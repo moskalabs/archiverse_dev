@@ -63,7 +63,7 @@ class _LectureListRowWidgetState extends State<LectureListRowWidget> {
           flex: 7,
           child: MouseRegion(
             opaque: false,
-            cursor: MouseCursor.defer ?? MouseCursor.defer,
+            cursor: MouseCursor.defer,
             child: InkWell(
               splashColor: Colors.transparent,
               focusColor: Colors.transparent,
@@ -206,7 +206,7 @@ class _LectureListRowWidgetState extends State<LectureListRowWidget> {
           flex: 2,
           child: MouseRegion(
             opaque: false,
-            cursor: MouseCursor.defer ?? MouseCursor.defer,
+            cursor: MouseCursor.defer,
             child: Container(
               width: double.infinity,
               height: MediaQuery.sizeOf(context).height * 0.04,
