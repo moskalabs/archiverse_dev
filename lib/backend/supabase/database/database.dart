@@ -1,0 +1,38 @@
+export '../../../flutter_flow/lat_lng.dart';
+export 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
+
+export '../supabase.dart';
+export 'row.dart';
+export 'table.dart';
+
+export 'tables/grades.dart';
+export 'tables/subjectportpolio.dart';
+export 'tables/professor_courses.dart';
+export 'tables/midterm_results.dart';
+export 'tables/courses_sections_map.dart';
+export 'tables/grades_courses_map.dart';
+export 'tables/weeks_upload.dart';
+export 'tables/student_post.dart';
+export 'tables/professor_myprofile.dart';
+export 'tables/temp_portpolio.dart';
+export 'tables/course_student.dart';
+export 'tables/years.dart';
+export 'tables/semesters.dart';
+export 'tables/posts.dart';
+export 'tables/student_myprofile.dart';
+export 'tables/class.dart';
+export 'tables/lecturematerial.dart';
+export 'tables/upload_by_student_and_weeks.dart';
+export 'tables/professor_validation.dart';
+export 'tables/admin_post.dart';
+export 'tables/years_semester_map.dart';
+export 'tables/semesters_grades_map.dart';
+export 'tables/sections.dart';
+export 'tables/professors.dart';
+export 'tables/final_results.dart';
+export 'tables/courseplan.dart';
+export 'tables/gradesheet.dart';
+export 'tables/attendance.dart';
+export 'tables/users.dart';
+export 'tables/workevalform.dart';
+export 'tables/courses.dart';
