@@ -24,3 +24,6 @@ android/app/build/
 
 # Mac
 .DS_Store
+
+# FVM Version Cache
+.fvm/
