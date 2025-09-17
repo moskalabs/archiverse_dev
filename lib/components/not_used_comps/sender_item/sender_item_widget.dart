@@ -53,7 +53,7 @@ class _SenderItemWidgetState extends State<SenderItemWidget> {
   Widget build(BuildContext context) {
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: InkWell(
         splashColor: Colors.transparent,
         focusColor: Colors.transparent,

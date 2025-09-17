@@ -139,7 +139,7 @@ class _OpenPopUpWidgetState extends State<OpenPopUpWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 5.0),
                 child: MouseRegion(
                   opaque: false,
-                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                  cursor: MouseCursor.defer,
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,

@@ -112,7 +112,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget>
   Widget build(BuildContext context) {
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Container(
         width: 320.0,
         decoration: BoxDecoration(),
@@ -138,7 +138,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget>
                           fit: BoxFit.cover,
                         ),
                       ),
-                      if (_model.mouseRegionHovered ?? true)
+                      if (_model.mouseRegionHovered)
                         Container(
                           width: double.infinity,
                           height: double.infinity,
@@ -151,7 +151,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget>
                     ],
                   ),
                 ),
-                if (_model.mouseRegionHovered ?? true)
+                if (_model.mouseRegionHovered)
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,

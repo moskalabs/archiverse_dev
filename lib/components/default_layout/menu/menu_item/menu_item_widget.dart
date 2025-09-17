@@ -68,7 +68,7 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
 
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Container(
         width: 250.0,
         height: () {

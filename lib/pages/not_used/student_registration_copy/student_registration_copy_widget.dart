@@ -57,7 +57,7 @@ class _StudentRegistrationCopyWidgetState
   void dispose() {
     // On page dispose action.
     () async {
-      FFAppState().chatState = !(FFAppState().chatState ?? true);
+      FFAppState().chatState = !(FFAppState().chatState);
       safeSetState(() {});
     }();
 

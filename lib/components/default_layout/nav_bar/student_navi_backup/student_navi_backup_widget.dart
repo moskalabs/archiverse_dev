@@ -63,7 +63,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
         alignment: AlignmentDirectional(1.0, 0.0),
         child: MouseRegion(
           opaque: false,
-          cursor: MouseCursor.defer ?? MouseCursor.defer,
+          cursor: MouseCursor.defer,
           child: Visibility(
             visible: responsiveVisibility(
               context: context,

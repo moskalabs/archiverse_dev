@@ -426,7 +426,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                           opaque:
                                                                               false,
                                                                           cursor:
-                                                                              MouseCursor.defer ?? MouseCursor.defer,
+                                                                              MouseCursor.defer,
                                                                           child:
                                                                               Row(
                                                                             mainAxisSize:
@@ -573,7 +573,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                 flex: 1,
                                                                                 child: MouseRegion(
                                                                                   opaque: false,
-                                                                                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                  cursor: MouseCursor.defer,
                                                                                   child: Padding(
                                                                                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
                                                                                     child: FFButtonWidget(
@@ -718,7 +718,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                             opaque:
                                                                                 false,
                                                                             cursor:
-                                                                                MouseCursor.defer ?? MouseCursor.defer,
+                                                                                MouseCursor.defer,
                                                                             child:
                                                                                 Container(
                                                                               width: double.infinity,
@@ -848,7 +848,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Padding(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
                                                                                 child: FFButtonWidget(
@@ -923,7 +923,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                             opaque:
                                                                                 false,
                                                                             cursor:
-                                                                                MouseCursor.defer ?? MouseCursor.defer,
+                                                                                MouseCursor.defer,
                                                                             child:
                                                                                 Padding(
                                                                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
@@ -1861,7 +1861,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                     ),
                                                                                 hintText: FFLocalizations.of(context).getText(
                                                                                   '87galvls' /* (예시)
-- 대지의 경사를 더욱 활용하였으면 함. - ... */
+- 대지의 경사를 더욱 활용하였으면 함.- ... */
                                                                                   ,
                                                                                 ),
                                                                                 hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
@@ -2478,8 +2478,6 @@ class _StudentSubjectPortpolioWidgetState
                                                                       opaque:
                                                                           false,
                                                                       cursor: MouseCursor
-                                                                              .defer ??
-                                                                          MouseCursor
                                                                               .defer,
                                                                       child:
                                                                           Row(
@@ -2647,11 +2645,11 @@ class _StudentSubjectPortpolioWidgetState
                                                                             opaque:
                                                                                 false,
                                                                             cursor:
-                                                                                MouseCursor.defer ?? MouseCursor.defer,
+                                                                                MouseCursor.defer,
                                                                             child:
                                                                                 FFButtonWidget(
                                                                               onPressed: () async {
-                                                                                FFAppState().studentPortporlioFileClickedTest = !(FFAppState().studentPortporlioFileClickedTest ?? true);
+                                                                                FFAppState().studentPortporlioFileClickedTest = !(FFAppState().studentPortporlioFileClickedTest);
                                                                                 FFAppState().studentPortporlioEditorClickedTest = true;
                                                                                 safeSetState(() {});
                                                                               },
@@ -2818,8 +2816,6 @@ class _StudentSubjectPortpolioWidgetState
                                                                       opaque:
                                                                           false,
                                                                       cursor: MouseCursor
-                                                                              .defer ??
-                                                                          MouseCursor
                                                                               .defer,
                                                                       child:
                                                                           Container(
@@ -2974,8 +2970,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                           MouseRegion(
                                                                         opaque:
                                                                             false,
-                                                                        cursor: MouseCursor.defer ??
-                                                                            MouseCursor.defer,
+                                                                        cursor: MouseCursor.defer,
                                                                         child:
                                                                             Padding(
                                                                           padding: EdgeInsetsDirectional.fromSTEB(
@@ -3062,8 +3057,6 @@ class _StudentSubjectPortpolioWidgetState
                                                                       opaque:
                                                                           false,
                                                                       cursor: MouseCursor
-                                                                              .defer ??
-                                                                          MouseCursor
                                                                               .defer,
                                                                       child:
                                                                           Padding(
@@ -4137,7 +4130,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                           FFLocalizations.of(context)
                                                                               .getText(
                                                                         'qek6g4lh' /* (예시)
-- 대지의 경사를 더욱 활용하였으면 함. - ... */
+- 대지의 경사를 더욱 활용하였으면 함.- ... */
                                                                         ,
                                                                       ),
                                                                       hintStyle: FlutterFlowTheme.of(

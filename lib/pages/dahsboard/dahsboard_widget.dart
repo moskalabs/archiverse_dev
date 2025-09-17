@@ -2036,7 +2036,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                           opaque:
                                                                               false,
                                                                           cursor:
-                                                                              MouseCursor.defer ?? MouseCursor.defer,
+                                                                              MouseCursor.defer,
                                                                           child:
                                                                               Align(
                                                                             alignment:
@@ -2652,7 +2652,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                               ),
                                                                               MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Padding(
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                                                                   child: InkWell(
@@ -2905,7 +2905,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                               ),
                                                                               MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Padding(
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                                                                   child: InkWell(
@@ -3158,7 +3158,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                               ),
                                                                               MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Padding(
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                                                                                   child: InkWell(
@@ -4896,7 +4896,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -5031,7 +5031,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -9277,7 +9277,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -9412,7 +9412,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -11064,7 +11064,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -11199,7 +11199,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -12851,7 +12851,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),
@@ -12986,7 +12986,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Builder(
                                                                                         builder: (context) => Padding(
                                                                                           padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 0.0),

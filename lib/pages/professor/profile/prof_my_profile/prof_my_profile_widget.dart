@@ -5846,8 +5846,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                           child: MouseRegion(
                                                             opaque: false,
                                                             cursor: MouseCursor
-                                                                    .defer ??
-                                                                MouseCursor
                                                                     .defer,
                                                             child: InkWell(
                                                               splashColor: Colors

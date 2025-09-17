@@ -385,10 +385,8 @@ class _DegreeInputWidgetState extends State<DegreeInputWidget> {
                                       initialDate: getCurrentTimestamp,
                                       firstDate:
                                           (DateTime.fromMicrosecondsSinceEpoch(
-                                                  946652400000000) ??
-                                              DateTime(1900)),
-                                      lastDate: (getCurrentTimestamp ??
-                                          DateTime(2050)),
+                                                  946652400000000)),
+                                      lastDate: (getCurrentTimestamp),
                                       builder: (context, child) {
                                         return wrapInMaterialDatePickerTheme(
                                           context,

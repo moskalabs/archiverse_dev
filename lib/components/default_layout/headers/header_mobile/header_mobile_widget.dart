@@ -114,7 +114,7 @@ class _HeaderMobileWidgetState extends State<HeaderMobileWidget> {
                         ),
                         onPressed: () async {
                           FFAppState().channelTalk =
-                              !(FFAppState().channelTalk ?? true);
+                              !(FFAppState().channelTalk);
                           _model.updatePage(() {});
                         },
                       ),

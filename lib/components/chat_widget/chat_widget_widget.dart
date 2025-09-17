@@ -420,7 +420,7 @@ class _ChatWidgetWidgetState extends State<ChatWidgetWidget> {
                     ),
                     MouseRegion(
                       opaque: false,
-                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                      cursor: MouseCursor.defer,
                       child: Icon(
                         Icons.send,
                         color: valueOrDefault<Color>(

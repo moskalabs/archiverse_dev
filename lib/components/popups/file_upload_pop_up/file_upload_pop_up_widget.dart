@@ -145,7 +145,7 @@ class _FileUploadPopUpWidgetState extends State<FileUploadPopUpWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
                 child: MouseRegion(
                   opaque: false,
-                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                  cursor: MouseCursor.defer,
                   child: Stack(
                     children: [
                       if ((_model.fileUpload == false) &&
@@ -611,7 +611,7 @@ class _FileUploadPopUpWidgetState extends State<FileUploadPopUpWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                 child: MouseRegion(
                   opaque: false,
-                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                  cursor: MouseCursor.defer,
                   child: Stack(
                     children: [
                       if (_model.fileUpload == true)

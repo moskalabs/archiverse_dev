@@ -492,7 +492,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                           children: [
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -573,7 +573,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -656,7 +656,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -739,7 +739,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -822,7 +822,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -911,7 +911,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                           children: [
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -992,7 +992,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -1075,7 +1075,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                             ),
                                                                             MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: MediaQuery.sizeOf(context).width * 0.054,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.03,
@@ -1682,7 +1682,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                             ),
                                                                                         hintText: FFLocalizations.of(context).getText(
                                                                                           '4vzws7o6' /* (예시)
-- 대지의 경사를 더욱 활용하였으면 함. - ... */
+- 대지의 경사를 더욱 활용하였으면 함.- ... */
                                                                                           ,
                                                                                         ),
                                                                                         hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
@@ -2272,7 +2272,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2359,7 +2359,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2445,7 +2445,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2531,7 +2531,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2617,7 +2617,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2713,7 +2713,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2800,7 +2800,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -2886,7 +2886,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   flex: 1,
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Container(
                                                                                       width: double.infinity,
                                                                                       height: MediaQuery.sizeOf(context).height * 0.04,
@@ -3459,7 +3459,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                             ),
                                                                                         hintText: FFLocalizations.of(context).getText(
                                                                                           '48so4l7i' /* (예시)
-- 대지의 경사를 더욱 활용하였으면 함. - ... */
+- 대지의 경사를 더욱 활용하였으면 함.- ... */
                                                                                           ,
                                                                                         ),
                                                                                         hintStyle: FlutterFlowTheme.of(context).labelMedium.override(

@@ -363,7 +363,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                               flex: 8,
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Container(
                                                                                   width: double.infinity,
                                                                                   height: MediaQuery.sizeOf(context).height * 0.05,
@@ -489,7 +489,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                               flex: 2,
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Container(
                                                                                   width: double.infinity,
                                                                                   height: MediaQuery.sizeOf(context).height * 0.05,
@@ -1285,7 +1285,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: double.infinity,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.05,
@@ -1415,7 +1415,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: double.infinity,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.05,

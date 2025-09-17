@@ -54,7 +54,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
               children: [
                 MouseRegion(
                   opaque: false,
-                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                  cursor: MouseCursor.defer,
                   child: Container(
                     width: _model.mouseRegionHovered1 ? 275.0 : 120.0,
                     decoration: BoxDecoration(
@@ -239,7 +239,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                 MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 24.0),
@@ -336,7 +336,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                 MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 24.0),
@@ -434,7 +434,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                 MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 24.0),
@@ -532,7 +532,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                 MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0.0, 0.0, 0.0, 24.0),
@@ -631,7 +631,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                   child: MouseRegion(
                                     opaque: false,
                                     cursor:
-                                        MouseCursor.defer ?? MouseCursor.defer,
+                                        MouseCursor.defer,
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 0.0, 24.0),
@@ -736,7 +736,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                   child: MouseRegion(
                                     opaque: false,
                                     cursor:
-                                        MouseCursor.defer ?? MouseCursor.defer,
+                                        MouseCursor.defer,
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0.0, 0.0, 0.0, 24.0),
@@ -843,7 +843,7 @@ class _HomeSideWidgetState extends State<HomeSideWidget> {
                                   child: MouseRegion(
                                     opaque: false,
                                     cursor:
-                                        MouseCursor.defer ?? MouseCursor.defer,
+                                        MouseCursor.defer,
                                     child: Container(
                                       width: double.infinity,
                                       height: 48.0,

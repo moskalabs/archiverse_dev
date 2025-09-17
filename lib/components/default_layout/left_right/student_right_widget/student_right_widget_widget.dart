@@ -1622,7 +1622,7 @@ class _StudentRightWidgetWidgetState extends State<StudentRightWidgetWidget> {
                                 MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: InkWell(
                                     splashColor: Colors.transparent,
                                     focusColor: Colors.transparent,

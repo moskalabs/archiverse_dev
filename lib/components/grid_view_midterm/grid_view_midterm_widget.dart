@@ -161,7 +161,7 @@ class _GridViewMidtermWidgetState extends State<GridViewMidtermWidget> {
                           padding: EdgeInsets.all(3.0),
                           child: MouseRegion(
                             opaque: false,
-                            cursor: MouseCursor.defer ?? MouseCursor.defer,
+                            cursor: MouseCursor.defer,
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -560,7 +560,7 @@ class _GridViewMidtermWidgetState extends State<GridViewMidtermWidget> {
                         padding: EdgeInsets.all(3.0),
                         child: MouseRegion(
                           opaque: false,
-                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                          cursor: MouseCursor.defer,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [

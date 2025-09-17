@@ -62,7 +62,7 @@ class _UserMenuWidgetState extends State<UserMenuWidget> {
           children: [
             MouseRegion(
               opaque: false,
-              cursor: MouseCursor.defer ?? MouseCursor.defer,
+              cursor: MouseCursor.defer,
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -129,7 +129,7 @@ class _UserMenuWidgetState extends State<UserMenuWidget> {
             ),
             MouseRegion(
               opaque: false,
-              cursor: MouseCursor.defer ?? MouseCursor.defer,
+              cursor: MouseCursor.defer,
               child: Visibility(
                 visible: false,
                 child: InkWell(
@@ -200,7 +200,7 @@ class _UserMenuWidgetState extends State<UserMenuWidget> {
             ),
             MouseRegion(
               opaque: false,
-              cursor: MouseCursor.defer ?? MouseCursor.defer,
+              cursor: MouseCursor.defer,
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,

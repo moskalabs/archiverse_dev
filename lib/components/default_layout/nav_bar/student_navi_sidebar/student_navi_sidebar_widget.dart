@@ -55,7 +55,7 @@ class _StudentNaviSidebarWidgetState extends State<StudentNaviSidebarWidget> {
 
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Visibility(
         visible: responsiveVisibility(
           context: context,

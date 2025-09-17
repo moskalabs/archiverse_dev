@@ -57,7 +57,7 @@ class _StudentRegistrationWidgetState extends State<StudentRegistrationWidget> {
   void dispose() {
     // On page dispose action.
     () async {
-      FFAppState().chatState = !(FFAppState().chatState ?? true);
+      FFAppState().chatState = !(FFAppState().chatState);
       safeSetState(() {});
     }();
 

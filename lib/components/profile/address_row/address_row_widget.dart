@@ -75,7 +75,7 @@ class _AddressRowWidgetState extends State<AddressRowWidget>
         decoration: BoxDecoration(),
         child: MouseRegion(
           opaque: false,
-          cursor: MouseCursor.defer ?? MouseCursor.defer,
+          cursor: MouseCursor.defer,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -107,7 +107,7 @@ class _AddressRowWidgetState extends State<AddressRowWidget>
                       ),
                 ),
               ),
-              if (_model.addressRegionHovered ?? true)
+              if (_model.addressRegionHovered)
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                   child: Icon(

@@ -76,7 +76,7 @@ class _UserRowCardResStartChatWidgetState
   Widget build(BuildContext context) {
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Container(
         decoration: BoxDecoration(
           color: valueOrDefault<Color>(
@@ -223,7 +223,7 @@ class _UserRowCardResStartChatWidgetState
                         ],
                       ),
                     ),
-                    if (_model.mouseRegionHovered ?? true)
+                    if (_model.mouseRegionHovered)
                       Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 6.0, 0.0),

@@ -2343,7 +2343,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: MouseRegion(
                                                                                   opaque: false,
-                                                                                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                  cursor: MouseCursor.defer,
                                                                                   child: Align(
                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                     child: Padding(
@@ -3252,7 +3252,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Align(
                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                       child: Padding(
@@ -3815,7 +3815,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Align(
                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                       child: Padding(
@@ -4582,8 +4582,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                   double>(
                                                             math.min(
                                                                 1.0,
-                                                                ((_model.progressSubject ??
-                                                                        0) /
+                                                                ((_model.progressSubject) /
                                                                     (8 *
                                                                         15 *
                                                                         3))),
@@ -6280,7 +6279,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -6297,7 +6296,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -6478,7 +6477,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -6495,7 +6494,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -8100,7 +8099,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -8117,7 +8116,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -8297,7 +8296,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -8314,7 +8313,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -9923,7 +9922,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -9940,7 +9939,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -10120,7 +10119,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -10137,7 +10136,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                     child: MouseRegion(
                                                                                       opaque: false,
-                                                                                      cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                      cursor: MouseCursor.defer,
                                                                                       child: Visibility(
                                                                                         visible: false,
                                                                                         child: Builder(
@@ -12386,7 +12385,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: MouseRegion(
                                                                                   opaque: false,
-                                                                                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                  cursor: MouseCursor.defer,
                                                                                   child: Align(
                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                     child: Padding(
@@ -13263,7 +13262,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Align(
                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                       child: Padding(
@@ -14040,7 +14039,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: MouseRegion(
                                                                                     opaque: false,
-                                                                                    cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                    cursor: MouseCursor.defer,
                                                                                     child: Align(
                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                       child: Padding(
@@ -14989,8 +14988,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                     double>(
                                                               math.min(
                                                                   1.0,
-                                                                  ((_model.progressSubject ??
-                                                                          0) /
+                                                                  ((_model.progressSubject) /
                                                                       (8 *
                                                                           15 *
                                                                           3))),
@@ -16430,7 +16428,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -16447,7 +16445,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(
@@ -16623,7 +16621,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -16640,7 +16638,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(
@@ -17979,7 +17977,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -17996,7 +17994,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(
@@ -18173,7 +18171,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -18190,7 +18188,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(
@@ -19530,7 +19528,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 15)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -19547,7 +19545,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(
@@ -19724,7 +19722,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject ?? 0) / (8 * 2)))),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubject) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -19741,7 +19739,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                                         child: MouseRegion(
                                                                                                           opaque: false,
-                                                                                                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                                          cursor: MouseCursor.defer,
                                                                                                           child: Visibility(
                                                                                                             visible: false,
                                                                                                             child: Builder(

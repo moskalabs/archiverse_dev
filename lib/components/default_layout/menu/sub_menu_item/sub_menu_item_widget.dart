@@ -47,7 +47,7 @@ class _SubMenuItemWidgetState extends State<SubMenuItemWidget> {
   Widget build(BuildContext context) {
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Container(
         height: 44.0,
         decoration: BoxDecoration(

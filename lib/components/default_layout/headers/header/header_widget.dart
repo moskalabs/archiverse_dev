@@ -548,7 +548,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                       ),
                       onPressed: () async {
                         FFAppState().channelTalk =
-                            !(FFAppState().channelTalk ?? true);
+                            !(FFAppState().channelTalk);
                         _model.updatePage(() {});
                       },
                     ),

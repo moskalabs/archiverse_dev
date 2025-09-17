@@ -64,7 +64,7 @@ class _MenuItemCopyWidgetState extends State<MenuItemCopyWidget> {
   Widget build(BuildContext context) {
     return MouseRegion(
       opaque: false,
-      cursor: MouseCursor.defer ?? MouseCursor.defer,
+      cursor: MouseCursor.defer,
       child: Container(
         height: 50.0,
         decoration: BoxDecoration(

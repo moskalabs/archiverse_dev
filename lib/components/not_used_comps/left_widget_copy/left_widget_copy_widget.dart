@@ -116,7 +116,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                             flex: 5,
                             child: MouseRegion(
                               opaque: false,
-                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                              cursor: MouseCursor.defer,
                               child: Container(
                                 width: 320.0,
                                 height: MediaQuery.sizeOf(context).height * 0.2,
@@ -304,8 +304,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                         Flexible(
                                           child: MouseRegion(
                                             opaque: false,
-                                            cursor: MouseCursor.defer ??
-                                                MouseCursor.defer,
+                                            cursor: MouseCursor.defer,
                                             child: Container(
                                               width: 236.0,
                                               height: 37.0,
@@ -418,8 +417,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                         Flexible(
                                           child: MouseRegion(
                                             opaque: false,
-                                            cursor: MouseCursor.defer ??
-                                                MouseCursor.defer,
+                                            cursor: MouseCursor.defer,
                                             child: Container(
                                               width: 236.0,
                                               height: 37.0,
@@ -532,8 +530,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                         Flexible(
                                           child: MouseRegion(
                                             opaque: false,
-                                            cursor: MouseCursor.defer ??
-                                                MouseCursor.defer,
+                                            cursor: MouseCursor.defer,
                                             child: Container(
                                               width: 236.0,
                                               height: 37.0,

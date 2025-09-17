@@ -163,7 +163,7 @@ class _GridViewFinalWidgetState extends State<GridViewFinalWidget> {
                           padding: EdgeInsets.all(3.0),
                           child: MouseRegion(
                             opaque: false,
-                            cursor: MouseCursor.defer ?? MouseCursor.defer,
+                            cursor: MouseCursor.defer,
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -562,7 +562,7 @@ class _GridViewFinalWidgetState extends State<GridViewFinalWidget> {
                         padding: EdgeInsets.all(3.0),
                         child: MouseRegion(
                           opaque: false,
-                          cursor: MouseCursor.defer ?? MouseCursor.defer,
+                          cursor: MouseCursor.defer,
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [

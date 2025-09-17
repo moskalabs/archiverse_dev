@@ -368,7 +368,7 @@ class _ProfCoursePlanWidgetState extends State<ProfCoursePlanWidget> {
                                                                           opaque:
                                                                               false,
                                                                           cursor:
-                                                                              MouseCursor.defer ?? MouseCursor.defer,
+                                                                              MouseCursor.defer,
                                                                           child:
                                                                               Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(
@@ -508,8 +508,7 @@ class _ProfCoursePlanWidgetState extends State<ProfCoursePlanWidget> {
                                                                           MouseRegion(
                                                                         opaque:
                                                                             false,
-                                                                        cursor: MouseCursor.defer ??
-                                                                            MouseCursor.defer,
+                                                                        cursor: MouseCursor.defer,
                                                                         child:
                                                                             Container(
                                                                           width:
@@ -1293,8 +1292,6 @@ class _ProfCoursePlanWidgetState extends State<ProfCoursePlanWidget> {
                                                                     opaque:
                                                                         false,
                                                                     cursor: MouseCursor
-                                                                            .defer ??
-                                                                        MouseCursor
                                                                             .defer,
                                                                     child:
                                                                         Container(
@@ -1466,8 +1463,6 @@ class _ProfCoursePlanWidgetState extends State<ProfCoursePlanWidget> {
                                                                     opaque:
                                                                         false,
                                                                     cursor: MouseCursor
-                                                                            .defer ??
-                                                                        MouseCursor
                                                                             .defer,
                                                                     child:
                                                                         Container(

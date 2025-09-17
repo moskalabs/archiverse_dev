@@ -234,7 +234,7 @@ class _DeletePopUpCopyWidgetState extends State<DeletePopUpCopyWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
                 child: MouseRegion(
                   opaque: false,
-                  cursor: MouseCursor.defer ?? MouseCursor.defer,
+                  cursor: MouseCursor.defer,
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,

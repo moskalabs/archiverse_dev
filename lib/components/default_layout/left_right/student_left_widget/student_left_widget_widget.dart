@@ -157,7 +157,7 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
                                 child: MouseRegion(
                                   opaque: false,
                                   cursor:
-                                      MouseCursor.defer ?? MouseCursor.defer,
+                                      MouseCursor.defer,
                                   child: Container(
                                     width: 320.0,
                                     height:
@@ -639,8 +639,7 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
                                                 Flexible(
                                                   child: MouseRegion(
                                                     opaque: false,
-                                                    cursor: MouseCursor.defer ??
-                                                        MouseCursor.defer,
+                                                    cursor: MouseCursor.defer,
                                                     child: Container(
                                                       width: 236.0,
                                                       height: 37.0,
@@ -792,8 +791,7 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
                                                 Flexible(
                                                   child: MouseRegion(
                                                     opaque: false,
-                                                    cursor: MouseCursor.defer ??
-                                                        MouseCursor.defer,
+                                                    cursor: MouseCursor.defer,
                                                     child: Container(
                                                       width: 236.0,
                                                       height: 37.0,

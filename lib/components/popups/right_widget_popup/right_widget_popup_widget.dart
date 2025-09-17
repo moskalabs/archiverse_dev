@@ -119,7 +119,7 @@ class _RightWidgetPopupWidgetState extends State<RightWidgetPopupWidget> {
               padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
               child: MouseRegion(
                 opaque: false,
-                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                cursor: MouseCursor.defer,
                 child: Material(
                   color: Colors.transparent,
                   elevation: 1.0,
@@ -207,7 +207,7 @@ class _RightWidgetPopupWidgetState extends State<RightWidgetPopupWidget> {
             ),
             MouseRegion(
               opaque: false,
-              cursor: MouseCursor.defer ?? MouseCursor.defer,
+              cursor: MouseCursor.defer,
               child: Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 10.0),
                 child: Container(
@@ -317,7 +317,7 @@ class _RightWidgetPopupWidgetState extends State<RightWidgetPopupWidget> {
             ),
             MouseRegion(
               opaque: false,
-              cursor: MouseCursor.defer ?? MouseCursor.defer,
+              cursor: MouseCursor.defer,
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,

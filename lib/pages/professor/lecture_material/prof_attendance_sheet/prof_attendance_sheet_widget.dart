@@ -423,7 +423,7 @@ class _ProfAttendanceSheetWidgetState extends State<ProfAttendanceSheetWidget> {
                                                                               flex: 7,
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Container(
                                                                                   width: double.infinity,
                                                                                   height: MediaQuery.sizeOf(context).height * 0.05,
@@ -549,7 +549,7 @@ class _ProfAttendanceSheetWidgetState extends State<ProfAttendanceSheetWidget> {
                                                                               flex: 3,
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Container(
                                                                                   width: double.infinity,
                                                                                   height: MediaQuery.sizeOf(context).height * 0.05,
@@ -1375,7 +1375,7 @@ class _ProfAttendanceSheetWidgetState extends State<ProfAttendanceSheetWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: double.infinity,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.05,
@@ -1505,7 +1505,7 @@ class _ProfAttendanceSheetWidgetState extends State<ProfAttendanceSheetWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Container(
                                                                                 width: double.infinity,
                                                                                 height: MediaQuery.sizeOf(context).height * 0.05,

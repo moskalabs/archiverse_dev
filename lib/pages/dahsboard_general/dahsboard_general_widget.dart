@@ -1933,7 +1933,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(

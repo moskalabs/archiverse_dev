@@ -3661,7 +3661,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                       ),
                       onPressed: () async {
                         FFAppState().channelTalk =
-                            !(FFAppState().channelTalk ?? true);
+                            !(FFAppState().channelTalk);
                         safeSetState(() {});
                       },
                     ),

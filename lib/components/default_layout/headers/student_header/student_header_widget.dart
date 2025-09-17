@@ -568,7 +568,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                           ),
                           onPressed: () async {
                             FFAppState().channelTalk =
-                                !(FFAppState().channelTalk ?? true);
+                                !(FFAppState().channelTalk);
                             _model.updatePage(() {});
                           },
                         ),
@@ -1149,7 +1149,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                           ),
                           onPressed: () async {
                             FFAppState().channelTalk =
-                                !(FFAppState().channelTalk ?? true);
+                                !(FFAppState().channelTalk);
                             safeSetState(() {});
                           },
                         ),

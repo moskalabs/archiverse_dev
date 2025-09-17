@@ -996,7 +996,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -1380,7 +1380,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -1786,7 +1786,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Align(
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: Padding(
@@ -2163,7 +2163,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                               child: MouseRegion(
                                                                                 opaque: false,
-                                                                                cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                                cursor: MouseCursor.defer,
                                                                                 child: Align(
                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                   child: Padding(
@@ -3501,8 +3501,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                               int>(
                                                                             _model.progressSubject,
                                                                             0,
-                                                                          ) ??
-                                                                          0) /
+                                                                          )) /
                                                                       15),
                                                                   0.3,
                                                                 ),
@@ -4051,8 +4050,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                     ((valueOrDefault<int>(
                                                                               _model.progressSubject,
                                                                               0,
-                                                                            ) ??
-                                                                            0) /
+                                                                            )) /
                                                                         15),
                                                                     0.3,
                                                                   ),
@@ -4190,8 +4188,6 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                     MouseRegion(
                                                                   opaque: false,
                                                                   cursor: MouseCursor
-                                                                          .defer ??
-                                                                      MouseCursor
                                                                           .defer,
                                                                   child: Row(
                                                                     mainAxisSize:
@@ -5454,7 +5450,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -5833,7 +5829,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -6239,7 +6235,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -6621,7 +6617,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                             child:
                                                                                 MouseRegion(
                                                                               opaque: false,
-                                                                              cursor: MouseCursor.defer ?? MouseCursor.defer,
+                                                                              cursor: MouseCursor.defer,
                                                                               child: Align(
                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                 child: Padding(
@@ -8237,8 +8233,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                         _model
                                                                             .progressSubject,
                                                                         0,
-                                                                      ) ??
-                                                                      0) /
+                                                                      )) /
                                                                   15),
                                                               0.3,
                                                             ),
@@ -8874,8 +8869,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                     ((valueOrDefault<int>(
                                                                               _model.progressSubject,
                                                                               0,
-                                                                            ) ??
-                                                                            0) /
+                                                                            )) /
                                                                         15),
                                                                     0.3,
                                                                   ),
@@ -9013,8 +9007,6 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                     MouseRegion(
                                                                   opaque: false,
                                                                   cursor: MouseCursor
-                                                                          .defer ??
-                                                                      MouseCursor
                                                                           .defer,
                                                                   child: Row(
                                                                     mainAxisSize:
