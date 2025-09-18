@@ -126,7 +126,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
             ),
           );
         }
-        List<ProfessorsRow> dahsboardViceProfessorsRowList = snapshot.data!;
+        //List<ProfessorsRow> dahsboardViceProfessorsRowList = snapshot.data!;
 
         return GestureDetector(
           onTap: () {

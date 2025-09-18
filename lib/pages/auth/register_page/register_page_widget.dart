@@ -3267,7 +3267,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                 });
                                                                 _shouldSetState =
                                                                     true;
-                                                                var confirmDialogResponse =
+                                                               
                                                                     await showDialog<
                                                                             bool>(
                                                                           context:
@@ -3325,7 +3325,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                   'uuid':
                                                                       currentUserUid,
                                                                 });
-                                                                var confirmDialogResponse =
+                                                                
                                                                     await showDialog<
                                                                             bool>(
                                                                           context:

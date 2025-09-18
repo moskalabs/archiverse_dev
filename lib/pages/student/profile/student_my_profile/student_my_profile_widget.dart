@@ -642,7 +642,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                       currentUserEmail,
                                                                                     ),
                                                                                   );
-                                                                                  var confirmDialogResponse = await showDialog<bool>(
+                                                                                  await showDialog<bool>(
                                                                                         context: context,
                                                                                         builder: (alertDialogContext) {
                                                                                           return WebViewAware(
@@ -676,7 +676,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                       'stu_email': currentUserEmail,
                                                                                       'stu_imageurl': FFAppState().studentMypageImageUrl,
                                                                                     });
-                                                                                    var confirmDialogResponse = await showDialog<bool>(
+                                                                                    await showDialog<bool>(
                                                                                           context: context,
                                                                                           builder: (alertDialogContext) {
                                                                                             return WebViewAware(
@@ -4302,7 +4302,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                                     FFAppState().courseNameSelected = _model.dropDownValue4!;
                                                                                                     FFAppState().sectionSelected = _model.radioButtonValue4!;
                                                                                                     safeSetState(() {});
-                                                                                                    var confirmDialogResponse = await showDialog<bool>(
+                                                                                                    await showDialog<bool>(
                                                                                                           context: context,
                                                                                                           builder: (alertDialogContext) {
                                                                                                             return WebViewAware(
@@ -4369,7 +4369,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                                     FFAppState().sectionSelected = _model.radioButtonValue4!;
                                                                                                     FFAppState().studentMyprofileFirstCheck = false;
                                                                                                     safeSetState(() {});
-                                                                                                    var confirmDialogResponse = await showDialog<bool>(
+                                                                                                    await showDialog<bool>(
                                                                                                           context: context,
                                                                                                           builder: (alertDialogContext) {
                                                                                                             return WebViewAware(

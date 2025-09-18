@@ -702,28 +702,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                       currentUserEmail,
                                                                                     ),
                                                                                   );
-                                                                                  var confirmDialogResponse = await showDialog<bool>(
-                                                                                        context: context,
-                                                                                        builder: (alertDialogContext) {
-                                                                                          return WebViewAware(
-                                                                                            child: AlertDialog(
-                                                                                              title: Text('적용 완료'),
-                                                                                              content: Text('이미지 적용이 완료되었습니다.'),
-                                                                                              actions: [
-                                                                                                TextButton(
-                                                                                                  onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                  child: Text('Cancel'),
-                                                                                                ),
-                                                                                                TextButton(
-                                                                                                  onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                  child: Text('Confirm'),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      ) ??
-                                                                                      false;
                                                                                   safeSetState(() {
                                                                                     _model.isDataUploading_uploadData = false;
                                                                                     _model.uploadedLocalFile_uploadData = FFUploadedFile(bytes: Uint8List.fromList([]));
@@ -735,28 +713,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                       'pfr_imageurl': FFAppState().mypageImageUrl,
                                                                                       'professor_name': FFAppState().professorNameSelected,
                                                                                     });
-                                                                                    var confirmDialogResponse = await showDialog<bool>(
-                                                                                          context: context,
-                                                                                          builder: (alertDialogContext) {
-                                                                                            return WebViewAware(
-                                                                                              child: AlertDialog(
-                                                                                                title: Text('적용 완료'),
-                                                                                                content: Text('이미지 적용이 완료되었습니다.'),
-                                                                                                actions: [
-                                                                                                  TextButton(
-                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                    child: Text('Cancel'),
-                                                                                                  ),
-                                                                                                  TextButton(
-                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                    child: Text('Confirm'),
-                                                                                                  ),
-                                                                                                ],
-                                                                                              ),
-                                                                                            );
-                                                                                          },
-                                                                                        ) ??
-                                                                                        false;
                                                                                     safeSetState(() {
                                                                                       _model.isDataUploading_uploadData = false;
                                                                                       _model.uploadedLocalFile_uploadData = FFUploadedFile(bytes: Uint8List.fromList([]));
@@ -5252,28 +5208,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                                   FFAppState().professorNameSelected,
                                                                                                 ),
                                                                                               );
-                                                                                              var confirmDialogResponse = await showDialog<bool>(
-                                                                                                    context: context,
-                                                                                                    builder: (alertDialogContext) {
-                                                                                                      return WebViewAware(
-                                                                                                        child: AlertDialog(
-                                                                                                          title: Text('적용 완료'),
-                                                                                                          content: Text('적용이 완료되었습니다.'),
-                                                                                                          actions: [
-                                                                                                            TextButton(
-                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                              child: Text('Cancel'),
-                                                                                                            ),
-                                                                                                            TextButton(
-                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                              child: Text('Confirm'),
-                                                                                                            ),
-                                                                                                          ],
-                                                                                                        ),
-                                                                                                      );
-                                                                                                    },
-                                                                                                  ) ??
-                                                                                                  false;
                                                                                             } else {
                                                                                               _model.academicRecords = [];
                                                                                               _model.teachingRecords = [];
@@ -5441,28 +5375,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                               });
                                                                                               FFAppState().mypageAcademicRecords = _model.academicRecords.toList().cast<dynamic>();
                                                                                               safeSetState(() {});
-                                                                                              var confirmDialogResponse = await showDialog<bool>(
-                                                                                                    context: context,
-                                                                                                    builder: (alertDialogContext) {
-                                                                                                      return WebViewAware(
-                                                                                                        child: AlertDialog(
-                                                                                                          title: Text('적용 완료'),
-                                                                                                          content: Text('적용이 완료되었습니다.'),
-                                                                                                          actions: [
-                                                                                                            TextButton(
-                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                              child: Text('Cancel'),
-                                                                                                            ),
-                                                                                                            TextButton(
-                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                              child: Text('Confirm'),
-                                                                                                            ),
-                                                                                                          ],
-                                                                                                        ),
-                                                                                                      );
-                                                                                                    },
-                                                                                                  ) ??
-                                                                                                  false;
                                                                                             }
 
                                                                                             safeSetState(() {});

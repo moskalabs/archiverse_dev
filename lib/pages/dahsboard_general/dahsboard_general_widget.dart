@@ -87,7 +87,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
             ),
           );
         }
-        List<ProfessorsRow> dahsboardGeneralProfessorsRowList = snapshot.data!;
+        //List<ProfessorsRow> dahsboardGeneralProfessorsRowList = snapshot.data!;
 
         return GestureDetector(
           onTap: () {
