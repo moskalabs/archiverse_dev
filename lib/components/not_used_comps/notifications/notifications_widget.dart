@@ -177,7 +177,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
                                           MainAxisAlignment.center,
                                       children: [
                                         FaIcon(
-                                          FontAwesomeIcons.ticketAlt,
+                                          FontAwesomeIcons.ticketSimple,
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           size: 12.0,
@@ -455,7 +455,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     FaIcon(
-                                      FontAwesomeIcons.ticketAlt,
+                                      FontAwesomeIcons.ticketSimple,
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       size: 12.0,
@@ -726,7 +726,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     FaIcon(
-                                      FontAwesomeIcons.ticketAlt,
+                                      FontAwesomeIcons.ticketSimple,
                                       color:
                                           FlutterFlowTheme.of(context).primary,
                                       size: 12.0,

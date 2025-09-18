@@ -81,9 +81,7 @@ String? serializeParam(
       case ParamType.SupabaseRow:
         return json.encode((param as SupabaseDataRow).data);
 
-      default:
-        data = null;
-    }
+      }
     return data;
   } catch (e) {
     print('Error serializing parameter: $e');
@@ -293,9 +291,7 @@ dynamic deserializeParam<T>(
       case ParamType.Enum:
         return deserializeEnum<T>(param);
 
-      default:
-        return null;
-    }
+      }
   } catch (e) {
     print('Error deserializing parameter: $e');
     return null;
