@@ -56,6 +56,7 @@ class SupabaseAuthManager extends AuthManager with EmailSignInManager {
   }
 
   @override
+  // TODO: 비밀번호 변경 기능 구현 예정
   Future updatePassword({
     required String newPassword,
     required BuildContext context,

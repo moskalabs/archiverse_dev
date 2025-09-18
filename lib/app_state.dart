@@ -1172,9 +1172,11 @@ void _safeInit(Function() initializeField) {
     initializeField();
   } catch (_) {}
 }
-
+// 안쓰는 elements 들. 주석처리.
+/*
 Future _safeInitAsync(Function() initializeField) async {
   try {
     await initializeField();
   } catch (_) {}
 }
+*/
