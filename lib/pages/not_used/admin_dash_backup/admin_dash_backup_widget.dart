@@ -3504,12 +3504,10 @@ class _AdminDashBackupWidgetState extends State<AdminDashBackupWidget> {
                                                               valueOrDefault<
                                                                   double>(
                                                             math.min(
-                                                                1.0,
-                                                                ((_model.progressSubject
-                                                                        15 *
-                                                                        3))),
-                                                            0.0,
-                                                          ),
+    1.0,
+    (_model.progressSubject * 15.0 * 3) / 100.0), // 괄호 정리 및 연산 수정
+    0.0,
+),
                                                           width:
                                                               MediaQuery.sizeOf(
                                                                           context)

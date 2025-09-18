@@ -9719,7 +9719,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                         alignment: AlignmentDirectional(-1.0, 0.0),
                                                                                         child: MouseRegion(
                                                                                           opaque: false,
-                                                                                          cursor: MouseCursor.defer
+                                                                                          cursor: MouseCursor.defer,
                                                                                           child: Visibility(
                                                                                             visible: false,
                                                                                             child: Builder(
