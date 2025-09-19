@@ -40,6 +40,20 @@ class ProfSubjectPortpolioModel
           int index, Function(SubjectportpolioRow) updateFn) =>
       sPortpolioList[index] = updateFn(sPortpolioList[index]);
 
+  List<SubjectportpolioRow> selectedSPortpolioList = [];
+  void addToSelectedSPortpolioList(SubjectportpolioRow item) =>
+      selectedSPortpolioList.add(item);
+  void removeFromSelectedSPortpolioList(SubjectportpolioRow item) =>
+      selectedSPortpolioList.remove(item);
+  void removeAtIndexFromSelectedSPortpolioList(int index) =>
+      selectedSPortpolioList.removeAt(index);
+  void insertAtIndexInSelectedSPortpolioList(
+          int index, SubjectportpolioRow item) =>
+      selectedSPortpolioList.insert(index, item);
+  void updateSelectedSPortpolioListAtIndex(
+          int index, Function(SubjectportpolioRow) updateFn) =>
+      selectedSPortpolioList[index] = updateFn(selectedSPortpolioList[index]);
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in Prof_SubjectPortpolio widget.
