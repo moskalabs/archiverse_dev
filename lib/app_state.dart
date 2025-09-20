@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
+import '/backend/supabase/supabase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -1131,6 +1132,18 @@ class FFAppState extends ChangeNotifier {
     await prefs.remove('ff_professorNameSelected');
     _studentNameSelected = '';
     await prefs.remove('ff_studentNameSelected');
+    _yearSelected = '';
+    await prefs.remove('ff_yearSelected');
+    _semesterSelected = '';
+    await prefs.remove('ff_semesterSelected');
+    _gradeSelected = 0;
+    await prefs.remove('ff_gradeSelected');
+    _sectionSelected = '';
+    await prefs.remove('ff_sectionSelected');
+    _courseNameSelected = '';
+    await prefs.remove('ff_courseNameSelected');
+    _classSelectedID = 0;
+    await prefs.remove('ff_classSelectedID');
     _mypageImageUrl = '';
     await prefs.remove('ff_mypageImageUrl');
     _mypagePhoneNumber = '';
@@ -1166,7 +1179,40 @@ class FFAppState extends ChangeNotifier {
     await prefs.remove('ff_degreeTextField');
     _studentMypageImageUrl = '';
     await prefs.remove('ff_studentMypageImageUrl');
+    _studentMyprofileFirstCheck = false;
+    await prefs.remove('ff_studentMyprofileFirstCheck');
     notifyListeners();
+  }
+
+  Future<void> applyStudentProfile(StudentMyprofileRow profile) async {
+    studentNameSelected = profile.name ?? '';
+    mypagePhoneNumber = profile.phoneNum ?? '';
+    mypageBirth = profile.birth ?? '';
+    mypagePosition = profile.enrollmentStatus ?? '';
+    mypageProject = profile.employmentDetails ?? '';
+    courseNameSelected = profile.courseMajor ?? '';
+    sectionSelected = profile.section ?? '';
+    yearSelected = profile.years ?? '';
+    semesterSelected = profile.semester ?? '';
+    gradeSelected = _gradeLabelToInt(profile.grade);
+    studentMypageImageUrl = profile.stuImageurl ?? '';
+    studentMyprofileFirstCheck = false;
+    notifyListeners();
+  }
+
+  int _gradeLabelToInt(String? grade) {
+    switch (grade) {
+      case '1학년':
+        return 1;
+      case '2학년':
+        return 2;
+      case '3학년':
+        return 3;
+      case '4학년':
+        return 4;
+      default:
+        return int.tryParse(grade ?? '') ?? 0;
+    }
   }
 
   List<String> _weeksList = [
