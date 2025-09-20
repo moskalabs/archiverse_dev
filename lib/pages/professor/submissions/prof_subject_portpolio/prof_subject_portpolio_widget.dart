@@ -61,6 +61,12 @@ class _ProfSubjectPortpolioWidgetState
             .eqOrNull(
               'professor_name',
               FFAppState().professorNameSelected,
+            )
+            .eqOrNull(
+              'section',
+              FFAppState().sectionSelected.isNotEmpty
+                  ? FFAppState().sectionSelected
+                  : null,
             ),
       );
       _model.sPortpolioList =
@@ -1584,6 +1590,12 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                         .eqOrNull(
                                                                                                           'week',
                                                                                                           _model.weeks,
+                                                                                                        )
+                                                                                                        .eqOrNull(
+                                                                                                          'section',
+                                                                                                          FFAppState().sectionSelected.isNotEmpty
+                                                                                                              ? FFAppState().sectionSelected
+                                                                                                              : null,
                                                                                                         ),
                                                                                                   );
                                                                                                   await showDialog(
@@ -3269,6 +3281,12 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                         .eqOrNull(
                                                                                                           'week',
                                                                                                           _model.weeks,
+                                                                                                        )
+                                                                                                        .eqOrNull(
+                                                                                                          'section',
+                                                                                                          FFAppState().sectionSelected.isNotEmpty
+                                                                                                              ? FFAppState().sectionSelected
+                                                                                                              : null,
                                                                                                         ),
                                                                                                   );
                                                                                                   await showDialog(
