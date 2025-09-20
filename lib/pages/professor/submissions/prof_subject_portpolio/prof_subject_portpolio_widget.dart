@@ -45,7 +45,11 @@ class _ProfSubjectPortpolioWidgetState
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       FFAppState().chatState = false;
-      safeSetState(() {});
+      safeSetState(() {
+        _model.selectedSPortpolioList = [];
+        _model.textController1?.text = '크리틱 내용';
+        _model.textController2?.text = '크리틱 내용';
+      });
       _model.tempoutput = await TempPortpolioTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'class',
@@ -61,11 +65,18 @@ class _ProfSubjectPortpolioWidgetState
             .eqOrNull(
               'professor_name',
               FFAppState().professorNameSelected,
+            )
+            .eqOrNull(
+              'section',
+              FFAppState().sectionSelected.isNotEmpty
+                  ? FFAppState().sectionSelected
+                  : null,
             ),
       );
       _model.sPortpolioList =
           _model.subjectoutput!.toList().cast<SubjectportpolioRow>();
       safeSetState(() {});
+      _setSelectedPortfolio(_model.nameselectforquery);
     });
 
     _model.textController1 ??= TextEditingController();
@@ -90,9 +101,91 @@ class _ProfSubjectPortpolioWidgetState
     super.dispose();
   }
 
+  void _setSelectedPortfolio(String? studentName) {
+    final subjectRows = _model.subjectoutput ?? [];
+    final newSelection = (studentName != null && subjectRows.isNotEmpty)
+        ? subjectRows
+            .where((row) => row.studentName == studentName)
+            .toList()
+            .cast<SubjectportpolioRow>()
+        : <SubjectportpolioRow>[];
+    var effectiveSelection = List<SubjectportpolioRow>.from(newSelection);
+    if (effectiveSelection.isEmpty) {
+      final rosterWeekEntries = _model.sPortpolioList
+          .where((row) => row.week == _model.weeks)
+          .toList();
+      if (rosterWeekEntries.isNotEmpty) {
+        final firstStudentName = rosterWeekEntries.first.studentName;
+        if (firstStudentName != null) {
+          effectiveSelection = _model.sPortpolioList
+              .where((row) => row.studentName == firstStudentName)
+              .toList();
+        }
+      }
+    }
+
+    SubjectportpolioRow? selectedWeekEntry;
+    for (final row in effectiveSelection) {
+      if (row.week == _model.weeks) {
+        selectedWeekEntry = row;
+        break;
+      }
+    }
+
+    final criticText = valueOrDefault<String>(
+      selectedWeekEntry?.criticHtml,
+      '크리틱 내용',
+    );
+
+    final shouldRequestFocus = studentName != null;
+
+    safeSetState(() {
+      _model.selectedSPortpolioList = effectiveSelection.toList();
+      _model.textController1?.text = criticText;
+      _model.textController2?.text = criticText;
+    });
+
+    if (shouldRequestFocus) {
+      _model.textFieldFocusNode1?.requestFocus();
+      _model.textFieldFocusNode2?.requestFocus();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _model.textController1?.selection =
+            const TextSelection.collapsed(offset: 0);
+        _model.textController2?.selection =
+            const TextSelection.collapsed(offset: 0);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+
+    final rosterWeekEntries = _model.sPortpolioList
+        .where((row) => row.week == _model.weeks)
+        .toList();
+    final selectedStudentEntries = _model.selectedSPortpolioList.isNotEmpty
+        ? _model.selectedSPortpolioList
+        : () {
+            if (rosterWeekEntries.isEmpty) {
+              return <SubjectportpolioRow>[];
+            }
+            final fallbackStudentName = rosterWeekEntries.first.studentName;
+            if (fallbackStudentName == null) {
+              return <SubjectportpolioRow>[];
+            }
+            return _model.sPortpolioList
+                .where((row) => row.studentName == fallbackStudentName)
+                .toList();
+          }();
+    SubjectportpolioRow? selectedWeekEntry;
+    for (final row in selectedStudentEntries) {
+      if (row.week == _model.weeks) {
+        selectedWeekEntry = row;
+        break;
+      }
+    }
 
     return GestureDetector(
       onTap: () {
@@ -438,6 +531,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                 _model.nameClickednum = -1;
                                                                                 _model.nameselectforquery = null;
                                                                                 safeSetState(() {});
+                                                                                _setSelectedPortfolio(_model.nameselectforquery);
                                                                               },
                                                                               child: Icon(
                                                                                 Icons.expand_more,
@@ -506,22 +600,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   highlightColor: Colors.transparent,
                                                                                   onTap: () async {
                                                                                     _model.nameClickednum = 0;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.studentName,
-                                                                                      '학생이름',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                    final selectedName = _model.sPortpolioList
+                                                                                        .where((e) => e.week == _model.weeks)
+                                                                                        .toList()
+                                                                                        .firstOrNull
+                                                                                        ?.studentName;
+                                                                                    _model.nameselectforquery = selectedName;
                                                                                     safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
+                                                                                    _setSelectedPortfolio(selectedName);
                                                                                   },
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
@@ -589,22 +675,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 1;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(1)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(1)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -672,22 +750,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 2;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(2)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(2)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -755,22 +825,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 3;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(3)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(3)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -838,22 +900,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 4;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(4)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(4)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -925,22 +979,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   highlightColor: Colors.transparent,
                                                                                   onTap: () async {
                                                                                     _model.nameClickednum = 5;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(5)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                    final selectedName = _model.sPortpolioList
+                                                                                        .where((e) => e.week == _model.weeks)
+                                                                                        .toList()
+                                                                                        .elementAtOrNull(5)
+                                                                                        ?.studentName;
+                                                                                    _model.nameselectforquery = selectedName;
                                                                                     safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
+                                                                                    _setSelectedPortfolio(selectedName);
                                                                                   },
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
@@ -1008,22 +1054,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 6;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(6)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(6)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -1091,22 +1129,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                     highlightColor: Colors.transparent,
                                                                                     onTap: () async {
                                                                                       _model.nameClickednum = 7;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(7)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                      final selectedName = _model.sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .elementAtOrNull(7)
+                                                                                          ?.studentName;
+                                                                                      _model.nameselectforquery = selectedName;
                                                                                       safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
+                                                                                      _setSelectedPortfolio(selectedName);
                                                                                     },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
@@ -1171,22 +1201,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   highlightColor: Colors.transparent,
                                                                                   onTap: () async {
                                                                                     _model.nameClickednum = 8;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(8)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                    final selectedName = _model.sPortpolioList
+                                                                                        .where((e) => e.week == _model.weeks)
+                                                                                        .toList()
+                                                                                        .elementAtOrNull(8)
+                                                                                        ?.studentName;
+                                                                                    _model.nameselectforquery = selectedName;
                                                                                     safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
+                                                                                    _setSelectedPortfolio(selectedName);
                                                                                   },
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
@@ -1233,22 +1255,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   highlightColor: Colors.transparent,
                                                                                   onTap: () async {
                                                                                     _model.nameClickednum = 9;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(9)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                    final selectedName = _model.sPortpolioList
+                                                                                        .where((e) => e.week == _model.weeks)
+                                                                                        .toList()
+                                                                                        .elementAtOrNull(9)
+                                                                                        ?.studentName;
+                                                                                    _model.nameselectforquery = selectedName;
                                                                                     safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
+                                                                                    _setSelectedPortfolio(selectedName);
                                                                                   },
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
@@ -1322,13 +1336,7 @@ class _ProfSubjectPortpolioWidgetState
                                                         children: [
                                                           if ((_model.nameClickednum! >=
                                                                   0) &&
-                                                              (_model.sPortpolioList
-                                                                      .where((e) =>
-                                                                          e.week ==
-                                                                          _model
-                                                                              .weeks)
-                                                                      .toList()
-                                                                      .firstOrNull !=
+                                                              (selectedWeekEntry !=
                                                                   null))
                                                             InkWell(
                                                               splashColor: Colors
@@ -1413,7 +1421,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                     '선택 이름',
                                                                                                   )} ${FFAppState().courseNameSelected} 포트폴리오',
                                                                                                   url: valueOrDefault<String>(
-                                                                                                    _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.url,
+                                                                                                    selectedWeekEntry?.url,
                                                                                                     'd',
                                                                                                   ),
                                                                                                 ),
@@ -1464,8 +1472,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                    if ((_model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull !=
-                                                                            null) &&
+                                                                    if ((selectedWeekEntry != null) &&
                                                                         (_model.openOrHideButton ==
                                                                             true))
                                                                       Expanded(
@@ -1481,7 +1488,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                               FlutterFlowPdfViewer(
                                                                             networkPath:
                                                                                 valueOrDefault<String>(
-                                                                              _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.url,
+                                                                              selectedWeekEntry?.url,
                                                                               'd',
                                                                             ),
                                                                             width:
@@ -1516,7 +1523,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                           child:
                                                                               Visibility(
                                                                             visible:
-                                                                                (_model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull != null) && (_model.openOrHideButton == true),
+                                                                                (selectedWeekEntry != null) && (_model.openOrHideButton == true),
                                                                             child:
                                                                                 Column(
                                                                               mainAxisSize: MainAxisSize.max,
@@ -1587,6 +1594,12 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                         .eqOrNull(
                                                                                                           'week',
                                                                                                           _model.weeks,
+                                                                                                        )
+                                                                                                        .eqOrNull(
+                                                                                                          'section',
+                                                                                                          FFAppState().sectionSelected.isNotEmpty
+                                                                                                              ? FFAppState().sectionSelected
+                                                                                                              : null,
                                                                                                         ),
                                                                                                   );
                                                                                                   await showDialog(
@@ -1821,13 +1834,7 @@ class _ProfSubjectPortpolioWidgetState
                                                             ),
                                                           if ((_model.nameClickednum ==
                                                                   -1) ||
-                                                              (_model.sPortpolioList
-                                                                      .where((e) =>
-                                                                          e.week ==
-                                                                          _model
-                                                                              .weeks)
-                                                                      .toList()
-                                                                      .firstOrNull ==
+                                                              (selectedWeekEntry ==
                                                                   null))
                                                             Align(
                                                               alignment:
@@ -2212,6 +2219,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                   _model.nameClickednum = -1;
                                                                                   _model.nameselectforquery = null;
                                                                                   safeSetState(() {});
+                                                                                  _setSelectedPortfolio(_model.nameselectforquery);
                                                                                 },
                                                                                 child: Icon(
                                                                                   Icons.expand_more,
@@ -2288,22 +2296,12 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           highlightColor: Colors.transparent,
                                                                                           onTap: () async {
                                                                                             _model.nameClickednum = 0;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.firstOrNull,
-                                                                                              '강초희',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .firstOrNull;
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2373,24 +2371,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 1;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 1;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2459,24 +2447,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 2;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 2;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2545,24 +2523,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 3;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 3;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2631,24 +2599,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 4;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 4;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2727,24 +2685,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 5;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 5;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2814,24 +2762,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 6;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 6;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -2900,24 +2838,14 @@ class _ProfSubjectPortpolioWidgetState
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 7;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
+                                                                                         onTap: () async {
+                                                                                           _model.nameClickednum = 7;
+                                                                                            final selectedName = FFAppState()
+                                                                                                .studentOutputVar
+                                                                                                .elementAtOrNull(1);
+                                                                                            _model.nameselectforquery = selectedName;
                                                                                             safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
+                                                                                            _setSelectedPortfolio(selectedName);
                                                                                           },
                                                                                           child: Text(
                                                                                             valueOrDefault<String>(
@@ -3077,13 +3005,7 @@ class _ProfSubjectPortpolioWidgetState
                                                         children: [
                                                           if ((_model.nameClickednum! >=
                                                                   0) &&
-                                                              (_model.sPortpolioList
-                                                                      .where((e) =>
-                                                                          e.week ==
-                                                                          _model
-                                                                              .weeks)
-                                                                      .toList()
-                                                                      .firstOrNull !=
+                                                              (selectedWeekEntry !=
                                                                   null))
                                                             InkWell(
                                                               splashColor: Colors
@@ -3169,7 +3091,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                       '선택 이름',
                                                                                                     )} ${FFAppState().courseNameSelected} 포트폴리오',
                                                                                                     url: valueOrDefault<String>(
-                                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.url,
+                                                                                                      selectedWeekEntry?.url,
                                                                                                       'd',
                                                                                                     ),
                                                                                                   ),
@@ -3241,8 +3163,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    if ((_model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull !=
-                                                                            null) &&
+                                                                    if ((selectedWeekEntry != null) &&
                                                                         (_model.openOrHideButton ==
                                                                             true))
                                                                       Expanded(
@@ -3258,7 +3179,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                               FlutterFlowPdfViewer(
                                                                             networkPath:
                                                                                 valueOrDefault<String>(
-                                                                              _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.url,
+                                                                              selectedWeekEntry?.url,
                                                                               'd',
                                                                             ),
                                                                             width:
@@ -3293,7 +3214,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                           child:
                                                                               Visibility(
                                                                             visible:
-                                                                                (_model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull != null) && (_model.openOrHideButton == true),
+                                                                                (selectedWeekEntry != null) && (_model.openOrHideButton == true),
                                                                             child:
                                                                                 Column(
                                                                               mainAxisSize: MainAxisSize.max,
@@ -3364,6 +3285,12 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                         .eqOrNull(
                                                                                                           'week',
                                                                                                           _model.weeks,
+                                                                                                        )
+                                                                                                        .eqOrNull(
+                                                                                                          'section',
+                                                                                                          FFAppState().sectionSelected.isNotEmpty
+                                                                                                              ? FFAppState().sectionSelected
+                                                                                                              : null,
                                                                                                         ),
                                                                                                   );
                                                                                                   await showDialog(
@@ -3598,13 +3525,7 @@ class _ProfSubjectPortpolioWidgetState
                                                             ),
                                                           if ((_model.nameClickednum ==
                                                                   -1) ||
-                                                              (_model.sPortpolioList
-                                                                      .where((e) =>
-                                                                          e.week ==
-                                                                          _model
-                                                                              .weeks)
-                                                                      .toList()
-                                                                      .firstOrNull ==
+                                                              (selectedWeekEntry ==
                                                                   null))
                                                             Align(
                                                               alignment:
