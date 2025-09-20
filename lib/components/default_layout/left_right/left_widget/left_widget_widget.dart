@@ -1,3 +1,4 @@
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -18,6 +19,113 @@ class LeftWidgetWidget extends StatefulWidget {
 class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
   late LeftWidgetModel _model;
 
+  int? _writtenCriticCount;
+  int? _confirmedCriticCount;
+  bool _isCriticCountLoading = false;
+  int? _lastClassId;
+  String? _lastProfessorName;
+  String? _lastSection;
+  bool _fetchScheduled = false;
+
+  void _scheduleFetchCriticCounts() {
+    if (_fetchScheduled) {
+      return;
+    }
+    _fetchScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _fetchScheduled = false;
+      await _fetchCriticCounts();
+    });
+  }
+
+  Future<void> _fetchCriticCounts() async {
+    final classId = FFAppState().classSelectedID;
+    final professorName = FFAppState().professorNameSelected;
+    final section = FFAppState().sectionSelected;
+
+    if (classId == 0 || professorName.isEmpty || professorName == '교수님') {
+      safeSetState(() {
+        _writtenCriticCount = 0;
+        _confirmedCriticCount = 0;
+        _isCriticCountLoading = false;
+      });
+      return;
+    }
+
+    safeSetState(() {
+      _isCriticCountLoading = true;
+    });
+
+    try {
+      final rows = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', classId)
+            .eqOrNull('professor_name', professorName)
+            .eqOrNull('section', section),
+      );
+
+      final validRows = rows ?? [];
+      final written = validRows.where(_hasCriticContent).length;
+      final confirmed = validRows
+          .where((row) =>
+              _hasCriticContent(row) &&
+              (row.portpolioresult ?? '').trim() == '확인')
+          .length;
+
+      safeSetState(() {
+        _writtenCriticCount = written;
+        _confirmedCriticCount = confirmed;
+      });
+    } catch (error) {
+      safeSetState(() {
+        _writtenCriticCount = 0;
+        _confirmedCriticCount = 0;
+      });
+    } finally {
+      safeSetState(() {
+        _isCriticCountLoading = false;
+      });
+    }
+  }
+
+  bool _hasCriticContent(SubjectportpolioRow row) {
+    final content = row.criticHtml ?? '';
+    if (content.trim().isEmpty) {
+      return false;
+    }
+    return content.trim() != '크리틱 내용';
+  }
+
+  void _maybeScheduleCriticCountRefresh() {
+    final appState = FFAppState();
+    final classId = appState.classSelectedID;
+    final professorName = appState.professorNameSelected;
+    final section = appState.sectionSelected;
+    final shouldRefresh = appState.shouldRefreshCriticCounts;
+
+    final hasChanged =
+        classId != _lastClassId ||
+        professorName != _lastProfessorName ||
+        section != _lastSection;
+
+    if (hasChanged || shouldRefresh) {
+      _lastClassId = classId;
+      _lastProfessorName = professorName;
+      _lastSection = section;
+      if (shouldRefresh) {
+        FFAppState().shouldRefreshCriticCounts = false;
+      }
+      _scheduleFetchCriticCounts();
+    }
+  }
+
+  String _formatCriticCount(int? count) {
+    if (_isCriticCountLoading) {
+      return '-';
+    }
+    return (count ?? 0).toString();
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -35,6 +143,8 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
       safeSetState(() {});
     });
 
+    _scheduleFetchCriticCounts();
+
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
@@ -48,6 +158,8 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+
+    _maybeScheduleCriticCountRefresh();
 
     return Align(
       alignment: AlignmentDirectional(-1.0, -1.0),
@@ -879,11 +991,8 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                             5.0,
                                                                             0.0),
                                                                 child: Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    'cmmeitxn' /* - */,
-                                                                  ),
+                                                                  _formatCriticCount(
+                                                                      _writtenCriticCount),
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMedium
@@ -1031,11 +1140,8 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                             5.0,
                                                                             0.0),
                                                                 child: Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    '0hvfh7ub' /* - */,
-                                                                  ),
+                                                                  _formatCriticCount(
+                                                                      _confirmedCriticCount),
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMedium

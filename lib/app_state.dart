@@ -310,6 +310,12 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_navOpen', value);
   }
 
+  bool _shouldRefreshCriticCounts = false;
+  bool get shouldRefreshCriticCounts => _shouldRefreshCriticCounts;
+  set shouldRefreshCriticCounts(bool value) {
+    _shouldRefreshCriticCounts = value;
+  }
+
   String _professorNameSelected = '교수님';
   String get professorNameSelected => _professorNameSelected;
   set professorNameSelected(String value) {
