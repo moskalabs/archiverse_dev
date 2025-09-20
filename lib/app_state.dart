@@ -22,6 +22,10 @@ class FFAppState extends ChangeNotifier {
       _chatState = prefs.getBool('ff_chatState') ?? _chatState;
     });
     _safeInit(() {
+      _lastLoggedInUserId =
+          prefs.getString('ff_lastLoggedInUserId') ?? _lastLoggedInUserId;
+    });
+    _safeInit(() {
       _navOpen = prefs.getBool('ff_navOpen') ?? _navOpen;
     });
     _safeInit(() {
@@ -301,6 +305,13 @@ class FFAppState extends ChangeNotifier {
   set chatState(bool value) {
     _chatState = value;
     prefs.setBool('ff_chatState', value);
+  }
+
+  String _lastLoggedInUserId = '';
+  String get lastLoggedInUserId => _lastLoggedInUserId;
+  set lastLoggedInUserId(String value) {
+    _lastLoggedInUserId = value;
+    prefs.setString('ff_lastLoggedInUserId', value);
   }
 
   bool _navOpen = false;
@@ -1113,6 +1124,49 @@ class FFAppState extends ChangeNotifier {
   set studentMypageImageUrl(String value) {
     _studentMypageImageUrl = value;
     prefs.setString('ff_studentMypageImageUrl', value);
+  }
+
+  Future<void> clearUserScopedState() async {
+    _professorNameSelected = '교수님';
+    await prefs.remove('ff_professorNameSelected');
+    _studentNameSelected = '';
+    await prefs.remove('ff_studentNameSelected');
+    _mypageImageUrl = '';
+    await prefs.remove('ff_mypageImageUrl');
+    _mypagePhoneNumber = '';
+    await prefs.remove('ff_mypagePhoneNumber');
+    _mypageBirth = '';
+    await prefs.remove('ff_mypageBirth');
+    _mypagePosition = '';
+    await prefs.remove('ff_mypagePosition');
+    _mypageProject = '';
+    await prefs.remove('ff_mypageProject');
+    _major = [];
+    await prefs.remove('ff_major');
+    _getDate = [];
+    await prefs.remove('ff_getDate');
+    _degree = [];
+    await prefs.remove('ff_degree');
+    _university = [];
+    await prefs.remove('ff_university');
+    _mypageAcademicRecords = [
+      jsonDecode('{}'),
+      jsonDecode('{}'),
+      jsonDecode('{}')
+    ];
+    await prefs.remove('ff_mypageAcademicRecords');
+    _mypageTeachingRecords = [
+      jsonDecode('{}'),
+      jsonDecode('{}'),
+      jsonDecode('{}'),
+      jsonDecode('{}')
+    ];
+    await prefs.remove('ff_mypageTeachingRecords');
+    _degreeTextField = [];
+    await prefs.remove('ff_degreeTextField');
+    _studentMypageImageUrl = '';
+    await prefs.remove('ff_studentMypageImageUrl');
+    notifyListeners();
   }
 
   List<String> _weeksList = [

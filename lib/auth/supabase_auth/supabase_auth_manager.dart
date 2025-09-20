@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '/app_state.dart';
 import '/auth/auth_manager.dart';
 import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -12,8 +13,11 @@ export '/auth/base_auth_user_provider.dart';
 
 class SupabaseAuthManager extends AuthManager with EmailSignInManager {
   @override
-  Future signOut() {
-    return SupaFlow.client.auth.signOut();
+  Future signOut() async {
+    await SupaFlow.client.auth.signOut();
+    final appState = FFAppState();
+    await appState.clearUserScopedState();
+    appState.lastLoggedInUserId = '';
   }
 
   @override
@@ -138,6 +142,13 @@ class SupabaseAuthManager extends AuthManager with EmailSignInManager {
       // but adding here too in case of a race condition where the user stream
       // doesn't assign the currentUser in time.
       if (authUser != null) {
+        final appState = FFAppState();
+        final newUserId = authUser.uid ?? '';
+        if (appState.lastLoggedInUserId.isNotEmpty &&
+            appState.lastLoggedInUserId != newUserId) {
+          await appState.clearUserScopedState();
+        }
+        appState.lastLoggedInUserId = newUserId;
         currentUser = authUser;
         AppStateNotifier.instance.update(authUser);
       }
