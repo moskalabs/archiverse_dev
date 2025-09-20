@@ -3325,6 +3325,15 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                   'uuid':
                                                                       currentUserUid,
                                                                 });
+                                                                await StudentMyprofileTable()
+                                                                    .insert({
+                                                                  'stu_email': _model
+                                                                      .emailTextFieldTextController
+                                                                      .text,
+                                                                  'name': _model
+                                                                      .fullNameTextFieldTextController
+                                                                      .text,
+                                                                });
                                                                 
                                                                     await showDialog<
                                                                             bool>(

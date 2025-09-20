@@ -66,111 +66,63 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
       );
       _model.studentPostList = _model.stuName?.firstOrNull;
       _model.studentMyprofileList = _model.myProfileList?.firstOrNull;
-      safeSetState(() {});
+
       if (_model.studentMyprofileList != null) {
-        safeSetState(() {
-          _model.fullNameTextFieldTextController?.text =
-              _model.studentPostList!.name!;
-        });
-        safeSetState(() {
-          _model.phonetextFieldTextController?.text =
-              _model.studentMyprofileList!.phoneNum!;
-          _model.phonetextFieldMask.updateMask(
-            newValue: TextEditingValue(
-              text: _model.phonetextFieldTextController!.text,
-            ),
-          );
-        });
-        safeSetState(() {
-          _model.birthtextFieldTextController?.text =
-              _model.studentMyprofileList!.birth!;
-        });
-        safeSetState(() {
-          _model.radioButtonValueController1?.value =
-              _model.studentMyprofileList!.gender!;
-        });
-        safeSetState(() {
-          _model.radioButtonValueController2?.value =
-              _model.studentMyprofileList!.admissionType!;
-        });
-        safeSetState(() {
-          _model.radioButtonValueController3?.value =
-              _model.studentMyprofileList!.enrollmentStatus!;
-        });
-        safeSetState(() {
-          _model.radioButtonValueController4?.value =
-              _model.studentMyprofileList!.section!;
-        });
-        safeSetState(() {
-          _model.radioButtonValueController5?.value =
-              _model.studentMyprofileList!.employmentStatus!;
-        });
-        safeSetState(() {
-          _model.dropDownValueController1?.value =
-              _model.studentMyprofileList!.grade!;
-        });
-        safeSetState(() {
-          _model.dropDownValueController2?.value =
-              _model.studentMyprofileList!.years!;
-        });
-        safeSetState(() {
-          _model.dropDownValueController3?.value =
-              _model.studentMyprofileList!.semester!;
-        });
-        safeSetState(() {
-          _model.dropDownValueController4?.value =
-              _model.studentMyprofileList!.courseMajor!;
-        });
-        safeSetState(() {
-          _model.textController5?.text =
-              _model.studentMyprofileList!.employmentDetails!;
-        });
-        safeSetState(() {
-          _model.textController6?.text =
-              _model.studentMyprofileList!.interestDetail!;
-        });
-        safeSetState(() {
-          _model.choiceChipsValueController?.value =
-              _model.studentMyprofileList!.interestAreas;
-        });
-        safeSetState(() {
-          _model.certiTextFieldTextController?.text =
-              _model.studentMyprofileList!.certifications!;
-        });
-        safeSetState(() {
-          _model.compTextFieldTextController?.text =
-              _model.studentMyprofileList!.competitionsAwards!;
-        });
-        safeSetState(() {
-          _model.networkTextFieldTextController?.text =
-              _model.studentMyprofileList!.networkingActivities!;
-        });
-        safeSetState(() {
-          _model.sWTextFieldTextController?.text =
-              _model.studentMyprofileList!.softwareSkills!;
-        });
+        _model.fullNameTextFieldTextController?.text =
+            _model.studentPostList!.name!;
+        _model.phonetextFieldTextController?.text =
+            _model.studentMyprofileList!.phoneNum!;
+        _model.birthtextFieldTextController?.text =
+            _model.studentMyprofileList!.birth!;
+        _model.radioButtonValueController1?.value =
+            _model.studentMyprofileList!.gender!;
+        _model.radioButtonValueController2?.value =
+            _model.studentMyprofileList!.admissionType!;
+        _model.radioButtonValueController3?.value =
+            _model.studentMyprofileList!.enrollmentStatus!;
+        _model.radioButtonValueController4?.value =
+            _model.studentMyprofileList!.section!;
+        _model.radioButtonValueController5?.value =
+            _model.studentMyprofileList!.employmentStatus!;
+        _model.dropDownValueController1?.value =
+            _model.studentMyprofileList!.grade!;
+        _model.dropDownValueController2?.value =
+            _model.studentMyprofileList!.years!;
+        _model.dropDownValueController3?.value =
+            _model.studentMyprofileList!.semester!;
+        _model.dropDownValueController4?.value =
+            _model.studentMyprofileList!.courseMajor!;
+        _model.textController5?.text =
+            _model.studentMyprofileList!.employmentDetails!;
+        _model.textController6?.text =
+            _model.studentMyprofileList!.interestDetail!;
+        _model.choiceChipsValueController?.value =
+            _model.studentMyprofileList!.interestAreas;
+        _model.certiTextFieldTextController?.text =
+            _model.studentMyprofileList!.certifications!;
+        _model.compTextFieldTextController?.text =
+            _model.studentMyprofileList!.competitionsAwards!;
+        _model.networkTextFieldTextController?.text =
+            _model.studentMyprofileList!.networkingActivities!;
+        _model.sWTextFieldTextController?.text =
+            _model.studentMyprofileList!.softwareSkills!;
       } else {
-        safeSetState(() {
-          _model.fullNameTextFieldTextController?.text =
-              _model.studentPostList!.name!;
-        });
+        _model.fullNameTextFieldTextController?.text =
+            _model.studentPostList!.name!;
       }
+      safeSetState(() {});
     });
 
     _model.fullNameTextFieldTextController ??=
-        TextEditingController(text: _model.studentPostList?.name);
+        TextEditingController();
     _model.fullNameTextFieldFocusNode ??= FocusNode();
 
     _model.phonetextFieldTextController ??=
-        TextEditingController(text: _model.studentMyprofileList?.phoneNum);
+        TextEditingController();
     _model.phonetextFieldFocusNode ??= FocusNode();
 
     _model.phonetextFieldMask = MaskTextInputFormatter(mask: '###-####-####');
-    _model.birthtextFieldTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-      _model.studentMyprofileList?.birth,
-      '0000.00',
-    ));
+    _model.birthtextFieldTextController ??= TextEditingController();
     _model.birthtextFieldFocusNode ??= FocusNode();
 
     _model.emailTextFieldTextController ??= TextEditingController(
@@ -181,28 +133,22 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
     _model.emailTextFieldFocusNode ??= FocusNode();
 
     _model.emailTextFieldMask = MaskTextInputFormatter(mask: '###-####-####');
-    _model.textController5 ??= TextEditingController(
-        text: _model.studentMyprofileList?.employmentDetails);
+    _model.textController5 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
 
-    _model.textController6 ??= TextEditingController(
-        text: _model.studentMyprofileList?.interestDetail);
+    _model.textController6 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
 
-    _model.certiTextFieldTextController ??= TextEditingController(
-        text: _model.studentMyprofileList?.certifications);
+    _model.certiTextFieldTextController ??= TextEditingController();
     _model.certiTextFieldFocusNode ??= FocusNode();
 
-    _model.compTextFieldTextController ??= TextEditingController(
-        text: _model.studentMyprofileList?.competitionsAwards);
+    _model.compTextFieldTextController ??= TextEditingController();
     _model.compTextFieldFocusNode ??= FocusNode();
 
-    _model.networkTextFieldTextController ??= TextEditingController(
-        text: _model.studentMyprofileList?.networkingActivities);
+    _model.networkTextFieldTextController ??= TextEditingController();
     _model.networkTextFieldFocusNode ??= FocusNode();
 
-    _model.sWTextFieldTextController ??= TextEditingController(
-        text: _model.studentMyprofileList?.softwareSkills);
+    _model.sWTextFieldTextController ??= TextEditingController();
     _model.sWTextFieldFocusNode ??= FocusNode();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
