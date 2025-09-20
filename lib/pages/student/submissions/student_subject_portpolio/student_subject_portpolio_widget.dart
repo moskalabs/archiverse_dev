@@ -40,6 +40,41 @@ class _StudentSubjectPortpolioWidgetState
 
   final animationsMap = <String, AnimationInfo>{};
 
+  Future<void> _markCriticAsConfirmed(String? week) async {
+    if (week == null) {
+      return;
+    }
+    final currentCritic = _model.sPortpolioList
+        .where((e) => e.week == week)
+        .toList()
+        .firstOrNull;
+    if (currentCritic == null) {
+      return;
+    }
+    final criticContent = currentCritic.criticHtml ?? '';
+    if (criticContent.trim().isEmpty || criticContent.trim() == '크리틱 내용') {
+      return;
+    }
+    if ((currentCritic.portpolioresult ?? '').trim() == '확인') {
+      return;
+    }
+    await SubjectportpolioTable().update(
+      data: {
+        'portpolioresult': '확인',
+      },
+      matchingRows: (rows) => rows.eqOrNull(
+        'id',
+        currentCritic.id,
+      ),
+    );
+    final index =
+        _model.sPortpolioList.indexWhere((e) => e.id == currentCritic.id);
+    if (index != -1) {
+      _model.sPortpolioList[index].portpolioresult = '확인';
+    }
+    safeSetState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -493,11 +528,15 @@ class _StudentSubjectPortpolioWidgetState
                                                                                       focusColor: Colors.transparent,
                                                                                       hoverColor: Colors.transparent,
                                                                                       highlightColor: Colors.transparent,
-                                                                                      onTap: () async {
-                                                                                        _model.weeks = '${_model.sliderValue1?.toString()}주차';
-                                                                                        _model.openOrHideButton = !_model.openOrHideButton;
-                                                                                        safeSetState(() {});
-                                                                                      },
+                                                                                        onTap: () async {
+                                                                                          _model.weeks = '${_model.sliderValue1?.toString()}주차';
+                                                                                          final newOpenState = !_model.openOrHideButton;
+                                                                                          _model.openOrHideButton = newOpenState;
+                                                                                          safeSetState(() {});
+                                                                                          if (newOpenState) {
+                                                                                            await _markCriticAsConfirmed(_model.weeks);
+                                                                                          }
+                                                                                        },
                                                                                       child: Icon(
                                                                                         Icons.expand_more,
                                                                                         color: valueOrDefault<Color>(
@@ -2551,16 +2590,20 @@ class _StudentSubjectPortpolioWidgetState
                                                                                   focusColor: Colors.transparent,
                                                                                   hoverColor: Colors.transparent,
                                                                                   highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    _model.weeks = '${_model.sliderValue2?.toString()}주차';
-                                                                                    _model.openOrHideButton = !_model.openOrHideButton;
-                                                                                    safeSetState(() {});
-                                                                                    _model.weekoutputMobile = await WeeksUploadTable().queryRows(
-                                                                                      queryFn: (q) => q.eqOrNull(
-                                                                                        'weeks_name',
-                                                                                        _model.weeks,
-                                                                                      ),
-                                                                                    );
+                                                                                    onTap: () async {
+                                                                                      _model.weeks = '${_model.sliderValue2?.toString()}주차';
+                                                                                      final newOpenState = !_model.openOrHideButton;
+                                                                                      _model.openOrHideButton = newOpenState;
+                                                                                      safeSetState(() {});
+                                                                                      if (newOpenState) {
+                                                                                        await _markCriticAsConfirmed(_model.weeks);
+                                                                                      }
+                                                                                      _model.weekoutputMobile = await WeeksUploadTable().queryRows(
+                                                                                        queryFn: (q) => q.eqOrNull(
+                                                                                          'weeks_name',
+                                                                                          _model.weeks,
+                                                                                        ),
+                                                                                      );
 
                                                                                     safeSetState(() {});
                                                                                   },
