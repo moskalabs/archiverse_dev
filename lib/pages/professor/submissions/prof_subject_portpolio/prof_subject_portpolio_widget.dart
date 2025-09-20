@@ -45,7 +45,11 @@ class _ProfSubjectPortpolioWidgetState
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       FFAppState().chatState = false;
-      safeSetState(() {});
+      safeSetState(() {
+        _model.selectedSPortpolioList = [];
+        _model.textController1?.text = '크리틱 내용';
+        _model.textController2?.text = '크리틱 내용';
+      });
       _model.tempoutput = await TempPortpolioTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'class',
@@ -105,7 +109,7 @@ class _ProfSubjectPortpolioWidgetState
             .toList()
             .cast<SubjectportpolioRow>()
         : <SubjectportpolioRow>[];
-    var effectiveSelection = newSelection;
+    var effectiveSelection = List<SubjectportpolioRow>.from(newSelection);
     if (effectiveSelection.isEmpty) {
       final rosterWeekEntries = _model.sPortpolioList
           .where((row) => row.week == _model.weeks)
@@ -136,7 +140,7 @@ class _ProfSubjectPortpolioWidgetState
     final shouldRequestFocus = studentName != null;
 
     safeSetState(() {
-      _model.selectedSPortpolioList = newSelection;
+      _model.selectedSPortpolioList = effectiveSelection.toList();
       _model.textController1?.text = criticText;
       _model.textController2?.text = criticText;
     });
