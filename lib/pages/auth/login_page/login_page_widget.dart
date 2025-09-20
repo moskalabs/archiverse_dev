@@ -1667,79 +1667,83 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                           ?.email,
                                                                     ),
                                                                   );
-                                                                  if (_model
-                                                                          .studentMyprofile
-                                                                          ?.firstOrNull !=
-                                                                      null) {
-                                                                    _model.emailField =
-                                                                        _model
-                                                                            .emailTextFieldTextController
-                                                                            .text;
-                                                                    safeSetState(
-                                                                        () {});
-                                                                    FFAppState()
-                                                                            .studentMyprofileFirstCheck =
-                                                                        false;
-                                                                    safeSetState(
-                                                                        () {});
+                                                                if (_model
+                                                                        .studentMyprofile
+                                                                        ?.firstOrNull !=
+                                                                    null) {
+                                                                  final profile =
+                                                                      _model
+                                                                          .studentMyprofile!
+                                                                          .firstOrNull!;
+                                                                  await FFAppState()
+                                                                      .applyStudentProfile(
+                                                                          profile);
+                                                                  _model.emailField =
+                                                                      _model
+                                                                          .emailTextFieldTextController
+                                                                          .text;
+                                                                  safeSetState(
+                                                                      () {});
 
+                                                                  context
+                                                                      .pushNamedAuth(
+                                                                    StudentDashboardWidget
+                                                                        .routeName,
                                                                     context
-                                                                        .pushNamedAuth(
-                                                                      StudentDashboardWidget
-                                                                          .routeName,
-                                                                      context
-                                                                          .mounted,
-                                                                      queryParameters:
-                                                                          {
-                                                                        'email':
-                                                                            serializeParam(
-                                                                          '',
-                                                                          ParamType
-                                                                              .String,
-                                                                        ),
-                                                                      }.withoutNulls,
-                                                                      extra: <String,
-                                                                          dynamic>{
-                                                                        kTransitionInfoKey:
-                                                                            TransitionInfo(
-                                                                          hasTransition:
-                                                                              true,
-                                                                          transitionType:
-                                                                              PageTransitionType.fade,
-                                                                        ),
-                                                                      },
-                                                                    );
-                                                                  } else {
-                                                                    _model.emailField =
-                                                                        _model
-                                                                            .emailTextFieldTextController
-                                                                            .text;
-                                                                    safeSetState(
-                                                                        () {});
-                                                                    FFAppState()
-                                                                            .studentMyprofileFirstCheck =
-                                                                        true;
-                                                                    safeSetState(
-                                                                        () {});
+                                                                        .mounted,
+                                                                    queryParameters:
+                                                                        {
+                                                                      'email':
+                                                                          serializeParam(
+                                                                        '',
+                                                                        ParamType
+                                                                            .String,
+                                                                      ),
+                                                                    }.withoutNulls,
+                                                                    extra: <String,
+                                                                        dynamic>{
+                                                                      kTransitionInfoKey:
+                                                                          TransitionInfo(
+                                                                        hasTransition:
+                                                                            true,
+                                                                        transitionType:
+                                                                            PageTransitionType.fade,
+                                                                      ),
+                                                                    },
+                                                                  );
+                                                                } else {
+                                                                  await FFAppState()
+                                                                      .clearUserScopedState();
+                                                                  _model.emailField =
+                                                                      _model
+                                                                          .emailTextFieldTextController
+                                                                          .text;
+                                                                  safeSetState(
+                                                                      () {});
+                                                                  FFAppState()
+                                                                          .studentMyprofileFirstCheck =
+                                                                      true;
+                                                                  safeSetState(
+                                                                      () {});
 
+                                                                  context
+                                                                      .pushNamedAuth(
+                                                                    StudentMyProfileWidget
+                                                                        .routeName,
                                                                     context
-                                                                        .pushNamedAuth(
-                                                                      StudentMyProfileWidget
-                                                                          .routeName,
-                                                                      context
-                                                                          .mounted,
-                                                                      extra: <String,
-                                                                          dynamic>{
-                                                                        kTransitionInfoKey:
-                                                                            TransitionInfo(
-                                                                          hasTransition:
-                                                                              true,
-                                                                          transitionType:
-                                                                              PageTransitionType.fade,
-                                                                        ),
-                                                                      },
-                                                                    );
-                                                                  }
+                                                                        .mounted,
+                                                                    extra: <String,
+                                                                        dynamic>{
+                                                                      kTransitionInfoKey:
+                                                                          TransitionInfo(
+                                                                        hasTransition:
+                                                                            true,
+                                                                        transitionType:
+                                                                            PageTransitionType.fade,
+                                                                      ),
+                                                                    },
+                                                                  );
+                                                                }
                                                                 } else {
                                                                   await showDialog(
                                                                     context:
