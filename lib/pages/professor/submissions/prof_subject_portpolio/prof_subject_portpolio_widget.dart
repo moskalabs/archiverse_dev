@@ -90,6 +90,47 @@ class _ProfSubjectPortpolioWidgetState
     super.dispose();
   }
 
+  List<SubjectportpolioRow> _studentsForSelectedWeek() {
+    final subjectRows =
+        _model.subjectoutput ?? <SubjectportpolioRow>[];
+    final selectedWeek = _model.weeks;
+    if (selectedWeek == null) {
+      return subjectRows.toList();
+    }
+    return subjectRows
+        .where((row) => row.week == selectedWeek)
+        .toList();
+  }
+
+  void _onStudentSelected(SubjectportpolioRow studentRow, int index) {
+    final studentName = studentRow.studentName;
+    if (studentName == null || studentName.isEmpty) {
+      return;
+    }
+    _model.nameClickednum = index;
+    _model.nameselectforquery = studentName;
+    _model.sPortpolioList = (_model.subjectoutput ?? <SubjectportpolioRow>[])
+        .where((row) => row.studentName == studentName)
+        .toList();
+    safeSetState(() {});
+    final selectedCritic = valueOrDefault<String>(
+      _model.sPortpolioList
+          .where((row) => row.week == _model.weeks)
+          .toList()
+          .firstOrNull
+          ?.criticHtml,
+      '크리틱 내용',
+    );
+    safeSetState(() {
+      _model.textController1?.text = selectedCritic;
+      _model.textFieldFocusNode1?.requestFocus();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _model.textController1?.selection =
+            const TextSelection.collapsed(offset: 0);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -455,1015 +496,196 @@ class _ProfSubjectPortpolioWidgetState
                                                             ),
                                                           ],
                                                         ),
-                                                        if (_model
-                                                                .openOrHideButton ==
-                                                            true)
+                                                        if (_model.openOrHideButton == true)
                                                           Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0,
-                                                                        5.0),
+                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                0.0, 0.0, 0.0, 5.0),
                                                             child: Row(
                                                               mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
+                                                                  MainAxisSize.max,
                                                               children: [
                                                                 Flexible(
-                                                                  child:
-                                                                      Padding(
+                                                                  child: Padding(
                                                                     padding: EdgeInsetsDirectional
                                                                         .fromSTEB(
                                                                             25.0,
                                                                             0.0,
                                                                             0.0,
                                                                             0.0),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: InkWell(
-                                                                                  splashColor: Colors.transparent,
-                                                                                  focusColor: Colors.transparent,
-                                                                                  hoverColor: Colors.transparent,
-                                                                                  highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    _model.nameClickednum = 0;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.studentName,
-                                                                                      '학생이름',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                    safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
-                                                                                  },
-                                                                                  child: Text(
-                                                                                    valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.studentName,
-                                                                                      '학생이름',
+                                                                    child: Builder(
+                                                                      builder: (context) {
+                                                                        final studentsForWeek =
+                                                                            _studentsForSelectedWeek();
+                                                                        if (studentsForWeek
+                                                                            .isEmpty) {
+                                                                          return Align(
+                                                                            alignment:
+                                                                                AlignmentDirectional(
+                                                                                    -1.0,
+                                                                                    0.0),
+                                                                            child: Text(
+                                                                              '등록된 학생이 없습니다.',
+                                                                              style: FlutterFlowTheme.of(
+                                                                                      context)
+                                                                                  .bodyMedium
+                                                                                  .override(
+                                                                                    font: GoogleFonts
+                                                                                        .openSans(
+                                                                                      fontWeight: FlutterFlowTheme.of(context)
+                                                                                          .bodyMedium
+                                                                                          .fontWeight,
+                                                                                      fontStyle: FlutterFlowTheme.of(context)
+                                                                                          .bodyMedium
+                                                                                          .fontStyle,
                                                                                     ),
-                                                                                    textAlign: TextAlign.center,
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          font: GoogleFonts.openSans(
-                                                                                            fontWeight: FontWeight.normal,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                    color: const Color(
+                                                                                        0xFF666666),
+                                                                                    fontSize:
+                                                                                        () {
+                                                                                      if (MediaQuery.sizeOf(context).width <
+                                                                                          kBreakpointSmall) {
+                                                                                        return 10.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width <
+                                                                                          kBreakpointMedium) {
+                                                                                        return 10.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width <
+                                                                                          kBreakpointLarge) {
+                                                                                        return 12.0;
+                                                                                      } else {
+                                                                                        return 16.0;
+                                                                                      }
+                                                                                    }(),
+                                                                                    letterSpacing:
+                                                                                        0.0,
+                                                                                  ),
+                                                                            ),
+                                                                          );
+                                                                        }
+                                                                        return ListView.separated(
+                                                                          padding: EdgeInsets.zero,
+                                                                          shrinkWrap: true,
+                                                                          primary: false,
+                                                                          physics:
+                                                                              const NeverScrollableScrollPhysics(),
+                                                                          itemCount:
+                                                                              studentsForWeek
+                                                                                  .length,
+                                                                          separatorBuilder:
+                                                                              (_, __) =>
+                                                                                  const SizedBox(
+                                                                                      height:
+                                                                                          4.0),
+                                                                          itemBuilder:
+                                                                              (context, index) {
+                                                                            final studentRow =
+                                                                                studentsForWeek[
+                                                                                    index];
+                                                                            final studentName =
+                                                                                valueOrDefault<
+                                                                                    String>(
+                                                                              studentRow
+                                                                                  .studentName,
+                                                                              '학생이름',
+                                                                            );
+                                                                            final isSelected =
+                                                                                (_model.nameClickednum ==
+                                                                                        index) &&
+                                                                                    (_model.nameselectforquery ==
+                                                                                        studentRow
+                                                                                            .studentName);
+                                                                            final isHovered = _model
+                                                                                    .hoveredStudentIndex ==
+                                                                                index;
+                                                                            final textColor =
+                                                                                (isSelected ||
+                                                                                        isHovered)
+                                                                                    ? const Color(
+                                                                                        0xFF284E75)
+                                                                                    : const Color(
+                                                                                        0xFF666666);
+                                                                            return MouseRegion(
+                                                                              opaque: false,
+                                                                              cursor: MouseCursor
+                                                                                  .defer,
+                                                                              onEnter: (_) =>
+                                                                                  safeSetState(() =>
+                                                                                      _model.hoveredStudentIndex =
+                                                                                          index),
+                                                                              onExit: (_) =>
+                                                                                  safeSetState(() =>
+                                                                                      _model.hoveredStudentIndex =
+                                                                                          null),
+                                                                              child: InkWell(
+                                                                                splashColor: Colors
+                                                                                    .transparent,
+                                                                                focusColor: Colors
+                                                                                    .transparent,
+                                                                                hoverColor: Colors
+                                                                                    .transparent,
+                                                                                highlightColor:
+                                                                                    Colors
+                                                                                        .transparent,
+                                                                                onTap: () {
+                                                                                  _onStudentSelected(
+                                                                                      studentRow,
+                                                                                      index);
+                                                                                },
+                                                                                child: Align(
+                                                                                  alignment:
+                                                                                      AlignmentDirectional(
+                                                                                          -1.0,
+                                                                                          0.0),
+                                                                                  child: Text(
+                                                                                    studentName,
+                                                                                    textAlign:
+                                                                                        TextAlign
+                                                                                            .center,
+                                                                                    style: FlutterFlowTheme.of(
+                                                                                            context)
+                                                                                        .bodyMedium
+                                                                                        .override(
+                                                                                          font: GoogleFonts
+                                                                                              .openSans(
+                                                                                            fontWeight: FlutterFlowTheme.of(context)
+                                                                                                .bodyMedium
+                                                                                                .fontWeight,
+                                                                                            fontStyle: FlutterFlowTheme.of(context)
+                                                                                                .bodyMedium
+                                                                                                .fontStyle,
                                                                                           ),
-                                                                                          color: valueOrDefault<Color>(
-                                                                                            () {
-                                                                                              if (_model.mouseRegionHovered1) {
-                                                                                                return Color(0xFF284E75);
-                                                                                              } else if (_model.nameClickednum == 0) {
-                                                                                                return Color(0xFF284E75);
-                                                                                              } else {
-                                                                                                return Color(0xFF666666);
-                                                                                              }
-                                                                                            }(),
-                                                                                            Color(0xFF666666),
-                                                                                          ),
-                                                                                          fontSize: () {
-                                                                                            if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                          color:
+                                                                                              textColor,
+                                                                                          fontSize:
+                                                                                              () {
+                                                                                            if (MediaQuery.sizeOf(context).width <
+                                                                                                kBreakpointSmall) {
                                                                                               return 8.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                            } else if (MediaQuery.sizeOf(context).width <
+                                                                                                kBreakpointMedium) {
                                                                                               return 10.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                            } else if (MediaQuery.sizeOf(context).width <
+                                                                                                kBreakpointLarge) {
                                                                                               return 12.0;
                                                                                             } else {
                                                                                               return 16.0;
                                                                                             }
                                                                                           }(),
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                          letterSpacing:
+                                                                                              0.0,
                                                                                         ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered1 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered1 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 1;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(1)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(1)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered2) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 1) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered2 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered2 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 2;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(2)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(2)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered3) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 2) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered3 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered3 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 3;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(3)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(3)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered4) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 3) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered4 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered4 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 4;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(4)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(4)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered5) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 4) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered5 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered5 = false);
-                                                                              }),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: InkWell(
-                                                                                  splashColor: Colors.transparent,
-                                                                                  focusColor: Colors.transparent,
-                                                                                  hoverColor: Colors.transparent,
-                                                                                  highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    _model.nameClickednum = 5;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(5)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                    safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
-                                                                                  },
-                                                                                  child: Text(
-                                                                                    valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(5)?.studentName,
-                                                                                      '-',
-                                                                                    ),
-                                                                                    textAlign: TextAlign.center,
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          font: GoogleFonts.openSans(
-                                                                                            fontWeight: FontWeight.normal,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                          color: valueOrDefault<Color>(
-                                                                                            () {
-                                                                                              if (_model.mouseRegionHovered6) {
-                                                                                                return Color(0xFF284E75);
-                                                                                              } else if (_model.nameClickednum == 5) {
-                                                                                                return Color(0xFF284E75);
-                                                                                              } else {
-                                                                                                return Color(0xFF666666);
-                                                                                              }
-                                                                                            }(),
-                                                                                            Color(0xFF666666),
-                                                                                          ),
-                                                                                          fontSize: () {
-                                                                                            if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 8.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                              return 10.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 12.0;
-                                                                                            } else {
-                                                                                              return 16.0;
-                                                                                            }
-                                                                                          }(),
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered6 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered6 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 6;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(6)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(6)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered7) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 6) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered7 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered7 = false);
-                                                                              }),
-                                                                            ),
-                                                                            MouseRegion(
-                                                                              opaque: false,
-                                                                              cursor: MouseCursor.defer,
-                                                                              child: Container(
-                                                                                width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                                height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                ),
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.nameClickednum = 7;
-                                                                                      _model.nameselectforquery = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(7)?.studentName,
-                                                                                        '-',
-                                                                                      );
-                                                                                      _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                      safeSetState(() {});
-                                                                                      safeSetState(() {
-                                                                                        _model.textController1?.text = valueOrDefault<String>(
-                                                                                          _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                          '크리틱 내용',
-                                                                                        );
-                                                                                        _model.textFieldFocusNode1?.requestFocus();
-                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                          _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                        });
-                                                                                      });
-                                                                                    },
-                                                                                    child: Text(
-                                                                                      valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(7)?.studentName,
-                                                                                        '-',
-                                                                                      ),
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                            color: valueOrDefault<Color>(
-                                                                                              () {
-                                                                                                if (_model.mouseRegionHovered8) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else if (_model.nameClickednum == 7) {
-                                                                                                  return Color(0xFF284E75);
-                                                                                                } else {
-                                                                                                  return Color(0xFF666666);
-                                                                                                }
-                                                                                              }(),
-                                                                                              Color(0xFF666666),
-                                                                                            ),
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              onEnter: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered8 = true);
-                                                                              }),
-                                                                              onExit: ((event) async {
-                                                                                safeSetState(() => _model.mouseRegionHovered8 = false);
-                                                                              }),
-                                                                            ),
-                                                                            Container(
-                                                                              width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                              height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                child: InkWell(
-                                                                                  splashColor: Colors.transparent,
-                                                                                  focusColor: Colors.transparent,
-                                                                                  hoverColor: Colors.transparent,
-                                                                                  highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    _model.nameClickednum = 8;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(8)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                    safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
-                                                                                  },
-                                                                                  child: Text(
-                                                                                    valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(8)?.studentName,
-                                                                                      '-',
-                                                                                    ),
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                          color: Color(0xFF666666),
-                                                                                          fontSize: () {
-                                                                                            if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 8.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                              return 10.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 12.0;
-                                                                                            } else {
-                                                                                              return 16.0;
-                                                                                            }
-                                                                                          }(),
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            Container(
-                                                                              width: MediaQuery.sizeOf(context).width * 0.054,
-                                                                              height: MediaQuery.sizeOf(context).height * 0.03,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
-                                                                                child: InkWell(
-                                                                                  splashColor: Colors.transparent,
-                                                                                  focusColor: Colors.transparent,
-                                                                                  hoverColor: Colors.transparent,
-                                                                                  highlightColor: Colors.transparent,
-                                                                                  onTap: () async {
-                                                                                    _model.nameClickednum = 9;
-                                                                                    _model.nameselectforquery = valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(9)?.studentName,
-                                                                                      '-',
-                                                                                    );
-                                                                                    _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                    safeSetState(() {});
-                                                                                    safeSetState(() {
-                                                                                      _model.textController1?.text = valueOrDefault<String>(
-                                                                                        _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                        '크리틱 내용',
-                                                                                      );
-                                                                                      _model.textFieldFocusNode1?.requestFocus();
-                                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                        _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                      });
-                                                                                    });
-                                                                                  },
-                                                                                  child: Text(
-                                                                                    valueOrDefault<String>(
-                                                                                      _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().elementAtOrNull(9)?.studentName,
-                                                                                      '-',
-                                                                                    ),
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                          ),
-                                                                                          color: Color(0xFF666666),
-                                                                                          fontSize: () {
-                                                                                            if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 8.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                              return 10.0;
-                                                                                            } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 12.0;
-                                                                                            } else {
-                                                                                              return 16.0;
-                                                                                            }
-                                                                                          }(),
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
+                                                                            );
+                                                                          },
+                                                                        );
+                                                                      },
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                           ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 700.0,
-                                                  child: VerticalDivider(
-                                                    thickness: 2.0,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .alternate,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme
-                                                              .of(context)
-                                                          .primaryBackground,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              16.0),
-                                                    ),
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      child: Stack(
-                                                        children: [
-                                                          if ((_model.nameClickednum! >=
-                                                                  0) &&
-                                                              (_model.sPortpolioList
-                                                                      .where((e) =>
-                                                                          e.week ==
-                                                                          _model
-                                                                              .weeks)
-                                                                      .toList()
-                                                                      .firstOrNull !=
-                                                                  null))
-                                                            InkWell(
-                                                              splashColor: Colors
-                                                                  .transparent,
-                                                              focusColor: Colors
-                                                                  .transparent,
-                                                              hoverColor: Colors
-                                                                  .transparent,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              onTap: () async {
-                                                                _model.imageClicked =
-                                                                    !_model
-                                                                        .imageClicked;
-                                                                safeSetState(
-                                                                    () {});
-                                                                FFAppState()
-                                                                        .chatState =
-                                                                    true;
-                                                                safeSetState(
-                                                                    () {});
-                                                              },
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                height: double
-                                                                    .infinity,
-                                                                decoration:
-                                                                    BoxDecoration(),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  children: [
-                                                                    Align(
-                                                                      alignment:
-                                                                          AlignmentDirectional(
-                                                                              1.0,
-                                                                              0.0),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            child:
-                                                                                Align(
-                                                                              alignment: AlignmentDirectional(1.0, 0.0),
-                                                                              child: Builder(
-                                                                                builder: (context) => Padding(
-                                                                                  padding: EdgeInsets.all(5.0),
-                                                                                  child: FFButtonWidget(
-                                                                                    onPressed: () async {
-                                                                                      await showDialog(
-                                                                                        context: context,
-                                                                                        builder: (dialogContext) {
-                                                                                          return Dialog(
-                                                                                            elevation: 0,
-                                                                                            insetPadding: EdgeInsets.zero,
-                                                                                            backgroundColor: Colors.transparent,
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                            child: WebViewAware(
-                                                                                              child: GestureDetector(
-                                                                                                onTap: () {
-                                                                                                  FocusScope.of(dialogContext).unfocus();
-                                                                                                  FocusManager.instance.primaryFocus?.unfocus();
-                                                                                                },
-                                                                                                child: DownloadPopUpWidget(
-                                                                                                  downloadType: '${valueOrDefault<String>(
-                                                                                                    _model.weeks,
-                                                                                                    '주차',
-                                                                                                  )}_${valueOrDefault<String>(
-                                                                                                    _model.nameselectforquery,
-                                                                                                    '선택 이름',
-                                                                                                  )} 포트폴리오',
-                                                                                                  titleName: '${valueOrDefault<String>(
-                                                                                                    _model.weeks,
-                                                                                                    '주차',
-                                                                                                  )}_${valueOrDefault<String>(
-                                                                                                    _model.nameselectforquery,
-                                                                                                    '선택 이름',
-                                                                                                  )} ${FFAppState().courseNameSelected} 포트폴리오',
-                                                                                                  url: valueOrDefault<String>(
-                                                                                                    _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.url,
-                                                                                                    'd',
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      );
-                                                                                    },
-                                                                                    text: FFLocalizations.of(context).getText(
-                                                                                      'it6v31gf' /* 다운로드 */,
-                                                                                    ),
-                                                                                    options: FFButtonOptions(
-                                                                                      width: 120.0,
-                                                                                      height: 40.0,
-                                                                                      padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                                                                      iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                      color: Color(0xFF284E75),
-                                                                                      textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                            font: GoogleFonts.openSans(
-                                                                                              fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                            ),
-                                                                                            color: Colors.white,
-                                                                                            fontSize: () {
-                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                return 8.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                return 10.0;
-                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                return 12.0;
-                                                                                              } else {
-                                                                                                return 16.0;
-                                                                                              }
-                                                                                            }(),
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                          ),
-                                                                                      elevation: 0.0,
-                                                                                      borderRadius: BorderRadius.circular(8.0),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
                                                                     if ((_model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull !=
                                                                             null) &&
                                                                         (_model.openOrHideButton ==
@@ -2230,822 +1452,144 @@ class _ProfSubjectPortpolioWidgetState
                                                             ],
                                                           ),
                                                         ),
-                                                        if (_model
-                                                                .openOrHideButton ==
-                                                            true)
+                                                        if (_model.openOrHideButton == true)
                                                           Expanded(
                                                             flex: 3,
                                                             child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          5.0),
+                                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                                  0.0, 0.0, 0.0, 5.0),
                                                               child: Row(
                                                                 mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
+                                                                    MainAxisSize.max,
                                                                 children: [
                                                                   Flexible(
-                                                                    child:
-                                                                        Padding(
+                                                                    child: Padding(
                                                                       padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          25.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        children: [
-                                                                          Flexible(
-                                                                            flex:
-                                                                                1,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                          25.0, 0.0, 0.0, 0.0),
+                                                                      child: Builder(
+                                                                        builder: (context) {
+                                                                          final studentsForWeek =
+                                                                              _studentsForSelectedWeek();
+                                                                          if (studentsForWeek.isEmpty) {
+                                                                            return Align(
+                                                                              alignment:
+                                                                                  AlignmentDirectional(-1.0, 0.0),
+                                                                              child: Text(
+                                                                                '등록된 학생이 없습니다.',
+                                                                                style: FlutterFlowTheme.of(context)
+                                                                                    .bodyMedium
+                                                                                    .override(
+                                                                                      font: GoogleFonts.openSans(
+                                                                                        fontWeight: FlutterFlowTheme.of(context)
+                                                                                            .bodyMedium
+                                                                                            .fontWeight,
+                                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                                            .bodyMedium
+                                                                                            .fontStyle,
                                                                                       ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 0;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.firstOrNull,
-                                                                                              '강초희',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.firstOrNull,
-                                                                                              '강초희',
+                                                                                      color: const Color(0xFF666666),
+                                                                                      fontSize: () {
+                                                                                        if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointSmall) {
+                                                                                          return 10.0;
+                                                                                        } else if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointMedium) {
+                                                                                          return 10.0;
+                                                                                        } else if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointLarge) {
+                                                                                          return 12.0;
+                                                                                        } else {
+                                                                                          return 16.0;
+                                                                                        }
+                                                                                      }(),
+                                                                                      letterSpacing: 0.0,
+                                                                                    ),
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                          return ListView.separated(
+                                                                            padding: EdgeInsets.zero,
+                                                                            shrinkWrap: true,
+                                                                            primary: false,
+                                                                            physics: const NeverScrollableScrollPhysics(),
+                                                                            itemCount: studentsForWeek.length,
+                                                                            separatorBuilder: (_, __) =>
+                                                                                const SizedBox(height: 4.0),
+                                                                            itemBuilder: (context, index) {
+                                                                              final studentRow = studentsForWeek[index];
+                                                                              final studentName = valueOrDefault<String>(
+                                                                                studentRow.studentName,
+                                                                                '학생이름',
+                                                                              );
+                                                                              final isSelected = (_model.nameClickednum == index) &&
+                                                                                  (_model.nameselectforquery ==
+                                                                                      studentRow.studentName);
+                                                                              final isHovered = _model.hoveredStudentIndexMobile ==
+                                                                                  index;
+                                                                              final textColor = (isSelected || isHovered)
+                                                                                  ? const Color(0xFF284E75)
+                                                                                  : const Color(0xFF666666);
+                                                                              return MouseRegion(
+                                                                                opaque: false,
+                                                                                cursor: MouseCursor.defer,
+                                                                                onEnter: (_) => safeSetState(
+                                                                                    () => _model.hoveredStudentIndexMobile =
+                                                                                        index),
+                                                                                onExit: (_) => safeSetState(
+                                                                                    () => _model.hoveredStudentIndexMobile =
+                                                                                        null),
+                                                                                child: InkWell(
+                                                                                  splashColor: Colors.transparent,
+                                                                                  focusColor: Colors.transparent,
+                                                                                  hoverColor: Colors.transparent,
+                                                                                  highlightColor: Colors.transparent,
+                                                                                  onTap: () {
+                                                                                    _onStudentSelected(studentRow, index);
+                                                                                  },
+                                                                                  child: Align(
+                                                                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                    child: Text(
+                                                                                      studentName,
+                                                                                      textAlign: TextAlign.center,
+                                                                                      style: FlutterFlowTheme.of(context)
+                                                                                          .bodyMedium
+                                                                                          .override(
+                                                                                            font: GoogleFonts.openSans(
+                                                                                              fontWeight:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .bodyMedium
+                                                                                                      .fontWeight,
+                                                                                              fontStyle:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .bodyMedium
+                                                                                                      .fontStyle,
                                                                                             ),
-                                                                                            textAlign: TextAlign.center,
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FontWeight.normal,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered9) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 0) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FontWeight.normal,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
+                                                                                            color: textColor,
+                                                                                            fontSize: () {
+                                                                                              if (MediaQuery.sizeOf(context).width <
+                                                                                                  kBreakpointSmall) {
+                                                                                                return 10.0;
+                                                                                              } else if (MediaQuery.sizeOf(context)
+                                                                                                      .width <
+                                                                                                  kBreakpointMedium) {
+                                                                                                return 10.0;
+                                                                                              } else if (MediaQuery.sizeOf(context)
+                                                                                                      .width <
+                                                                                                  kBreakpointLarge) {
+                                                                                                return 12.0;
+                                                                                              } else {
+                                                                                                return 16.0;
+                                                                                              }
+                                                                                            }(),
+                                                                                            letterSpacing: 0.0,
                                                                                           ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered9 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered9 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 1;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered10) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 1) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered10 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered10 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 2;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(2),
-                                                                                              '김용현',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered11) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 2) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered11 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered11 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 3;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(3),
-                                                                                              '김철진',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered12) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 3) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered12 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered12 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 4;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(4),
-                                                                                              '나영석',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered13) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 4) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered13 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered13 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          Flexible(
-                                                                            flex:
-                                                                                1,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 5;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(5),
-                                                                                              '노선희',
-                                                                                            ),
-                                                                                            textAlign: TextAlign.center,
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FontWeight.normal,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered14) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 5) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FontWeight.normal,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered14 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered14 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 6;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(6),
-                                                                                              '이규한',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered15) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 6) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered15 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered15 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: MouseRegion(
-                                                                                    opaque: false,
-                                                                                    cursor: MouseCursor.defer,
-                                                                                    child: Container(
-                                                                                      width: double.infinity,
-                                                                                      height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      ),
-                                                                                      child: Align(
-                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                        child: InkWell(
-                                                                                          splashColor: Colors.transparent,
-                                                                                          focusColor: Colors.transparent,
-                                                                                          hoverColor: Colors.transparent,
-                                                                                          highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.nameClickednum = 7;
-                                                                                            _model.nameselectforquery = valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(1),
-                                                                                              '김건우',
-                                                                                            );
-                                                                                            _model.sPortpolioList = _model.subjectoutput!.where((e) => e.studentName == _model.nameselectforquery).toList().cast<SubjectportpolioRow>();
-                                                                                            safeSetState(() {});
-                                                                                            safeSetState(() {
-                                                                                              _model.textController1?.text = valueOrDefault<String>(
-                                                                                                _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.criticHtml,
-                                                                                                '크리틱 내용',
-                                                                                              );
-                                                                                              _model.textFieldFocusNode1?.requestFocus();
-                                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                                                _model.textController1?.selection = const TextSelection.collapsed(offset: 0);
-                                                                                              });
-                                                                                            });
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            valueOrDefault<String>(
-                                                                                              FFAppState().studentOutputVar.elementAtOrNull(7),
-                                                                                              '서백희',
-                                                                                            ),
-                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                  font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                  ),
-                                                                                                  color: valueOrDefault<Color>(
-                                                                                                    () {
-                                                                                                      if (_model.mouseRegionHovered16) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else if (_model.nameClickednum == 7) {
-                                                                                                        return Color(0xFF284E75);
-                                                                                                      } else {
-                                                                                                        return Color(0xFF666666);
-                                                                                                      }
-                                                                                                    }(),
-                                                                                                    Color(0xFF666666),
-                                                                                                  ),
-                                                                                                  fontSize: () {
-                                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                      return 10.0;
-                                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 12.0;
-                                                                                                    } else {
-                                                                                                      return 16.0;
-                                                                                                    }
-                                                                                                  }(),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    onEnter: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered16 = true);
-                                                                                    }),
-                                                                                    onExit: ((event) async {
-                                                                                      safeSetState(() => _model.mouseRegionHovered16 = false);
-                                                                                    }),
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: Container(
-                                                                                    width: double.infinity,
-                                                                                    height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                    decoration: BoxDecoration(
-                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    ),
-                                                                                    child: Align(
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                      child: Text(
-                                                                                        '',
-                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              font: GoogleFonts.openSans(
-                                                                                                fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                              ),
-                                                                                              color: Color(0xFF666666),
-                                                                                              fontSize: () {
-                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                  return 8.0;
-                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                  return 10.0;
-                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                  return 12.0;
-                                                                                                } else {
-                                                                                                  return 16.0;
-                                                                                                }
-                                                                                              }(),
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                      ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                Flexible(
-                                                                                  flex: 1,
-                                                                                  child: Container(
-                                                                                    width: double.infinity,
-                                                                                    height: MediaQuery.sizeOf(context).height * 0.04,
-                                                                                    decoration: BoxDecoration(
-                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    ),
-                                                                                    child: Align(
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                      child: Text(
-                                                                                        '',
-                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              font: GoogleFonts.openSans(
-                                                                                                fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                              ),
-                                                                                              color: Color(0xFF666666),
-                                                                                              fontSize: () {
-                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                  return 10.0;
-                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                  return 10.0;
-                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                  return 12.0;
-                                                                                                } else {
-                                                                                                  return 16.0;
-                                                                                                }
-                                                                                              }(),
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ],
+                                                                              );
+                                                                            },
+                                                                          );
+                                                                        },
                                                                       ),
                                                                     ),
                                                                   ),
@@ -3053,10 +1597,6 @@ class _ProfSubjectPortpolioWidgetState
                                                               ),
                                                             ),
                                                           ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Container(
