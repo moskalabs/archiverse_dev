@@ -27,24 +27,6 @@ class ProfSubjectPortpolioModel
 
   String? weeks = '1주차';
 
-  List<SubjectportpolioRow> sPortpolioList = [];
-  void addToSPortpolioList(SubjectportpolioRow item) =>
-      sPortpolioList.add(item);
-  void removeFromSPortpolioList(SubjectportpolioRow item) =>
-      sPortpolioList.remove(item);
-  void removeAtIndexFromSPortpolioList(int index) =>
-      sPortpolioList.removeAt(index);
-  void insertAtIndexInSPortpolioList(int index, SubjectportpolioRow item) =>
-      sPortpolioList.insert(index, item);
-  void updateSPortpolioListAtIndex(
-          int index, Function(SubjectportpolioRow) updateFn) =>
-      sPortpolioList[index] = updateFn(sPortpolioList[index]);
-
-  void clearSPortfolioLists() {
-    sPortpolioList.clear();
-    nameselectforquery = null;
-    nameClickednum = -1;
-  }
 
   ///  State fields for stateful widgets in this page.
 

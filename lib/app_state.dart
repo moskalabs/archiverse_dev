@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+import '/backend/supabase/supabase.dart';
 
 class FFAppState extends ChangeNotifier {
   static FFAppState _instance = FFAppState._internal();
@@ -1126,6 +1127,35 @@ class FFAppState extends ChangeNotifier {
     prefs.setString('ff_studentMypageImageUrl', value);
   }
 
+  List<SubjectportpolioRow> _sPortpolioList = [];
+  List<SubjectportpolioRow> get sPortpolioList => _sPortpolioList;
+  set sPortpolioList(List<SubjectportpolioRow> value) {
+    _sPortpolioList = value;
+  }
+
+  void addToSPortpolioList(SubjectportpolioRow value) {
+    sPortpolioList.add(value);
+  }
+
+  void removeFromSPortpolioList(SubjectportpolioRow value) {
+    sPortpolioList.remove(value);
+  }
+
+  void removeAtIndexFromSPortpolioList(int index) {
+    sPortpolioList.removeAt(index);
+  }
+
+  void updateSPortpolioListAtIndex(
+    int index,
+    SubjectportpolioRow Function(SubjectportpolioRow) updateFn,
+  ) {
+    sPortpolioList[index] = updateFn(_sPortpolioList[index]);
+  }
+
+  void insertAtIndexInSPortpolioList(int index, SubjectportpolioRow value) {
+    sPortpolioList.insert(index, value);
+  }
+
   Future<void> clearUserScopedState() async {
     _professorNameSelected = '교수님';
     await prefs.remove('ff_professorNameSelected');
@@ -1166,6 +1196,7 @@ class FFAppState extends ChangeNotifier {
     await prefs.remove('ff_degreeTextField');
     _studentMypageImageUrl = '';
     await prefs.remove('ff_studentMypageImageUrl');
+    _sPortpolioList = [];
     notifyListeners();
   }
 
