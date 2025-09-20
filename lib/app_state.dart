@@ -1129,6 +1129,18 @@ class FFAppState extends ChangeNotifier {
   Future<void> clearUserScopedState() async {
     _professorNameSelected = '교수님';
     await prefs.remove('ff_professorNameSelected');
+    _yearSelected = '';
+    await prefs.remove('ff_yearSelected');
+    _semesterSelected = '';
+    await prefs.remove('ff_semesterSelected');
+    _gradeSelected = 0;
+    await prefs.remove('ff_gradeSelected');
+    _sectionSelected = '';
+    await prefs.remove('ff_sectionSelected');
+    _courseNameSelected = '';
+    await prefs.remove('ff_courseNameSelected');
+    _classSelectedID = 0;
+    await prefs.remove('ff_classSelectedID');
     _studentNameSelected = '';
     await prefs.remove('ff_studentNameSelected');
     _mypageImageUrl = '';

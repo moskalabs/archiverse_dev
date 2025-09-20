@@ -40,6 +40,10 @@ class ProfSubjectPortpolioModel
           int index, Function(SubjectportpolioRow) updateFn) =>
       sPortpolioList[index] = updateFn(sPortpolioList[index]);
 
+  List<SubjectportpolioRow> fullSPortpolioList = [];
+  void setFullSPortpolioList(List<SubjectportpolioRow> items) =>
+      fullSPortpolioList = items;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in Prof_SubjectPortpolio widget.
