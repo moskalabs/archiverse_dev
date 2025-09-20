@@ -54,13 +54,13 @@ class _ProfSubjectPortpolioWidgetState
       );
       _model.subjectoutput = await SubjectportpolioTable().queryRows(
         queryFn: (q) => q
-            .eqOrNull(
-              'class',
-              FFAppState().classSelectedID,
+            .eq(
+              'professor_id',
+              GoTrue.instance.currentUser!.id,
             )
-            .eqOrNull(
-              'professor_name',
-              FFAppState().professorNameSelected,
+            .eq(
+              'class_section',
+              FFAppState().classSelectedID,
             ),
       );
       _model.sPortpolioList =
@@ -82,6 +82,7 @@ class _ProfSubjectPortpolioWidgetState
     // On page dispose action.
     () async {
       FFAppState().chatState = false;
+      _model.clearSPortfolioLists();
       safeSetState(() {});
     }();
 

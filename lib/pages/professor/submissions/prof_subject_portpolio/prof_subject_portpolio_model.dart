@@ -40,6 +40,12 @@ class ProfSubjectPortpolioModel
           int index, Function(SubjectportpolioRow) updateFn) =>
       sPortpolioList[index] = updateFn(sPortpolioList[index]);
 
+  void clearSPortfolioLists() {
+    sPortpolioList.clear();
+    nameselectforquery = null;
+    nameClickednum = -1;
+  }
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in Prof_SubjectPortpolio widget.
