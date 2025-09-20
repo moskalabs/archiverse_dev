@@ -40,6 +40,10 @@ class ProfSubjectPortpolioModel
           int index, Function(SubjectportpolioRow) updateFn) =>
       sPortpolioList[index] = updateFn(sPortpolioList[index]);
 
+  List<SubjectportpolioRow> fullSPortpolioList = [];
+  void setFullSPortpolioList(List<SubjectportpolioRow> items) =>
+      fullSPortpolioList = items;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in Prof_SubjectPortpolio widget.
@@ -54,8 +58,22 @@ class ProfSubjectPortpolioModel
   late LeftWidgetModel leftWidgetModel;
   // State field(s) for Slider widget.
   double? sliderValue1;
-  // Tracks which desktop student list item is hovered.
-  int? hoveredStudentIndex;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered1 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered2 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered3 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered4 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered5 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered6 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered7 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered8 = false;
   // Stores action output result for [Backend Call - Update Row(s)] action in Button widget.
   List<SubjectportpolioRow>? updatecriticbyprf;
   // State field(s) for TextField widget.
@@ -68,8 +86,22 @@ class ProfSubjectPortpolioModel
   late StudentHeaderMobileModel studentHeaderMobileModel;
   // State field(s) for Slider widget.
   double? sliderValue2;
-  // Tracks which mobile student list item is hovered.
-  int? hoveredStudentIndexMobile;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered9 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered10 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered11 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered12 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered13 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered14 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered15 = false;
+  // State field(s) for MouseRegion widget.
+  bool mouseRegionHovered16 = false;
   // Stores action output result for [Backend Call - Update Row(s)] action in Button widget.
   List<SubjectportpolioRow>? updatecriticbyprfMobile;
   // State field(s) for TextField widget.
