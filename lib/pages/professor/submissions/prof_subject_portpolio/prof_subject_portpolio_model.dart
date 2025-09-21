@@ -44,6 +44,12 @@ class ProfSubjectPortpolioModel
   void setFullSPortpolioList(List<SubjectportpolioRow> items) =>
       fullSPortpolioList = items;
 
+  int? loadedClassId;
+
+  String? loadedProfessorName;
+
+  String? loadedCourseName;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in Prof_SubjectPortpolio widget.

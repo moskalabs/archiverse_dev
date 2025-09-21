@@ -35,6 +35,8 @@ class _ProfSubjectPortpolioWidgetState
     extends State<ProfSubjectPortpolioWidget> {
   late ProfSubjectPortpolioModel _model;
 
+  bool _isFetchingPortfolios = false;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -43,30 +45,14 @@ class _ProfSubjectPortpolioWidgetState
     _model = createModel(context, () => ProfSubjectPortpolioModel());
 
     // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       FFAppState().chatState = false;
       safeSetState(() {});
-      _model.tempoutput = await TempPortpolioTable().queryRows(
-        queryFn: (q) => q.eqOrNull(
-          'class',
-          FFAppState().classSelectedID,
-        ),
+      _loadPortfolioData(
+        classId: FFAppState().classSelectedID,
+        professorName: FFAppState().professorNameSelected,
+        courseName: FFAppState().courseNameSelected,
       );
-      _model.subjectoutput = await SubjectportpolioTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'class',
-              FFAppState().classSelectedID,
-            )
-            .eqOrNull(
-              'professor_name',
-              FFAppState().professorNameSelected,
-            ),
-      );
-      _model.sPortpolioList =
-          _model.subjectoutput!.toList().cast<SubjectportpolioRow>();
-      _model.setFullSPortpolioList(_model.sPortpolioList.toList());
-      safeSetState(() {});
     });
 
     _model.textController1 ??= TextEditingController();
@@ -113,6 +99,92 @@ class _ProfSubjectPortpolioWidgetState
   String? _studentNameForWeekAt(int index) =>
       _studentRowForWeekAt(index)?.studentName;
 
+  void _resetPortfolioSelection() {
+    _model.openOrHideButton = false;
+    _model.nameClickednum = -1;
+    _model.nameselectforquery = null;
+    _model.sliderValue1 = 1.0;
+    _model.sliderValue2 = 1.0;
+    _model.weeks = '1주차';
+    _model.textFieldFocusNode1?.unfocus();
+    _model.textFieldFocusNode2?.unfocus();
+    _model.textController1?.clear();
+    _model.textController2?.clear();
+  }
+
+  Future<void> _loadPortfolioData({
+    required int classId,
+    required String professorName,
+    required String courseName,
+  }) async {
+    if (_isFetchingPortfolios) {
+      return;
+    }
+    _isFetchingPortfolios = true;
+    try {
+      safeSetState(() {
+        _model.tempoutput = [];
+        _model.subjectoutput = [];
+        _model.sPortpolioList = [];
+        _model.setFullSPortpolioList([]);
+        _resetPortfolioSelection();
+      });
+
+      final hasValidFilters =
+          classId != 0 && professorName.isNotEmpty && professorName != '교수님';
+      if (!hasValidFilters) {
+        safeSetState(() {
+          _model.loadedClassId = classId;
+          _model.loadedProfessorName = professorName;
+          _model.loadedCourseName = courseName;
+        });
+        return;
+      }
+
+      final tempRows = await TempPortpolioTable().queryRows(
+        queryFn: (q) => q.eqOrNull(
+          'class',
+          classId,
+        ),
+      );
+      final subjectRows = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull(
+              'class',
+              classId,
+            )
+            .eqOrNull(
+              'professor_name',
+              professorName,
+            ),
+      );
+
+      if (!mounted ||
+          FFAppState().classSelectedID != classId ||
+          FFAppState().professorNameSelected != professorName ||
+          FFAppState().courseNameSelected != courseName) {
+        return;
+      }
+
+      final updatedPortfolios =
+          List<SubjectportpolioRow>.from(subjectRows);
+
+      safeSetState(() {
+        _model.tempoutput = tempRows;
+        _model.subjectoutput = subjectRows;
+        _model.sPortpolioList = updatedPortfolios;
+        _model.setFullSPortpolioList(
+          List<SubjectportpolioRow>.from(updatedPortfolios),
+        );
+        _model.loadedClassId = classId;
+        _model.loadedProfessorName = professorName;
+        _model.loadedCourseName = courseName;
+      });
+    } finally {
+      _isFetchingPortfolios = false;
+    }
+  }
+
   void _handleStudentTap(int index) {
     final studentName = valueOrDefault<String>(
       _studentNameForWeekAt(index),
@@ -148,6 +220,23 @@ class _ProfSubjectPortpolioWidgetState
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+
+    final selectedClassId = FFAppState().classSelectedID;
+    final selectedProfessorName = FFAppState().professorNameSelected;
+    final selectedCourseName = FFAppState().courseNameSelected;
+
+    if ((_model.loadedClassId != selectedClassId ||
+            _model.loadedProfessorName != selectedProfessorName ||
+            _model.loadedCourseName != selectedCourseName) &&
+        !_isFetchingPortfolios) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _loadPortfolioData(
+          classId: selectedClassId,
+          professorName: selectedProfessorName,
+          courseName: selectedCourseName,
+        );
+      });
+    }
 
     return GestureDetector(
       onTap: () {
