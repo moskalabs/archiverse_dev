@@ -28,3 +28,24 @@
                                                                                           _updateChartData(_model.progressoutput1A);
                                                                                             _updateChartData(_model.progressoutput2A);
                                                                                             _updateChartData(_model.progressoutput3A);
+    safeSetState(() {});
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      final dataSets = <List<SubjectportpolioRow>?>[
+        _model.progressoutput1,
+        _model.progressoutput2,
+        _model.progressoutput3,
+        _model.progressoutput1A,
+        _model.progressoutput2A,
+        _model.progressoutput3A,
+      ];
+
+      for (final rows in dataSets) {
+        if (rows != null && rows.isNotEmpty) {
+          _updateChartData(rows);
+          return;
+        }
+      }
+
+      _updateChartData(null);
+    });
+
