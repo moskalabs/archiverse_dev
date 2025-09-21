@@ -26,9 +26,10 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
     return;
   }
 
-  PdfDocument? finalDoc;
+  final PdfDocument finalDoc = PdfDocument();
   Uint8List? outputBytes;
   final int totalFiles = validUrls.length;
+  bool appendedAnyPage = false;
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -81,12 +82,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
-        if (finalDoc == null) {
-          finalDoc = currentDoc;
-          currentDoc = null;
-        } else {
-          finalDoc.appendDocument(currentDoc);
-        }
+        finalDoc.appendDocument(currentDoc);
+        appendedAnyPage = true;
 
         updateProgress(
           displayIndex,
@@ -103,20 +100,19 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
       }
     }
 
-    if (finalDoc == null || finalDoc.pages.count == 0) {
+    if (!appendedAnyPage || finalDoc.pages.count == 0) {
       throw Exception('병합할 PDF 페이지가 없습니다.');
     }
 
-    final PdfDocument mergedDoc = finalDoc!;
     updateProgress(totalFiles, 'PDF 파일 생성 중');
-    outputBytes = Uint8List.fromList(await mergedDoc.save());
+    outputBytes = Uint8List.fromList(await finalDoc.save());
     updateProgress(totalFiles, 'PDF 다운로드 준비 완료');
   } catch (e) {
     updateProgress(totalFiles, 'PDF 병합 중 오류가 발생했습니다');
     print('[mergeAndDownloadPdf] 오류: $e');
     throw Exception('PDF 병합 중 오류가 발생했습니다: $e');
   } finally {
-    finalDoc?.dispose();
+    finalDoc.dispose();
   }
 
   if (!kIsWeb || outputBytes == null) {
