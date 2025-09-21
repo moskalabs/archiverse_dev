@@ -15,7 +15,9 @@ class LeftWidgetModel extends FlutterFlowModel<LeftWidgetWidget> {
   bool mouseRegionHovered4 = false;
 
   @override
-  void initState(BuildContext context) {}
+  void initState(BuildContext context) {
+    FFAppState().refreshCriticCounters();
+  }
 
   @override
   void dispose() {}

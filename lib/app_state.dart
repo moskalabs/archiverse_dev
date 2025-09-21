@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
+import '/backend/supabase/supabase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -196,6 +197,14 @@ class FFAppState extends ChangeNotifier {
     });
     _safeInit(() {
       _classSelectedID = prefs.getInt('ff_classSelectedID') ?? _classSelectedID;
+    });
+    _safeInit(() {
+      _writtenCriticCount =
+          prefs.getInt('ff_writtenCriticCount') ?? _writtenCriticCount;
+    });
+    _safeInit(() {
+      _confirmedCriticCount =
+          prefs.getInt('ff_confirmedCriticCount') ?? _confirmedCriticCount;
     });
     _safeInit(() {
       _coursePlanUploadURLUse = prefs.getString('ff_coursePlanUploadURLUse') ??
@@ -920,6 +929,20 @@ class FFAppState extends ChangeNotifier {
     prefs.setInt('ff_classSelectedID', value);
   }
 
+  int _writtenCriticCount = 0;
+  int get writtenCriticCount => _writtenCriticCount;
+  set writtenCriticCount(int value) {
+    _writtenCriticCount = value;
+    prefs.setInt('ff_writtenCriticCount', value);
+  }
+
+  int _confirmedCriticCount = 0;
+  int get confirmedCriticCount => _confirmedCriticCount;
+  set confirmedCriticCount(int value) {
+    _confirmedCriticCount = value;
+    prefs.setInt('ff_confirmedCriticCount', value);
+  }
+
   /// 수업계획서_제목
   String _courseplanPlaintext = '';
   String get courseplanPlaintext => _courseplanPlaintext;
@@ -1126,6 +1149,47 @@ class FFAppState extends ChangeNotifier {
     prefs.setString('ff_studentMypageImageUrl', value);
   }
 
+  Future<void> refreshCriticCounters({String? week}) async {
+    final selectedClassId = classSelectedID;
+    final professorName = professorNameSelected;
+
+    if (selectedClassId == 0 || professorName.isEmpty) {
+      update(() {
+        writtenCriticCount = 0;
+        confirmedCriticCount = 0;
+      });
+      return;
+    }
+
+    try {
+      final results = await SubjectportpolioTable().queryRows(
+        queryFn: (q) {
+          var query = q
+              .eqOrNull('class', selectedClassId)
+              .eqOrNull('professor_name', professorName);
+          final effectiveWeek = week?.trim();
+          if (effectiveWeek != null && effectiveWeek.isNotEmpty) {
+            query = query.eqOrNull('week', effectiveWeek);
+          }
+          return query;
+        },
+      );
+
+      final written = results
+          .where((row) => (row.criticHtml ?? '').trim().isNotEmpty)
+          .length;
+      final confirmed =
+          results.where((row) => row.criticConfirmedAt != null).length;
+
+      update(() {
+        writtenCriticCount = written;
+        confirmedCriticCount = confirmed;
+      });
+    } catch (e) {
+      print('Error refreshing critic counters: $e');
+    }
+  }
+
   Future<void> clearUserScopedState() async {
     _professorNameSelected = '교수님';
     await prefs.remove('ff_professorNameSelected');
@@ -1141,6 +1205,10 @@ class FFAppState extends ChangeNotifier {
     await prefs.remove('ff_courseNameSelected');
     _classSelectedID = 0;
     await prefs.remove('ff_classSelectedID');
+    _writtenCriticCount = 0;
+    await prefs.remove('ff_writtenCriticCount');
+    _confirmedCriticCount = 0;
+    await prefs.remove('ff_confirmedCriticCount');
     _studentNameSelected = '';
     await prefs.remove('ff_studentNameSelected');
     _mypageImageUrl = '';

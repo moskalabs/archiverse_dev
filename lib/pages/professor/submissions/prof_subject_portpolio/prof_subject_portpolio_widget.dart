@@ -576,15 +576,17 @@ class _ProfSubjectPortpolioWidgetState
                                                                               hoverColor: Colors.transparent,
                                                                               highlightColor: Colors.transparent,
                                                                                  onTap: () async {
-                                                                                   _model.openOrHideButton = !_model.openOrHideButton;
-                                                                                   _model.weeks = '${_model.sliderValue1?.toString()}주차';
-                                                                                   safeSetState(() {});
-                                                                                   _model.nameClickednum = -1;
-                                                                                   _model.nameselectforquery = null;
-                                                                                    _model.sPortpolioList =
-                                                                                        _model.fullSPortpolioList.toList();
-                                                                                    safeSetState(() {});
-                                                                                 },
+                                                                                _model.openOrHideButton =
+                                                                                    !_model.openOrHideButton;
+                                                                                _model.weeks =
+                                                                                    '${_model.sliderValue1?.toString()}주차';
+                                                                                safeSetState(() {});
+                                                                                _model.nameClickednum = -1;
+                                                                                _model.nameselectforquery = null;
+                                                                                _model.sPortpolioList =
+                                                                                    _model.fullSPortpolioList.toList();
+                                                                                safeSetState(() {});
+                                                                              },
                                                                               child: Icon(
                                                                                 Icons.expand_more,
                                                                                 color: Color(0xFF284E75),
@@ -1594,6 +1596,8 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   );
 
                                                                                                   safeSetState(() {});
+                                                                                                  await FFAppState()
+                                                                                                      .refreshCriticCounters();
                                                                                                 },
                                                                                                 text: FFLocalizations.of(context).getText(
                                                                                                   'hnnsauoe' /* 수정 */,
@@ -3245,6 +3249,8 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   );
 
                                                                                                   safeSetState(() {});
+                                                                                                  await FFAppState()
+                                                                                                      .refreshCriticCounters();
                                                                                                 },
                                                                                                 text: FFLocalizations.of(context).getText(
                                                                                                   '0oqzslbq' /* 수정 */,

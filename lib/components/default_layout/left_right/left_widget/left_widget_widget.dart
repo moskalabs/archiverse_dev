@@ -879,10 +879,15 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                             5.0,
                                                                             0.0),
                                                                 child: Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    'cmmeitxn' /* - */,
+                                                                  formatNumber(
+                                                                    FFAppState()
+                                                                        .writtenCriticCount,
+                                                                    formatType:
+                                                                        FormatType
+                                                                            .decimal,
+                                                                    decimalType:
+                                                                        DecimalType
+                                                                            .automatic,
                                                                   ),
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
@@ -1031,10 +1036,15 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                             5.0,
                                                                             0.0),
                                                                 child: Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    '0hvfh7ub' /* - */,
+                                                                  formatNumber(
+                                                                    FFAppState()
+                                                                        .confirmedCriticCount,
+                                                                    formatType:
+                                                                        FormatType
+                                                                            .decimal,
+                                                                    decimalType:
+                                                                        DecimalType
+                                                                            .automatic,
                                                                   ),
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
