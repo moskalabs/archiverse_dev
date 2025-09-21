@@ -102,11 +102,11 @@
                             minWidth: 1200.0,
                           ),
                             mainAxisSize: MainAxisSize.max,
-                            children: [
+                          constraints: const BoxConstraints(
                               Container(
                           child: Container(
                             width: MediaQuery.sizeOf(context).width * 0.35,
-                            constraints: BoxConstraints(
+                            constraints: const BoxConstraints(
                               minWidth: 200.0,
                               maxWidth: 500.0,
                             ),
@@ -463,17 +463,13 @@
                                                                           MainAxisSize
                                                                               .min,
                                                                       children: [
-                                                  child: Text(
-                                                    valueOrDefault<String>(
-                                                      _model.years,
-                                                      '0000',
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                               child: Text(
-                                                 FFLocalizations.of(context)
-                                                     .getText(
+                                                child: Text(
+                                                  valueOrDefault<String>(
+                                                    _model.years,
+                                                    '0000',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              child: AnimatedDefaultTextStyle(
                                                    '5hv0jwqm' /* 년 */,
                                                  ),
                                                  textAlign: TextAlign.center,
@@ -579,8 +575,6 @@
                                                                                               fontSize: 13.0,
                                                                   child: Row(
                                                                     mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
                                                                     children: [
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
@@ -769,3 +763,139 @@
                                                                                               fontSize: 12.0,
                                                                                               fontSize: 12.0,
                                                                                               fontSize: 12.0,
+                                                                          25.0,
+                                                                          25.0,
+                                                                          25.0,
+                                                                          25.0,
+                                                                          25.0,
+                                                                              fontSize: 25.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                              SizedBox(
+                                                  fontSize: 25.0,
+                                                                              25.0,
+                                                                          25.0,
+                                                          Flexible(
+                                                            child: Container(
+                                                              height: double
+                                                                  .infinity,
+                                                              decoration:
+                                                                  BoxDecoration(),
+                                                              child: Padding(
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      child: Text(
+                                                                        FFLocalizations.of(
+                                                                                context)
+                                                                            .getText(
+                                                                          'yc2tezrq' /* 교수님 업로드현황  */,
+                                                                        ),
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: FlutterFlowTheme.of(
+                                                                                context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              font:
+                                                                                  GoogleFonts.openSans(
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                              ),
+                                                                              color:
+                                                                                  FlutterFlowTheme.of(context).secondaryText,
+                                                                              fontSize:
+                                                                                  18.0,
+                                                                              letterSpacing:
+                                                                                  0.0,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              fontStyle:
+                                                                                  FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                      ),
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                  fontSize: 25.0,
+                                                                              25.0,
+                                                                          25.0,
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                            23.0,
+                                                                                15.0,
+                                                                                15.0,
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                  fontSize: 25.0,
+                                                                              25.0,
+                                                                          25.0,
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                            23.0,
+                                                                                15.0,
+                                                                                15.0,
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                  fontSize: 25.0,
+                                                                              25.0,
+                                                                          25.0,
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                            23.0,
+                                                                                15.0,
+                                                                                15.0,
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
