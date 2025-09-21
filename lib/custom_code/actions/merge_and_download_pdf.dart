@@ -79,7 +79,9 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
 
         src = PdfDocument(inputBytes: resp.bodyBytes);
         if (src.pages.count > 0) {
-          finalDoc.importPageRange(src, 0, src.pages.count - 1);
+          for (int pageIndex = 0; pageIndex < src.pages.count; pageIndex++) {
+            finalDoc.importPage(src, pageIndex);
+          }
         }
 
         updateProgress(
