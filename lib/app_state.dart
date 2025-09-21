@@ -1104,6 +1104,14 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_studentNavbarMobile', value);
   }
 
+  int _criticCountersVersion = 0;
+  int get criticCountersVersion => _criticCountersVersion;
+
+  void refreshCriticCounters() {
+    _criticCountersVersion++;
+    notifyListeners();
+  }
+
   bool _navbarMobile = false;
   bool get navbarMobile => _navbarMobile;
   set navbarMobile(bool value) {

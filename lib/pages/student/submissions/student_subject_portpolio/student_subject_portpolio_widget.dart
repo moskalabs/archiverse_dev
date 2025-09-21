@@ -735,10 +735,29 @@ class _StudentSubjectPortpolioWidgetState
                                                                                     focusColor: Colors.transparent,
                                                                                     hoverColor: Colors.transparent,
                                                                                     highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.textClickedResult = !_model.textClickedResult;
-                                                                                      safeSetState(() {});
-                                                                                    },
+                                                                                  onTap: () async {
+                                                                                    _model.textClickedResult = !_model.textClickedResult;
+                                                                                    safeSetState(() {});
+                                                                                    if (_model.textClickedResult) {
+                                                                                      final selectedSubjectportpolio = _model
+                                                                                          .sPortpolioList
+                                                                                          .where((e) => e.week == _model.weeks)
+                                                                                          .toList()
+                                                                                          .firstOrNull;
+                                                                                      if (selectedSubjectportpolio != null) {
+                                                                                        await SubjectportpolioTable().update(
+                                                                                          data: {
+                                                                                            'critic_confirmed_at': DateTime.now(),
+                                                                                          },
+                                                                                          matchingRows: (rows) => rows.eq(
+                                                                                            'id',
+                                                                                            selectedSubjectportpolio.id,
+                                                                                          ),
+                                                                                        );
+                                                                                        FFAppState().refreshCriticCounters();
+                                                                                      }
+                                                                                    }
+                                                                                  },
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
                                                                                         _model.sPortpolioList.where((e) => e.week == _model.weeks).toList().firstOrNull?.title,
@@ -2849,6 +2868,25 @@ class _StudentSubjectPortpolioWidgetState
                                                                               onTap: () async {
                                                                                 _model.textClickedResult = !_model.textClickedResult;
                                                                                 safeSetState(() {});
+                                                                                if (_model.textClickedResult) {
+                                                                                  final selectedSubjectportpolio = _model
+                                                                                      .sPortpolioList
+                                                                                      .where((e) => e.week == _model.weeks)
+                                                                                      .toList()
+                                                                                      .firstOrNull;
+                                                                                  if (selectedSubjectportpolio != null) {
+                                                                                    await SubjectportpolioTable().update(
+                                                                                      data: {
+                                                                                        'critic_confirmed_at': DateTime.now(),
+                                                                                      },
+                                                                                      matchingRows: (rows) => rows.eq(
+                                                                                        'id',
+                                                                                        selectedSubjectportpolio.id,
+                                                                                      ),
+                                                                                    );
+                                                                                    FFAppState().refreshCriticCounters();
+                                                                                  }
+                                                                                }
                                                                               },
                                                                               child: Text(
                                                                                 valueOrDefault<String>(

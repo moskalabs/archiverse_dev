@@ -51,4 +51,9 @@ class SubjectportpolioRow extends SupabaseDataRow {
 
   int? get grade => getField<int>('grade');
   set grade(int? value) => setField<int>('grade', value);
+
+  DateTime? get criticConfirmedAt =>
+      getField<DateTime>('critic_confirmed_at');
+  set criticConfirmedAt(DateTime? value) =>
+      setField<DateTime>('critic_confirmed_at', value);
 }

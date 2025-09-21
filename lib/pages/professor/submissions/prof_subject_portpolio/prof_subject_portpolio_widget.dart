@@ -1560,6 +1560,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   await SubjectportpolioTable().update(
                                                                                                     data: {
                                                                                                       'critic_html': _model.textController1.text,
+                                                                                                      'critic_confirmed_at': null,
                                                                                                     },
                                                                                                     matchingRows: (rows) => rows
                                                                                                         .eqOrNull(
@@ -3211,6 +3212,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   await SubjectportpolioTable().update(
                                                                                                     data: {
                                                                                                       'critic_html': _model.textController2.text,
+                                                                                                      'critic_confirmed_at': null,
                                                                                                     },
                                                                                                     matchingRows: (rows) => rows
                                                                                                         .eqOrNull(
