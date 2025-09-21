@@ -30,6 +30,9 @@ class SubjectportpolioRow extends SupabaseDataRow {
   String? get url => getField<String>('url');
   set url(String? value) => setField<String>('url', value);
 
+  String? get fileUrl => getField<String>('url');
+  set fileUrl(String? value) => setField<String>('url', value);
+
   String? get week => getField<String>('week');
   set week(String? value) => setField<String>('week', value);
 

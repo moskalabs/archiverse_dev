@@ -40,4 +40,7 @@ class ClassRow extends SupabaseDataRow {
 
   String? get section => getField<String>('section');
   set section(String? value) => setField<String>('section', value);
+
+  String? get url => getField<String>('url');
+  set url(String? value) => setField<String>('url', value);
 }

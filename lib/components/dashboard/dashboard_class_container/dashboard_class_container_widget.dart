@@ -309,15 +309,60 @@ class _DashboardClassContainerWidgetState
                       onPressed: () async {
                         if ((widget.currentlySelectedID == widget.classID) ==
                             true) {
-                          await actions.mergePdfs(
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/courseplan/1741517426639000.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/attendance/7.PDF_ATTENDANCE.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/PDF_COVER.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
+                          if (!mounted) {
+                            return;
+                          }
+
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (dialogContext) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           );
-                          await actions.mergeAndDownloadPdf(
-                            FFAppState().mergepdfs.toList(),
-                          );
+
+                          try {
+                            final classId =
+                                widget.classID ?? FFAppState().classSelectedID;
+                            final documentUrls = await actions
+                                .getClassDocuments(classId);
+
+                            await actions.mergePdfs(
+                              'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/PDF_COVER.pdf',
+                              documentUrls,
+                              'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
+                            );
+
+                            await actions.mergeAndDownloadPdf(
+                              FFAppState().mergepdfs.toList(),
+                            );
+
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('PDF 다운로드 완료'),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            print(
+                                '[DashboardClassContainerWidget] PDF 다운로드 실패: $e');
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('다운로드 실패: $e'),
+                                ),
+                              );
+                            }
+                          } finally {
+                            if (mounted) {
+                              final navigator =
+                                  Navigator.of(context, rootNavigator: true);
+                              if (navigator.canPop()) {
+                                navigator.pop();
+                              }
+                            }
+                          }
                         }
                       },
                       text: FFLocalizations.of(context).getText(
