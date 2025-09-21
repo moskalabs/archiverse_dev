@@ -1107,7 +1107,7 @@ class FFAppState extends ChangeNotifier {
   int _criticCountersVersion = 0;
   int get criticCountersVersion => _criticCountersVersion;
 
-  void refreshCriticCounters() {
+  Future<void> refreshCriticCounters({String? week}) async {
     _criticCountersVersion++;
     notifyListeners();
   }

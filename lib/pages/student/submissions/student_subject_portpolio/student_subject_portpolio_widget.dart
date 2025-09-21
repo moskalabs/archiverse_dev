@@ -747,14 +747,17 @@ class _StudentSubjectPortpolioWidgetState
                                                                                       if (selectedSubjectportpolio != null) {
                                                                                         await SubjectportpolioTable().update(
                                                                                           data: {
-                                                                                            'critic_confirmed_at': DateTime.now(),
+                                                                                            'critic_confirmed_at':
+                                                                                                DateTime.now().toUtc(),
                                                                                           },
                                                                                           matchingRows: (rows) => rows.eq(
                                                                                             'id',
                                                                                             selectedSubjectportpolio.id,
                                                                                           ),
                                                                                         );
-                                                                                        FFAppState().refreshCriticCounters();
+                                                                                        await FFAppState().refreshCriticCounters(
+                                                                                          week: _model.weeks,
+                                                                                        );
                                                                                       }
                                                                                     }
                                                                                   },
@@ -2877,14 +2880,17 @@ class _StudentSubjectPortpolioWidgetState
                                                                                   if (selectedSubjectportpolio != null) {
                                                                                     await SubjectportpolioTable().update(
                                                                                       data: {
-                                                                                        'critic_confirmed_at': DateTime.now(),
+                                                                                        'critic_confirmed_at':
+                                                                                            DateTime.now().toUtc(),
                                                                                       },
                                                                                       matchingRows: (rows) => rows.eq(
                                                                                         'id',
                                                                                         selectedSubjectportpolio.id,
                                                                                       ),
                                                                                     );
-                                                                                    FFAppState().refreshCriticCounters();
+                                                                                    await FFAppState().refreshCriticCounters(
+                                                                                      week: _model.weeks,
+                                                                                    );
                                                                                   }
                                                                                 }
                                                                               },

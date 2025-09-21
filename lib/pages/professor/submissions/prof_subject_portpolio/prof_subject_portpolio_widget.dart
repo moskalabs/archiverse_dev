@@ -1576,6 +1576,9 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           _model.weeks,
                                                                                                         ),
                                                                                                   );
+                                                                                                  await FFAppState().refreshCriticCounters(
+                                                                                                    week: _model.weeks,
+                                                                                                  );
                                                                                                   await showDialog(
                                                                                                     context: context,
                                                                                                     builder: (alertDialogContext) {
@@ -3227,6 +3230,9 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           'week',
                                                                                                           _model.weeks,
                                                                                                         ),
+                                                                                                  );
+                                                                                                  await FFAppState().refreshCriticCounters(
+                                                                                                    week: _model.weeks,
                                                                                                   );
                                                                                                   await showDialog(
                                                                                                     context: context,
