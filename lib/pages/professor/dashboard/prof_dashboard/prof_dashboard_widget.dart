@@ -1,4 +1,3 @@
-import '/backend/supabase/database/tables/course_student.dart';
 import '/backend/supabase/database/tables/subjectportpolio.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import 'dart:math' as math;
@@ -11,74 +10,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
-  int _studentEnrollmentCount = 0;
-
-  List<int> _buildWeeklyCounts(List<SubjectportpolioRow>? rows) {
-    final counts = List<int>.filled(15, 0);
-    if (rows == null || rows.isEmpty) {
+  static const int _weeksPerSemester = 15;
+    final counts = List<int>.filled(_weeksPerSemester, 0);
       return counts;
-  static const String _defaultChartKey = '_default';
-
-  final Map<String, List<int>> _chartDataByKey = <String, List<int>>{};
-    }
-
-    for (final row in rows) {
-      final weekLabel = row.week;
-      if (weekLabel == null || weekLabel.isEmpty) {
-        continue;
-      }
-
-      final weekMatch = RegExp(r'(\d+)').firstMatch(weekLabel);
-      final parsedWeek =
-          weekMatch != null ? int.tryParse(weekMatch.group(1) ?? '') : null;
-      if (parsedWeek == null) {
-        continue;
-      }
-
-      final index = parsedWeek - 1;
-      if (index >= 0 && index < counts.length) {
-        counts[index] = counts[index] + 1;
-      }
-    }
-
-    return counts;
-  }
-
-  String _chartKeyForType({required bool isAdjunct, required int index}) =>
-      '${isAdjunct ? 'adjunct' : 'fullTime'}-$index';
-
-  List<int> _getChartData(String key) {
-    if (_chartDataByKey.containsKey(key)) {
-      return _chartDataByKey[key]!;
-    }
-    return _chartDataByKey[_defaultChartKey] ?? List<int>.filled(15, 0);
-  }
-
-  String _buildChartSemanticsLabel(String key) {
-    final data = _getChartData(key);
-    final totalSubmissions = data.fold<int>(0, (sum, value) => sum + value);
-    return '담당 학생 ${_studentEnrollmentCount}명, 총 제출 ${totalSubmissions}건';
-  }
-
-  void _updateChartData({
-    required String key,
-    List<SubjectportpolioRow>? rows,
-  }) {
-    final counts = _buildWeeklyCounts(rows);
-    safeSetState(() {
-      _chartDataByKey[key] = counts;
-      if (key == _defaultChartKey) {
-        _model.chartDataParam = counts;
-      }
-    });
-  Future<void> _refreshStudentEnrollment(String professorName) async {
-    }
-  Future<void> _loadProfessorPortfolioSummary(String professorName) async {
-    final rows = await SubjectportpolioTable().queryRows(
-      queryFn: (q) => q
-          .eqOrNull(
-            'professor_name',
-            professorName,
+      final match = RegExp(r'(\d+)').firstMatch(weekLabel);
+      final parsedWeek = match != null ? int.tryParse(match.group(1) ?? '') : null;
+  void _updateChartDataFromRows(List<SubjectportpolioRow>? rows) {
+    final weeklyCounts = _buildWeeklyCounts(rows);
+      _model.chartDataParam = weeklyCounts;
+      _model.progressSubject = rows?.length ?? 0;
+  Future<void> _loadInitialChartData(String professorName) async {
+    if (professorName.isEmpty) {
+      queryFn: (q) => q.eqOrNull(
+        'professor_name',
+        professorName,
+      ),
+    _updateChartDataFromRows(rows);
+        await _loadInitialChartData(professorName);
           )
           .order('week'),
     );
@@ -615,3 +563,115 @@ import 'package:webviewx_plus/webviewx_plus.dart';
                                                                                                               index: 2,
                                                                                                             ),
                                                                                                           ),
+                                                                                          _model.progressoutput1 = await SubjectportpolioTable().queryRows(
+                                                                                            queryFn: (q) => q
+                                                                                                .eqOrNull(
+                                                                                                  'professor_name',
+                                                                                                  _model.profeesorName,
+                                                                                                )
+                                                                                                .eqOrNull(
+                                                                                                  'class',
+                                                                                                  _model.classAfterGradeByCourseForSection.firstOrNull?.id,
+                                                                                                ),
+                                                                                          );
+                                                                                          _updateChartDataFromRows(_model.progressoutput1);
+                                                                                          
+                                                                                          safeSetState(() {});
+                                                                                        },
+                                                                                              _model.progressoutput2 = await SubjectportpolioTable().queryRows(
+                                                                                                queryFn: (q) => q
+                                                                                                    .eqOrNull(
+                                                                                                      'professor_name',
+                                                                                                      _model.profeesorName,
+                                                                                                    )
+                                                                                                    .eqOrNull(
+                                                                                                      'class',
+                                                                                                      _model.classAfterGradeByCourseForSection.elementAtOrNull(1)?.id,
+                                                                                                    ),
+                                                                                              );
+                                                                                              _updateChartDataFromRows(_model.progressoutput2);
+                                                                                              
+                                                                                              safeSetState(() {});
+                                                                                              _model.progressoutput3 = await SubjectportpolioTable().queryRows(
+                                                                                                queryFn: (q) => q
+                                                                                                    .eqOrNull(
+                                                                                                      'professor_name',
+                                                                                                      _model.profeesorName,
+                                                                                                    )
+                                                                                                    .eqOrNull(
+                                                                                                      'class',
+                                                                                                      _model.classAfterGradeByCourseForSection.elementAtOrNull(2)?.id,
+                                                                                                    ),
+                                                                                              );
+                                                                                              _updateChartDataFromRows(_model.progressoutput3);
+                                                                                              
+                                                                                              safeSetState(() {});
+                                                                            Expanded(
+                                                                              flex: 10,
+                                                                              child: Container(
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                                child: custom_widgets.ChartWidget(
+                                                                                  chartData: _model.chartDataParam,
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 10,
+                                                                              child: Container(
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                                child: custom_widgets.ChartWidget(
+                                                                                  chartData: _model.chartDataParam,
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 10,
+                                                                              child: Container(
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                                child: custom_widgets.ChartWidget(
+                                                                                  chartData: _model.chartDataParam,
+                                                                            ),
+                                                                                          _model.progressoutput1A = await SubjectportpolioTable().queryRows(
+                                                                                            queryFn: (q) => q
+                                                                                                .eqOrNull(
+                                                                                                  'professor_name',
+                                                                                                  _model.profeesorName,
+                                                                                                )
+                                                                                                .eqOrNull(
+                                                                                                  'class',
+                                                                                                  _model.classAfterGradeByCourseForSection.firstOrNull?.id,
+                                                                                                ),
+                                                                                          );
+                                                                                          _updateChartDataFromRows(_model.progressoutput1A);
+                                                                                          
+                                                                                          safeSetState(() {});
+                                                                                        },
+                                                                                            _updateChartDataFromRows(_model.progressoutput2A);
+                                                                                             
+                                                                                             safeSetState(() {});
+                                                                                            _updateChartDataFromRows(_model.progressoutput3A);
+                                                                                             
+                                                                                             safeSetState(() {});
+                                                                                                Expanded(
+                                                                                                  flex: 10,
+                                                                                                  child: Container(
+                                                                                                    width: double.infinity,
+                                                                                                    height: double.infinity,
+                                                                                                    child: custom_widgets.ChartWidget(
+                                                                                                      chartData: _model.chartDataParam,
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 10,
+                                                                                                  child: Container(
+                                                                                                    width: double.infinity,
+                                                                                                    height: double.infinity,
+                                                                                                    child: custom_widgets.ChartWidget(
+                                                                                                      chartData: _model.chartDataParam,
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 10,
+                                                                                                  child: Container(
+                                                                                                    width: double.infinity,
+                                                                                                    height: double.infinity,
+                                                                                                    child: custom_widgets.ChartWidget(
+                                                                                                      chartData: _model.chartDataParam,
+                                                                                                ),
