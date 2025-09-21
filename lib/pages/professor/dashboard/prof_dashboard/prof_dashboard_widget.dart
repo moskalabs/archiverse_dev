@@ -44,6 +44,31 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _fetchChartData(int classId) async {
+    final professorName = FFAppState().user.name;
+    final portfolioData = await SubjectportpolioTable().queryRows(
+      queryFn: (q) => q
+          .eq('class_id', classId)
+          .eq('professor_name', professorName),
+    );
+
+    final weeklyCounts = List<int>.filled(15, 0);
+    for (var row in portfolioData) {
+      final weekString = row.week;
+      if (weekString != null) {
+        final weekNum = int.tryParse(weekString.replaceAll('주차', ''));
+        if (weekNum != null && weekNum > 0 && weekNum <= 15) {
+          weeklyCounts[weekNum - 1]++;
+        }
+      }
+    }
+
+    setState(() {
+      _model.chartDataParam = weeklyCounts;
+      _model.progressSubject = portfolioData.length;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +76,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // Fetch current professor's info
       _model.prfoutput = await PostsTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'user_email',
@@ -61,22 +87,100 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
         _model.prfoutput?.firstOrNull?.name,
         '교수 이름',
       );
-      safeSetState(() {});
+
+      // Fetch all classes assigned to this professor
       _model.classSelectedOnload = await ClassTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'professor',
           _model.profeesorName,
         ),
       );
-      _model.classOnload = _model.classSelectedOnload!
-          .where((e) =>
-              (e.year == _model.years) && (e.semester == _model.semester))
-          .toList()
-          .toList()
-          .cast<ClassRow>();
-      safeSetState(() {});
+
+      // Filter classes for the initially selected year and semester
+      _model.classOnload = _model.classSelectedOnload
+              ?.where((e) =>
+                  (e.year == _model.years) && (e.semester == _model.semester))
+              .toList()
+              .cast<ClassRow>() ??
+          [];
+
       FFAppState().usertype = widget.userType!;
-      safeSetState(() {});
+
+      // If there are classes for the current semester, load the first one automatically.
+      if (_model.classOnload.isNotEmpty) {
+        // Sort to get a predictable first class (by grade, then course name)
+        _model.classOnload.sort((a, b) {
+          int gradeCompare = a.grade!.compareTo(b.grade!);
+          if (gradeCompare != 0) return gradeCompare;
+          return a.course!.compareTo(b.course!);
+        });
+
+        final firstClass = _model.classOnload.first;
+        final firstGrade = firstClass.grade!;
+
+        // --- Simulate Grade Selection ---
+        _model.buttonGrades = firstGrade;
+        // Set button colors
+        switch (firstGrade) {
+          case 1:
+            _model.buttonColor1 = Color(0xFF284E75);
+            _model.textColor1 = FlutterFlowTheme.of(context).primaryBackground;
+            break;
+          case 2:
+            _model.buttonColor2 = Color(0xFF284E75);
+            _model.textColor2 = FlutterFlowTheme.of(context).primaryBackground;
+            break;
+          case 3:
+            _model.buttonColor3 = Color(0xFF284E75);
+            _model.textColor3 = FlutterFlowTheme.of(context).primaryBackground;
+            break;
+          case 4:
+            _model.buttonColor4 = Color(0xFF284E75);
+            _model.textColor4 = FlutterFlowTheme.of(context).primaryBackground;
+            break;
+          case 5:
+            _model.buttonColor5 = Color(0xFF284E75);
+            _model.textColor5 = FlutterFlowTheme.of(context).primaryBackground;
+            break;
+        }
+
+        // Filter classes for the selected grade
+        _model.classAfterGrade =
+            _model.classOnload.where((e) => e.grade == firstGrade).toList();
+
+        // --- Simulate Course Selection ---
+        if (_model.classAfterGrade.isNotEmpty) {
+          // This logic is to fetch all sections for a given course, even if taught by other professors.
+          _model.courseNameForOtherPfr = _model.classAfterGrade
+              .map((e) => valueOrDefault<String>(e.course, '과목 이름'))
+              .toSet()
+              .toList();
+
+          _model.classAfterGradeByCourseForSection =
+              await ClassTable().queryRows(
+            queryFn: (q) => q
+                .eq('year', _model.years)
+                .eq('semester', _model.semester)
+                .eq('grade', firstGrade)
+                .in_('course', _model.courseNameForOtherPfr)
+                .order('section', ascending: true),
+          );
+
+          if (_model.classAfterGradeByCourseForSection.isNotEmpty) {
+            _model.courseSelected = 0; // Select the first course card
+            _model.classAfterCourse = [_model.classAfterGrade.first];
+
+            // Finally, fetch the chart data for the selected course
+            await _fetchChartData(
+                _model.classAfterGradeByCourseForSection.first.id);
+          }
+        }
+      }
+
+      // Update the UI with all the new state
+      if (mounted) {
+        safeSetState(() {});
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
@@ -2359,21 +2463,9 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                           safeSetState(() {});
                                                                                           _model.addToClassAfterCourse(_model.classAfterGrade.elementAtOrNull(0)!);
                                                                                           safeSetState(() {});
-                                                                                          _model.progressoutput1 = await SubjectportpolioTable().queryRows(
-                                                                                            queryFn: (q) => q
-                                                                                                .eqOrNull(
-                                                                                                  'professor_name',
-                                                                                                  _model.profeesorName,
-                                                                                                )
-                                                                                                .eqOrNull(
-                                                                                                  'class',
-                                                                                                  _model.classAfterGradeByCourseForSection.firstOrNull?.id,
-                                                                                                ),
-                                                                                          );
-                                                                                          _model.progressSubject = _model.progressoutput1!.length;
-                                                                                          safeSetState(() {});
-
-                                                                                          safeSetState(() {});
+                                                                                          if (_model.classAfterGradeByCourseForSection.isNotEmpty) {
+                                                                                            await _fetchChartData(_model.classAfterGradeByCourseForSection.first.id);
+                                                                                          }
                                                                                         },
                                                                                         child: AnimatedDefaultTextStyle(
                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3268,21 +3360,10 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                             safeSetState(() {});
                                                                                             _model.addToClassAfterCourse(_model.classAfterGrade.elementAtOrNull(1)!);
                                                                                             safeSetState(() {});
-                                                                                            _model.progressoutput2 = await SubjectportpolioTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(1)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressSubject = _model.progressoutput2!.length;
-                                                                                            safeSetState(() {});
-
-                                                                                            safeSetState(() {});
+                                                                                            final classInfo = _model.classAfterGradeByCourseForSection.elementAtOrNull(1);
+                                                                                            if (classInfo != null) {
+                                                                                              await _fetchChartData(classInfo.id);
+                                                                                            }
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3831,21 +3912,10 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                             safeSetState(() {});
                                                                                             _model.addToClassAfterCourse(_model.classAfterGrade.elementAtOrNull(2)!);
                                                                                             safeSetState(() {});
-                                                                                            _model.progressoutput3 = await SubjectportpolioTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(2)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressSubject = _model.progressoutput3!.length;
-                                                                                            safeSetState(() {});
-
-                                                                                            safeSetState(() {});
+                                                                                            final classInfo = _model.classAfterGradeByCourseForSection.elementAtOrNull(2);
+                                                                                            if (classInfo != null) {
+                                                                                              await _fetchChartData(classInfo.id);
+                                                                                            }
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
                                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
