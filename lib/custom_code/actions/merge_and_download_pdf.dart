@@ -83,14 +83,19 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
         src = PdfDocument(inputBytes: resp.bodyBytes);
         if (src.pages.count > 0) {
           for (int pageIndex = 0; pageIndex < src.pages.count; pageIndex++) {
-            final template = src.pages[pageIndex].createTemplate();
-            final pageSize = template.size;
+            final PdfPage srcPage = src.pages[pageIndex];
+            final ui.Size pageSize =
+                ui.Size(srcPage.size.width, srcPage.size.height);
+
             finalDoc.pageSettings.size = pageSize;
-            final newPage = finalDoc.pages.add();
-            newPage.graphics.drawPdfTemplate(
+            final PdfPage dstPage = finalDoc.pages.add();
+            dstPage.rotation = srcPage.rotation;
+
+            final PdfTemplate template = srcPage.createTemplate();
+            dstPage.graphics.drawPdfTemplate(
               template,
               ui.Offset.zero,
-              ui.Size(pageSize.width, pageSize.height),
+              pageSize,
             );
           }
         }
