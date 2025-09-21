@@ -368,6 +368,10 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
     while (academicGetDateFocusNodes.isNotEmpty) {
       removeAcademicRecordControllers(academicGetDateFocusNodes.length - 1);
     }
+    if (records.isEmpty) {
+      addAcademicRecordControllers();
+      return;
+    }
     for (final record in records) {
       final map = record is Map
           ? Map<String, dynamic>.from(record as Map)
@@ -426,6 +430,10 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
   void resetTeachingControllersWithRecords(List<dynamic> records) {
     while (teachingPeriodFocusNodes.isNotEmpty) {
       removeTeachingRecordControllers(teachingPeriodFocusNodes.length - 1);
+    }
+    if (records.isEmpty) {
+      addTeachingRecordControllers();
+      return;
     }
     for (final record in records) {
       final map = record is Map

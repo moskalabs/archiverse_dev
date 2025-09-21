@@ -13,6 +13,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_web_view.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/upload_data.dart';
+import 'dart:convert';
 import 'dart:ui';
 import '/index.dart';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -42,10 +43,140 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  static const List<String> _academicFieldKeys = [
+    'getDate',
+    'university',
+    'major',
+    'degree',
+  ];
+
+  static const List<String> _teachingFieldKeys = [
+    'period',
+    'schoolDepartment',
+    'subject',
+    'creditsHours',
+  ];
+
+  Map<String, dynamic> _emptyRecord(List<String> fields) => {
+        for (final field in fields) field: '',
+      };
+
+  Map<String, dynamic> _normalizeRecord(
+    dynamic record,
+    List<String> fields,
+  ) {
+    if (record == null) {
+      return _emptyRecord(fields);
+    }
+
+    Map<String, dynamic> map;
+    if (record is Map) {
+      map = record.map(
+        (key, value) => MapEntry(key.toString(), value),
+      );
+    } else if (record is String && record.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(record);
+        if (decoded is Map) {
+          map = decoded.map(
+            (key, value) => MapEntry(key.toString(), value),
+          );
+        } else {
+          map = <String, dynamic>{};
+        }
+      } catch (_) {
+        map = <String, dynamic>{};
+      }
+    } else {
+      map = <String, dynamic>{};
+    }
+
+    if (map.isEmpty) {
+      for (final field in fields) {
+        final value = getJsonField(record, "\$.${field}");
+        if (value != null) {
+          map[field] = value;
+        }
+      }
+    }
+
+    return {
+      for (final field in fields) field: map[field]?.toString() ?? '',
+    };
+  }
+
+  List<Map<String, dynamic>> _normalizeRecords(
+    Iterable<dynamic> records,
+    List<String> fields,
+    int maxLength,
+  ) {
+    final normalized = <Map<String, dynamic>>[];
+    var added = 0;
+    for (final record in records) {
+      if (added >= maxLength) {
+        break;
+      }
+      normalized.add(_normalizeRecord(record, fields));
+      added++;
+    }
+    if (normalized.isEmpty) {
+      normalized.add(_emptyRecord(fields));
+    }
+    return normalized;
+  }
+
+  void _assignRecordState({
+    required List<Map<String, dynamic>> academicRecords,
+    required List<Map<String, dynamic>> teachingRecords,
+    bool notify = true,
+  }) {
+    _model.academicRecords = academicRecords
+        .map((record) => Map<String, dynamic>.from(record))
+        .toList();
+    _model.teachingRecords = teachingRecords
+        .map((record) => Map<String, dynamic>.from(record))
+        .toList();
+
+    FFAppState().mypageAcademicRecords =
+        List<dynamic>.from(_model.academicRecords.take(3));
+    FFAppState().mypageTeachingRecords =
+        List<dynamic>.from(_model.teachingRecords.take(4));
+
+    if (notify) {
+      safeSetState(() {
+        _model.resetAcademicControllersWithRecords(
+            FFAppState().mypageAcademicRecords.take(3).toList());
+        _model.resetTeachingControllersWithRecords(
+            FFAppState().mypageTeachingRecords.take(4).toList());
+      });
+    } else {
+      _model.resetAcademicControllersWithRecords(
+          FFAppState().mypageAcademicRecords.take(3).toList());
+      _model.resetTeachingControllersWithRecords(
+          FFAppState().mypageTeachingRecords.take(4).toList());
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ProfMyProfileModel());
+
+    final initialAcademicRecords = _normalizeRecords(
+      FFAppState().mypageAcademicRecords,
+      _academicFieldKeys,
+      3,
+    );
+    final initialTeachingRecords = _normalizeRecords(
+      FFAppState().mypageTeachingRecords,
+      _teachingFieldKeys,
+      4,
+    );
+    _assignRecordState(
+      academicRecords: initialAcademicRecords,
+      teachingRecords: initialTeachingRecords,
+      notify: false,
+    );
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
@@ -145,13 +276,20 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
             milliseconds: 500,
           ),
         );
-        _model.academicRecords = _model.querybyname!.firstOrNull!.degreeList
-            .toList()
-            .cast<dynamic>();
-        _model.teachingRecords = _model.querybyname!.firstOrNull!.lecExperience
-            .toList()
-            .cast<dynamic>();
-        safeSetState(() {});
+        final supabaseAcademicRecords = _normalizeRecords(
+          _model.querybyname!.firstOrNull!.degreeList,
+          _academicFieldKeys,
+          3,
+        );
+        final supabaseTeachingRecords = _normalizeRecords(
+          _model.querybyname!.firstOrNull!.lecExperience,
+          _teachingFieldKeys,
+          4,
+        );
+        _assignRecordState(
+          academicRecords: supabaseAcademicRecords,
+          teachingRecords: supabaseTeachingRecords,
+        );
         safeSetState(() {
           _model.archiAbroadTextFieldTextController?.text = getJsonField(
             _model.myProfileList!.pfrLicensed!,
@@ -184,66 +322,13 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
           _model.projectTextFieldTextController?.text =
               _model.myProfileList!.pfrProject!;
         });
-        if ((_model.academicRecords.firstOrNull != null) ||
-            (_model.teachingRecords.firstOrNull != null)) {
-        } else {
-          _model.addToAcademicRecordsFirst(<String, dynamic>{
-            'getDate': '',
-            'university': '',
-            'major': '',
-            'degree': '',
-          });
-          _model.addToTeachingRecordsFirst(<String, dynamic>{
-            'period': '',
-            'schoolDepartment': '',
-            'subject': '',
-            'creditsHours': '',
-          });
-          safeSetState(() {});
-          _model.academicRecords =
-              _model.academicRecordsFirst.firstOrNull!.toList().cast<dynamic>();
-          _model.teachingRecords =
-              _model.teachingRecordsFirst.firstOrNull!.toList().cast<dynamic>();
-          safeSetState(() {});
-        }
-
-        FFAppState().mypageAcademicRecords =
-            _model.academicRecords.toList().cast<dynamic>();
-        FFAppState().mypageTeachingRecords =
-            _model.teachingRecords.toList().cast<dynamic>();
-        safeSetState(() {});
-        _model.resetAcademicControllersWithRecords(
-            FFAppState().mypageAcademicRecords.take(3).toList());
-        _model.resetTeachingControllersWithRecords(
-            FFAppState().mypageTeachingRecords.take(4).toList());
       } else {
-        _model.addToAcademicRecordsFirst(<String, dynamic>{
-          'getDate': '',
-          'university': '',
-          'major': '',
-          'degree': '',
-        });
-        _model.addToTeachingRecordsFirst(<String, dynamic>{
-          'period': '',
-          'schoolDepartment': '',
-          'subject': '',
-          'creditsHours': '',
-        });
-        safeSetState(() {});
-        _model.academicRecords =
-            _model.academicRecordsFirst.firstOrNull!.toList().cast<dynamic>();
-        _model.teachingRecords =
-            _model.teachingRecordsFirst.firstOrNull!.toList().cast<dynamic>();
-        safeSetState(() {});
-        FFAppState().mypageAcademicRecords =
-            _model.academicRecords.toList().cast<dynamic>();
-        FFAppState().mypageTeachingRecords =
-            FFAppState().mypageTeachingRecords.toList().cast<dynamic>();
-        safeSetState(() {});
-        _model.resetAcademicControllersWithRecords(
-            FFAppState().mypageAcademicRecords.take(3).toList());
-        _model.resetTeachingControllersWithRecords(
-            FFAppState().mypageTeachingRecords.take(4).toList());
+        _assignRecordState(
+          academicRecords:
+              _normalizeRecords(const [], _academicFieldKeys, 3),
+          teachingRecords:
+              _normalizeRecords(const [], _teachingFieldKeys, 4),
+        );
       }
     });
 
@@ -5401,8 +5486,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                                 ) ??
                                                                                                 false;
                                                                                             if (confirmDialogResponse) {
-                                                                                              FFAppState().mypageAcademicRecords = [];
-                                                                                              FFAppState().mypageTeachingRecords = [];
                                                                                               FFAppState().archix = false;
                                                                                               FFAppState().archikr = false;
                                                                                               FFAppState().archiabroad = false;
@@ -5418,34 +5501,19 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                               FFAppState().consturction = false;
                                                                                               safeSetState(() {});
                                                                                               _model.myProfileList = null;
-                                                                                              _model.academicRecords = [];
                                                                                               _model.degreeTextField = null;
-                                                                                              _model.teachingRecords = [];
-                                                                                              _model.resetAcademicControllersWithRecords([]);
-                                                                                              _model.resetTeachingControllersWithRecords([]);
-                                                                                              final emptyAcademic = <String, dynamic>{
-                                                                                                'getDate': '',
-                                                                                                'university': '',
-                                                                                                'major': '',
-                                                                                                'degree': '',
-                                                                                              };
-                                                                                              final emptyTeaching = <String, dynamic>{
-                                                                                                'period': '',
-                                                                                                'schoolDepartment': '',
-                                                                                                'subject': '',
-                                                                                                'creditsHours': '',
-                                                                                              };
-                                                                                              FFAppState().mypageAcademicRecords = [emptyAcademic];
-                                                                                              FFAppState().mypageTeachingRecords = [emptyTeaching];
-                                                                                              _model.academicRecords =
-                                                                                                  List<dynamic>.from(FFAppState().mypageAcademicRecords.take(3));
-                                                                                              _model.teachingRecords =
-                                                                                                  List<dynamic>.from(FFAppState().mypageTeachingRecords.take(4));
-                                                                                              _model.resetAcademicControllersWithRecords(
-                                                                                                  FFAppState().mypageAcademicRecords.take(3).toList());
-                                                                                              _model.resetTeachingControllersWithRecords(
-                                                                                                  FFAppState().mypageTeachingRecords.take(4).toList());
-                                                                                              safeSetState(() {});
+                                                                                              _assignRecordState(
+                                                                                                academicRecords: _normalizeRecords(
+                                                                                                  const [],
+                                                                                                  _academicFieldKeys,
+                                                                                                  3,
+                                                                                                ),
+                                                                                                teachingRecords: _normalizeRecords(
+                                                                                                  const [],
+                                                                                                  _teachingFieldKeys,
+                                                                                                  4,
+                                                                                                ),
+                                                                                              );
                                                                                             }
                                                                                           },
                                                                                           text: FFLocalizations.of(context).getText(
