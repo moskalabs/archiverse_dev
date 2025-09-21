@@ -309,14 +309,8 @@ class _DashboardClassContainerWidgetState
                       onPressed: () async {
                         if ((widget.currentlySelectedID == widget.classID) ==
                             true) {
-                          await actions.mergePdfs(
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/courseplan/1741517426639000.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/attendance/7.PDF_ATTENDANCE.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/PDF_COVER.pdf',
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
-                          );
-                          await actions.mergeAndDownloadPdf(
-                            FFAppState().mergepdfs.toList(),
+                          await actions.customMergeAndDownload(
+                            widget.classID!,
                           );
                         }
                       },
