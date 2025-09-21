@@ -23,26 +23,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   }
 
   final PdfDocument finalDoc = PdfDocument();
-  final Map<String, PdfSection> _sectionCache = <String, PdfSection>{};
   Uint8List? outputBytes;
   final int totalFiles = pdfUrls.length;
-
-  String _sectionKey(Size size) =>
-      '${size.width.toStringAsFixed(3)}x${size.height.toStringAsFixed(3)}';
-
-  PdfSection _resolveSection(Size pageSize) {
-    final String key = _sectionKey(pageSize);
-    final PdfSection? existing = _sectionCache[key];
-    if (existing != null) {
-      return existing;
-    }
-
-    final PdfSection section = finalDoc.sections.add();
-    section.pageSettings.margins.all = 0;
-    section.pageSettings.size = pageSize;
-    _sectionCache[key] = section;
-    return section;
-  }
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -105,8 +87,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
             final Size pageSize =
                 Size(srcPage.size.width, srcPage.size.height);
 
-            final PdfSection targetSection = _resolveSection(pageSize);
-            final PdfPage dstPage = targetSection.pages.add();
+            finalDoc.pageSettings.size = pageSize;
+            final PdfPage dstPage = finalDoc.pages.add();
             dstPage.rotation = srcPage.rotation;
 
             final PdfTemplate template = srcPage.createTemplate();
