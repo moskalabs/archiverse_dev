@@ -6,8 +6,6 @@ import '/components/default_layout/left_right/left_widget/left_widget_widget.dar
 import '/components/default_layout/left_right/right_widget/right_widget_widget.dart';
 import '/components/default_layout/nav_bar/navi_sidebar/navi_sidebar_widget.dart';
 import '/components/default_layout/nav_bar/navi_sidebar_mobile/navi_sidebar_mobile_widget.dart';
-import '/components/profile/degree_input/degree_input_widget.dart';
-import '/components/profile/teaching_history/teaching_history_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_toggle_icon.dart';
@@ -214,6 +212,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         FFAppState().mypageTeachingRecords =
             _model.teachingRecords.toList().cast<dynamic>();
         safeSetState(() {});
+        _model.resetAcademicControllersWithRecords(
+            FFAppState().mypageAcademicRecords.take(3).toList());
+        _model.resetTeachingControllersWithRecords(
+            FFAppState().mypageTeachingRecords.take(4).toList());
       } else {
         _model.addToAcademicRecordsFirst(<String, dynamic>{
           'getDate': '',
@@ -238,6 +240,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         FFAppState().mypageTeachingRecords =
             FFAppState().mypageTeachingRecords.toList().cast<dynamic>();
         safeSetState(() {});
+        _model.resetAcademicControllersWithRecords(
+            FFAppState().mypageAcademicRecords.take(3).toList());
+        _model.resetTeachingControllersWithRecords(
+            FFAppState().mypageTeachingRecords.take(4).toList());
       }
     });
 
@@ -321,6 +327,160 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     _model.dispose();
 
     super.dispose();
+  }
+
+  InputDecoration _recordInputDecoration(
+    BuildContext context,
+    String hint,
+  ) {
+    final theme = FlutterFlowTheme.of(context);
+    return InputDecoration(
+      isDense: true,
+      labelStyle: theme.labelMedium.override(
+        font: GoogleFonts.openSans(
+          fontWeight: theme.labelMedium.fontWeight,
+          fontStyle: theme.labelMedium.fontStyle,
+        ),
+        letterSpacing: 0.0,
+      ),
+      hintText: hint,
+      hintStyle: theme.labelMedium.override(
+        font: GoogleFonts.openSans(
+          fontWeight: theme.labelMedium.fontWeight,
+          fontStyle: theme.labelMedium.fontStyle,
+        ),
+        letterSpacing: 0.0,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Color(0x00000000),
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Color(0x00000000),
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: theme.error,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: theme.error,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      filled: true,
+      fillColor: theme.secondaryBackground,
+    );
+  }
+
+  TextStyle _recordTextStyle(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return theme.bodyMedium.override(
+      font: GoogleFonts.openSans(
+        fontWeight: theme.bodyMedium.fontWeight,
+        fontStyle: theme.bodyMedium.fontStyle,
+      ),
+      letterSpacing: 0.0,
+    );
+  }
+
+  void _handleAcademicFieldChanged(int index) {
+    if (index >= _model.academicGetDateTextControllers.length) {
+      return;
+    }
+    final record = <String, dynamic>{
+      'getDate': _model.academicGetDateTextControllers[index].text,
+      'university': _model.academicUniversityTextControllers[index].text,
+      'major': _model.academicMajorTextControllers[index].text,
+      'degree': _model.academicDegreeTextControllers[index].text,
+    };
+    if (index < FFAppState().mypageAcademicRecords.length) {
+      FFAppState().updateMypageAcademicRecordsAtIndex(
+        index,
+        (_) => record,
+      );
+    } else {
+      FFAppState().addToMypageAcademicRecords(record);
+    }
+    while (_model.academicRecords.length <= index) {
+      _model.addToAcademicRecords(<String, dynamic>{});
+    }
+    _model.updateAcademicRecordsAtIndex(index, (_) => record);
+  }
+
+  void _handleTeachingFieldChanged(int index) {
+    if (index >= _model.teachingPeriodTextControllers.length) {
+      return;
+    }
+    final record = <String, dynamic>{
+      'period': _model.teachingPeriodTextControllers[index].text,
+      'schoolDepartment':
+          _model.teachingSchoolTextControllers[index].text,
+      'subject': _model.teachingSubjectTextControllers[index].text,
+      'creditsHours': _model.teachingCreditTextControllers[index].text,
+    };
+    if (index < FFAppState().mypageTeachingRecords.length) {
+      FFAppState().updateMypageTeachingRecordsAtIndex(
+        index,
+        (_) => record,
+      );
+    } else {
+      FFAppState().addToMypageTeachingRecords(record);
+    }
+    while (_model.teachingRecords.length <= index) {
+      _model.addToTeachingRecords(<String, dynamic>{});
+    }
+    _model.updateTeachingRecordsAtIndex(index, (_) => record);
+  }
+
+  List<Map<String, dynamic>> _collectAcademicRecords() {
+    final records = <Map<String, dynamic>>[];
+    for (var i = 0; i < _model.academicGetDateTextControllers.length; i++) {
+      final record = <String, dynamic>{
+        'getDate': _model.academicGetDateTextControllers[i].text,
+        'university': _model.academicUniversityTextControllers[i].text,
+        'major': _model.academicMajorTextControllers[i].text,
+        'degree': _model.academicDegreeTextControllers[i].text,
+      };
+      final hasContent = record.values.any(
+        (value) => value is String ? value.trim().isNotEmpty : value != null,
+      );
+      if (hasContent) {
+        records.add(record);
+      }
+    }
+    return records;
+  }
+
+  List<Map<String, dynamic>> _collectTeachingRecords() {
+    final records = <Map<String, dynamic>>[];
+    for (var i = 0; i < _model.teachingPeriodTextControllers.length; i++) {
+      final record = <String, dynamic>{
+        'period': _model.teachingPeriodTextControllers[i].text,
+        'schoolDepartment':
+            _model.teachingSchoolTextControllers[i].text,
+        'subject': _model.teachingSubjectTextControllers[i].text,
+        'creditsHours': _model.teachingCreditTextControllers[i].text,
+      };
+      final hasContent = record.values.any(
+        (value) => value is String ? value.trim().isNotEmpty : value != null,
+      );
+      if (hasContent) {
+        records.add(record);
+      }
+    }
+    return records;
   }
 
   @override
@@ -4100,78 +4260,123 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         Container(
                                                                       width: double
                                                                           .infinity,
-                                                                      height: valueOrDefault<
-                                                                          double>(
-                                                                        _model.academicRecords.elementAtOrNull(1) !=
-                                                                                null
-                                                                            ? 180.0
-                                                                            : 100.0,
-                                                                        100.0,
-                                                                      ),
+                                                                      height: 250.0,
                                                                       decoration:
                                                                           BoxDecoration(),
                                                                       child:
                                                                           Builder(
                                                                         builder:
                                                                             (context) {
-                                                                          final academicSettingChildren = FFAppState()
+                                                                          final academicRecords = FFAppState()
                                                                               .mypageAcademicRecords
                                                                               .map((e) => e)
                                                                               .toList()
                                                                               .take(3)
                                                                               .toList();
-
-                                                                          return ListView
-                                                                              .builder(
-                                                                            padding:
-                                                                                EdgeInsets.zero,
-                                                                            primary:
-                                                                                false,
-                                                                            shrinkWrap:
-                                                                                true,
-                                                                            scrollDirection:
-                                                                                Axis.vertical,
-                                                                            itemCount:
-                                                                                academicSettingChildren.length,
-                                                                            itemBuilder:
-                                                                                (context, academicSettingChildrenIndex) {
-                                                                              final academicSettingChildrenItem = academicSettingChildren[academicSettingChildrenIndex];
-                                                                              return wrapWithModel(
-                                                                                model: _model.degreeInputModels.getModel(
-                                                                                  academicSettingChildrenIndex.toString(),
-                                                                                  academicSettingChildrenIndex,
-                                                                                ),
-                                                                                updateCallback: () => safeSetState(() {}),
-                                                                                updateOnChange: true,
-                                                                                child: DegreeInputWidget(
-                                                                                  key: Key(
-                                                                                    'Keyj4i_${academicSettingChildrenIndex.toString()}',
-                                                                                  ),
-                                                                                  academicRecordItem: academicSettingChildrenItem,
-                                                                                  getDate: getJsonField(
-                                                                                    academicSettingChildrenItem,
-                                                                                    r'''$.getDate''',
-                                                                                  ).toString(),
-                                                                                  university: getJsonField(
-                                                                                    academicSettingChildrenItem,
-                                                                                    r'''$.university''',
-                                                                                  ).toString(),
-                                                                                  major: getJsonField(
-                                                                                    academicSettingChildrenItem,
-                                                                                    r'''$.major''',
-                                                                                  ).toString(),
-                                                                                  degree: getJsonField(
-                                                                                    academicSettingChildrenItem,
-                                                                                    r'''$.degree''',
-                                                                                  ).toString(),
-                                                                                  currentSelectedSet: valueOrDefault<int>(
-                                                                                    academicSettingChildrenIndex,
-                                                                                    0,
-                                                                                  ),
-                                                                                  getAlldetails: () async {},
-                                                                                ),
+                                                                          if (_model.academicGetDateTextControllers.length <
+                                                                              academicRecords.length) {
+                                                                            for (var i =
+                                                                                    _model.academicGetDateTextControllers.length;
+                                                                                i < academicRecords.length;
+                                                                                i++) {
+                                                                              final record = academicRecords[i] is Map
+                                                                                  ? Map<String, dynamic>.from(academicRecords[i] as Map)
+                                                                                  : <String, dynamic>{};
+                                                                              _model.addAcademicRecordControllers(
+                                                                                getDate: record['getDate']?.toString(),
+                                                                                university: record['university']?.toString(),
+                                                                                major: record['major']?.toString(),
+                                                                                degree: record['degree']?.toString(),
                                                                               );
-                                                                            },
+                                                                            }
+                                                                          } else if (_model.academicGetDateTextControllers.length >
+                                                                              academicRecords.length) {
+                                                                            for (var i =
+                                                                                    _model.academicGetDateTextControllers.length -
+                                                                                        1;
+                                                                                i >= academicRecords.length;
+                                                                                i--) {
+                                                                              _model.removeAcademicRecordControllers(i);
+                                                                            }
+                                                                          }
+
+                                                                          return SingleChildScrollView(
+                                                                            child: Column(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: List.generate(
+                                                                                academicRecords.length,
+                                                                                (academicIndex) => Padding(
+                                                                                  padding: EdgeInsets.symmetric(
+                                                                                    vertical: 8.0,
+                                                                                  ),
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    children: [
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.academicGetDateTextControllers[academicIndex],
+                                                                                          focusNode: _model.academicGetDateFocusNodes[academicIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            'YYYY.MM',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                          keyboardType: TextInputType.datetime,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.academicUniversityTextControllers[academicIndex],
+                                                                                          focusNode: _model.academicUniversityFocusNodes[academicIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            'OO대학교',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.academicMajorTextControllers[academicIndex],
+                                                                                          focusNode: _model.academicMajorFocusNodes[academicIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            '건축학과',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.academicDegreeTextControllers[academicIndex],
+                                                                                          focusNode: _model.academicDegreeFocusNodes[academicIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            '학위',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           );
                                                                         },
                                                                       ),
@@ -4210,20 +4415,24 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  FFAppState().addToMypageAcademicRecords(<String, dynamic>{
-                                                                                    'getDate': '',
-                                                                                    'university': '',
-                                                                                    'major': '',
-                                                                                    'degree': '',
-                                                                                  });
-                                                                                  safeSetState(() {});
-                                                                                  _model.addToAcademicRecords(<String, dynamic>{
-                                                                                    'getDate': '',
-                                                                                    'university': '',
-                                                                                    'major': '',
-                                                                                    'degree': '',
-                                                                                  });
-                                                                                  safeSetState(() {});
+                                                                                  if (FFAppState().mypageAcademicRecords.length <
+                                                                                      3) {
+                                                                                    final newRecord = <String, dynamic>{
+                                                                                      'getDate': '',
+                                                                                      'university': '',
+                                                                                      'major': '',
+                                                                                      'degree': '',
+                                                                                    };
+                                                                                    FFAppState().addToMypageAcademicRecords(newRecord);
+                                                                                    _model.addToAcademicRecords(newRecord);
+                                                                                    _model.addAcademicRecordControllers(
+                                                                                      getDate: '',
+                                                                                      university: '',
+                                                                                      major: '',
+                                                                                      degree: '',
+                                                                                    );
+                                                                                    safeSetState(() {});
+                                                                                  }
                                                                                 },
                                                                                 text: FFLocalizations.of(context).getText(
                                                                                   'wbc1rycr' /* 추가 + */,
@@ -4290,10 +4499,16 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageAcademicRecords.elementAtOrNull(1) != null) {
-                                                                                    FFAppState().removeFromMypageAcademicRecords(FFAppState().mypageAcademicRecords.lastOrNull!);
-                                                                                    safeSetState(() {});
-                                                                                    _model.removeFromAcademicRecords(_model.academicRecords.lastOrNull!);
+                                                                                  if (FFAppState().mypageAcademicRecords.length >
+                                                                                      1) {
+                                                                                    final removeIndex = FFAppState().mypageAcademicRecords.length - 1;
+                                                                                    FFAppState().removeAtIndexFromMypageAcademicRecords(removeIndex);
+                                                                                    if (_model.academicRecords.length > removeIndex) {
+                                                                                      _model.removeAtIndexFromAcademicRecords(removeIndex);
+                                                                                    }
+                                                                                    if (_model.academicGetDateTextControllers.length > removeIndex) {
+                                                                                      _model.removeAcademicRecordControllers(removeIndex);
+                                                                                    }
                                                                                     safeSetState(() {});
                                                                                   }
                                                                                 },
@@ -4435,55 +4650,122 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         Container(
                                                                       width: double
                                                                           .infinity,
-                                                                      height: valueOrDefault<
-                                                                          double>(
-                                                                        _model.teachingRecords.elementAtOrNull(1) !=
-                                                                                null
-                                                                            ? 180.0
-                                                                            : 100.0,
-                                                                        100.0,
-                                                                      ),
+                                                                      height: 300.0,
                                                                       decoration:
                                                                           BoxDecoration(),
                                                                       child:
                                                                           Builder(
                                                                         builder:
                                                                             (context) {
-                                                                          final mypageTeachingRecordsInCV = FFAppState()
+                                                                          final teachingRecords = FFAppState()
                                                                               .mypageTeachingRecords
                                                                               .map((e) => e)
                                                                               .toList()
                                                                               .take(4)
                                                                               .toList();
-
-                                                                          return ListView
-                                                                              .builder(
-                                                                            padding:
-                                                                                EdgeInsets.zero,
-                                                                            shrinkWrap:
-                                                                                true,
-                                                                            scrollDirection:
-                                                                                Axis.vertical,
-                                                                            itemCount:
-                                                                                mypageTeachingRecordsInCV.length,
-                                                                            itemBuilder:
-                                                                                (context, mypageTeachingRecordsInCVIndex) {
-                                                                              final mypageTeachingRecordsInCVItem = mypageTeachingRecordsInCV[mypageTeachingRecordsInCVIndex];
-                                                                              return wrapWithModel(
-                                                                                model: _model.teachingHistoryModels.getModel(
-                                                                                  mypageTeachingRecordsInCVIndex.toString(),
-                                                                                  mypageTeachingRecordsInCVIndex,
-                                                                                ),
-                                                                                updateCallback: () => safeSetState(() {}),
-                                                                                updateOnChange: true,
-                                                                                child: TeachingHistoryWidget(
-                                                                                  key: Key(
-                                                                                    'Keymj1_${mypageTeachingRecordsInCVIndex.toString()}',
-                                                                                  ),
-                                                                                  teachingRecordItem: mypageTeachingRecordsInCVItem,
-                                                                                ),
+                                                                          if (_model.teachingPeriodTextControllers.length <
+                                                                              teachingRecords.length) {
+                                                                            for (var i =
+                                                                                    _model.teachingPeriodTextControllers.length;
+                                                                                i < teachingRecords.length;
+                                                                                i++) {
+                                                                              final record = teachingRecords[i] is Map
+                                                                                  ? Map<String, dynamic>.from(teachingRecords[i] as Map)
+                                                                                  : <String, dynamic>{};
+                                                                              _model.addTeachingRecordControllers(
+                                                                                period: record['period']?.toString(),
+                                                                                schoolDepartment: record['schoolDepartment']?.toString(),
+                                                                                subject: record['subject']?.toString(),
+                                                                                creditsHours: record['creditsHours']?.toString(),
                                                                               );
-                                                                            },
+                                                                            }
+                                                                          } else if (_model.teachingPeriodTextControllers.length >
+                                                                              teachingRecords.length) {
+                                                                            for (var i =
+                                                                                    _model.teachingPeriodTextControllers.length -
+                                                                                        1;
+                                                                                i >= teachingRecords.length;
+                                                                                i--) {
+                                                                              _model.removeTeachingRecordControllers(i);
+                                                                            }
+                                                                          }
+
+                                                                          return SingleChildScrollView(
+                                                                            child: Column(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: List.generate(
+                                                                                teachingRecords.length,
+                                                                                (teachingIndex) => Padding(
+                                                                                  padding: EdgeInsets.symmetric(
+                                                                                    vertical: 8.0,
+                                                                                  ),
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    children: [
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.teachingPeriodTextControllers[teachingIndex],
+                                                                                          focusNode: _model.teachingPeriodFocusNodes[teachingIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            '기간',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleTeachingFieldChanged(teachingIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.teachingSchoolTextControllers[teachingIndex],
+                                                                                          focusNode: _model.teachingSchoolFocusNodes[teachingIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            'OO대학교/OO과',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleTeachingFieldChanged(teachingIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.teachingSubjectTextControllers[teachingIndex],
+                                                                                          focusNode: _model.teachingSubjectFocusNodes[teachingIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            '강의과목',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleTeachingFieldChanged(teachingIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                      SizedBox(width: 8.0),
+                                                                                      Expanded(
+                                                                                        child: TextFormField(
+                                                                                          controller: _model.teachingCreditTextControllers[teachingIndex],
+                                                                                          focusNode: _model.teachingCreditFocusNodes[teachingIndex],
+                                                                                          decoration: _recordInputDecoration(
+                                                                                            context,
+                                                                                            '학점/시간',
+                                                                                          ),
+                                                                                          style: _recordTextStyle(context),
+                                                                                          onChanged: (_) => _handleTeachingFieldChanged(teachingIndex),
+                                                                                          autofocus: false,
+                                                                                          obscureText: false,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           );
                                                                         },
                                                                       ),
@@ -4522,20 +4804,24 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  FFAppState().addToMypageTeachingRecords(<String, dynamic>{
-                                                                                    'period': '',
-                                                                                    'schoolDepartment': '',
-                                                                                    'subject': '',
-                                                                                    'creditsHours': '',
-                                                                                  });
-                                                                                  safeSetState(() {});
-                                                                                  _model.addToTeachingRecords(<String, dynamic>{
-                                                                                    'period': '',
-                                                                                    'schoolDepartment': '',
-                                                                                    'subject': '',
-                                                                                    'creditsHours': '',
-                                                                                  });
-                                                                                  safeSetState(() {});
+                                                                                  if (FFAppState().mypageTeachingRecords.length <
+                                                                                      4) {
+                                                                                    final newRecord = <String, dynamic>{
+                                                                                      'period': '',
+                                                                                      'schoolDepartment': '',
+                                                                                      'subject': '',
+                                                                                      'creditsHours': '',
+                                                                                    };
+                                                                                    FFAppState().addToMypageTeachingRecords(newRecord);
+                                                                                    _model.addToTeachingRecords(newRecord);
+                                                                                    _model.addTeachingRecordControllers(
+                                                                                      period: '',
+                                                                                      schoolDepartment: '',
+                                                                                      subject: '',
+                                                                                      creditsHours: '',
+                                                                                    );
+                                                                                    safeSetState(() {});
+                                                                                  }
                                                                                 },
                                                                                 text: FFLocalizations.of(context).getText(
                                                                                   '0ci94j6j' /* 추가 + */,
@@ -4602,10 +4888,16 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageTeachingRecords.elementAtOrNull(1) != null) {
-                                                                                    FFAppState().removeFromMypageTeachingRecords(FFAppState().mypageTeachingRecords.lastOrNull!);
-                                                                                    safeSetState(() {});
-                                                                                    _model.removeFromTeachingRecords(_model.teachingRecords.lastOrNull!);
+                                                                                  if (FFAppState().mypageTeachingRecords.length >
+                                                                                      1) {
+                                                                                    final removeIndex = FFAppState().mypageTeachingRecords.length - 1;
+                                                                                    FFAppState().removeAtIndexFromMypageTeachingRecords(removeIndex);
+                                                                                    if (_model.teachingRecords.length > removeIndex) {
+                                                                                      _model.removeAtIndexFromTeachingRecords(removeIndex);
+                                                                                    }
+                                                                                    if (_model.teachingPeriodTextControllers.length > removeIndex) {
+                                                                                      _model.removeTeachingRecordControllers(removeIndex);
+                                                                                    }
                                                                                     safeSetState(() {});
                                                                                   }
                                                                                 },
@@ -4910,256 +5202,19 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                         padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 4.0, 0.0),
                                                                                         child: FFButtonWidget(
                                                                                           onPressed: () async {
+                                                                                            final academicRecords = _collectAcademicRecords();
+                                                                                            final teachingRecords = _collectTeachingRecords();
+
+                                                                                            _model.academicRecords = List<dynamic>.from(academicRecords);
+                                                                                            _model.teachingRecords = List<dynamic>.from(teachingRecords);
+
+                                                                                            FFAppState().mypageAcademicRecords =
+                                                                                                _model.academicRecords.toList().cast<dynamic>();
+                                                                                            FFAppState().mypageTeachingRecords =
+                                                                                                _model.teachingRecords.toList().cast<dynamic>();
+                                                                                            safeSetState(() {});
+
                                                                                             if (_model.myProfileList != null) {
-                                                                                              _model.academicRecords = [];
-                                                                                              _model.teachingRecords = [];
-                                                                                              safeSetState(() {});
-                                                                                              _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                'getDate': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField1TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'university': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField2TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'major': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField3TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'degree': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField4TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                              });
-                                                                                              _model.addToTeachingRecords(<String, dynamic>{
-                                                                                                'period': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController1.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'schoolDepartment': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController2.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'subject': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController3.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'creditsHours': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController4.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                              });
-                                                                                              safeSetState(() {});
-                                                                                              await Future.wait([
-                                                                                                Future(() async {
-                                                                                                  if ((_model.degreeInputModels
-                                                                                                                  .getValues(
-                                                                                                                    (m) => m.textField1TextController.text,
-                                                                                                                  )
-                                                                                                                  .elementAtOrNull(1) !=
-                                                                                                              null &&
-                                                                                                          _model.degreeInputModels
-                                                                                                                  .getValues(
-                                                                                                                    (m) => m.textField1TextController.text,
-                                                                                                                  )
-                                                                                                                  .elementAtOrNull(1) !=
-                                                                                                              '') ==
-                                                                                                      true) {
-                                                                                                    _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                      'getDate': _model.degreeInputModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textField1TextController.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'university': _model.degreeInputModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textField2TextController.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'major': _model.degreeInputModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textField3TextController.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'degree': _model.degreeInputModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textField4TextController.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                    });
-                                                                                                    safeSetState(() {});
-                                                                                                    if ((_model.degreeInputModels
-                                                                                                                    .getValues(
-                                                                                                                      (m) => m.textField1TextController.text,
-                                                                                                                    )
-                                                                                                                    .elementAtOrNull(2) !=
-                                                                                                                null &&
-                                                                                                            _model.degreeInputModels
-                                                                                                                    .getValues(
-                                                                                                                      (m) => m.textField1TextController.text,
-                                                                                                                    )
-                                                                                                                    .elementAtOrNull(2) !=
-                                                                                                                '') ==
-                                                                                                        true) {
-                                                                                                      _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                        'getDate': _model.degreeInputModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textField1TextController.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'university': _model.degreeInputModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textField2TextController.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'major': _model.degreeInputModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textField3TextController.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'degree': _model.degreeInputModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textField4TextController.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                      });
-                                                                                                      safeSetState(() {});
-                                                                                                    }
-                                                                                                    FFAppState().mypageAcademicRecords = _model.academicRecords.toList().cast<dynamic>();
-                                                                                                    safeSetState(() {});
-                                                                                                  }
-
-                                                                                                  safeSetState(() {});
-                                                                                                }),
-                                                                                                Future(() async {
-                                                                                                  if ((_model.teachingHistoryModels
-                                                                                                                  .getValues(
-                                                                                                                    (m) => m.textController1.text,
-                                                                                                                  )
-                                                                                                                  .elementAtOrNull(1) !=
-                                                                                                              null &&
-                                                                                                          _model.teachingHistoryModels
-                                                                                                                  .getValues(
-                                                                                                                    (m) => m.textController1.text,
-                                                                                                                  )
-                                                                                                                  .elementAtOrNull(1) !=
-                                                                                                              '') ==
-                                                                                                      true) {
-                                                                                                    _model.addToTeachingRecords(<String, dynamic>{
-                                                                                                      'period': _model.teachingHistoryModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textController1.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'schoolDepartment': _model.teachingHistoryModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textController2.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'subject': _model.teachingHistoryModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textController3.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                      'creditsHours': _model.teachingHistoryModels
-                                                                                                          .getValues(
-                                                                                                            (m) => m.textController4.text,
-                                                                                                          )
-                                                                                                          .elementAtOrNull(1),
-                                                                                                    });
-                                                                                                    safeSetState(() {});
-                                                                                                    if ((_model.teachingHistoryModels
-                                                                                                                    .getValues(
-                                                                                                                      (m) => m.textController1.text,
-                                                                                                                    )
-                                                                                                                    .elementAtOrNull(2) !=
-                                                                                                                null &&
-                                                                                                            _model.teachingHistoryModels
-                                                                                                                    .getValues(
-                                                                                                                      (m) => m.textController1.text,
-                                                                                                                    )
-                                                                                                                    .elementAtOrNull(2) !=
-                                                                                                                '') ==
-                                                                                                        true) {
-                                                                                                      _model.addToTeachingRecords(<String, dynamic>{
-                                                                                                        'period': _model.teachingHistoryModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textController1.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'schoolDepartment': _model.teachingHistoryModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textController2.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'subject': _model.teachingHistoryModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textController3.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                        'creditsHours': _model.teachingHistoryModels
-                                                                                                            .getValues(
-                                                                                                              (m) => m.textController4.text,
-                                                                                                            )
-                                                                                                            .elementAtOrNull(2),
-                                                                                                      });
-                                                                                                      safeSetState(() {});
-                                                                                                      if ((_model.teachingHistoryModels
-                                                                                                                      .getValues(
-                                                                                                                        (m) => m.textController1.text,
-                                                                                                                      )
-                                                                                                                      .elementAtOrNull(3) !=
-                                                                                                                  null &&
-                                                                                                              _model.teachingHistoryModels
-                                                                                                                      .getValues(
-                                                                                                                        (m) => m.textController1.text,
-                                                                                                                      )
-                                                                                                                      .elementAtOrNull(3) !=
-                                                                                                                  '') ==
-                                                                                                          true) {
-                                                                                                        _model.addToTeachingRecords(<String, dynamic>{
-                                                                                                          'period': _model.teachingHistoryModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textController1.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(3),
-                                                                                                          'schoolDepartment': _model.teachingHistoryModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textController2.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(3),
-                                                                                                          'subject': _model.teachingHistoryModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textController3.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(3),
-                                                                                                          'creditsHours': _model.teachingHistoryModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textController4.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(3),
-                                                                                                        });
-                                                                                                        safeSetState(() {});
-                                                                                                      }
-                                                                                                      FFAppState().mypageTeachingRecords = _model.teachingRecords.toList().cast<dynamic>();
-                                                                                                      safeSetState(() {});
-                                                                                                    }
-
-                                                                                                    safeSetState(() {});
-                                                                                                  }
-
-                                                                                                  safeSetState(() {});
-                                                                                                }),
-                                                                                              ]);
                                                                                               await ProfessorMyprofileTable().update(
                                                                                                 data: {
                                                                                                   'professor_name': _model.fullNameTextFieldTextController1.text,
@@ -5209,128 +5264,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                                 ),
                                                                                               );
                                                                                             } else {
-                                                                                              _model.academicRecords = [];
-                                                                                              _model.teachingRecords = [];
-                                                                                              safeSetState(() {});
-                                                                                              _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                'getDate': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField1TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'university': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField2TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'major': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField3TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'degree': _model.degreeInputModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textField4TextController.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                              });
-                                                                                              _model.addToTeachingRecords(<String, dynamic>{
-                                                                                                'period': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController1.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'schoolDepartment': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController2.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'subject': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController3.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                                'creditsHours': _model.teachingHistoryModels
-                                                                                                    .getValues(
-                                                                                                      (m) => m.textController4.text,
-                                                                                                    )
-                                                                                                    .firstOrNull,
-                                                                                              });
-                                                                                              safeSetState(() {});
-                                                                                              if ((_model.degreeInputModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textField1TextController.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(1) !=
-                                                                                                          null &&
-                                                                                                      _model.degreeInputModels
-                                                                                                              .getValues(
-                                                                                                                (m) => m.textField1TextController.text,
-                                                                                                              )
-                                                                                                              .elementAtOrNull(1) !=
-                                                                                                          '') ==
-                                                                                                  true) {
-                                                                                                _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                  'getDate': _model.degreeInputModels
-                                                                                                      .getValues(
-                                                                                                        (m) => m.textField1TextController.text,
-                                                                                                      )
-                                                                                                      .elementAtOrNull(1),
-                                                                                                  'university': _model.degreeInputModels
-                                                                                                      .getValues(
-                                                                                                        (m) => m.textField2TextController.text,
-                                                                                                      )
-                                                                                                      .elementAtOrNull(1),
-                                                                                                  'major': _model.degreeInputModels
-                                                                                                      .getValues(
-                                                                                                        (m) => m.textField3TextController.text,
-                                                                                                      )
-                                                                                                      .elementAtOrNull(1),
-                                                                                                  'degree': _model.degreeInputModels
-                                                                                                      .getValues(
-                                                                                                        (m) => m.textField4TextController.text,
-                                                                                                      )
-                                                                                                      .elementAtOrNull(1),
-                                                                                                });
-                                                                                                safeSetState(() {});
-                                                                                                if ((_model.degreeInputModels
-                                                                                                                .getValues(
-                                                                                                                  (m) => m.textField1TextController.text,
-                                                                                                                )
-                                                                                                                .elementAtOrNull(2) !=
-                                                                                                            null &&
-                                                                                                        _model.degreeInputModels
-                                                                                                                .getValues(
-                                                                                                                  (m) => m.textField1TextController.text,
-                                                                                                                )
-                                                                                                                .elementAtOrNull(2) !=
-                                                                                                            '') ==
-                                                                                                    true) {
-                                                                                                  _model.addToAcademicRecords(<String, dynamic>{
-                                                                                                    'getDate': _model.degreeInputModels
-                                                                                                        .getValues(
-                                                                                                          (m) => m.textField1TextController.text,
-                                                                                                        )
-                                                                                                        .elementAtOrNull(2),
-                                                                                                    'university': _model.degreeInputModels
-                                                                                                        .getValues(
-                                                                                                          (m) => m.textField2TextController.text,
-                                                                                                        )
-                                                                                                        .elementAtOrNull(2),
-                                                                                                    'major': _model.degreeInputModels
-                                                                                                        .getValues(
-                                                                                                          (m) => m.textField3TextController.text,
-                                                                                                        )
-                                                                                                        .elementAtOrNull(2),
-                                                                                                    'degree': _model.degreeInputModels
-                                                                                                        .getValues(
-                                                                                                          (m) => m.textField4TextController.text,
-                                                                                                        )
-                                                                                                        .elementAtOrNull(2),
-                                                                                                  });
-                                                                                                  safeSetState(() {});
-                                                                                                }
-                                                                                              }
                                                                                               await ProfessorMyprofileTable().insert({
                                                                                                 'professor_name': _model.fullNameTextFieldTextController1.text,
                                                                                                 'pfr_phonenumber': valueOrDefault<String>(
@@ -5373,13 +5306,16 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                                 'lecExperience': _model.teachingRecords,
                                                                                                 'pfr_imageurl': FFAppState().mypageImageUrl,
                                                                                               });
-                                                                                              FFAppState().mypageAcademicRecords = _model.academicRecords.toList().cast<dynamic>();
+                                                                                              FFAppState().mypageAcademicRecords =
+                                                                                                  _model.academicRecords.toList().cast<dynamic>();
+                                                                                              FFAppState().mypageTeachingRecords =
+                                                                                                  _model.teachingRecords.toList().cast<dynamic>();
                                                                                               safeSetState(() {});
                                                                                             }
 
                                                                                             safeSetState(() {});
                                                                                           },
-                                                                                          text: FFLocalizations.of(context).getText(
+                                                                                text: FFLocalizations.of(context).getText(
                                                                                             'j7aomech' /* 적용 */,
                                                                                           ),
                                                                                           options: FFButtonOptions(
@@ -5484,19 +5420,31 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                               _model.myProfileList = null;
                                                                                               _model.academicRecords = [];
                                                                                               _model.degreeTextField = null;
-                                                                                              safeSetState(() {});
-                                                                                              FFAppState().addToMypageAcademicRecords(<String, dynamic>{
+                                                                                              _model.teachingRecords = [];
+                                                                                              _model.resetAcademicControllersWithRecords([]);
+                                                                                              _model.resetTeachingControllersWithRecords([]);
+                                                                                              final emptyAcademic = <String, dynamic>{
                                                                                                 'getDate': '',
                                                                                                 'university': '',
                                                                                                 'major': '',
                                                                                                 'degree': '',
-                                                                                              });
-                                                                                              FFAppState().addToMypageTeachingRecords(<String, dynamic>{
+                                                                                              };
+                                                                                              final emptyTeaching = <String, dynamic>{
                                                                                                 'period': '',
                                                                                                 'schoolDepartment': '',
                                                                                                 'subject': '',
                                                                                                 'creditsHours': '',
-                                                                                              });
+                                                                                              };
+                                                                                              FFAppState().mypageAcademicRecords = [emptyAcademic];
+                                                                                              FFAppState().mypageTeachingRecords = [emptyTeaching];
+                                                                                              _model.academicRecords =
+                                                                                                  List<dynamic>.from(FFAppState().mypageAcademicRecords.take(3));
+                                                                                              _model.teachingRecords =
+                                                                                                  List<dynamic>.from(FFAppState().mypageTeachingRecords.take(4));
+                                                                                              _model.resetAcademicControllersWithRecords(
+                                                                                                  FFAppState().mypageAcademicRecords.take(3).toList());
+                                                                                              _model.resetTeachingControllersWithRecords(
+                                                                                                  FFAppState().mypageTeachingRecords.take(4).toList());
                                                                                               safeSetState(() {});
                                                                                             }
                                                                                           },

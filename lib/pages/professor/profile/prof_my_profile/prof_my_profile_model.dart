@@ -6,8 +6,6 @@ import '/components/default_layout/left_right/left_widget/left_widget_widget.dar
 import '/components/default_layout/left_right/right_widget/right_widget_widget.dart';
 import '/components/default_layout/nav_bar/navi_sidebar/navi_sidebar_widget.dart';
 import '/components/default_layout/nav_bar/navi_sidebar_mobile/navi_sidebar_mobile_widget.dart';
-import '/components/profile/degree_input/degree_input_widget.dart';
-import '/components/profile/teaching_history/teaching_history_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import 'prof_my_profile_widget.dart' show ProfMyProfileWidget;
@@ -177,10 +175,25 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
   TextEditingController? otherTextFieldTextController;
   String? Function(BuildContext, String?)?
       otherTextFieldTextControllerValidator;
-  // Models for DegreeInput dynamic component.
-  late FlutterFlowDynamicModels<DegreeInputModel> degreeInputModels;
-  // Models for TeachingHistory dynamic component.
-  late FlutterFlowDynamicModels<TeachingHistoryModel> teachingHistoryModels;
+  /// Academic record controllers.
+  final List<FocusNode> academicGetDateFocusNodes = [];
+  final List<TextEditingController> academicGetDateTextControllers = [];
+  final List<FocusNode> academicUniversityFocusNodes = [];
+  final List<TextEditingController> academicUniversityTextControllers = [];
+  final List<FocusNode> academicMajorFocusNodes = [];
+  final List<TextEditingController> academicMajorTextControllers = [];
+  final List<FocusNode> academicDegreeFocusNodes = [];
+  final List<TextEditingController> academicDegreeTextControllers = [];
+
+  /// Teaching history controllers.
+  final List<FocusNode> teachingPeriodFocusNodes = [];
+  final List<TextEditingController> teachingPeriodTextControllers = [];
+  final List<FocusNode> teachingSchoolFocusNodes = [];
+  final List<TextEditingController> teachingSchoolTextControllers = [];
+  final List<FocusNode> teachingSubjectFocusNodes = [];
+  final List<TextEditingController> teachingSubjectTextControllers = [];
+  final List<FocusNode> teachingCreditFocusNodes = [];
+  final List<TextEditingController> teachingCreditTextControllers = [];
   // State field(s) for ProjectTextField widget.
   FocusNode? projectTextFieldFocusNode;
   TextEditingController? projectTextFieldTextController;
@@ -206,9 +219,10 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
     naviSidebarModel = createModel(context, () => NaviSidebarModel());
     headerModel = createModel(context, () => HeaderModel());
     leftWidgetModel = createModel(context, () => LeftWidgetModel());
-    degreeInputModels = FlutterFlowDynamicModels(() => DegreeInputModel());
-    teachingHistoryModels =
-        FlutterFlowDynamicModels(() => TeachingHistoryModel());
+    resetAcademicControllersWithRecords(
+        FFAppState().mypageAcademicRecords.take(3).toList());
+    resetTeachingControllersWithRecords(
+        FFAppState().mypageTeachingRecords.take(4).toList());
     rightWidgetModel = createModel(context, () => RightWidgetModel());
     headerMobileModel1 = createModel(context, () => HeaderMobileModel());
     naviSidebarMobileModel1 =
@@ -250,8 +264,54 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
     otherTextFieldFocusNode?.dispose();
     otherTextFieldTextController?.dispose();
 
-    degreeInputModels.dispose();
-    teachingHistoryModels.dispose();
+    for (final node in academicGetDateFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in academicGetDateTextControllers) {
+      controller.dispose();
+    }
+    for (final node in academicUniversityFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in academicUniversityTextControllers) {
+      controller.dispose();
+    }
+    for (final node in academicMajorFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in academicMajorTextControllers) {
+      controller.dispose();
+    }
+    for (final node in academicDegreeFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in academicDegreeTextControllers) {
+      controller.dispose();
+    }
+    for (final node in teachingPeriodFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in teachingPeriodTextControllers) {
+      controller.dispose();
+    }
+    for (final node in teachingSchoolFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in teachingSchoolTextControllers) {
+      controller.dispose();
+    }
+    for (final node in teachingSubjectFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in teachingSubjectTextControllers) {
+      controller.dispose();
+    }
+    for (final node in teachingCreditFocusNodes) {
+      node.dispose();
+    }
+    for (final controller in teachingCreditTextControllers) {
+      controller.dispose();
+    }
     projectTextFieldFocusNode?.dispose();
     projectTextFieldTextController?.dispose();
 
@@ -260,5 +320,123 @@ class ProfMyProfileModel extends FlutterFlowModel<ProfMyProfileWidget> {
     naviSidebarMobileModel1.dispose();
     headerMobileModel2.dispose();
     naviSidebarMobileModel2.dispose();
+  }
+
+  void addAcademicRecordControllers({
+    String? getDate,
+    String? university,
+    String? major,
+    String? degree,
+  }) {
+    academicGetDateFocusNodes.add(FocusNode());
+    academicGetDateTextControllers
+        .add(TextEditingController(text: getDate ?? ''));
+    academicUniversityFocusNodes.add(FocusNode());
+    academicUniversityTextControllers
+        .add(TextEditingController(text: university ?? ''));
+    academicMajorFocusNodes.add(FocusNode());
+    academicMajorTextControllers
+        .add(TextEditingController(text: major ?? ''));
+    academicDegreeFocusNodes.add(FocusNode());
+    academicDegreeTextControllers
+        .add(TextEditingController(text: degree ?? ''));
+  }
+
+  void removeAcademicRecordControllers(int index) {
+    academicGetDateFocusNodes[index].dispose();
+    academicGetDateFocusNodes.removeAt(index);
+    academicGetDateTextControllers[index].dispose();
+    academicGetDateTextControllers.removeAt(index);
+
+    academicUniversityFocusNodes[index].dispose();
+    academicUniversityFocusNodes.removeAt(index);
+    academicUniversityTextControllers[index].dispose();
+    academicUniversityTextControllers.removeAt(index);
+
+    academicMajorFocusNodes[index].dispose();
+    academicMajorFocusNodes.removeAt(index);
+    academicMajorTextControllers[index].dispose();
+    academicMajorTextControllers.removeAt(index);
+
+    academicDegreeFocusNodes[index].dispose();
+    academicDegreeFocusNodes.removeAt(index);
+    academicDegreeTextControllers[index].dispose();
+    academicDegreeTextControllers.removeAt(index);
+  }
+
+  void resetAcademicControllersWithRecords(List<dynamic> records) {
+    while (academicGetDateFocusNodes.isNotEmpty) {
+      removeAcademicRecordControllers(academicGetDateFocusNodes.length - 1);
+    }
+    for (final record in records) {
+      final map = record is Map
+          ? Map<String, dynamic>.from(record as Map)
+          : <String, dynamic>{};
+      addAcademicRecordControllers(
+        getDate: map['getDate']?.toString(),
+        university: map['university']?.toString(),
+        major: map['major']?.toString(),
+        degree: map['degree']?.toString(),
+      );
+    }
+  }
+
+  void addTeachingRecordControllers({
+    String? period,
+    String? schoolDepartment,
+    String? subject,
+    String? creditsHours,
+  }) {
+    teachingPeriodFocusNodes.add(FocusNode());
+    teachingPeriodTextControllers
+        .add(TextEditingController(text: period ?? ''));
+    teachingSchoolFocusNodes.add(FocusNode());
+    teachingSchoolTextControllers
+        .add(TextEditingController(text: schoolDepartment ?? ''));
+    teachingSubjectFocusNodes.add(FocusNode());
+    teachingSubjectTextControllers
+        .add(TextEditingController(text: subject ?? ''));
+    teachingCreditFocusNodes.add(FocusNode());
+    teachingCreditTextControllers
+        .add(TextEditingController(text: creditsHours ?? ''));
+  }
+
+  void removeTeachingRecordControllers(int index) {
+    teachingPeriodFocusNodes[index].dispose();
+    teachingPeriodFocusNodes.removeAt(index);
+    teachingPeriodTextControllers[index].dispose();
+    teachingPeriodTextControllers.removeAt(index);
+
+    teachingSchoolFocusNodes[index].dispose();
+    teachingSchoolFocusNodes.removeAt(index);
+    teachingSchoolTextControllers[index].dispose();
+    teachingSchoolTextControllers.removeAt(index);
+
+    teachingSubjectFocusNodes[index].dispose();
+    teachingSubjectFocusNodes.removeAt(index);
+    teachingSubjectTextControllers[index].dispose();
+    teachingSubjectTextControllers.removeAt(index);
+
+    teachingCreditFocusNodes[index].dispose();
+    teachingCreditFocusNodes.removeAt(index);
+    teachingCreditTextControllers[index].dispose();
+    teachingCreditTextControllers.removeAt(index);
+  }
+
+  void resetTeachingControllersWithRecords(List<dynamic> records) {
+    while (teachingPeriodFocusNodes.isNotEmpty) {
+      removeTeachingRecordControllers(teachingPeriodFocusNodes.length - 1);
+    }
+    for (final record in records) {
+      final map = record is Map
+          ? Map<String, dynamic>.from(record as Map)
+          : <String, dynamic>{};
+      addTeachingRecordControllers(
+        period: map['period']?.toString(),
+        schoolDepartment: map['schoolDepartment']?.toString(),
+        subject: map['subject']?.toString(),
+        creditsHours: map['creditsHours']?.toString(),
+      );
+    }
   }
 }
