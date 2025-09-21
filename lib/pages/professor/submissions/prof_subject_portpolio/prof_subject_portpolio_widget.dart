@@ -1560,6 +1560,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   await SubjectportpolioTable().update(
                                                                                                     data: {
                                                                                                       'critic_html': _model.textController1.text,
+                                                                                                      'portpolioresult': '미확인',
                                                                                                     },
                                                                                                     matchingRows: (rows) => rows
                                                                                                         .eqOrNull(
@@ -1575,6 +1576,9 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           _model.weeks,
                                                                                                         ),
                                                                                                   );
+                                                                                                  FFAppState().update(() {
+                                                                                                    FFAppState().shouldRefreshCriticCounts = true;
+                                                                                                  });
                                                                                                   await showDialog(
                                                                                                     context: context,
                                                                                                     builder: (alertDialogContext) {
@@ -3211,6 +3215,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                   await SubjectportpolioTable().update(
                                                                                                     data: {
                                                                                                       'critic_html': _model.textController2.text,
+                                                                                                      'portpolioresult': '미확인',
                                                                                                     },
                                                                                                     matchingRows: (rows) => rows
                                                                                                         .eqOrNull(
@@ -3226,6 +3231,9 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           _model.weeks,
                                                                                                         ),
                                                                                                   );
+                                                                                                  FFAppState().update(() {
+                                                                                                    FFAppState().shouldRefreshCriticCounts = true;
+                                                                                                  });
                                                                                                   await showDialog(
                                                                                                     context: context,
                                                                                                     builder: (alertDialogContext) {
