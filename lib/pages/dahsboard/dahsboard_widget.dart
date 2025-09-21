@@ -109,84 +109,103 @@
                             constraints: const BoxConstraints(
                               minWidth: 200.0,
                               maxWidth: 500.0,
-                            ),
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                      maxLines: 1,
-                                                                      overflow: TextOverflow.ellipsis,
-                                                                    child: SingleChildScrollView(
-                                                                      scrollDirection: Axis.horizontal,
-                                                                      child: Row(
-                                                                        children: [
-                                                                          ConstrainedBox(
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            child: Column(
-                                                                              mainAxisSize:
-                                                                                  MainAxisSize
-                                                                                      .min,
-                                                                              children: [
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
-                                                                            ),
-                            if (((_model.courseBySelectOutputV.isNotEmpty) ==
-                                    true) &&
-                                (_model.courseSelected2 == true))
-                                                                    maxLines: 1,
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                  child: SingleChildScrollView(
-                                                                    scrollDirection: Axis.horizontal,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        ConstrainedBox(
-                                                                          constraints: BoxConstraints(
-                                                                            minWidth: 200.0,
-                                                                          ),
-                                                                          child: Column(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize
+                                width: MediaQuery.sizeOf(context).width * 1.0,
+                                height: 55.0,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFEEF1F6),
+                                  shape: BoxShape.rectangle,
+                                ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          10.0, 0.0, 0.0, 0.0),
+                                      child: Container(
+                                        width:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.35,
+                                        constraints: const BoxConstraints(
+                                          minWidth: 200.0,
+                                          maxWidth: 500.0,
+                                        ),
+                                        decoration: BoxDecoration(),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Flexible(
+                                              flex: 2,
+                                              child: Row(
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    flex: 2,
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(2.0,
+                                                                  5.0, 2.0,
+                                                                  5.0),
+                                                      child: FutureBuilder<
+                                                          List<YearsRow>>(
+                                                        future: YearsTable()
+                                                            .queryRows(
+                                                          queryFn: (q) => q,
+                                                        ),
+                                                        builder:
+                                                            (context, snapshot) {
+                                                          // Customize what your widget looks like when it's loading.
+                                                          if (!snapshot
+                                                              .hasData) {
+                                                            return Center(
+                                                              child: SizedBox(
+                                                                width: 50.0,
+                                                                height: 50.0,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  valueColor:
+                                                                      AlwaysStoppedAnimation<
+                                                                          Color>(
+                                                                    Color(
+                                                                        0xFF284E75),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                          List<YearsRow>
+                                                              dropDown1YearsRowList =
+                                                              snapshot.data!;
+                                                          return FlutterFlowDropDown<
+                                                              String>(
+                                                            controller: _model
+                                                                    .dropDown1ValueController ??=
+                                                                FormFieldController<
+                                                                    String>(
+                                                              _model.dropDown1Value ??=
+                                                                  valueOrDefault<
+                                                                      String>(
+                                                                dropDown1YearsRowList
+                                                                    .lastOrNull
+                                                                    ?.year,
+                                                                '2025',
+                                                              ),
+                                                            ),
+                                                            options:
+                                                                dropDown1YearsRowList
+                                                                    .map((e) =>
+                                                                        e.year)
+                                                                    .withoutNulls
+                                                                    .toList(),
+                                                            onChanged:
+                                                                (val) async {
+                                                              safeSetState(() =>
+                                                                  _model.dropDown1Value =
+                                                                      val);
+                                                              _model.years = _model
+                                                                  .dropDown1Value;
+                                                              safeSetState(() {});
+                                                            },
+                                                            width: 160.0,
+                                                            height: 40.0,
                                                                                     .min,
                                                                             children: [
                                                                             constraints: BoxConstraints(
@@ -666,8 +685,8 @@
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                                                                            .min,
-                                                                    children: [
+                          children: [
+                            Flexible(
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
                                                                   child: Row(
@@ -899,3 +918,105 @@
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
+                            if (_model.buttonGrades != null)
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected1 == true))
+                                                          Flexible(
+                                                                padding: EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        3.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                              fontSize: 12.0,
+                                                                                  fontSize: 12.0,
+                                                                    child: Text(
+                                                                      FFLocalizations.of(
+                                                                              context)
+                                                                          .getText(
+                                                                        'yc2tezrq' /* 교수님 업로드현황  */,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            font:
+                                                                                GoogleFonts.openSans(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                            ),
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).secondaryText,
+                                                                            fontSize:
+                                                                                18.0,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontStyle:
+                                                                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                          ),
+                                                                    ),
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                            if (((_model.courseBySelectOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected2 == true))
+                                                                          'enrol7sp' /* 교수님 업로드현황  */,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected3 == true))
+                                                                          'nxh0rhns' /* 교수님 업로드현황  */,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected4 == true))
+                                                                          'jo857j05' /* 교수님 업로드현황  */,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
