@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui' show Offset, Size;
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   if (pdfUrls.isEmpty) {
@@ -23,8 +23,26 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   }
 
   final PdfDocument finalDoc = PdfDocument();
+  final Map<String, PdfSection> _sectionCache = <String, PdfSection>{};
   Uint8List? outputBytes;
   final int totalFiles = pdfUrls.length;
+
+  String _sectionKey(Size size) =>
+      '${size.width.toStringAsFixed(3)}x${size.height.toStringAsFixed(3)}';
+
+  PdfSection _resolveSection(Size pageSize) {
+    final String key = _sectionKey(pageSize);
+    final PdfSection? existing = _sectionCache[key];
+    if (existing != null) {
+      return existing;
+    }
+
+    final PdfSection section = finalDoc.sections.add();
+    section.pageSettings.margins.all = 0;
+    section.pageSettings.size = pageSize;
+    _sectionCache[key] = section;
+    return section;
+  }
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -84,17 +102,17 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
         if (src.pages.count > 0) {
           for (int pageIndex = 0; pageIndex < src.pages.count; pageIndex++) {
             final PdfPage srcPage = src.pages[pageIndex];
-            final ui.Size pageSize =
-                ui.Size(srcPage.size.width, srcPage.size.height);
+            final Size pageSize =
+                Size(srcPage.size.width, srcPage.size.height);
 
-            finalDoc.pageSettings.size = pageSize;
-            final PdfPage dstPage = finalDoc.pages.add();
+            final PdfSection targetSection = _resolveSection(pageSize);
+            final PdfPage dstPage = targetSection.pages.add();
             dstPage.rotation = srcPage.rotation;
 
             final PdfTemplate template = srcPage.createTemplate();
             dstPage.graphics.drawPdfTemplate(
               template,
-              ui.Offset.zero,
+              Offset.zero,
               pageSize,
             );
           }
