@@ -755,9 +755,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                             selectedSubjectportpolio.id,
                                                                                           ),
                                                                                         );
-                                                                                        await FFAppState().refreshCriticCounters(
-                                                                                          week: _model.weeks,
-                                                                                        );
+                                                                                        FFAppState().refreshCriticCounters();
                                                                                       }
                                                                                     }
                                                                                   },
@@ -2888,9 +2886,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                         selectedSubjectportpolio.id,
                                                                                       ),
                                                                                     );
-                                                                                    await FFAppState().refreshCriticCounters(
-                                                                                      week: _model.weeks,
-                                                                                    );
+                                                                                    FFAppState().refreshCriticCounters();
                                                                                   }
                                                                                 }
                                                                               },

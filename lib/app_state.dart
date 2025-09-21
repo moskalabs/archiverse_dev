@@ -1104,11 +1104,7 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_studentNavbarMobile', value);
   }
 
-  int _criticCountersVersion = 0;
-  int get criticCountersVersion => _criticCountersVersion;
-
-  Future<void> refreshCriticCounters({String? week}) async {
-    _criticCountersVersion++;
+  void refreshCriticCounters() {
     notifyListeners();
   }
 
