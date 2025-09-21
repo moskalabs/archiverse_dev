@@ -657,10 +657,11 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                           }
                         } finally {
                           if (mounted) {
-                            final navigator =
+                            final rootNavigator =
                                 Navigator.of(context, rootNavigator: true);
-                            if (navigator.canPop()) {
-                              navigator.pop();
+                            final popped = await rootNavigator.maybePop();
+                            if (!popped && mounted) {
+                              await Navigator.of(context).maybePop();
                             }
                           }
                         }
