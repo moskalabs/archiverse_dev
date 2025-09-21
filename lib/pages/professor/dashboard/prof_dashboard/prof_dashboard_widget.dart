@@ -1,6 +1,6 @@
-import '/backend/supabase/database/tables/subjectportpolio.dart';
 import '/backend/supabase/database/tables/course_student.dart';
-import '/custom_code/widgets/index.dart';
+import '/backend/supabase/database/tables/subjectportpolio.dart';
+import '/custom_code/widgets/index.dart' as custom_widgets;
 import 'dart:math' as math;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
@@ -11,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
+  int _studentEnrollmentCount = 0;
+
   List<int> _buildWeeklyCounts(List<SubjectportpolioRow>? rows) {
     final counts = List<int>.filled(15, 0);
     if (rows == null || rows.isEmpty) {
@@ -18,20 +20,21 @@ import 'package:webviewx_plus/webviewx_plus.dart';
     }
 
     for (final row in rows) {
-      final weekValue = row.week;
-      if (weekValue == null || weekValue.isEmpty) {
+      final weekLabel = row.week;
+      if (weekLabel == null || weekLabel.isEmpty) {
         continue;
       }
 
-      final weekMatch = RegExp(r'\d+').firstMatch(weekValue);
+      final weekMatch = RegExp(r'\d+').firstMatch(weekLabel);
       final parsedWeek =
           weekMatch != null ? int.tryParse(weekMatch.group(0)!) : null;
       if (parsedWeek == null) {
         continue;
       }
 
-      if (parsedWeek >= 1 && parsedWeek <= counts.length) {
-        counts[parsedWeek - 1] = counts[parsedWeek - 1] + 1;
+      final index = parsedWeek - 1;
+      if (index >= 0 && index < counts.length) {
+        counts[index] = counts[index] + 1;
       }
     }
 
@@ -40,56 +43,34 @@ import 'package:webviewx_plus/webviewx_plus.dart';
 
   void _updateChartData(List<SubjectportpolioRow>? rows) {
     final counts = _buildWeeklyCounts(rows);
-    final current = _model.chartDataParam;
-    var hasDifference = current.length != counts.length;
-    if (!hasDifference) {
-      for (var i = 0; i < counts.length; i++) {
-        if (current[i] != counts[i]) {
-          hasDifference = true;
-          break;
-        }
-      }
+    safeSetState(() {
+      _model.chartDataParam = counts;
+    });
+  Future<void> _refreshStudentEnrollment(String professorName) async {
     }
+  Future<void> _loadProfessorPortfolioSummary(String professorName) async {
+    final rows = await SubjectportpolioTable().queryRows(
+      queryFn: (q) => q
+          .eqOrNull(
+            'professor_name',
+            professorName,
+          )
+          .order('week'),
+    );
 
-    _model.chartDataParam = counts;
-    if (!hasDifference || !mounted) {
+    if (!mounted) {
       return;
     }
-    safeSetState(() {});
+
+    _updateChartData(rows);
   }
-
-    _updateChartData(null);
-
-                                                                                    height: double.infinity,
-                                                                                    chartData: weeklySubmissions,
-                                                                                  ),
-                                                                              child: Semantics(
-                                                                                label: _buildChartSemanticsLabel(),
-                                                                                child: Container(
-  String _buildChartSemanticsLabel(List<int> chartData) {
-    if (chartData.isEmpty) {
-      return '주차별 제출 현황 데이터가 없습니다.';
-    }
-    final total = chartData.fold<int>(0, (sum, value) => sum + value);
-    final details = <String>[];
-    for (var i = 0; i < chartData.length; i++) {
-      final value = chartData[i];
-      if (value > 0) {
-        details.add('${i + 1}주차 ${value}건');
+      final professorName = _model.profeesorName ?? '';
+      if (professorName.isNotEmpty && professorName != '교수 이름') {
+        await Future.wait([
+          _loadProfessorPortfolioSummary(professorName),
+          _refreshStudentEnrollment(professorName),
+        ]);
       }
-    }
-    final buffer = StringBuffer('주차별 제출 현황. 총 제출 수 ${total}건');
-    if (_studentEnrollmentCount > 0) {
-      buffer.write(', 담당 학생 ${_studentEnrollmentCount}명');
-    }
-    if (details.isNotEmpty) {
-      buffer.write(', ');
-      buffer.write(details.join(', '));
-    }
-    return buffer.toString();
-  }
-
-  Future<void> _refreshStudentCount() async {
     final professorName = _model.profeesorName;
     if (professorName == null || professorName.isEmpty) {
       return;
@@ -391,3 +372,105 @@ import 'package:webviewx_plus/webviewx_plus.dart';
                                                                                                     );
                                                                                                   },
                                                                                                 ),
+                                                                                            _model.progressoutput1 = await SubjectportpolioTable().queryRows(
+                                                                                              queryFn: (q) => q
+                                                                                                  .eqOrNull(
+                                                                                                    'professor_name',
+                                                                                                    _model.profeesorName,
+                                                                                                  )
+                                                                                                  .eqOrNull(
+                                                                                                    'class',
+                                                                                                    _model.classAfterGradeByCourseForSection.firstOrNull?.id,
+                                                                                                  ),
+                                                                                            );
+                                                                                            _model.progressSubject = _model.progressoutput1!.length;
+                                                                                            safeSetState(() {});
+                                                                                            _updateChartData(_model.progressoutput1);
+                                                                                            safeSetState(() {});
+                                                                                          },
+                                                                                            _updateChartData(_model.progressoutput2);
+                                                                                            _updateChartData(_model.progressoutput3);
+                                                                              Expanded(
+                                                                                flex: 10,
+                                                                                child: Container(
+                                                                                  width: double.infinity,
+                                                                                  height: double.infinity,
+                                                                                  child: Semantics(
+                                                                                    label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                    child: custom_widgets.ChartWidget(
+                                                                                      chartData: _model.chartDataParam,
+                                                                                  ),
+                                                                                ),
+                                                                              Expanded(
+                                                                                flex: 10,
+                                                                                child: Container(
+                                                                                  width: double.infinity,
+                                                                                  height: double.infinity,
+                                                                                  child: Semantics(
+                                                                                    label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                    child: custom_widgets.ChartWidget(
+                                                                                      chartData: _model.chartDataParam,
+                                                                                  ),
+                                                                                ),
+                                                                              Expanded(
+                                                                                flex: 10,
+                                                                                child: Container(
+                                                                                  width: double.infinity,
+                                                                                  height: double.infinity,
+                                                                                  child: Semantics(
+                                                                                    label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                    child: custom_widgets.ChartWidget(
+                                                                                      chartData: _model.chartDataParam,
+                                                                                  ),
+                                                                                ),
+                                                                                            _model.progressoutput1A = await SubjectportpolioTable().queryRows(
+                                                                                              queryFn: (q) => q
+                                                                                                  .eqOrNull(
+                                                                                                    'professor_name',
+                                                                                                    _model.profeesorName,
+                                                                                                  )
+                                                                                                  .eqOrNull(
+                                                                                                    'class',
+                                                                                                    _model.classAfterGradeByCourseForSection.firstOrNull?.id,
+                                                                                                  ),
+                                                                                            );
+                                                                                            _model.progressSubject = _model.progressoutput1A!.length;
+                                                                                            safeSetState(() {});
+                                                                                            _updateChartData(_model.progressoutput1A);
+                                                                                            safeSetState(() {});
+                                                                                          },
+                                                                                            _updateChartData(_model.progressoutput2A);
+                                                                                            _updateChartData(_model.progressoutput3A);
+                                                                                                  Expanded(
+                                                                                                    flex: 10,
+                                                                                                    child: Container(
+                                                                                                      width: double.infinity,
+                                                                                                      height: double.infinity,
+                                                                                                      child: Semantics(
+                                                                                                        label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                                        child: custom_widgets.ChartWidget(
+                                                                                                          chartData: _model.chartDataParam,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  Expanded(
+                                                                                                    flex: 10,
+                                                                                                    child: Container(
+                                                                                                      width: double.infinity,
+                                                                                                      height: double.infinity,
+                                                                                                      child: Semantics(
+                                                                                                        label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                                        child: custom_widgets.ChartWidget(
+                                                                                                          chartData: _model.chartDataParam,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  Expanded(
+                                                                                                    flex: 10,
+                                                                                                    child: Container(
+                                                                                                      width: double.infinity,
+                                                                                                      height: double.infinity,
+                                                                                                      child: Semantics(
+                                                                                                        label: '담당 학생 ${_studentEnrollmentCount}명',
+                                                                                                        child: custom_widgets.ChartWidget(
+                                                                                                          chartData: _model.chartDataParam,
+                                                                                                    ),
+                                                                                                  ),
