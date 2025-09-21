@@ -1,19 +1,21 @@
+import 'dart:math' as math;
+
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart'
+    as smooth_page_indicator;
+import 'package:webviewx_plus/webviewx_plus.dart';
+
 import '/backend/supabase/database/tables/class.dart';
 import '/backend/supabase/database/tables/course_student.dart';
 import '/backend/supabase/database/tables/professor_courses.dart';
 import '/backend/supabase/database/tables/professors.dart';
 import '/backend/supabase/database/tables/subjectportpolio.dart';
-  bool _isDashboardLoading = true;
-  int? _activeProfessorId;
-  String? _activeProfessorName;
-  int? _activeProfessorType;
-
-  List<int> weeklySubmissions = List<int>.filled(15, 0);
-  List<double> weeklyGrades = List<double>.filled(15, 0.0);
-  int totalStudents = 0;
-  int activeCoursesCount = 0;
-
-  int? _parseWeekNumber(String? rawWeek) {
+import '/custom_code/widgets/index.dart'; // custom_widgets 해결
     if (rawWeek == null || rawWeek.isEmpty) {
       return null;
     }
@@ -326,3 +328,78 @@ import '/backend/supabase/database/tables/subjectportpolio.dart';
                                                                                                         height: double.infinity,
                                                                                                         chartData: weeklySubmissions,
                                                                                                       ),
+                                                                              child: Builder(
+                                                                                builder: (context) {
+                                                                                  return Semantics(
+                                                                                    label: _buildChartSemanticsLabel(),
+                                                                                    child: ChartWidget(
+                                                                                      width: double.infinity,
+                                                                                      height: double.infinity,
+                                                                                      chartData: weeklySubmissions,
+                                                                                    ),
+                                                                                  );
+                                                                                },
+                                                                              child: Builder(
+                                                                                builder: (context) {
+                                                                                  return Semantics(
+                                                                                    label: _buildChartSemanticsLabel(),
+                                                                                    child: ChartWidget(
+                                                                                      width: double.infinity,
+                                                                                      height: double.infinity,
+                                                                                      chartData: weeklySubmissions,
+                                                                                    ),
+                                                                                  );
+                                                                                },
+                                                                              child: Builder(
+                                                                                builder: (context) {
+                                                                                  return Semantics(
+                                                                                    label: _buildChartSemanticsLabel(),
+                                                                                    child: ChartWidget(
+                                                                                      width: double.infinity,
+                                                                                      height: double.infinity,
+                                                                                      chartData: weeklySubmissions,
+                                                                                    ),
+                                                                                  );
+                                                                                },
+                                                                                                      Expanded(
+                                                                                                        flex: 10,
+                                                                                                        child: Builder(
+                                                                                                          builder: (context) {
+                                                                                                            return Semantics(
+                                                                                                              label: _buildChartSemanticsLabel(),
+                                                                                                              child: ChartWidget(
+                                                                                                                width: double.infinity,
+                                                                                                                height: double.infinity,
+                                                                                                                chartData: weeklySubmissions,
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
+                                                                                                        ),
+                                                                                                      Expanded(
+                                                                                                        flex: 10,
+                                                                                                        child: Builder(
+                                                                                                          builder: (context) {
+                                                                                                            return Semantics(
+                                                                                                              label: _buildChartSemanticsLabel(),
+                                                                                                              child: ChartWidget(
+                                                                                                                width: double.infinity,
+                                                                                                                height: double.infinity,
+                                                                                                                chartData: weeklySubmissions,
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
+                                                                                                        ),
+                                                                                                      Expanded(
+                                                                                                        flex: 10,
+                                                                                                        child: Builder(
+                                                                                                          builder: (context) {
+                                                                                                            return Semantics(
+                                                                                                              label: _buildChartSemanticsLabel(),
+                                                                                                              child: ChartWidget(
+                                                                                                                width: double.infinity,
+                                                                                                                height: double.infinity,
+                                                                                                                chartData: weeklySubmissions,
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
+                                                                                                        ),
