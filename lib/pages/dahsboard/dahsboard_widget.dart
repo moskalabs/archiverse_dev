@@ -97,16 +97,18 @@
                         alignment: AlignmentDirectional(0.0, -1.0),
                         child: Container(
                           width: 1920.0,
-                          child: Column(
+                          constraints: BoxConstraints(
+                            minWidth: 1200.0,
+                          ),
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Container(
-                                                                              mainAxisSize:
-                                                                                  MainAxisSize
-                                                                                      .min,
-                                                                              children: [
-                                                                            constraints: BoxConstraints(
-                                                                              minWidth: 200.0,
+                          child: Container(
+                            width: MediaQuery.sizeOf(context).width * 0.35,
+                            constraints: BoxConstraints(
+                              minWidth: 200.0,
+                              maxWidth: 500.0,
+                            ),
                                                                             ),
                                                                             constraints: BoxConstraints(
                                                                               minWidth: 200.0,
@@ -460,26 +462,32 @@
                                                                           MainAxisSize
                                                                               .min,
                                                                       children: [
-                                                                                              fontSize: 12.0,
-                                                                                              fontSize: 12.0,
-                                                                                              fontSize: 12.0,
-                                                                                              fontSize: 12.0,
-                                                  fontSize: 22.0,
-                                                                                fontSize: 14.0,
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    scrollDirection:
-                                                                        Axis.horizontal,
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                                              fontSize: 12.0,
-                                                                                              fontSize: 12.0,
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    scrollDirection:
+                                                  child: Text(
+                                                    valueOrDefault<String>(
+                                                      _model.years,
+                                                      '0000',
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                               child: Text(
+                                                 FFLocalizations.of(context)
+                                                     .getText(
+                                                   '5hv0jwqm' /* 년 */,
+                                                 ),
+                                                 textAlign: TextAlign.center,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                               ),
+                                               child: Text(
+                                                 valueOrDefault<String>(
+                                                   _model.semester,
+                                                   '-학기',
+                                                 ),
+                                                 textAlign: TextAlign.center,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                               ),
                                                                         Axis.horizontal,
                                                                     child: Row(
                                                                       mainAxisSize:
@@ -491,3 +499,189 @@
                                                                                               fontSize: 12.0,
                                                                                               fontSize: 12.0,
                     ),
+              Flexible(
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width * 1.0,
+                  height: MediaQuery.sizeOf(context).height * 0.87,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Column(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                                                            fontSize: 22.0,
+                                                                                  fontSize: 22.0,
+                                                                                            fontSize: 20.0,
+                                                                                            fontSize: 20.0,
+                                                                                            fontSize: 20.0,
+                                                                                                fontSize: 20.0,
+                                                                                                fontSize: 20.0,
+                                                                                                fontSize: 20.0,
+                              if (_model.buttonGrades != null)
+                              if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                      true) &&
+                                  (_model.courseSelected1 == true))
+                                                            Flexible(
+                                                            Flexible(
+                                                              child: Container(
+                                                                height: double
+                                                                    .infinity,
+                                                                decoration:
+                                                                    BoxDecoration(),
+                                                                                fontSize: 12.0,
+                                                                                fontSize: 12.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                    child:
+                                                                        Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      ),
+                                                                    ],
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                    child:
+                                                                        Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                    child:
+                                                                        Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                              if (((_model.courseBySelectOutputV.isNotEmpty) ==
+                                      true) &&
+                                  (_model.courseSelected2 == true))
+                                                                                fontSize: 15.0,
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                              if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                      true) &&
+                                  (_model.courseSelected3 == true))
+                                                                                fontSize: 15.0,
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                              if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                      true) &&
+                                  (_model.courseSelected4 == true))
+                                                                                fontSize: 15.0,
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                    ],
