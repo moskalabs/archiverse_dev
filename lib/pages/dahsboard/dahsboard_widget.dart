@@ -107,30 +107,30 @@
                         child: Container(
                           width: MediaQuery.sizeOf(context).width * 0.35,
                           constraints: BoxConstraints(
-                            minWidth: 200.0,
-                            maxWidth: 500.0,
-                          ),
-                          decoration: BoxDecoration(),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                                        maxWidth: 500.0,
-                                      ),
-                                      decoration: BoxDecoration(),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                              Flexible(
-                                flex: 2,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      flex: 2,
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            2.0, 5.0, 2.0, 5.0),
-                                        child: FutureBuilder<List<YearsRow>>(
+                            mainAxisSize: MainAxisSize.max,
+              Container(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                height: 55.0,
+                decoration: BoxDecoration(
+                  color: Color(0xFFEEF1F6),
+                  shape: BoxShape.rectangle,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(
+                          10.0, 0.0, 0.0, 0.0),
+                      child: Container(
+                        width: MediaQuery.sizeOf(context).width * 0.35,
+                        constraints: BoxConstraints(
+                          minWidth: 200.0,
+                          maxWidth: 500.0,
+                        ),
+                        decoration: BoxDecoration(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
                                           future: YearsTable().queryRows(
                                             queryFn: (q) => q,
                                           ),
@@ -657,17 +657,16 @@
                                                                         MainAxisSize
                                                                             .min,
                                                                     children: [
-                              Container(
-                                width: MediaQuery.sizeOf(context).width * 1.0,
-                                height: MediaQuery.sizeOf(context).height * 0.87,
-                                decoration: BoxDecoration(
-                                  color:
-                                      FlutterFlowTheme.of(context).secondaryBackground,
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
+              Container(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                height: MediaQuery.sizeOf(context).height * 0.87,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  shape: BoxShape.rectangle,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                                                                             .min,
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -1291,3 +1290,25 @@
                                         true) &&
                     ],
             ],
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected1 == true))
+                                                              child: Visibility(
+                                                                visible: true,
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          3.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                  child: Row(
+                            if (((_model.courseBySelectOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected2 == true))
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected3 == true))
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected4 == true))
