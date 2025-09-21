@@ -17,6 +17,9 @@ import 'package:webviewx_plus/webviewx_plus.dart';
     final counts = List<int>.filled(15, 0);
     if (rows == null || rows.isEmpty) {
       return counts;
+  static const String _defaultChartKey = '_default';
+
+  final Map<String, List<int>> _chartDataByKey = <String, List<int>>{};
     }
 
     for (final row in rows) {
@@ -25,9 +28,9 @@ import 'package:webviewx_plus/webviewx_plus.dart';
         continue;
       }
 
-      final weekMatch = RegExp(r'\d+').firstMatch(weekLabel);
+      final weekMatch = RegExp(r'(\d+)').firstMatch(weekLabel);
       final parsedWeek =
-          weekMatch != null ? int.tryParse(weekMatch.group(0)!) : null;
+          weekMatch != null ? int.tryParse(weekMatch.group(1) ?? '') : null;
       if (parsedWeek == null) {
         continue;
       }
@@ -41,10 +44,32 @@ import 'package:webviewx_plus/webviewx_plus.dart';
     return counts;
   }
 
-  void _updateChartData(List<SubjectportpolioRow>? rows) {
+  String _chartKeyForType({required bool isAdjunct, required int index}) =>
+      '${isAdjunct ? 'adjunct' : 'fullTime'}-$index';
+
+  List<int> _getChartData(String key) {
+    if (_chartDataByKey.containsKey(key)) {
+      return _chartDataByKey[key]!;
+    }
+    return _chartDataByKey[_defaultChartKey] ?? List<int>.filled(15, 0);
+  }
+
+  String _buildChartSemanticsLabel(String key) {
+    final data = _getChartData(key);
+    final totalSubmissions = data.fold<int>(0, (sum, value) => sum + value);
+    return '담당 학생 ${_studentEnrollmentCount}명, 총 제출 ${totalSubmissions}건';
+  }
+
+  void _updateChartData({
+    required String key,
+    List<SubjectportpolioRow>? rows,
+  }) {
     final counts = _buildWeeklyCounts(rows);
     safeSetState(() {
-      _model.chartDataParam = counts;
+      _chartDataByKey[key] = counts;
+      if (key == _defaultChartKey) {
+        _model.chartDataParam = counts;
+      }
     });
   Future<void> _refreshStudentEnrollment(String professorName) async {
     }
@@ -62,8 +87,10 @@ import 'package:webviewx_plus/webviewx_plus.dart';
       return;
     }
 
-    _updateChartData(rows);
+    _updateChartData(key: _defaultChartKey, rows: rows);
   }
+    _chartDataByKey[_defaultChartKey] = List<int>.from(_model.chartDataParam);
+
       final professorName = _model.profeesorName ?? '';
       if (professorName.isNotEmpty && professorName != '교수 이름') {
         await Future.wait([
@@ -474,3 +501,117 @@ import 'package:webviewx_plus/webviewx_plus.dart';
                                                                                                           chartData: _model.chartDataParam,
                                                                                                     ),
                                                                                                   ),
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: false,
+                                                                                                index: 0,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput1,
+                                                                                            );
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: false,
+                                                                                                index: 1,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput2,
+                                                                                            );
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: false,
+                                                                                                index: 2,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput3,
+                                                                                            );
+                                                                                    label: _buildChartSemanticsLabel(
+                                                                                      _chartKeyForType(
+                                                                                        isAdjunct: false,
+                                                                                        index: 0,
+                                                                                      ),
+                                                                                    ),
+                                                                                      chartData: _getChartData(
+                                                                                        _chartKeyForType(
+                                                                                          isAdjunct: false,
+                                                                                          index: 0,
+                                                                                        ),
+                                                                                      ),
+                                                                                    label: _buildChartSemanticsLabel(
+                                                                                      _chartKeyForType(
+                                                                                        isAdjunct: false,
+                                                                                        index: 1,
+                                                                                      ),
+                                                                                    ),
+                                                                                      chartData: _getChartData(
+                                                                                        _chartKeyForType(
+                                                                                          isAdjunct: false,
+                                                                                          index: 1,
+                                                                                        ),
+                                                                                      ),
+                                                                                    label: _buildChartSemanticsLabel(
+                                                                                      _chartKeyForType(
+                                                                                        isAdjunct: false,
+                                                                                        index: 2,
+                                                                                      ),
+                                                                                    ),
+                                                                                      chartData: _getChartData(
+                                                                                        _chartKeyForType(
+                                                                                          isAdjunct: false,
+                                                                                          index: 2,
+                                                                                        ),
+                                                                                      ),
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: true,
+                                                                                                index: 0,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput1A,
+                                                                                            );
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: true,
+                                                                                                index: 1,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput2A,
+                                                                                            );
+                                                                                            _updateChartData(
+                                                                                              key: _chartKeyForType(
+                                                                                                isAdjunct: true,
+                                                                                                index: 2,
+                                                                                              ),
+                                                                                              rows: _model.progressoutput3A,
+                                                                                            );
+                                                                                                        label: _buildChartSemanticsLabel(
+                                                                                                          _chartKeyForType(
+                                                                                                            isAdjunct: true,
+                                                                                                            index: 0,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                          chartData: _getChartData(
+                                                                                                            _chartKeyForType(
+                                                                                                              isAdjunct: true,
+                                                                                                              index: 0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        label: _buildChartSemanticsLabel(
+                                                                                                          _chartKeyForType(
+                                                                                                            isAdjunct: true,
+                                                                                                            index: 1,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                          chartData: _getChartData(
+                                                                                                            _chartKeyForType(
+                                                                                                              isAdjunct: true,
+                                                                                                              index: 1,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        label: _buildChartSemanticsLabel(
+                                                                                                          _chartKeyForType(
+                                                                                                            isAdjunct: true,
+                                                                                                            index: 2,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                          chartData: _getChartData(
+                                                                                                            _chartKeyForType(
+                                                                                                              isAdjunct: true,
+                                                                                                              index: 2,
+                                                                                                            ),
+                                                                                                          ),
