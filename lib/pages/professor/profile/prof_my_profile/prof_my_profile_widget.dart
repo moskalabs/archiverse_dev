@@ -105,19 +105,47 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     };
   }
 
+  Iterable<dynamic> _recordsToIterable(dynamic records) {
+    if (records == null) {
+      return const [];
+    }
+    if (records is Iterable) {
+      return records;
+    }
+    if (records is String) {
+      final trimmed = records.trim();
+      if (trimmed.isEmpty) {
+        return const [];
+      }
+      try {
+        final decoded = jsonDecode(trimmed);
+        if (decoded is Iterable) {
+          return decoded;
+        }
+        if (decoded is Map) {
+          return [decoded];
+        }
+      } catch (_) {
+        return const [];
+      }
+    }
+    if (records is Map) {
+      return [records];
+    }
+    return const [];
+  }
+
   List<Map<String, dynamic>> _normalizeRecords(
-    Iterable<dynamic> records,
+    dynamic records,
     List<String> fields,
     int maxLength,
   ) {
     final normalized = <Map<String, dynamic>>[];
-    var added = 0;
-    for (final record in records) {
-      if (added >= maxLength) {
+    for (final record in _recordsToIterable(records)) {
+      if (normalized.length >= maxLength) {
         break;
       }
       normalized.add(_normalizeRecord(record, fields));
-      added++;
     }
     if (normalized.isEmpty) {
       normalized.add(_emptyRecord(fields));
@@ -125,35 +153,71 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     return normalized;
   }
 
-  void _assignRecordState({
-    required List<Map<String, dynamic>> academicRecords,
-    required List<Map<String, dynamic>> teachingRecords,
-    bool notify = true,
+  void _setAcademicRecords(
+    List<Map<String, dynamic>> records, {
+    bool syncAppState = true,
+    bool rebuild = true,
   }) {
-    _model.academicRecords = academicRecords
-        .map((record) => Map<String, dynamic>.from(record))
-        .toList();
-    _model.teachingRecords = teachingRecords
-        .map((record) => Map<String, dynamic>.from(record))
-        .toList();
+    final sanitized = records.isEmpty
+        ? <Map<String, dynamic>>[_emptyRecord(_academicFieldKeys)]
+        : records
+            .take(3)
+            .map((record) => {
+                  for (final field in _academicFieldKeys)
+                    field: record[field]?.toString() ?? '',
+                })
+            .toList();
 
-    FFAppState().mypageAcademicRecords =
-        List<dynamic>.from(_model.academicRecords.take(3));
-    FFAppState().mypageTeachingRecords =
-        List<dynamic>.from(_model.teachingRecords.take(4));
+    void assign() {
+      _model.academicRecords = sanitized
+          .map((record) => Map<String, dynamic>.from(record))
+          .toList();
+      _model.resetAcademicControllersWithRecords(_model.academicRecords);
+    }
 
-    if (notify) {
-      safeSetState(() {
-        _model.resetAcademicControllersWithRecords(
-            FFAppState().mypageAcademicRecords.take(3).toList());
-        _model.resetTeachingControllersWithRecords(
-            FFAppState().mypageTeachingRecords.take(4).toList());
-      });
+    if (rebuild) {
+      safeSetState(assign);
     } else {
-      _model.resetAcademicControllersWithRecords(
-          FFAppState().mypageAcademicRecords.take(3).toList());
-      _model.resetTeachingControllersWithRecords(
-          FFAppState().mypageTeachingRecords.take(4).toList());
+      assign();
+    }
+
+    if (syncAppState) {
+      FFAppState().mypageAcademicRecords =
+          List<dynamic>.from(_model.academicRecords.take(3));
+    }
+  }
+
+  void _setTeachingRecords(
+    List<Map<String, dynamic>> records, {
+    bool syncAppState = true,
+    bool rebuild = true,
+  }) {
+    final sanitized = records.isEmpty
+        ? <Map<String, dynamic>>[_emptyRecord(_teachingFieldKeys)]
+        : records
+            .take(4)
+            .map((record) => {
+                  for (final field in _teachingFieldKeys)
+                    field: record[field]?.toString() ?? '',
+                })
+            .toList();
+
+    void assign() {
+      _model.teachingRecords = sanitized
+          .map((record) => Map<String, dynamic>.from(record))
+          .toList();
+      _model.resetTeachingControllersWithRecords(_model.teachingRecords);
+    }
+
+    if (rebuild) {
+      safeSetState(assign);
+    } else {
+      assign();
+    }
+
+    if (syncAppState) {
+      FFAppState().mypageTeachingRecords =
+          List<dynamic>.from(_model.teachingRecords.take(4));
     }
   }
 
@@ -172,10 +236,15 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       _teachingFieldKeys,
       4,
     );
-    _assignRecordState(
-      academicRecords: initialAcademicRecords,
-      teachingRecords: initialTeachingRecords,
-      notify: false,
+    _setAcademicRecords(
+      initialAcademicRecords,
+      syncAppState: true,
+      rebuild: false,
+    );
+    _setTeachingRecords(
+      initialTeachingRecords,
+      syncAppState: true,
+      rebuild: false,
     );
 
     // On page load action.
@@ -286,10 +355,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
           _teachingFieldKeys,
           4,
         );
-        _assignRecordState(
-          academicRecords: supabaseAcademicRecords,
-          teachingRecords: supabaseTeachingRecords,
-        );
+        _setAcademicRecords(supabaseAcademicRecords);
+        _setTeachingRecords(supabaseTeachingRecords);
         safeSetState(() {
           _model.archiAbroadTextFieldTextController?.text = getJsonField(
             _model.myProfileList!.pfrLicensed!,
@@ -323,11 +390,11 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
               _model.myProfileList!.pfrProject!;
         });
       } else {
-        _assignRecordState(
-          academicRecords:
-              _normalizeRecords(const [], _academicFieldKeys, 3),
-          teachingRecords:
-              _normalizeRecords(const [], _teachingFieldKeys, 4),
+        _setAcademicRecords(
+          _normalizeRecords(const [], _academicFieldKeys, 3),
+        );
+        _setTeachingRecords(
+          _normalizeRecords(const [], _teachingFieldKeys, 4),
         );
       }
     });
@@ -4384,38 +4451,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                           Builder(
                                                                         builder:
                                                                             (context) {
-                                                                          final academicRecords = FFAppState()
-                                                                              .mypageAcademicRecords
-                                                                              .map((e) => e)
-                                                                              .toList()
-                                                                              .take(3)
-                                                                              .toList();
-                                                                          if (_model.academicGetDateTextControllers.length <
-                                                                              academicRecords.length) {
-                                                                            for (var i =
-                                                                                    _model.academicGetDateTextControllers.length;
-                                                                                i < academicRecords.length;
-                                                                                i++) {
-                                                                              final record = academicRecords[i] is Map
-                                                                                  ? Map<String, dynamic>.from(academicRecords[i] as Map)
-                                                                                  : <String, dynamic>{};
-                                                                              _model.addAcademicRecordControllers(
-                                                                                getDate: record['getDate']?.toString(),
-                                                                                university: record['university']?.toString(),
-                                                                                major: record['major']?.toString(),
-                                                                                degree: record['degree']?.toString(),
-                                                                              );
-                                                                            }
-                                                                          } else if (_model.academicGetDateTextControllers.length >
-                                                                              academicRecords.length) {
-                                                                            for (var i =
-                                                                                    _model.academicGetDateTextControllers.length -
-                                                                                        1;
-                                                                                i >= academicRecords.length;
-                                                                                i--) {
-                                                                              _model.removeAcademicRecordControllers(i);
-                                                                            }
-                                                                          }
+                                                                          final recordCount =
+                                                                              _model.academicGetDateTextControllers.length;
 
                                                                           return Column(
                                                                             mainAxisSize: MainAxisSize.max,
@@ -4435,7 +4472,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                   child: Column(
                                                                                     mainAxisSize: MainAxisSize.min,
                                                                                     children: List.generate(
-                                                                                      academicRecords.length,
+                                                                                      recordCount,
                                                                                       (academicIndex) => Padding(
                                                                                         padding: EdgeInsets.symmetric(
                                                                                           vertical: 8.0,
@@ -4535,8 +4572,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         MainAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      if (FFAppState()
-                                                                              .mypageAcademicRecords
+                                                                      if (_model
+                                                                              .academicRecords
                                                                               .length <
                                                                           3)
                                                                         Flexible(
@@ -4549,7 +4586,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageAcademicRecords.length <
+                                                                                  if (_model.academicRecords.length <
                                                                                       3) {
                                                                                     final newRecord = <String, dynamic>{
                                                                                       'getDate': '',
@@ -4619,10 +4656,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      if (FFAppState()
-                                                                              .mypageAcademicRecords
-                                                                              .elementAtOrNull(1) !=
-                                                                          null)
+                                                                      if (_model
+                                                                              .academicRecords
+                                                                              .length >
+                                                                          1)
                                                                         Flexible(
                                                                           child:
                                                                               Align(
@@ -4633,9 +4670,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageAcademicRecords.length >
+                                                                                  if (_model.academicRecords.length >
                                                                                       1) {
-                                                                                    final removeIndex = FFAppState().mypageAcademicRecords.length - 1;
+                                                                                    final removeIndex =
+                                                                                        _model.academicRecords.length - 1;
                                                                                     FFAppState().removeAtIndexFromMypageAcademicRecords(removeIndex);
                                                                                     if (_model.academicRecords.length > removeIndex) {
                                                                                       _model.removeAtIndexFromAcademicRecords(removeIndex);
@@ -4791,38 +4829,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                           Builder(
                                                                         builder:
                                                                             (context) {
-                                                                          final teachingRecords = FFAppState()
-                                                                              .mypageTeachingRecords
-                                                                              .map((e) => e)
-                                                                              .toList()
-                                                                              .take(4)
-                                                                              .toList();
-                                                                          if (_model.teachingPeriodTextControllers.length <
-                                                                              teachingRecords.length) {
-                                                                            for (var i =
-                                                                                    _model.teachingPeriodTextControllers.length;
-                                                                                i < teachingRecords.length;
-                                                                                i++) {
-                                                                              final record = teachingRecords[i] is Map
-                                                                                  ? Map<String, dynamic>.from(teachingRecords[i] as Map)
-                                                                                  : <String, dynamic>{};
-                                                                              _model.addTeachingRecordControllers(
-                                                                                period: record['period']?.toString(),
-                                                                                schoolDepartment: record['schoolDepartment']?.toString(),
-                                                                                subject: record['subject']?.toString(),
-                                                                                creditsHours: record['creditsHours']?.toString(),
-                                                                              );
-                                                                            }
-                                                                          } else if (_model.teachingPeriodTextControllers.length >
-                                                                              teachingRecords.length) {
-                                                                            for (var i =
-                                                                                    _model.teachingPeriodTextControllers.length -
-                                                                                        1;
-                                                                                i >= teachingRecords.length;
-                                                                                i--) {
-                                                                              _model.removeTeachingRecordControllers(i);
-                                                                            }
-                                                                          }
+                                                                          final recordCount =
+                                                                              _model.teachingPeriodTextControllers.length;
 
                                                                           return Column(
                                                                             mainAxisSize: MainAxisSize.max,
@@ -4842,7 +4850,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                   child: Column(
                                                                                     mainAxisSize: MainAxisSize.min,
                                                                                     children: List.generate(
-                                                                                      teachingRecords.length,
+                                                                                      recordCount,
                                                                                       (teachingIndex) => Padding(
                                                                                         padding: EdgeInsets.symmetric(
                                                                                           vertical: 8.0,
@@ -4941,8 +4949,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         MainAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      if (FFAppState()
-                                                                              .mypageTeachingRecords
+                                                                      if (_model
+                                                                              .teachingRecords
                                                                               .length <
                                                                           4)
                                                                         Flexible(
@@ -4955,7 +4963,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageTeachingRecords.length <
+                                                                                  if (_model.teachingRecords.length <
                                                                                       4) {
                                                                                     final newRecord = <String, dynamic>{
                                                                                       'period': '',
@@ -5025,10 +5033,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      if (FFAppState()
-                                                                              .mypageTeachingRecords
-                                                                              .elementAtOrNull(1) !=
-                                                                          null)
+                                                                      if (_model
+                                                                              .teachingRecords
+                                                                              .length >
+                                                                          1)
                                                                         Flexible(
                                                                           child:
                                                                               Align(
@@ -5039,9 +5047,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
                                                                               child: FFButtonWidget(
                                                                                 onPressed: () async {
-                                                                                  if (FFAppState().mypageTeachingRecords.length >
+                                                                                  if (_model.teachingRecords.length >
                                                                                       1) {
-                                                                                    final removeIndex = FFAppState().mypageTeachingRecords.length - 1;
+                                                                                    final removeIndex =
+                                                                                        _model.teachingRecords.length - 1;
                                                                                     FFAppState().removeAtIndexFromMypageTeachingRecords(removeIndex);
                                                                                     if (_model.teachingRecords.length > removeIndex) {
                                                                                       _model.removeAtIndexFromTeachingRecords(removeIndex);
@@ -5568,13 +5577,15 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                               safeSetState(() {});
                                                                                               _model.myProfileList = null;
                                                                                               _model.degreeTextField = null;
-                                                                                              _assignRecordState(
-                                                                                                academicRecords: _normalizeRecords(
+                                                                                              _setAcademicRecords(
+                                                                                                _normalizeRecords(
                                                                                                   const [],
                                                                                                   _academicFieldKeys,
                                                                                                   3,
                                                                                                 ),
-                                                                                                teachingRecords: _normalizeRecords(
+                                                                                              );
+                                                                                              _setTeachingRecords(
+                                                                                                _normalizeRecords(
                                                                                                   const [],
                                                                                                   _teachingFieldKeys,
                                                                                                   4,
