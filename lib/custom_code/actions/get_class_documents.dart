@@ -70,20 +70,25 @@ Future<List<String>> getClassDocuments(int classId) async {
   }
 
   try {
-    final assessmentData = await Future.wait([
-      MidtermResultsTable().queryRows(
-        queryFn: (q) => q.eq('class', classId).order('created_date'),
-      ),
-      FinalResultsTable().queryRows(
-        queryFn: (q) => q.eq('class', classId).order('created_date'),
-      ),
-    ]);
-
-    for (final results in assessmentData.expand((rows) => rows)) {
-      addUrl(results.url);
+    final midtermResults = await MidtermResultsTable().queryRows(
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
+    );
+    for (final result in midtermResults) {
+      addUrl(result.url);
     }
   } catch (error) {
-    print('[getClassDocuments] 평가 자료 조회 오류: $error');
+    print('[getClassDocuments] midterm_results 테이블 조회 오류: $error');
+  }
+
+  try {
+    final finalResults = await FinalResultsTable().queryRows(
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
+    );
+    for (final result in finalResults) {
+      addUrl(result.url);
+    }
+  } catch (error) {
+    print('[getClassDocuments] final_results 테이블 조회 오류: $error');
   }
 
   return urls;
