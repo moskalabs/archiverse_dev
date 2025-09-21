@@ -14,6 +14,7 @@ import '/backend/supabase/database/tables/class.dart';
 import '/backend/supabase/database/tables/course_student.dart';
 import '/backend/supabase/database/tables/professor_courses.dart';
 import '/backend/supabase/database/tables/professors.dart';
+import '/backend/supabase/database/tables/posts.dart';
 import '/backend/supabase/database/tables/subjectportpolio.dart';
 import '/custom_code/widgets/index.dart'; // custom_widgets 해결
     if (rawWeek == null || rawWeek.isEmpty) {
@@ -112,7 +113,8 @@ import '/custom_code/widgets/index.dart'; // custom_widgets 해결
       _isDashboardLoading = true;
     });
 
-    try {
+    final totalSubmissions = weeklySubmissions.fold<int>(0, (sum, value) => sum + value);
+    return '$professorName$idSegment $professorTypeLabel의 총 학생 수 ${totalStudents}명, 담당 과목 ${activeCoursesCount}개, 누적 제출 ${totalSubmissions}건, 평균 주차 성적 ${averageGrade.toStringAsFixed(1)}점';
       final targetEmail = (widget.email ?? currentUserEmail).trim();
       if (targetEmail.isEmpty) {
         safeSetState(_resetDashboardMetrics);
@@ -217,20 +219,36 @@ import '/custom_code/widgets/index.dart'; // custom_widgets 해결
     final uniqueStudentIds = <int>{};
     for (final student in studentRows) {
       final studentId = student.studentId;
-      if (studentId != null) {
-        uniqueStudentIds.add(studentId);
-      }
-    }
-
-    int computedCourseCount = 0;
+    List<SubjectportpolioRow> portfolioRows = [];
 
     if (restrictToProfessorId) {
-      final courseRows = await ProfessorCoursesTable().queryRows(
+      portfolioRows = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('professor_id', professorId)
+            .order('week'),
+      );
+    }
+
+    if (portfolioRows.isEmpty) {
+      portfolioRows = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('professor_name', professorName)
+            .order('week'),
+      );
+    }
+    List<CourseStudentRow> studentRows = [];
+
+    if (restrictToProfessorId) {
+      studentRows = await CourseStudentTable().queryRows(
         queryFn: (q) => q.eqOrNull('professor_id', professorId),
       );
-      final uniqueCourseIds = <int>{};
-      for (final course in courseRows) {
-        final courseId = course.courseId;
+    }
+
+    if (studentRows.isEmpty) {
+      studentRows = await CourseStudentTable().queryRows(
+        queryFn: (q) => q.eqOrNull('professor_name', professorName),
+      );
+    }
         if (courseId != null) {
           uniqueCourseIds.add(courseId);
         }
