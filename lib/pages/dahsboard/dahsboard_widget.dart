@@ -106,97 +106,79 @@
                               Container(
                           child: Container(
                             width: MediaQuery.sizeOf(context).width * 0.35,
-                            constraints: const BoxConstraints(
-                              minWidth: 200.0,
-                              maxWidth: 500.0,
-                                width: MediaQuery.sizeOf(context).width * 1.0,
-                                height: 55.0,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFEEF1F6),
-                                  shape: BoxShape.rectangle,
-                                ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          10.0, 0.0, 0.0, 0.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.35,
-                                        constraints: const BoxConstraints(
-                                          minWidth: 200.0,
-                                          maxWidth: 500.0,
-                                        ),
-                                        decoration: BoxDecoration(),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Flexible(
-                                              flex: 2,
-                                              child: Row(
-                                                mainAxisSize:
-                                                    MainAxisSize.min,
-                                                children: [
-                                                  Flexible(
-                                                    flex: 2,
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(2.0,
-                                                                  5.0, 2.0,
-                                                                  5.0),
-                                                      child: FutureBuilder<
-                                                          List<YearsRow>>(
-                                                        future: YearsTable()
-                                                            .queryRows(
-                                                          queryFn: (q) => q,
-                                                        ),
-                                                        builder:
-                                                            (context, snapshot) {
-                                                          // Customize what your widget looks like when it's loading.
-                                                          if (!snapshot
-                                                              .hasData) {
-                                                            return Center(
-                                                              child: SizedBox(
-                                                                width: 50.0,
-                                                                height: 50.0,
-                                                                child:
-                                                                    CircularProgressIndicator(
-                                                                  valueColor:
-                                                                      AlwaysStoppedAnimation<
-                                                                          Color>(
-                                                                    Color(
-                                                                        0xFF284E75),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                          List<YearsRow>
-                                                              dropDown1YearsRowList =
-                                                              snapshot.data!;
-                                                          return FlutterFlowDropDown<
-                                                              String>(
-                                                            controller: _model
-                                                                    .dropDown1ValueController ??=
-                                                                FormFieldController<
-                                                                    String>(
-                                                              _model.dropDown1Value ??=
-                                                                  valueOrDefault<
-                                                                      String>(
-                                                                dropDown1YearsRowList
-                                                                    .lastOrNull
-                                                                    ?.year,
-                                                                '2025',
-                                                              ),
-                                                            ),
-                                                            options:
-                                                                dropDown1YearsRowList
-                                                                    .map((e) =>
-                                                                        e.year)
-                                                                    .withoutNulls
-                                                                    .toList(),
-                                                            onChanged:
-                                                                (val) async {
+
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                                    child: Container(
+                                      width: MediaQuery.sizeOf(context).width * 0.35,
+                                      constraints: const BoxConstraints(
+                                        minWidth: 200.0,
+                                        maxWidth: 500.0,
+                                      ),
+                                      decoration: BoxDecoration(),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                              Flexible(
+                                flex: 2,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            2.0, 5.0, 2.0, 5.0),
+                                        child: FutureBuilder<List<YearsRow>>(
+                                          future: YearsTable().queryRows(
+                                            queryFn: (q) => q,
+                                          ),
+                                          builder: (context, snapshot) {
+                                            // Customize what your widget looks like when it's loading.
+                                            if (!snapshot.hasData) {
+                                              return Center(
+                                                child: SizedBox(
+                                                  width: 50.0,
+                                                  height: 50.0,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(
+                                                      Color(0xFF284E75),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            List<YearsRow>
+                                                dropDown1YearsRowList =
+                                                snapshot.data!;
+                                            return FlutterFlowDropDown<String>(
+                                              controller: _model
+                                                      .dropDown1ValueController ??=
+                                                  FormFieldController<String>(
+                                                _model.dropDown1Value ??=
+                                                    valueOrDefault<String>(
+                                                  dropDown1YearsRowList
+                                                      .lastOrNull?.year,
+                                                  '2025',
+                                                ),
+                                              ),
+                                              options: dropDown1YearsRowList
+                                                  .map((e) => e.year)
+                                                  .withoutNulls
+                                                  .toList(),
+                                              onChanged: (val) async {
+                                                safeSetState(() => _model
+                                                    .dropDown1Value = val);
+                                                _model.years =
+                                                    _model.dropDown1Value;
+                                                safeSetState(() {});
+                                              },
+                                              width: 160.0,
+                                              height: 40.0,
+                                                    fontSize: 16.0,
                                                               safeSetState(() =>
                                                                   _model.dropDown1Value =
                                                                       val);
@@ -372,6 +354,7 @@
                                                                     child: Row(
                                                                       mainAxisSize:
                                                                           MainAxisSize
+                                                    fontSize: 16.0,
                                                                               .min,
                                                                       children: [
                                                                                               fontSize: 12.0,
@@ -917,7 +900,8 @@
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
-                                                                      fontSize: 22.0,
+                                                                      fontSize:
+                                                                          25.0,
                             if (((_model.courseSectionOutputV.isNotEmpty) ==
                                     true) &&
                                 (_model.courseSelected1 == true))
@@ -1108,3 +1092,176 @@
                                                                                               fontSize: 12.0,
                                                                                               fontSize: 12.0,
                                                                                               fontSize: 12.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                              fontSize: 25.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                            fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                                                                                      fontSize: 25.0,
+                                                                                                fontSize: 20.0,
+                            if ((((_model.courseSectionOutputV.isNotEmpty) == true) &&
+                                    (_model.courseSelected1 == true)))
+                                                  fontSize: 25.0,
+                                                                          fontSize:
+                                                                              25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                              child: Visibility(
+                                                                visible:
+                                                                    true,
+                                                                child: Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          3.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                                  fontSize: () {
+                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                      return 8.0;
+                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                      return 10.0;
+                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                      return 12.0;
+                                                                                    } else {
+                                                                                      return 15.0;
+                                                                                    }
+                                                                                  }(),
+                                                                          fontSize:
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                          fontSize:
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                          fontSize:
+                                                                              23.0,
+                                                                              fontSize: 15.0,
+                                                                              fontSize: 15.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseBySelectOutputV.isNotEmpty) == true) &&
+                                    (_model.courseSelected2 == true)))
+                                                  fontSize: 25.0,
+                                                                          fontSize:
+                                                                              25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                        fontSize:
+                                                                            23.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                      'enrol7sp' /* 교수님 업로드현황  */,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseSectionOutputV.isNotEmpty) == true) &&
+                                    (_model.courseSelected3 == true)))
+                                                  fontSize: 25.0,
+                                                                          fontSize:
+                                                                              25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                        fontSize:
+                                                                            23.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                      'nxh0rhns' /* 교수님 업로드현황  */,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseSectionOutputV.isNotEmpty) == true) &&
+                                    (_model.courseSelected4 == true)))
+                                                  fontSize: 25.0,
+                                                                          fontSize:
+                                                                              25.0,
+                                                                      fontSize:
+                                                                          25.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                                fontSize: 15.0,
+                                                                        fontSize:
+                                                                            23.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            fontSize:
+                                                                                15.0,
+                                                                      'jo857j05' /* 교수님 업로드현황  */,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                                              fontSize: 13.0,
+                                                                      overflow: TextOverflow.ellipsis,
+                    ),
+            ),
