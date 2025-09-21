@@ -109,29 +109,33 @@
                           constraints: BoxConstraints(
                             mainAxisSize: MainAxisSize.max,
               Container(
-                width: MediaQuery.sizeOf(context).width * 1.0,
-                height: 55.0,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEEF1F6),
-                  shape: BoxShape.rectangle,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                          10.0, 0.0, 0.0, 0.0),
-                      child: Container(
-                        width: MediaQuery.sizeOf(context).width * 0.35,
-                        constraints: BoxConstraints(
-                          minWidth: 200.0,
-                          maxWidth: 500.0,
-                        ),
-                        decoration: BoxDecoration(),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                                          future: YearsTable().queryRows(
+                              if (responsiveVisibility(
+                                context: context,
+                                phone: false,
+                              ))
+                                Container(
+                  width: MediaQuery.sizeOf(context).width * 1.0,
+                  height: 55.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEEF1F6),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width * 0.35,
+                          constraints: BoxConstraints(
+                            minWidth: 200.0,
+                            maxWidth: 500.0,
+                          ),
+                          decoration: BoxDecoration(),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
                                             queryFn: (q) => q,
                                           ),
                                           builder: (context, snapshot) {
@@ -470,8 +474,6 @@
                                                     '0000',
                                                   textAlign: TextAlign.center,
                                                 ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
                                               child: AnimatedDefaultTextStyle(
                                                    '5hv0jwqm' /* 년 */,
                                                  ),
@@ -525,8 +527,6 @@
                               if (_model.buttonGrades != null)
                               if (((_model.courseSectionOutputV.isNotEmpty) ==
                                       true) &&
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
                                   (_model.courseSelected1 == true))
                                                             Flexible(
                                                             Flexible(
@@ -580,8 +580,6 @@
                                                                                               fontSize: 13.0,
                                                                   child: Row(
                                                                     mainAxisSize:
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
                                                                     children: [
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
@@ -657,17 +655,23 @@
                                                                         MainAxisSize
                                                                             .min,
                                                                     children: [
-              Container(
-                width: MediaQuery.sizeOf(context).width * 1.0,
-                height: MediaQuery.sizeOf(context).height * 0.87,
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).secondaryBackground,
-                  shape: BoxShape.rectangle,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                                                                            .min,
+              Flexible(
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width * 1.0,
+                  height: MediaQuery.sizeOf(context).height * 0.87,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                            if (responsiveVisibility(
+                              context: context,
+                              phone: false,
+                              tablet: false,
+                            ))
+                              Flexible(
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -1312,3 +1316,60 @@
                             if (((_model.courseSectionOutputV.isNotEmpty) ==
                                     true) &&
                                 (_model.courseSelected4 == true))
+                            if ((_model.buttonGrades != null) &&
+                                responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                ))
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                                    (_model.courseSelected1 == true)) &&
+                                responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                ))
+                                                          if (responsiveVisibility(
+                                                            context: context,
+                                                            phone: false,
+                                                          ))
+                                                            Flexible(
+                                                              child: Padding(
+                                                                visible:
+                                                                    responsiveVisibility(
+                                                                  context:
+                                                                      context,
+                                                                  phone: false,
+                                                                ),
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseBySelectOutputV.isNotEmpty) ==
+                                        true) &&
+                                    (_model.courseSelected2 == true)) &&
+                                responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                ))
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                                    (_model.courseSelected3 == true)) &&
+                                responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                ))
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                                    (_model.courseSelected4 == true)) &&
+                                responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                ))
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
