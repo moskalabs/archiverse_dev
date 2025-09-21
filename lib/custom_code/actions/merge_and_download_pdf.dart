@@ -23,42 +23,89 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
 
   final PdfDocument finalDoc = PdfDocument();
   Uint8List? outputBytes;
-  int processedFiles = 0;
   final int totalFiles = pdfUrls.length;
 
+  double _progressValue(int processed) {
+    if (totalFiles <= 0) {
+      return 0.0;
+    }
+    final double value = processed / totalFiles;
+    if (value.isNaN) {
+      return 0.0;
+    }
+    return value.clamp(0.0, 1.0);
+  }
+
+  void updateProgress(int processedCount, String message) {
+    FFAppState().update(() {
+      FFAppState().downloadProgress = _progressValue(processedCount);
+      FFAppState().downloadProgressMessage = message;
+    });
+  }
+
+  updateProgress(0, '총 $totalFiles개 파일 다운로드 준비 중');
+
   try {
-    for (final url in pdfUrls) {
+    for (int index = 0; index < totalFiles; index++) {
+      final displayIndex = index + 1;
+      final url = pdfUrls[index];
       final trimmedUrl = url.trim();
+
+      updateProgress(index, '파일 $displayIndex / $totalFiles 다운로드 중');
+
       if (trimmedUrl.isEmpty) {
-        print('[mergeAndDownloadPdf] 빈 URL 건너뜀');
+        print('[mergeAndDownloadPdf] 빈 URL 건너뜀: index $index');
+        updateProgress(
+          displayIndex,
+          '파일 $displayIndex / $totalFiles 건너뜀',
+        );
         continue;
       }
 
-      processedFiles++;
-      print('Processing file $processedFiles of $totalFiles');
+      PdfDocument? src;
+      try {
+        final resp = await http
+            .get(Uri.parse(trimmedUrl))
+            .timeout(const Duration(minutes: 2));
 
-      final resp = await http
-          .get(Uri.parse(trimmedUrl))
-          .timeout(const Duration(minutes: 2));
+        if (resp.statusCode != 200) {
+          print('[mergeAndDownloadPdf] 다운로드 실패: $trimmedUrl');
+          updateProgress(
+            displayIndex,
+            '파일 $displayIndex / $totalFiles 다운로드 실패',
+          );
+          continue;
+        }
 
-      if (resp.statusCode != 200) {
-        print('[mergeAndDownloadPdf] 다운로드 실패: $trimmedUrl');
-        continue;
+        src = PdfDocument(inputBytes: resp.bodyBytes);
+        if (src.pages.count > 0) {
+          finalDoc.importPageRange(src, 0, src.pages.count - 1);
+        }
+
+        updateProgress(
+          displayIndex,
+          '파일 $displayIndex / $totalFiles 병합 완료',
+        );
+      } catch (error) {
+        print('[mergeAndDownloadPdf] 파일 처리 오류 ($trimmedUrl): $error');
+        updateProgress(
+          displayIndex,
+          '파일 $displayIndex / $totalFiles 처리 중 오류',
+        );
+      } finally {
+        src?.dispose();
       }
-
-      final PdfDocument src = PdfDocument(inputBytes: resp.bodyBytes);
-      if (src.pages.count > 0) {
-        finalDoc.importPageRange(src, 0, src.pages.count - 1);
-      }
-      src.dispose();
     }
 
     if (finalDoc.pages.count == 0) {
       throw Exception('병합할 PDF 페이지가 없습니다.');
     }
 
+    updateProgress(totalFiles, 'PDF 파일 생성 중');
     outputBytes = Uint8List.fromList(await finalDoc.save());
+    updateProgress(totalFiles, 'PDF 다운로드 준비 완료');
   } catch (e) {
+    updateProgress(totalFiles, 'PDF 병합 중 오류가 발생했습니다');
     print('[mergeAndDownloadPdf] 오류: $e');
     throw Exception('PDF 병합 중 오류가 발생했습니다: $e');
   } finally {

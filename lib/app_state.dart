@@ -921,6 +921,18 @@ class FFAppState extends ChangeNotifier {
     prefs.setStringList('ff_mergepdfs', _mergepdfs);
   }
 
+  double _downloadProgress = 0.0;
+  double get downloadProgress => _downloadProgress;
+  set downloadProgress(double value) {
+    _downloadProgress = value;
+  }
+
+  String _downloadProgressMessage = '';
+  String get downloadProgressMessage => _downloadProgressMessage;
+  set downloadProgressMessage(String value) {
+    _downloadProgressMessage = value;
+  }
+
   /// 강좌 선택한거
   int _classSelectedID = 0;
   int get classSelectedID => _classSelectedID;

@@ -50,6 +50,83 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
     super.dispose();
   }
 
+  Widget _buildDownloadProgressDialog() {
+    return Consumer<FFAppState>(
+      builder: (context, appState, _) {
+        final progressValue = appState.downloadProgress.clamp(0.0, 1.0);
+        final percentText =
+            (progressValue * 100).clamp(0, 100).toStringAsFixed(0);
+        final statusText = appState.downloadProgressMessage.isNotEmpty
+            ? appState.downloadProgressMessage
+            : '잠시만 기다려주세요...';
+
+        return Dialog(
+          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PDF 다운로드 준비 중',
+                  style: FlutterFlowTheme.of(context).titleMedium.override(
+                        font: GoogleFonts.openSans(
+                          fontWeight:
+                              FlutterFlowTheme.of(context).titleMedium.fontWeight,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).titleMedium.fontStyle,
+                        ),
+                        color: FlutterFlowTheme.of(context).primaryText,
+                        letterSpacing: 0.0,
+                      ),
+                ),
+                SizedBox(height: 16.0),
+                LinearProgressIndicator(
+                  value: progressValue,
+                  minHeight: 6.0,
+                  backgroundColor: FlutterFlowTheme.of(context).alternate,
+                  color: FlutterFlowTheme.of(context).mainColor1,
+                ),
+                SizedBox(height: 12.0),
+                Text(
+                  '$percentText%',
+                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                        font: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                        ),
+                        color: FlutterFlowTheme.of(context).primaryText,
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                SizedBox(height: 6.0),
+                Text(
+                  statusText,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        font: GoogleFonts.openSans(
+                          fontWeight:
+                              FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                        ),
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -616,18 +693,26 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                           return;
                         }
 
+                        FFAppState().update(() {
+                          FFAppState().downloadProgress = 0.0;
+                          FFAppState().downloadProgressMessage = '문서 목록을 불러오는 중';
+                        });
+
                         showDialog(
                           context: context,
                           barrierDismissible: false,
-                          builder: (dialogContext) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          builder: (dialogContext) =>
+                              _buildDownloadProgressDialog(),
                         );
 
                         try {
                           final selectedClassId = FFAppState().classSelectedID;
                           final documentUrls =
                               await actions.getClassDocuments(selectedClassId);
+
+                          FFAppState().update(() {
+                            FFAppState().downloadProgressMessage = 'PDF 병합 준비 중';
+                          });
 
                           await actions.mergePdfs(
                             'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/PDF_COVER.pdf',
@@ -663,6 +748,10 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                             if (!popped && mounted) {
                               await Navigator.of(context).maybePop();
                             }
+                            FFAppState().update(() {
+                              FFAppState().downloadProgress = 0.0;
+                              FFAppState().downloadProgressMessage = '';
+                            });
                           }
                         }
                       },
