@@ -27,8 +27,6 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   final int totalFiles = pdfUrls.length;
 
   try {
-    finalDoc.pageSettings.margins.all = 0;
-
     for (final url in pdfUrls) {
       final trimmedUrl = url.trim();
       if (trimmedUrl.isEmpty) {
@@ -49,14 +47,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
       }
 
       final PdfDocument src = PdfDocument(inputBytes: resp.bodyBytes);
-      for (int i = 0; i < src.pages.count; i++) {
-        final PdfPage srcPage = src.pages[i];
-        finalDoc.pageSettings.size =
-            Size(srcPage.size.width, srcPage.size.height);
-        final PdfPage dstPage = finalDoc.pages.add();
-        dstPage.rotation = srcPage.rotation;
-        final PdfTemplate tpl = srcPage.createTemplate();
-        dstPage.graphics.drawPdfTemplate(tpl, Offset.zero, srcPage.size);
+      if (src.pages.count > 0) {
+        finalDoc.importPageRange(src, 0, src.pages.count - 1);
       }
       src.dispose();
     }
