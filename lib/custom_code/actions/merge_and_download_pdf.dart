@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   if (pdfUrls.isEmpty) {
@@ -46,6 +47,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   updateProgress(0, '총 $totalFiles개 파일 다운로드 준비 중');
 
   try {
+    finalDoc.pageSettings.margins.all = 0;
+
     for (int index = 0; index < totalFiles; index++) {
       final displayIndex = index + 1;
       final url = pdfUrls[index];
@@ -80,7 +83,10 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
         src = PdfDocument(inputBytes: resp.bodyBytes);
         if (src.pages.count > 0) {
           for (int pageIndex = 0; pageIndex < src.pages.count; pageIndex++) {
-            finalDoc.importPage(src, pageIndex);
+            final template = src.pages[pageIndex].createTemplate();
+            finalDoc.pageSettings.size = template.size;
+            final newPage = finalDoc.pages.add();
+            newPage.graphics.drawPdfTemplate(template, ui.Offset.zero);
           }
         }
 
