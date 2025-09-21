@@ -89,12 +89,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
             final newPage = finalDoc.pages.add();
             newPage.graphics.drawPdfTemplate(
               template,
-              ui.Rect.fromLTWH(
-                0,
-                0,
-                pageSize.width,
-                pageSize.height,
-              ),
+              ui.Offset.zero,
+              ui.Size(pageSize.width, pageSize.height),
             );
           }
         }
