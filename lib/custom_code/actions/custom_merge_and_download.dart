@@ -8,23 +8,9 @@ import 'dart:html'; // For web-specific download
 /// Fetches document URLs for a given class from multiple Supabase tables.
 /// This is a private helper function.
 Future<List<String>> _getClassDocuments(String classId, SupabaseClient supabase) async {
-  List<String> urls = [];
+  final List<String> urls = [];
   print('Fetching documents for class ID: $classId');
 
-  // A helper to safely extract URLs from a query response
-  void addUrlsFromResponse(List<Map<String, dynamic>> data, String tableName) {
-    if (data.isNotEmpty) {
-      for (var row in data) {
-        final url = row['url'];
-        if (url != null && url is String && url.isNotEmpty) {
-          urls.add(url);
-        }
-      }
-    }
-    print('Found ${data.length} documents in $tableName');
-  }
-
-  // Define all tables to query
   final tablesToQuery = {
     'class': 'id',
     'subjectportpolio': 'class',
@@ -36,8 +22,19 @@ Future<List<String>> _getClassDocuments(String classId, SupabaseClient supabase)
 
   for (var table in tablesToQuery.entries) {
     try {
-      final response = await supabase.from(table.key).select('url').eq(table.value, classId);
-      addUrlsFromResponse(response, table.key);
+      // Explicitly type the response to ensure type safety.
+      final List<Map<String, dynamic>> response =
+          await supabase.from(table.key).select('url').eq(table.value, classId);
+
+      if (response.isNotEmpty) {
+        for (var row in response) {
+          final url = row['url'];
+          if (url != null && url is String && url.isNotEmpty) {
+            urls.add(url);
+          }
+        }
+      }
+      print('Found ${response.length} documents in ${table.key}');
     } catch (e) {
       print('Error fetching from ${table.key} table: $e');
     }
