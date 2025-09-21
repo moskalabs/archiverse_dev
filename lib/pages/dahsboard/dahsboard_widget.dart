@@ -89,30 +89,31 @@
                                                                               minWidth: 200.0,
                                                                             ),
                                                                       maxLines: 1,
-                                                                      overflow: TextOverflow.ellipsis,
-                  scrollDirection: Axis.horizontal,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Align(
-                        alignment: AlignmentDirectional(0.0, -1.0),
-                        child: Container(
-                          width: 1920.0,
-                      scrollDirection: Axis.vertical,
+                constrained: false,
                           constraints: BoxConstraints(
-                            minWidth: 1200.0,
+                            mainAxisSize: MainAxisSize.min,
+                  width: MediaQuery.sizeOf(context).width * 1.0,
+                  height: 55.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEEF1F6),
+                    shape: BoxShape.rectangle,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width * 0.35,
+                          constraints: BoxConstraints(
+                            minWidth: 200.0,
+                            maxWidth: 500.0,
                           ),
-                            mainAxisSize: MainAxisSize.max,
-                          constraints: const BoxConstraints(
-                              Container(
-                          child: Container(
-                            width: MediaQuery.sizeOf(context).width * 0.35,
-
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
-                                    child: Container(
-                                      width: MediaQuery.sizeOf(context).width * 0.35,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 200.0,
+                          decoration: BoxDecoration(),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
                                         maxWidth: 500.0,
                                       ),
                                       decoration: BoxDecoration(),
@@ -210,7 +211,6 @@
                                                                             ),
                                                                             constraints: BoxConstraints(
                                                                               minWidth: 200.0,
-                                                                            ),
                                                                             constraints: BoxConstraints(
                                                                               minWidth: 200.0,
                                                                             ),
@@ -354,7 +354,6 @@
                                                                     child: Row(
                                                                       mainAxisSize:
                                                                           MainAxisSize
-                                                    fontSize: 16.0,
                                                                               .min,
                                                                       children: [
                                                                                               fontSize: 12.0,
@@ -471,6 +470,8 @@
                                                     '0000',
                                                   textAlign: TextAlign.center,
                                                 ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
                                               child: AnimatedDefaultTextStyle(
                                                    '5hv0jwqm' /* 년 */,
                                                  ),
@@ -524,6 +525,8 @@
                               if (_model.buttonGrades != null)
                               if (((_model.courseSectionOutputV.isNotEmpty) ==
                                       true) &&
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
                                   (_model.courseSelected1 == true))
                                                             Flexible(
                                                             Flexible(
@@ -577,6 +580,8 @@
                                                                                               fontSize: 13.0,
                                                                   child: Row(
                                                                     mainAxisSize:
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
                                                                     children: [
                                                                                               fontSize: 13.0,
                                                                                               fontSize: 13.0,
@@ -652,17 +657,17 @@
                                                                         MainAxisSize
                                                                             .min,
                                                                     children: [
-                                                                                              fontSize: 13.0,
-                                                                                              fontSize: 13.0,
-                                                                                              fontSize: 13.0,
-                                                                                              fontSize: 13.0,
-                              if (((_model.courseSectionOutputV.isNotEmpty) ==
-                                      true) &&
-                                  (_model.courseSelected4 == true))
-                                                                                fontSize: 15.0,
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
+                              Container(
+                                width: MediaQuery.sizeOf(context).width * 1.0,
+                                height: MediaQuery.sizeOf(context).height * 0.87,
+                                decoration: BoxDecoration(
+                                  color:
+                                      FlutterFlowTheme.of(context).secondaryBackground,
+                                  shape: BoxShape.rectangle,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                                                             .min,
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -1265,3 +1270,24 @@
                                                                       overflow: TextOverflow.ellipsis,
                     ),
             ),
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                                                            child: Padding(
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                            0.0,
+                                                                            3.0,
+                                                                            0.0,
+                                                                            0.0),
+                                                                child: Row(
+                                                                                  fontSize: 12.0,
+                            if ((((_model.courseBySelectOutputV.isNotEmpty) ==
+                                        true) &&
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                            if ((((_model.courseSectionOutputV.isNotEmpty) ==
+                                        true) &&
+                    ],
+            ],
