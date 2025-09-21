@@ -950,7 +950,7 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                               ],
                                             ),
                                           ),
-                                          Expanded(
+                                          /*디폴트 레이아웃에서, left widget 에 확인된 크리틱 -> hide 처리. 추후, 연동 후 개발Expanded(
                                             flex: 1,
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
@@ -1106,7 +1106,7 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                          ),*/
                                         ],
                                       ),
                                     ),
