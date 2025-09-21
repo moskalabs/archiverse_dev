@@ -40,6 +40,46 @@ class _StudentSubjectPortpolioWidgetState
 
   final animationsMap = <String, AnimationInfo>{};
 
+  Future<void> _confirmCriticForWeek(String? week) async {
+    final effectiveWeek = week?.trim();
+    if (effectiveWeek == null || effectiveWeek.isEmpty) {
+      return;
+    }
+
+    final matchingRow = _model.sPortpolioList
+        .where((row) => (row.week ?? '').trim() == effectiveWeek)
+        .toList()
+        .firstOrNull;
+
+    if (matchingRow == null) {
+      return;
+    }
+
+    final criticHtml = matchingRow.criticHtml?.trim() ?? '';
+    if (criticHtml.isEmpty) {
+      return;
+    }
+
+    if (matchingRow.criticConfirmedAt != null) {
+      return;
+    }
+
+    final now = DateTime.now().toUtc();
+    try {
+      await SubjectportpolioTable().update(
+        data: {
+          'critic_confirmed_at': now,
+        },
+        matchingRows: (rows) => rows.eq('id', matchingRow.id),
+      );
+
+      matchingRow.criticConfirmedAt = now;
+      safeSetState(() {});
+    } catch (e) {
+      print('Error confirming critic for week $effectiveWeek: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +117,7 @@ class _StudentSubjectPortpolioWidgetState
       _model.sPortpolioList =
           _model.onloadportpoliooutput!.toList().cast<SubjectportpolioRow>();
       safeSetState(() {});
+      await _confirmCriticForWeek(_model.weeks);
     });
 
     _model.textController1 ??= TextEditingController();
@@ -497,6 +538,8 @@ class _StudentSubjectPortpolioWidgetState
                                                                                         _model.weeks = '${_model.sliderValue1?.toString()}주차';
                                                                                         _model.openOrHideButton = !_model.openOrHideButton;
                                                                                         safeSetState(() {});
+                                                                                        await _confirmCriticForWeek(
+                                                                                            _model.weeks);
                                                                                       },
                                                                                       child: Icon(
                                                                                         Icons.expand_more,
@@ -2555,6 +2598,8 @@ class _StudentSubjectPortpolioWidgetState
                                                                                     _model.weeks = '${_model.sliderValue2?.toString()}주차';
                                                                                     _model.openOrHideButton = !_model.openOrHideButton;
                                                                                     safeSetState(() {});
+                                                                                    await _confirmCriticForWeek(
+                                                                                        _model.weeks);
                                                                                     _model.weekoutputMobile = await WeeksUploadTable().queryRows(
                                                                                       queryFn: (q) => q.eqOrNull(
                                                                                         'weeks_name',
