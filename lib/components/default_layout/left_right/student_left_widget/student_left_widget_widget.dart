@@ -1,3 +1,4 @@
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -17,6 +18,8 @@ class StudentLeftWidgetWidget extends StatefulWidget {
 
 class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
   late StudentLeftWidgetModel _model;
+  Future<int>? _registeredCriticCountFuture;
+  String? _registeredCriticCountKey;
 
   @override
   void setState(VoidCallback callback) {
@@ -30,6 +33,80 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
     _model = createModel(context, () => StudentLeftWidgetModel());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  }
+
+  Future<int> _fetchRegisteredCriticCount({
+    required int classId,
+    required String studentName,
+  }) async {
+    if (classId == 0 || studentName.isEmpty) {
+      return 0;
+    }
+
+    try {
+      final rows = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', classId)
+            .eqOrNull('student_name', studentName),
+      );
+
+      return rows
+          .where((row) {
+            final url = row.url?.trim() ?? '';
+            final result = row.portpolioresult?.trim() ?? '';
+            final title = row.title?.trim() ?? '';
+            return url.isNotEmpty || result.isNotEmpty || title.isNotEmpty;
+          })
+          .length;
+    } catch (e) {
+      print('Error loading registered critic count: $e');
+      return 0;
+    }
+  }
+
+  Future<int> _ensureRegisteredCriticCountFuture() {
+    final appState = FFAppState();
+    final queryKey = [
+      appState.classSelectedID,
+      appState.studentNameSelected,
+      appState.studentPortporlioAfterEditor,
+      appState.studentPortporlioDeleteClicked,
+    ].join('|');
+
+    if (_registeredCriticCountFuture == null ||
+        _registeredCriticCountKey != queryKey) {
+      _registeredCriticCountKey = queryKey;
+      _registeredCriticCountFuture = _fetchRegisteredCriticCount(
+        classId: appState.classSelectedID,
+        studentName: appState.studentNameSelected,
+      );
+    }
+
+    return _registeredCriticCountFuture!;
+  }
+
+  TextStyle _registeredCriticCountTextStyle(BuildContext context) {
+    return FlutterFlowTheme.of(context).bodyMedium.override(
+          font: GoogleFonts.openSans(
+            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+          ),
+          color: FlutterFlowTheme.of(context).primaryText,
+          fontSize: () {
+            if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+              return 12.0;
+            } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+              return 10.0;
+            } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+              return 10.0;
+            } else {
+              return 12.0;
+            }
+          }(),
+          letterSpacing: 0.0,
+          fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+        );
   }
 
   @override
@@ -868,51 +945,59 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
                                                                             0.0,
                                                                             5.0,
                                                                             0.0),
-                                                                child: Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    '1urtnl98' /* - */,
-                                                                  ),
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        font: GoogleFonts
-                                                                            .openSans(
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
+                                                                child:
+                                                                    FutureBuilder<int>(
+                                                                  future:
+                                                                      _ensureRegisteredCriticCountFuture(),
+                                                                  builder: (context,
+                                                                      snapshot) {
+                                                                    if (snapshot
+                                                                            .connectionState ==
+                                                                        ConnectionState
+                                                                            .waiting) {
+                                                                      return Text(
+                                                                        FFLocalizations.of(
+                                                                                context)
+                                                                            .getText(
+                                                                          '1urtnl98' /* - */,
                                                                         ),
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontSize:
-                                                                            () {
-                                                                          if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointSmall) {
-                                                                            return 12.0;
-                                                                          } else if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointMedium) {
-                                                                            return 10.0;
-                                                                          } else if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointLarge) {
-                                                                            return 10.0;
-                                                                          } else {
-                                                                            return 12.0;
-                                                                          }
-                                                                        }(),
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
+                                                                        style:
+                                                                            _registeredCriticCountTextStyle(context),
+                                                                      );
+                                                                    }
+
+                                                                    if (snapshot
+                                                                            .hasError ||
+                                                                        !snapshot
+                                                                            .hasData) {
+                                                                      return Text(
+                                                                        FFLocalizations.of(
+                                                                                context)
+                                                                            .getText(
+                                                                          '1urtnl98' /* - */,
+                                                                        ),
+                                                                        style:
+                                                                            _registeredCriticCountTextStyle(context),
+                                                                      );
+                                                                    }
+
+                                                                    final count =
+                                                                        snapshot
+                                                                            .data!;
+                                                                    return Text(
+                                                                      formatNumber(
+                                                                        count,
+                                                                        formatType:
+                                                                            FormatType
+                                                                                .decimal,
+                                                                        decimalType:
+                                                                            DecimalType
+                                                                                .automatic,
                                                                       ),
+                                                                      style:
+                                                                          _registeredCriticCountTextStyle(context),
+                                                                    );
+                                                                  },
                                                                 ),
                                                               ),
                                                             ),
