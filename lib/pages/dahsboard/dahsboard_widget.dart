@@ -99,43 +99,38 @@
                     shape: BoxShape.rectangle,
                   ),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width * 0.35,
-                          constraints: BoxConstraints(
-                            mainAxisSize: MainAxisSize.max,
-              Container(
-                              if (responsiveVisibility(
-                                context: context,
-                                phone: false,
-                              ))
-                                Container(
-                  width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: 55.0,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFEEF1F6),
-                    shape: BoxShape.rectangle,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width * 0.35,
-                          constraints: BoxConstraints(
-                            minWidth: 200.0,
-                            maxWidth: 500.0,
-                          ),
-                          decoration: BoxDecoration(),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
+                      child: Container(
+                        width: 1920.0,
+                        constraints: BoxConstraints(
+                          minWidth: 1200.0,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Container(
+                              width: MediaQuery.sizeOf(context).width * 1.0,
+                              height: 55.0,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFEEF1F6),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        10.0, 0.0, 0.0, 0.0),
+                                    child: Container(
+                                      width:
+                                          MediaQuery.sizeOf(context).width * 0.35,
+                                      constraints: BoxConstraints(
+                                        minWidth: 200.0,
+                                        maxWidth: 500.0,
+                                      ),
+                                      decoration: BoxDecoration(),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
                                             queryFn: (q) => q,
                                           ),
                                           builder: (context, snapshot) {
@@ -678,11 +673,6 @@
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Flexible(
-                                                                                              fontSize: 13.0,
-                                                                                              fontSize: 13.0,
-                                                                  child: Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
                                                                             .min,
                                                                     children: [
                                                                                               fontSize: 13.0,
@@ -1373,3 +1363,124 @@
                                 ))
                                                                     maxLines: 1,
                                                                     overflow: TextOverflow.ellipsis,
+                                                                              fontSize: 22.0,
+                                                                                      fontSize: 22.0,
+                                                                                            fontSize: 18.0,
+                                                                                      fontSize: 22.0,
+                                                                                            fontSize: 18.0,
+                                                                                      fontSize: 22.0,
+                                                                                            fontSize: 18.0,
+                                                                                      fontSize: 22.0,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                                fontSize: 18.0,
+                                                                                      fontSize: 22.0,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                                fontSize: 18.0,
+                                                                                      fontSize: 22.0,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                                fontSize: 18.0,
+                            if (_model.buttonGrades != null)
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected1 == true))
+                                                  fontSize: 22.0,
+                                                          Flexible(
+                                                              child: Padding(
+                                                                              fontSize: 16.0,
+                                                                              fontSize: 16.0,
+                                                                            'yc2tezrq' /* 교수님 업로드현황  */,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                                                                              fontSize: 16.0,
+                                                                              fontSize: 16.0,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                                                                              fontSize: 16.0,
+                                                                              fontSize: 16.0,
+                                                                              constraints: BoxConstraints(
+                                                                                minWidth: 200.0,
+                                                                              ),
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                            if (((_model.courseBySelectOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected2 == true))
+                                                  fontSize: 22.0,
+                                                                                fontSize: 16.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected3 == true))
+                                                  fontSize: 22.0,
+                                                                                fontSize: 16.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                            if (((_model.courseSectionOutputV.isNotEmpty) ==
+                                    true) &&
+                                (_model.courseSelected4 == true))
+                                                  fontSize: 22.0,
+                                                                                fontSize: 16.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 12.0,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                                              fontSize: 16.0,
+                                                                                              fontSize: 16.0,
+                    ),
