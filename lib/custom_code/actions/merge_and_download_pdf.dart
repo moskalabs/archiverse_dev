@@ -16,14 +16,19 @@ import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
-  if (pdfUrls.isEmpty) {
+  final List<String> validUrls = pdfUrls
+      .map((url) => url.trim())
+      .where((url) => url.isNotEmpty)
+      .toList();
+
+  if (validUrls.isEmpty) {
     print('[mergeAndDownloadPdf] 병합할 PDF URL이 없습니다.');
     return;
   }
 
-  final PdfDocument finalDoc = PdfDocument();
+  PdfDocument? finalDoc;
   Uint8List? outputBytes;
-  final int totalFiles = pdfUrls.length;
+  final int totalFiles = validUrls.length;
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -48,28 +53,18 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   try {
     for (int index = 0; index < totalFiles; index++) {
       final displayIndex = index + 1;
-      final url = pdfUrls[index];
-      final trimmedUrl = url.trim();
+      final url = validUrls[index];
 
       updateProgress(index, '파일 $displayIndex / $totalFiles 다운로드 중');
 
-      if (trimmedUrl.isEmpty) {
-        print('[mergeAndDownloadPdf] 빈 URL 건너뜀: index $index');
-        updateProgress(
-          displayIndex,
-          '파일 $displayIndex / $totalFiles 건너뜀',
-        );
-        continue;
-      }
-
-      PdfDocument? src;
+      PdfDocument? currentDoc;
       try {
         final resp = await http
-            .get(Uri.parse(trimmedUrl))
+            .get(Uri.parse(url))
             .timeout(const Duration(minutes: 2));
 
         if (resp.statusCode != 200) {
-          print('[mergeAndDownloadPdf] 다운로드 실패: $trimmedUrl');
+          print('[mergeAndDownloadPdf] 다운로드 실패: $url');
           updateProgress(
             displayIndex,
             '파일 $displayIndex / $totalFiles 다운로드 실패',
@@ -77,9 +72,20 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
-        src = PdfDocument(inputBytes: resp.bodyBytes);
-        if (src.pages.count > 0) {
-          finalDoc.appendDocument(src);
+        currentDoc = PdfDocument(inputBytes: resp.bodyBytes);
+        if (currentDoc.pages.count == 0) {
+          updateProgress(
+            displayIndex,
+            '파일 $displayIndex / $totalFiles 빈 문서 건너뜀',
+          );
+          continue;
+        }
+
+        if (finalDoc == null) {
+          finalDoc = currentDoc;
+          currentDoc = null;
+        } else {
+          finalDoc.appendDocument(currentDoc);
         }
 
         updateProgress(
@@ -87,29 +93,30 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           '파일 $displayIndex / $totalFiles 병합 완료',
         );
       } catch (error) {
-        print('[mergeAndDownloadPdf] 파일 처리 오류 ($trimmedUrl): $error');
+        print('[mergeAndDownloadPdf] 파일 처리 오류 ($url): $error');
         updateProgress(
           displayIndex,
           '파일 $displayIndex / $totalFiles 처리 중 오류',
         );
       } finally {
-        src?.dispose();
+        currentDoc?.dispose();
       }
     }
 
-    if (finalDoc.pages.count == 0) {
+    if (finalDoc == null || finalDoc.pages.count == 0) {
       throw Exception('병합할 PDF 페이지가 없습니다.');
     }
 
+    final PdfDocument mergedDoc = finalDoc!;
     updateProgress(totalFiles, 'PDF 파일 생성 중');
-    outputBytes = Uint8List.fromList(await finalDoc.save());
+    outputBytes = Uint8List.fromList(await mergedDoc.save());
     updateProgress(totalFiles, 'PDF 다운로드 준비 완료');
   } catch (e) {
     updateProgress(totalFiles, 'PDF 병합 중 오류가 발생했습니다');
     print('[mergeAndDownloadPdf] 오류: $e');
     throw Exception('PDF 병합 중 오류가 발생했습니다: $e');
   } finally {
-    finalDoc.dispose();
+    finalDoc?.dispose();
   }
 
   if (!kIsWeb || outputBytes == null) {
