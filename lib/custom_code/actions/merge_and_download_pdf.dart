@@ -31,6 +31,7 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   Uint8List? outputBytes;
   final int totalFiles = validUrls.length;
   bool appendedAnyPage = false;
+  bool removedPlaceholderPage = false;
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -85,19 +86,22 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
-        if (!appendedAnyPage && finalDoc.pages.count == 1) {
-          finalDoc.pages.removeAt(0);
-        }
-
         for (int pageIndex = 0; pageIndex < currentDoc.pages.count; pageIndex++) {
           final PdfPage srcPage = currentDoc.pages[pageIndex];
           final PdfTemplate template = srcPage.createTemplate();
 
+          if (!appendedAnyPage && !removedPlaceholderPage) {
+            if (finalDoc.pages.count == 1) {
+              finalDoc.pages.removeAt(0);
+            }
+            removedPlaceholderPage = true;
+          }
+
+          finalDoc.pageSettings.margins.all = 0;
+          finalDoc.pageSettings.size = template.size;
+
           final PdfPage dstPage = finalDoc.pages.add()
             ..rotation = srcPage.rotation;
-
-          dstPage.section.pageSettings.margins.all = 0;
-          dstPage.section.pageSettings.size = template.size;
 
           dstPage.graphics.drawPdfTemplate(
             template,
