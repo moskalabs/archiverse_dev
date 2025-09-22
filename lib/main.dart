@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
+import 'package:archiverse/core/app_theme.dart';
+import 'package:archiverse/core/responsive_wrapper.dart';
+
 import 'auth/supabase_auth/supabase_user_provider.dart';
 import 'auth/supabase_auth/auth_util.dart';
 
@@ -114,8 +117,20 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: false,
+        textTheme: TextTheme(
+          displayLarge: AppTheme.headline1,
+          displayMedium: AppTheme.headline2,
+          bodyLarge: AppTheme.bodyText1,
+          bodyMedium: AppTheme.caption,
+        ),
       ),
       themeMode: _themeMode,
+      builder: (context, child) {
+        if (child == null) {
+          return const SizedBox.shrink();
+        }
+        return ResponsiveWrapper(child: child);
+      },
       routerConfig: _router,
     );
   }
