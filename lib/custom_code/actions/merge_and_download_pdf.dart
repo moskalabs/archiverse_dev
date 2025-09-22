@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   final List<String> validUrls = pdfUrls
@@ -52,6 +53,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   updateProgress(0, '총 $totalFiles개 파일 다운로드 준비 중');
 
   try {
+    finalDoc.pageSettings.margins.all = 0;
+
     for (int index = 0; index < totalFiles; index++) {
       final displayIndex = index + 1;
       final url = validUrls[index];
@@ -82,21 +85,24 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
+        if (!appendedAnyPage && finalDoc.pages.count == 1) {
+          finalDoc.pages.removeAt(0);
+        }
+
         for (int pageIndex = 0; pageIndex < currentDoc.pages.count; pageIndex++) {
           final PdfPage srcPage = currentDoc.pages[pageIndex];
           final PdfTemplate template = srcPage.createTemplate();
 
-          finalDoc.pageSettings
-            ..margins.all = 0
-            ..size = Size(srcPage.size.width, srcPage.size.height);
-
           final PdfPage dstPage = finalDoc.pages.add()
             ..rotation = srcPage.rotation;
 
+          dstPage.section.pageSettings.margins.all = 0;
+          dstPage.section.pageSettings.size = template.size;
+
           dstPage.graphics.drawPdfTemplate(
             template,
-            Offset.zero,
-            Size(srcPage.size.width, srcPage.size.height),
+            ui.Offset.zero,
+            template.size,
           );
 
           appendedAnyPage = true;
