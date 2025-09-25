@@ -76,12 +76,7 @@ class _NewCardModal2WidgetState extends State<NewCardModal2Widget> {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      Spacer(),
+                    Spacer(),
                     Expanded(
                       flex: 2,
                       child: Padding(
@@ -1271,12 +1266,7 @@ class _NewCardModal2WidgetState extends State<NewCardModal2Widget> {
                         ),
                       ),
                     ),
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      Spacer(),
+                    Spacer(),
                   ],
                 ),
               ),

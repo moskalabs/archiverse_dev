@@ -243,12 +243,7 @@ class _StudentLeftWidgetWidgetState extends State<StudentLeftWidgetWidget> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        if (responsiveVisibility(
-                                          context: context,
-                                          phone: false,
-                                          tablet: false,
-                                        ))
-                                          Flexible(
+                                        Flexible(
                                             flex: 3,
                                             child: Container(
                                               width: () {

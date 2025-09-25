@@ -104,13 +104,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                if (responsiveVisibility(
-                  context: context,
-                  phone: false,
-                  tablet: false,
-                  tabletLandscape: false,
-                ))
-                  Container(
+                Container(
                     height: 50.0,
                     decoration: BoxDecoration(),
                     alignment: AlignmentDirectional(-1.0, 0.0),
@@ -249,13 +243,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                                           0.0),
                                                 ),
                                               ),
-                                              if (responsiveVisibility(
-                                                context: context,
-                                                phone: false,
-                                                tablet: false,
-                                                tabletLandscape: false,
-                                              ))
-                                                Container(
+                                              Container(
                                                   width: 200.0,
                                                   height: 1.0,
                                                   decoration: BoxDecoration(
@@ -352,13 +340,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                             shape: BoxShape.rectangle,
                                           ),
                                         ),
-                                        if (responsiveVisibility(
-                                          context: context,
-                                          phone: false,
-                                          tablet: false,
-                                          tabletLandscape: false,
-                                        ))
-                                          Container(
+                                        Container(
                                             width: 200.0,
                                             height: 1.0,
                                             decoration: BoxDecoration(
@@ -393,13 +375,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                             size: 20.0,
                                           ),
                                         ),
-                                        if (responsiveVisibility(
-                                          context: context,
-                                          phone: false,
-                                          tablet: false,
-                                          tabletLandscape: false,
-                                        ))
-                                          Container(
+                                        Container(
                                             width: 200.0,
                                             height: 44.0,
                                             decoration: BoxDecoration(),
@@ -480,7 +456,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                                                       .bodySmall
                                                                       .fontStyle,
                                                                 ),
-                                                                fontSize: 11.0,
+                                                                fontSize: 12.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight: FlutterFlowTheme.of(
@@ -587,13 +563,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                   Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                        tabletLandscape: false,
-                      ))
-                        Column(
+                      Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             if (_model.showUpgrade)
@@ -635,7 +605,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                                                 .titleMedium
                                                                 .fontStyle,
                                                       ),
-                                                      fontSize: 14.0,
+                                                      fontSize: 16.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FontWeight.w900,
@@ -759,13 +729,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              if (responsiveVisibility(
-                                context: context,
-                                phone: false,
-                                tablet: false,
-                                tabletLandscape: false,
-                              ))
-                                Container(
+                              Container(
                                   width: 200.0,
                                   height: 50.0,
                                   decoration: BoxDecoration(),

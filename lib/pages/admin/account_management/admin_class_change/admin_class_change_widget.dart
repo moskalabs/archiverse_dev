@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'admin_class_change_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'admin_class_change_model.dart';
 
 class AdminClassChangeWidget extends StatefulWidget {
@@ -96,19 +97,15 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Stack(
+        body: ResponsiveWrapper(
+          child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    wrapWithModel(
+                  wrapWithModel(
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
@@ -116,12 +113,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                         pageIsInSubMenu: false,
                       ),
                     ),
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    Expanded(
+                  Expanded(
                       flex: 1,
                       child: SingleChildScrollView(
                         child: Column(
@@ -137,11 +129,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 4,
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
@@ -920,7 +908,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             .fontStyle,
                                                   ),
                                                   color: Color(0xFF666666),
-                                                  fontSize: 25.0,
+                                                  fontSize: 22.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.bold,
                                                   fontStyle:
@@ -988,7 +976,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                                 ),
                                                                 color: Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 22.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1200,7 +1188,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                                 ),
                                                                 color: Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 22.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1272,7 +1260,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                                 ),
                                                                 color: Colors
                                                                     .white,
-                                                                fontSize: 20.0,
+                                                                fontSize: 22.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1365,7 +1353,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 20.0,
+                                                            fontSize: 22.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1408,7 +1396,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 20.0,
+                                                            fontSize: 22.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1451,7 +1439,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 20.0,
+                                                            fontSize: 22.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1494,7 +1482,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 20.0,
+                                                            fontSize: 22.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1537,7 +1525,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 20.0,
+                                                            fontSize: 22.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1787,12 +1775,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                 ],
               ),
             ),
-            if (responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ))
-              Container(
+            Container(
                 width: MediaQuery.sizeOf(context).width * 1.0,
                 height: MediaQuery.sizeOf(context).height * 1.0,
                 decoration: BoxDecoration(
@@ -2147,7 +2130,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                           .fontStyle,
                                     ),
                                     color: Color(0xFF666666),
-                                    fontSize: 20.0,
+                                    fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -2227,7 +2210,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -2365,7 +2348,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                     .fontStyle,
                                           ),
                                           color: Color(0xFF666666),
-                                          fontSize: 15.0,
+                                          fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.normal,
                                           fontStyle:
@@ -2409,7 +2392,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -2697,7 +2680,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
                                             fontStyle:
@@ -2853,7 +2836,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 13.0,
+                                                fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -2881,6 +2864,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                 ),
               ),
           ],
+        ),
         ),
       ),
     );

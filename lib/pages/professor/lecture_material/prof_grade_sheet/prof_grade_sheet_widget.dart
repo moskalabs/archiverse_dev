@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'prof_grade_sheet_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'prof_grade_sheet_model.dart';
 
 class ProfGradeSheetWidget extends StatefulWidget {
@@ -75,7 +76,8 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -90,12 +92,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.naviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: NaviSidebarWidget(
@@ -124,12 +121,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.leftWidgetModel,
@@ -964,7 +956,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .secondaryText,
                                                                         fontSize:
-                                                                            20.0,
+                                                                            22.0,
                                                                         letterSpacing:
                                                                             0.0,
                                                                         fontWeight:
@@ -988,12 +980,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Expanded(
+                                  Expanded(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.rightWidgetModel,
@@ -1012,12 +999,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -1881,7 +1863,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                                                             context)
                                                                         .secondaryText,
                                                                     fontSize:
-                                                                        20.0,
+                                                                        22.0,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight:
@@ -1939,12 +1921,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                                           ),
                                         ),
                                       ),
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        wrapWithModel(
+                                      wrapWithModel(
                                           model: _model.naviSidebarMobileModel,
                                           updateCallback: () =>
                                               safeSetState(() {}),
@@ -1979,6 +1956,7 @@ class _ProfGradeSheetWidgetState extends State<ProfGradeSheetWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'login_page_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'login_page_model.dart';
 
 class LoginPageWidget extends StatefulWidget {
@@ -115,7 +116,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-          body: SafeArea(
+          body: ResponsiveWrapper(
+            child: SafeArea(
             top: true,
             child: Container(
               width: double.infinity,
@@ -135,12 +137,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (responsiveVisibility(
-                              context: context,
-                              phone: false,
-                              tablet: false,
-                            ))
-                              Expanded(
+                            Expanded(
                                 child: Container(
                                   width: double.infinity,
                                   height: double.infinity,
@@ -2254,6 +2251,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                 ],
               ),
             ),
+          ),
           ),
         ),
       ),

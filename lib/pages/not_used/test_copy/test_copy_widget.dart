@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'test_copy_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'test_copy_model.dart';
 
 class TestCopyWidget extends StatefulWidget {
@@ -44,12 +45,14 @@ class _TestCopyWidgetState extends State<TestCopyWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [],
           ),
+        ),
         ),
       ),
     );

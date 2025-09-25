@@ -75,7 +75,7 @@ class _PortfolioTypeChipWidgetState extends State<PortfolioTypeChipWidget> {
               color: widget.portfolioType == widget.selectedPortfolioType
                   ? Colors.white
                   : Color(0xFF666666),
-              fontSize: 20.0,
+              fontSize: 22.0,
               letterSpacing: 0.0,
               fontWeight: FontWeight.bold,
               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,

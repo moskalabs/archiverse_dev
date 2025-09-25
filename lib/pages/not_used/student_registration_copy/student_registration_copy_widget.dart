@@ -14,6 +14,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'student_registration_copy_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_registration_copy_model.dart';
 
 class StudentRegistrationCopyWidget extends StatefulWidget {
@@ -126,7 +127,8 @@ class _StudentRegistrationCopyWidgetState
             elevation: 0.0,
           ),
         ),
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -289,7 +291,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                         ),
                                                                                         color: Color(0xFF284E75),
-                                                                                        fontSize: 20.0,
+                                                                                        fontSize: 22.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -368,7 +370,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: Color(0xFF666666),
-                                                                                                    fontSize: 20.0,
+                                                                                                    fontSize: 22.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -421,12 +423,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                           size: 18.0,
                                                                                                         ),
                                                                                                       ),
-                                                                                                      if (responsiveVisibility(
-                                                                                                        context: context,
-                                                                                                        phone: false,
-                                                                                                        tablet: false,
-                                                                                                      ))
-                                                                                                        Container(
+                                                                                                      Container(
                                                                                                           width: 300.0,
                                                                                                           child: TextFormField(
                                                                                                             controller: _model.textController1,
@@ -459,7 +456,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                                       fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                                                     ),
                                                                                                                     color: FlutterFlowTheme.of(context).gray400,
-                                                                                                                    fontSize: 17.0,
+                                                                                                                    fontSize: 18.0,
                                                                                                                     letterSpacing: 0.0,
                                                                                                                     fontWeight: FontWeight.normal,
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
@@ -607,7 +604,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
                                                                                                                   ),
                                                                                                                   color: Colors.white,
-                                                                                                                  fontSize: 25.0,
+                                                                                                                  fontSize: 22.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FontWeight.w500,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -755,7 +752,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
                                                                                   color: Color(0xFF666666),
-                                                                                  fontSize: 20.0,
+                                                                                  fontSize: 22.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w600,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -774,15 +771,7 @@ class _StudentRegistrationCopyWidgetState
                                                                       MainAxisSize
                                                                           .max,
                                                                   children: [
-                                                                    if (responsiveVisibility(
-                                                                      context:
-                                                                          context,
-                                                                      phone:
-                                                                          false,
-                                                                      tablet:
-                                                                          false,
-                                                                    ))
-                                                                      Expanded(
+                                                                    Expanded(
                                                                         child:
                                                                             Container(
                                                                           width:
@@ -844,7 +833,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FontWeight.w500,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w500,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -866,7 +855,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -888,7 +877,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -910,7 +899,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -932,7 +921,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -954,7 +943,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                     fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
                                                                                                   ),
-                                                                                                  fontSize: 15.0,
+                                                                                                  fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).labelSmall.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).labelSmall.fontStyle,
@@ -1074,7 +1063,7 @@ class _StudentRegistrationCopyWidgetState
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 14.0,
+                                                                                                fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -1891,6 +1880,7 @@ class _StudentRegistrationCopyWidgetState
               ],
             ),
           ),
+        ),
         ),
       ),
     );

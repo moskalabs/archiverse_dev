@@ -370,12 +370,7 @@ class _OrderItemsWidgetState extends State<OrderItemsWidget> {
                             ],
                           ),
                         ),
-                        if (responsiveVisibility(
-                          context: context,
-                          phone: false,
-                          tablet: false,
-                        ))
-                          FlutterFlowIconButton(
+                        FlutterFlowIconButton(
                             borderRadius: 20.0,
                             borderWidth: 1.0,
                             buttonSize: 40.0,
@@ -395,12 +390,7 @@ class _OrderItemsWidgetState extends State<OrderItemsWidget> {
                   ),
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                phone: false,
-                tablet: false,
-              ))
-                Container(
+              Container(
                   width: 48.0,
                   constraints: BoxConstraints(
                     minHeight: 230.0,

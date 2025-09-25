@@ -91,13 +91,7 @@ class _MenuItemCopyWidgetState extends State<MenuItemCopyWidget> {
               decoration: BoxDecoration(),
               child: widget.icon!,
             ),
-            if (responsiveVisibility(
-              context: context,
-              phone: false,
-              tablet: false,
-              tabletLandscape: false,
-            ))
-              Container(
+            Container(
                 width: 200.0,
                 height: 50.0,
                 decoration: BoxDecoration(),
@@ -190,7 +184,7 @@ class _MenuItemCopyWidgetState extends State<MenuItemCopyWidget> {
                                     ),
                                     color: FlutterFlowTheme.of(context)
                                         .primaryBackground,
-                                    fontSize: 11.0,
+                                    fontSize: 12.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FlutterFlowTheme.of(context)

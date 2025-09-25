@@ -18,6 +18,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_dashboard_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_dashboard_model.dart';
 
 class StudentDashboardWidget extends StatefulWidget {
@@ -113,7 +114,8 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Column(
+        body: ResponsiveWrapper(
+          child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
@@ -126,11 +128,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                  ))
-                    Flexible(
+                  Flexible(
                       flex: 4,
                       child: Padding(
                         padding:
@@ -833,12 +831,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if (responsiveVisibility(
-                          context: context,
-                          phone: false,
-                          tablet: false,
-                        ))
-                          Flexible(
+                        Flexible(
                             flex: 4,
                             child: Align(
                               alignment: AlignmentDirectional(0.0, -1.0),
@@ -2636,7 +2629,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                     ),
                                                                                     color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    fontSize: 25.0,
+                                                                                    fontSize: 22.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w600,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2869,7 +2862,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                       ),
                                                                                       color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      fontSize: 25.0,
+                                                                                      fontSize: 22.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2896,7 +2889,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                             ),
                                                                                             color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                            fontSize: 20.0,
+                                                                                            fontSize: 22.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w500,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3001,7 +2994,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                       ),
                                                                                       color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                      fontSize: 25.0,
+                                                                                      fontSize: 22.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3028,7 +3021,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                             ),
                                                                                             color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                            fontSize: 20.0,
+                                                                                            fontSize: 22.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w500,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3132,12 +3125,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                             color: FlutterFlowTheme.of(context).alternate,
                           ),
                         ),
-                        if (responsiveVisibility(
-                          context: context,
-                          phone: false,
-                          tablet: false,
-                        ))
-                          Flexible(
+                        Flexible(
                             flex: 7,
                             child: SafeArea(
                               child: Container(
@@ -3241,7 +3229,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                       color: Color(
                                                                           0xFF284E75),
                                                                       fontSize:
-                                                                          25.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -3313,7 +3301,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
                                                                               color: Color(0xFF284E75),
-                                                                              fontSize: 23.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3414,7 +3402,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                                         fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
                                                                                       ),
                                                                                       color: Colors.white,
-                                                                                      fontSize: 15.0,
+                                                                                      fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
                                                                                       fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -3469,7 +3457,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                                               context)
                                                                           .secondaryText,
                                                                       fontSize:
-                                                                          25.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -4740,12 +4728,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                     ),
                     Stack(
                       children: [
-                        if (responsiveVisibility(
-                          context: context,
-                          tabletLandscape: false,
-                          desktop: false,
-                        ))
-                          Align(
+                        Align(
                             alignment: AlignmentDirectional(0.0, -1.0),
                             child: Container(
                               width: double.infinity,
@@ -4766,13 +4749,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          if (responsiveVisibility(
-                                            context: context,
-                                            tablet: false,
-                                            tabletLandscape: false,
-                                            desktop: false,
-                                          ))
-                                            Flexible(
+                                          Flexible(
                                               flex: 1,
                                               child: Padding(
                                                 padding: EdgeInsetsDirectional
@@ -5311,12 +5288,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                                                 ),
                                               ),
                                             ),
-                                          if (responsiveVisibility(
-                                            context: context,
-                                            tabletLandscape: false,
-                                            desktop: false,
-                                          ))
-                                            Flexible(
+                                          Flexible(
                                               flex: 5,
                                               child: Container(
                                                 width: double.infinity,
@@ -9640,6 +9612,7 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

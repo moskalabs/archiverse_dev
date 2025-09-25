@@ -64,12 +64,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
 
     return Stack(
       children: [
-        if (responsiveVisibility(
-          context: context,
-          phone: false,
-          tablet: false,
-        ))
-          Container(
+        Container(
             width: double.infinity,
             height: MediaQuery.sizeOf(context).height * 0.06,
             decoration: BoxDecoration(
@@ -267,13 +262,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  FlutterFlowIconButton(
+                                FlutterFlowIconButton(
                                     borderRadius: 12.0,
                                     borderWidth: 1.0,
                                     buttonSize: 48.0,
@@ -300,12 +289,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                                     size: 18.0,
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                ))
-                                  Container(
+                                Container(
                                     width: 300.0,
                                     child: TextFormField(
                                       controller: _model.textController1,
@@ -645,12 +629,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
               ),
             ),
           ),
-        if (responsiveVisibility(
-          context: context,
-          tabletLandscape: false,
-          desktop: false,
-        ))
-          Container(
+        Container(
             width: double.infinity,
             height: MediaQuery.sizeOf(context).height * 0.06,
             decoration: BoxDecoration(
@@ -848,13 +827,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  FlutterFlowIconButton(
+                                FlutterFlowIconButton(
                                     borderRadius: 12.0,
                                     borderWidth: 1.0,
                                     buttonSize: 48.0,
@@ -881,12 +854,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                                     size: 18.0,
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                ))
-                                  Container(
+                                Container(
                                     width: 300.0,
                                     child: TextFormField(
                                       controller: _model.textController2,

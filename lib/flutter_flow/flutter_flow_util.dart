@@ -379,16 +379,7 @@ bool responsiveVisibility({
   bool tabletLandscape = true,
   bool desktop = true,
 }) {
-  final width = MediaQuery.sizeOf(context).width;
-  if (width < kBreakpointSmall) {
-    return phone;
-  } else if (width < kBreakpointMedium) {
-    return tablet;
-  } else if (width < kBreakpointLarge) {
-    return tabletLandscape;
-  } else {
-    return desktop;
-  }
+  return true;
 }
 
 const kTextValidatorUsernameRegex = r'^[a-zA-Z][a-zA-Z0-9_-]{2,16}$';

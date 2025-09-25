@@ -248,7 +248,7 @@ class CalendarHeader extends StatelessWidget {
   Widget _buildDateWidget() => Expanded(
         child: Text(
           DateFormat.yMMMM(locale).format(focusedDay),
-          style: const TextStyle(fontSize: 17).merge(titleStyle),
+          style: const TextStyle(fontSize: 18.0).merge(titleStyle),
         ),
       );
 

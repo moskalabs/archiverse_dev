@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'message_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'message_model.dart';
 
 class MessageWidget extends StatefulWidget {
@@ -65,7 +66,8 @@ class _MessageWidgetState extends State<MessageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -533,12 +535,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                                                   ),
                                                 ),
                                               ),
-                                              if (responsiveVisibility(
-                                                context: context,
-                                                phone: false,
-                                                tablet: false,
-                                              ))
-                                                Container(
+                                              Container(
                                                   width: 1.0,
                                                   height: double.infinity,
                                                   decoration: BoxDecoration(
@@ -547,12 +544,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                                                         .neutral100,
                                                   ),
                                                 ),
-                                              if (responsiveVisibility(
-                                                context: context,
-                                                phone: false,
-                                                tablet: false,
-                                              ))
-                                                Expanded(
+                                              Expanded(
                                                   flex: 2,
                                                   child: Container(
                                                     width: double.infinity,
@@ -1116,6 +1108,7 @@ class _MessageWidgetState extends State<MessageWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

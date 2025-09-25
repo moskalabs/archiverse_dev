@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_subject_portpolio_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_subject_portpolio_model.dart';
 
 class StudentSubjectPortpolioWidget extends StatefulWidget {
@@ -189,7 +190,8 @@ class _StudentSubjectPortpolioWidgetState
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -204,12 +206,7 @@ class _StudentSubjectPortpolioWidgetState
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.studentNaviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: StudentNaviSidebarWidget(
@@ -244,12 +241,7 @@ class _StudentSubjectPortpolioWidgetState
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentLeftWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentLeftWidgetWidget(),
@@ -1403,7 +1395,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                           color:
                                                                               FlutterFlowTheme.of(context).secondaryText,
                                                                           fontSize:
-                                                                              20.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight:
@@ -2232,11 +2224,7 @@ class _StudentSubjectPortpolioWidgetState
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentRightWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentRightWidgetWidget(),
@@ -2251,12 +2239,7 @@ class _StudentSubjectPortpolioWidgetState
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -2277,12 +2260,7 @@ class _StudentSubjectPortpolioWidgetState
                           ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -2295,11 +2273,7 @@ class _StudentSubjectPortpolioWidgetState
                                 if ((FFAppState()
                                             .studentPortporlioEditorClickedTest ==
                                         false) &&
-                                    responsiveVisibility(
-                                      context: context,
-                                      tabletLandscape: false,
-                                      desktop: false,
-                                    ))
+                                    true)
                                   Align(
                                     alignment: AlignmentDirectional(0.0, -1.0),
                                     child: Padding(
@@ -2319,12 +2293,7 @@ class _StudentSubjectPortpolioWidgetState
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              tabletLandscape: false,
-                                              desktop: false,
-                                            ))
-                                              Flexible(
+                                            Flexible(
                                                 flex: 2,
                                                 child: Container(
                                                   width: double.infinity,
@@ -2339,11 +2308,7 @@ class _StudentSubjectPortpolioWidgetState
                                                   ),
                                                   child: Visibility(
                                                     visible:
-                                                        responsiveVisibility(
-                                                      context: context,
-                                                      tabletLandscape: false,
-                                                      desktop: false,
-                                                    ),
+                                                        true,
                                                     child: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -3299,12 +3264,7 @@ class _StudentSubjectPortpolioWidgetState
                                                   ),
                                                 ),
                                               ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              tabletLandscape: false,
-                                              desktop: false,
-                                            ))
-                                              Flexible(
+                                            Flexible(
                                                 flex: 3,
                                                 child: Container(
                                                   width: double.infinity,
@@ -3564,7 +3524,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                           context)
                                                                       .secondaryText,
                                                                   fontSize:
-                                                                      20.0,
+                                                                      22.0,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -3589,11 +3549,7 @@ class _StudentSubjectPortpolioWidgetState
                                 if ((FFAppState()
                                             .studentPortporlioEditorClickedTest ==
                                         true) &&
-                                    responsiveVisibility(
-                                      context: context,
-                                      tabletLandscape: false,
-                                      desktop: false,
-                                    ))
+                                    true)
                                   Align(
                                     alignment: AlignmentDirectional(0.0, -1.0),
                                     child: Padding(
@@ -3700,14 +3656,7 @@ class _StudentSubjectPortpolioWidgetState
                                                             children: [
                                                               if ((_model.submitbool ==
                                                                       true) &&
-                                                                  responsiveVisibility(
-                                                                    context:
-                                                                        context,
-                                                                    tabletLandscape:
-                                                                        false,
-                                                                    desktop:
-                                                                        false,
-                                                                  ))
+                                                                  true)
                                                                 Align(
                                                                   alignment:
                                                                       AlignmentDirectional(
@@ -4571,12 +4520,7 @@ class _StudentSubjectPortpolioWidgetState
                                       ),
                                     ),
                                   ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  wrapWithModel(
+                                wrapWithModel(
                                     model: _model.studentNaviSidebarMobileModel,
                                     updateCallback: () => safeSetState(() {}),
                                     child: StudentNaviSidebarMobileWidget(
@@ -4607,6 +4551,7 @@ class _StudentSubjectPortpolioWidgetState
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

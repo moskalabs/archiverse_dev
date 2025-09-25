@@ -77,13 +77,7 @@ class _SubMenuItemWidgetState extends State<SubMenuItemWidget> {
                 ],
               ),
             ),
-            if (responsiveVisibility(
-              context: context,
-              phone: false,
-              tablet: false,
-              tabletLandscape: false,
-            ))
-              Container(
+            Container(
                 width: 200.0,
                 height: 44.0,
                 decoration: BoxDecoration(),

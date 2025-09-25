@@ -11,6 +11,7 @@ import '/custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'calendar_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'calendar_model.dart';
 
 class CalendarWidget extends StatefulWidget {
@@ -55,7 +56,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -70,12 +72,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.naviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: NaviSidebarWidget(
@@ -87,12 +84,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          if (responsiveVisibility(
-                            context: context,
-                            phone: false,
-                            tablet: false,
-                          ))
-                            wrapWithModel(
+                          wrapWithModel(
                               model: _model.headerModel,
                               updateCallback: () => safeSetState(() {}),
                               updateOnChange: true,
@@ -109,12 +101,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.leftWidgetModel,
@@ -167,12 +154,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Expanded(
+                                  Expanded(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.rightWidgetModel,
@@ -191,12 +173,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -217,12 +194,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                           ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -261,12 +233,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                                     ),
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  wrapWithModel(
+                                wrapWithModel(
                                     model: _model.naviSidebarMobileModel,
                                     updateCallback: () => safeSetState(() {}),
                                     child: NaviSidebarMobileWidget(
@@ -296,6 +263,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

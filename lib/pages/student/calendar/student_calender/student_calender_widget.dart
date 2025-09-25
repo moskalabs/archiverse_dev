@@ -11,6 +11,7 @@ import '/custom_code/widgets/index.dart' as custom_widgets;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'student_calender_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_calender_model.dart';
 
 class StudentCalenderWidget extends StatefulWidget {
@@ -55,7 +56,8 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -70,12 +72,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.studentNaviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: StudentNaviSidebarWidget(
@@ -110,12 +107,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentLeftWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentLeftWidgetWidget(),
@@ -164,12 +156,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentRightWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentRightWidgetWidget(),
@@ -184,12 +171,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -210,12 +192,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                           ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -254,12 +231,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                                     ),
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  wrapWithModel(
+                                wrapWithModel(
                                     model: _model.studentNaviSidebarMobileModel,
                                     updateCallback: () => safeSetState(() {}),
                                     child: StudentNaviSidebarMobileWidget(
@@ -313,6 +285,7 @@ class _StudentCalenderWidgetState extends State<StudentCalenderWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

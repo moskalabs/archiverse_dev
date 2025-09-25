@@ -76,7 +76,7 @@ class _LectureMaterialWidgetState extends State<LectureMaterialWidget> {
                             FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                       ),
                       color: Color(0xFF666666),
-                      fontSize: 15.0,
+                      fontSize: 16.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w600,
                       fontStyle:

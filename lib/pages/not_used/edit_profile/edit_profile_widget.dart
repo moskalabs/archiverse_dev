@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'edit_profile_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'edit_profile_model.dart';
 
 class EditProfileWidget extends StatefulWidget {
@@ -69,7 +70,8 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -1157,6 +1159,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

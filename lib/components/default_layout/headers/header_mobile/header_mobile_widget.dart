@@ -50,11 +50,7 @@ class _HeaderMobileWidgetState extends State<HeaderMobileWidget> {
     context.watch<FFAppState>();
 
     return Visibility(
-      visible: responsiveVisibility(
-        context: context,
-        tabletLandscape: false,
-        desktop: false,
-      ),
+      visible: true,
       child: Container(
         width: double.infinity,
         height: MediaQuery.sizeOf(context).height * 0.06,

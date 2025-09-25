@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'student_lecture_material_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_lecture_material_model.dart';
 
 class StudentLectureMaterialWidget extends StatefulWidget {
@@ -102,7 +103,8 @@ class _StudentLectureMaterialWidgetState
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -117,12 +119,7 @@ class _StudentLectureMaterialWidgetState
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.studentNaviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: StudentNaviSidebarWidget(
@@ -157,12 +154,7 @@ class _StudentLectureMaterialWidgetState
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentLeftWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentLeftWidgetWidget(),
@@ -530,7 +522,7 @@ class _StudentLectureMaterialWidgetState
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .secondaryText,
                                                                         fontSize:
-                                                                            20.0,
+                                                                            22.0,
                                                                         letterSpacing:
                                                                             0.0,
                                                                         fontWeight:
@@ -554,12 +546,7 @@ class _StudentLectureMaterialWidgetState
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentRightWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentRightWidgetWidget(),
@@ -574,12 +561,7 @@ class _StudentLectureMaterialWidgetState
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -600,12 +582,7 @@ class _StudentLectureMaterialWidgetState
                           ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -977,7 +954,7 @@ class _StudentLectureMaterialWidgetState
                                                                           context)
                                                                       .secondaryText,
                                                                   fontSize:
-                                                                      20.0,
+                                                                      22.0,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -999,12 +976,7 @@ class _StudentLectureMaterialWidgetState
                                     ),
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  wrapWithModel(
+                                wrapWithModel(
                                     model: _model.studentNaviSidebarMobileModel,
                                     updateCallback: () => safeSetState(() {}),
                                     child: StudentNaviSidebarMobileWidget(
@@ -1034,6 +1006,7 @@ class _StudentLectureMaterialWidgetState
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

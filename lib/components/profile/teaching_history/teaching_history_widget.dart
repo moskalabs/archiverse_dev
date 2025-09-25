@@ -275,7 +275,7 @@ class _TeachingHistoryWidgetState extends State<TeachingHistoryWidget> {
                                                     .labelMedium
                                                     .fontStyle,
                                           ),
-                                          fontSize: 14.0,
+                                          fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight:
                                               FlutterFlowTheme.of(context)
@@ -811,7 +811,7 @@ class _TeachingHistoryWidgetState extends State<TeachingHistoryWidget> {
                                             .labelMedium
                                             .fontStyle,
                                       ),
-                                      fontSize: 14.0,
+                                      fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .labelMedium
@@ -1014,7 +1014,7 @@ class _TeachingHistoryWidgetState extends State<TeachingHistoryWidget> {
                                             .labelMedium
                                             .fontStyle,
                                       ),
-                                      fontSize: 14.0,
+                                      fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .labelMedium
@@ -1217,7 +1217,7 @@ class _TeachingHistoryWidgetState extends State<TeachingHistoryWidget> {
                                             .labelMedium
                                             .fontStyle,
                                       ),
-                                      fontSize: 14.0,
+                                      fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .labelMedium

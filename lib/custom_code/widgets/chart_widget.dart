@@ -56,7 +56,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                     TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 16.0,
                     ),
                   );
                 },

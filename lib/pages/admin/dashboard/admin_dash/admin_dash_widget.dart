@@ -24,6 +24,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:text_search/text_search.dart';
 import 'admin_dash_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'admin_dash_model.dart';
 
 class AdminDashWidget extends StatefulWidget {
@@ -130,7 +131,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Stack(
+        body: ResponsiveWrapper(
+          child: Stack(
           children: [
             Container(
               constraints: BoxConstraints(
@@ -140,12 +142,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    wrapWithModel(
+                  wrapWithModel(
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
@@ -153,12 +150,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                         pageIsInSubMenu: false,
                       ),
                     ),
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    Flexible(
+                  Flexible(
                       flex: 1,
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -173,11 +165,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                ))
-                                  Flexible(
+                                Flexible(
                                     flex: 4,
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
@@ -1043,7 +1031,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1137,7 +1125,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1231,7 +1219,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1325,7 +1313,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1419,7 +1407,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1985,7 +1973,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: _model.isDesignClass ? FlutterFlowTheme.of(context).mainColor1 : Color(0xFF666666),
-                                                                                          fontSize: 20.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2040,7 +2028,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: !_model.isDesignClass ? FlutterFlowTheme.of(context).mainColor1 : Color(0xFF666666),
-                                                                                          fontSize: 20.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2208,7 +2196,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                       fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                     ),
-                                                                                    fontSize: 20.0,
+                                                                                    fontSize: 22.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2398,7 +2386,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                       color: Color(
                                                                           0xFF666666),
                                                                       fontSize:
-                                                                          20.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -2980,7 +2968,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                   color: Color(
                                                                       0xFF666666),
                                                                   fontSize:
-                                                                      20.0,
+                                                                      22.0,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -3169,7 +3157,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     color: Color(
                                                                         0xFFB3B3B3),
                                                                     fontSize:
-                                                                        15.0,
+                                                                        16.0,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight:
@@ -3203,12 +3191,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                 ],
               ),
             ),
-            if (responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ))
-              SafeArea(
+            SafeArea(
                 child: Container(
                   width: MediaQuery.sizeOf(context).width,
                   height: MediaQuery.sizeOf(context).height,
@@ -3635,7 +3618,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 20.0,
+                                            fontSize: 22.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             fontStyle:
@@ -3719,7 +3702,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3797,7 +3780,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3875,7 +3858,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3953,7 +3936,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4031,7 +4014,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4224,7 +4207,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Colors.white,
-                                            fontSize: 20.0,
+                                            fontSize: 22.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
                                             fontStyle:
@@ -4278,7 +4261,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Colors.white,
-                                            fontSize: 20.0,
+                                            fontSize: 22.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
                                             fontStyle:
@@ -4405,7 +4388,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4588,7 +4571,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4622,7 +4605,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .mainColor1,
-                                              fontSize: 15.0,
+                                              fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.bold,
                                               fontStyle:
@@ -4672,7 +4655,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                 .fontStyle,
                                                       ),
                                                       color: Colors.white,
-                                                      fontSize: 15.0,
+                                                      fontSize: 16.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FlutterFlowTheme.of(
@@ -4734,7 +4717,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               .fontStyle,
                                                     ),
                                                     color: Color(0xFF666666),
-                                                    fontSize: 15.0,
+                                                    fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
                                                     fontStyle:
@@ -5143,4 +5126,5 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       ),
     );
   }
-}
+},
+        ),

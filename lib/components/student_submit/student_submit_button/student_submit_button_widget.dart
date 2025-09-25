@@ -77,7 +77,7 @@ class _StudentSubmitButtonWidgetState extends State<StudentSubmitButtonWidget> {
                     ),
                     color:
                         widget.isSelected ? Colors.white : Color(0xFF666666),
-                    fontSize: 20.0,
+                    fontSize: 22.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.normal,
                     fontStyle:
@@ -97,7 +97,7 @@ class _StudentSubmitButtonWidgetState extends State<StudentSubmitButtonWidget> {
                     ),
                     color:
                         widget.isSelected ? Colors.white : Color(0xFF666666),
-                    fontSize: 20.0,
+                    fontSize: 22.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.normal,
                     fontStyle:

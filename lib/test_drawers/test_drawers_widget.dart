@@ -62,23 +62,14 @@ class _TestDrawersWidgetState extends State<TestDrawersWidget> {
                   color: FlutterFlowTheme.of(context).mainColor1,
                 ),
                 child: Visibility(
-                  visible: responsiveVisibility(
-                    context: context,
-                    tabletLandscape: false,
-                    desktop: false,
-                  ),
+                  visible: true,
                   child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 15.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (responsiveVisibility(
-                          context: context,
-                          tabletLandscape: false,
-                          desktop: false,
-                        ))
-                          Row(
+                        Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -107,11 +98,7 @@ class _TestDrawersWidgetState extends State<TestDrawersWidget> {
                             ].divide(SizedBox(width: 4.0)),
                           ),
                         if ((FFAppState().navbarMobile == true) &&
-                            responsiveVisibility(
-                              context: context,
-                              tabletLandscape: false,
-                              desktop: false,
-                            ))
+                            true)
                           Flexible(
                             flex: 2,
                             child: Column(

@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'prof_subject_portpolio_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'prof_subject_portpolio_model.dart';
 
 class ProfSubjectPortpolioWidget extends StatefulWidget {
@@ -246,17 +247,13 @@ class _ProfSubjectPortpolioWidgetState
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
             children: [
-              if (responsiveVisibility(
-                context: context,
-                phone: false,
-                tablet: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -266,12 +263,7 @@ class _ProfSubjectPortpolioWidgetState
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                      ))
-                        wrapWithModel(
+                      wrapWithModel(
                           model: _model.naviSidebarModel,
                           updateCallback: () => safeSetState(() {}),
                           child: NaviSidebarWidget(
@@ -300,12 +292,7 @@ class _ProfSubjectPortpolioWidgetState
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Flexible(
+                                    Flexible(
                                         flex: 3,
                                         child: wrapWithModel(
                                           model: _model.leftWidgetModel,
@@ -1845,7 +1832,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                               context)
                                                                           .secondaryText,
                                                                       fontSize:
-                                                                          20.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -1869,12 +1856,7 @@ class _ProfSubjectPortpolioWidgetState
                                         ),
                                       ),
                                     ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
+                                    Expanded(
                                         flex: 3,
                                         child: wrapWithModel(
                                           model: _model.rightWidgetModel,
@@ -1893,12 +1875,7 @@ class _ProfSubjectPortpolioWidgetState
                     ],
                   ),
                 ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -3498,7 +3475,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                               context)
                                                                           .secondaryText,
                                                                       fontSize:
-                                                                          20.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -3556,6 +3533,7 @@ class _ProfSubjectPortpolioWidgetState
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

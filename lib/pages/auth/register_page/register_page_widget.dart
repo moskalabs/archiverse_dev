@@ -22,6 +22,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'register_page_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'register_page_model.dart';
 
 class RegisterPageWidget extends StatefulWidget {
@@ -112,7 +113,8 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -128,12 +130,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      Expanded(
+                    Expanded(
                         child: Container(
                           width: double.infinity,
                           height: double.infinity,
@@ -3682,6 +3679,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                 ),
             ],
           ),
+        ),
         ),
       ),
     );
