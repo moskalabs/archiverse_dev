@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '/backend/supabase/supabase.dart';
 import '/components/class_change/class_change_row/class_change_row_widget.dart';
 import '/components/class_change/class_change_row_mobile/class_change_row_mobile_widget.dart';
@@ -37,6 +39,9 @@ class AdminClassChangeWidget extends StatefulWidget {
 class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
   late AdminClassChangeModel _model;
 
+  SupabaseClient get supabase => SupaFlow.client;
+  Timer? _realtimeDebounce;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -53,7 +58,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
         _model.prfoutput?.firstOrNull?.name,
         '교수 이름',
       );
-      safeSetState(() {});
+
       _model.classSelectedOnload = await ClassTable().queryRows(
         queryFn: (q) => q,
       );
@@ -61,9 +66,11 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
           .where((e) =>
               (e.year == _model.years) && (e.semester == _model.semester))
           .toList()
-          .toList()
           .cast<ClassRow>();
-      safeSetState(() {});
+
+      await loadInitialChangeRequests();
+      setupRealtimeSubscription();
+
       FFAppState().usertype = 0;
       safeSetState(() {});
     });
@@ -79,9 +86,211 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
 
   @override
   void dispose() {
+    _realtimeDebounce?.cancel();
+    _model.changeRequestsChannel?.unsubscribe();
     _model.dispose();
 
     super.dispose();
+  }
+
+  Future<void> loadInitialChangeRequests() async {
+    _model.isLoadingRequests = true;
+    safeSetState(() {});
+
+    final requestsData = await safeExecute<List<ClassChangeRequestsRow>>(() {
+      return ClassChangeRequestsTable().queryRows(
+        queryFn: (q) => q
+            .eq('year', _model.years ?? '2025')
+            .eq('semester', _model.semester ?? '1학기')
+            .order('request_date', ascending: false),
+      );
+    });
+
+    if (requestsData != null) {
+      _model.classChangeRequestsList = requestsData;
+      _model.filteredRequestsList =
+          List<ClassChangeRequestsRow>.from(_model.classChangeRequestsList);
+      updateRequestStatistics();
+    }
+
+    _model.isLoadingRequests = false;
+    safeSetState(() {});
+  }
+
+  Future<void> processApprovalRequest({
+    required String requestId,
+    required bool isApproved,
+  }) async {
+    if (_model.isProcessingApproval) {
+      return;
+    }
+
+    _model.isProcessingApproval = true;
+    safeSetState(() {});
+
+    try {
+      final targetRequest = _model.classChangeRequestsList
+          .firstWhere((req) => req.id == requestId);
+
+      final updateData = {
+        'request_status': isApproved ? 'approved' : 'rejected',
+        'approved_by': widget.email ?? 'unknown',
+        'approved_date': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      final requestUpdateResult =
+          await safeExecute<List<ClassChangeRequestsRow>>(() {
+        return ClassChangeRequestsTable().update(
+          data: updateData,
+          matchingRows: (rows) => rows.eq('id', requestId),
+        );
+      });
+
+      if (requestUpdateResult == null) {
+        return;
+      }
+
+      if (isApproved) {
+        final enrollmentUpdateResult = await safeExecute<List<EnrollmentsRow>>(
+          () {
+            return EnrollmentsTable().update(
+              data: {
+                'class_id': targetRequest.requestedClassId,
+                'updated_at': DateTime.now().toIso8601String(),
+              },
+              matchingRows: (rows) => rows
+                  .eq('student_id', targetRequest.studentId)
+                  .eq('class_id', targetRequest.currentClassId),
+            );
+          },
+        );
+
+        if (enrollmentUpdateResult == null) {
+          return;
+        }
+
+        await safeExecute<NotificationsRow>(() {
+          return NotificationsTable().insert({
+            'user_id': targetRequest.studentId,
+            'title': '분반 변경 승인',
+            'message': '요청하신 분반 변경이 승인되었습니다.',
+            'type': 'class_change',
+            'is_read': false,
+          });
+        });
+      }
+
+      await loadInitialChangeRequests();
+
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isApproved ? '승인되었습니다.' : '거절되었습니다.'),
+          backgroundColor: isApproved ? Colors.green : Colors.orange,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('처리 중 오류가 발생했습니다: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      debugPrint('Approval error: $error');
+    } finally {
+      _model.isProcessingApproval = false;
+      safeSetState(() {});
+    }
+  }
+
+  void setupRealtimeSubscription() {
+    final yearFilter = _model.years ?? '2025';
+
+    _model.changeRequestsChannel?.unsubscribe();
+    _model.changeRequestsChannel = supabase
+        .channel('class_change_requests_channel')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'class_change_requests',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'year',
+            value: yearFilter,
+          ),
+          callback: (payload) {
+            debugPrint('Realtime update received: ${payload.eventType}');
+            _realtimeDebounce?.cancel();
+            _realtimeDebounce =
+                Timer(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                loadInitialChangeRequests();
+              }
+            });
+          },
+        )
+        .subscribe();
+  }
+
+  void updateRequestStatistics() {
+    final requests = _model.filteredRequestsList;
+
+    _model.totalRequestsCount = requests.length;
+    _model.pendingRequestsCount = requests
+        .where((r) => (r.requestStatus ?? 'pending') == 'pending')
+        .length;
+    _model.approvedRequestsCount = requests
+        .where((r) => (r.requestStatus ?? '').toLowerCase() == 'approved')
+        .length;
+    _model.rejectedRequestsCount = requests
+        .where((r) => (r.requestStatus ?? '').toLowerCase() == 'rejected')
+        .length;
+  }
+
+  Future<T?> safeExecute<T>(Future<T> Function() operation) async {
+    try {
+      return await operation();
+    } catch (error) {
+      debugPrint('Operation failed: $error');
+      _model.errorMessage = error.toString();
+
+      if (!mounted) {
+        return null;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('오류가 발생했습니다. 잠시 후 다시 시도해주세요.'),
+          backgroundColor: Colors.red,
+          action: SnackBarAction(
+            label: '상세보기',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text('오류 상세'),
+                  content: Text(error.toString()),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('확인'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+      return null;
+    }
   }
 
   @override
@@ -290,6 +499,33 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                                 _model.textColor5 =
                                                                     Color(
                                                                         4280831605);
+                                                                _model.searchTextFieldTextController
+                                                                    ?.clear();
+                                                                _model.searchKeyword =
+                                                                    '';
+                                                                _model.searchType =
+                                                                    '이름';
+                                                                final defaultSearchLabel =
+                                                                    FFLocalizations.of(
+                                                                            context)
+                                                                        .getText(
+                                                                              'th3amuk0' /* 이 름 */,
+                                                                            );
+                                                                _model.dropDownValue1 =
+                                                                    defaultSearchLabel;
+                                                                _model
+                                                                    .dropDownValueController1
+                                                                    ?.value =
+                                                                        defaultSearchLabel;
+                                                                _model.filteredRequestsList
+                                                                    .clear();
+                                                                _model.classChangeRequestsList
+                                                                    .clear();
+                                                                await loadInitialChangeRequests();
+                                                                _model
+                                                                    .changeRequestsChannel
+                                                                    ?.unsubscribe();
+                                                                setupRealtimeSubscription();
                                                                 safeSetState(
                                                                     () {});
                                                               },
@@ -505,6 +741,33 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                                 _model.textColor5 =
                                                                     Color(
                                                                         4280831605);
+                                                                _model.searchTextFieldTextController
+                                                                    ?.clear();
+                                                                _model.searchKeyword =
+                                                                    '';
+                                                                _model.searchType =
+                                                                    '이름';
+                                                                final defaultSearchLabel =
+                                                                    FFLocalizations.of(
+                                                                            context)
+                                                                        .getText(
+                                                                              'th3amuk0' /* 이 름 */,
+                                                                            );
+                                                                _model.dropDownValue1 =
+                                                                    defaultSearchLabel;
+                                                                _model
+                                                                    .dropDownValueController1
+                                                                    ?.value =
+                                                                        defaultSearchLabel;
+                                                                _model.filteredRequestsList
+                                                                    .clear();
+                                                                _model.classChangeRequestsList
+                                                                    .clear();
+                                                                await loadInitialChangeRequests();
+                                                                _model
+                                                                    .changeRequestsChannel
+                                                                    ?.unsubscribe();
+                                                                setupRealtimeSubscription();
                                                                 safeSetState(
                                                                     () {});
                                                               },
@@ -1226,9 +1489,113 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                 Expanded(
                                                   flex: 1,
                                                   child: FFButtonWidget(
-                                                    onPressed: () {
-                                                      print(
-                                                          'Button pressed ...');
+                                                    onPressed: () async {
+                                                      if (_model
+                                                          .searchTextFieldTextController
+                                                          .text
+                                                          .isEmpty) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content: Text(
+                                                                '검색어를 입력해주세요.'),
+                                                          ),
+                                                        );
+                                                        return;
+                                                      }
+
+                                                      _model.isLoadingRequests =
+                                                          true;
+                                                      _model.searchKeyword =
+                                                          _model
+                                                              .searchTextFieldTextController
+                                                              .text
+                                                              .trim();
+                                                      _model.searchType =
+                                                          _model.dropDownValue1 ??
+                                                              '이름';
+                                                      safeSetState(() {});
+
+                                                      try {
+                                                        List<ClassChangeRequestsRow>
+                                                            searchResults = [];
+
+                                                        final normalizedSearchType =
+                                                            _model.searchType
+                                                                .replaceAll(
+                                                                    ' ', '');
+
+                                                        if (normalizedSearchType ==
+                                                            '이름') {
+                                                          searchResults = await ClassChangeRequestsTable()
+                                                              .queryRows(
+                                                            queryFn: (q) => q
+                                                                .ilike(
+                                                                  'student_name',
+                                                                  '%${_model.searchKeyword}%',
+                                                                )
+                                                                .eq(
+                                                                  'year',
+                                                                  _model.years ??
+                                                                      '2025',
+                                                                )
+                                                                .eq(
+                                                                  'semester',
+                                                                  _model.semester ??
+                                                                      '1학기',
+                                                                )
+                                                                .order(
+                                                                  'request_date',
+                                                                  ascending:
+                                                                      false,
+                                                                ),
+                                                          );
+                                                        } else if (normalizedSearchType ==
+                                                            '학번') {
+                                                          searchResults = await ClassChangeRequestsTable()
+                                                              .queryRows(
+                                                            queryFn: (q) => q
+                                                                .eq(
+                                                                  'student_number',
+                                                                  _model
+                                                                      .searchKeyword,
+                                                                )
+                                                                .eq(
+                                                                  'year',
+                                                                  _model.years ??
+                                                                      '2025',
+                                                                )
+                                                                .eq(
+                                                                  'semester',
+                                                                  _model.semester ??
+                                                                      '1학기',
+                                                                )
+                                                                .order(
+                                                                  'request_date',
+                                                                  ascending:
+                                                                      false,
+                                                                ),
+                                                          );
+                                                        }
+
+                                                        _model.filteredRequestsList =
+                                                            searchResults;
+                                                        updateRequestStatistics();
+                                                      } catch (error) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(
+                                                                '검색 중 오류가 발생했습니다: $error'),
+                                                          ),
+                                                        );
+                                                      } finally {
+                                                        _model.isLoadingRequests =
+                                                            false;
+                                                        safeSetState(() {});
+                                                      }
                                                     },
                                                     text: FFLocalizations.of(
                                                             context)
@@ -1576,30 +1943,134 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                 0.7,
                                       ),
                                       decoration: BoxDecoration(),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            ListView(
-                                              padding: EdgeInsets.zero,
-                                              shrinkWrap: true,
-                                              scrollDirection: Axis.vertical,
-                                              children: [
-                                                wrapWithModel(
-                                                  model: _model
-                                                      .classChangeRowModel,
-                                                  updateCallback: () =>
-                                                      safeSetState(() {}),
-                                                  child: ClassChangeRowWidget(
-                                                    acceptRequest:
-                                                        (accept) async {},
+                                      child: _model.isLoadingRequests
+                                          ? Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: const [
+                                                  CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(
+                                                      Color(0xFF284E75),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 16),
+                                                  Text('요청 목록을 불러오는 중...'),
+                                                ],
+                                              ),
+                                            )
+                                          : _model.filteredRequestsList.isEmpty
+                                              ? Center(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons
+                                                            .inbox_outlined,
+                                                        size: 64,
+                                                        color: Colors.grey,
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 16),
+                                                      Text(
+                                                        _model.searchKeyword
+                                                                .isNotEmpty
+                                                            ? '검색 결과가 없습니다.'
+                                                            : '현재 요청사항이 없습니다.',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      ListView.builder(
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        shrinkWrap: true,
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        itemCount: _model
+                                                            .filteredRequestsList
+                                                            .length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          final requestItem =
+                                                              _model.filteredRequestsList[
+                                                                  index];
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              bottom: 10.0,
+                                                            ),
+                                                            child:
+                                                                ClassChangeRowWidget(
+                                                              key: ValueKey(
+                                                                'request_${requestItem.id}',
+                                                              ),
+                                                              studentName:
+                                                                  requestItem
+                                                                          .studentName ??
+                                                                      '-',
+                                                              studentNumber:
+                                                                  requestItem
+                                                                          .studentNumber ??
+                                                                      '-',
+                                                              currentSection:
+                                                                  requestItem
+                                                                          .currentClassSection ??
+                                                                      '-',
+                                                              requestedSection:
+                                                                  requestItem
+                                                                          .requestedClassSection ??
+                                                                      '-',
+                                                              requestReason:
+                                                                  requestItem
+                                                                          .requestReason ??
+                                                                      '사유 없음',
+                                                              requestStatus:
+                                                                  requestItem
+                                                                          .requestStatus ??
+                                                                      'pending',
+                                                              requestDate:
+                                                                  requestItem
+                                                                      .requestDate,
+                                                              isProcessing: _model
+                                                                      .isProcessingApproval ||
+                                                                  (requestItem
+                                                                          .requestStatus
+                                                                          ?.toLowerCase() ??
+                                                                      '') !=
+                                                                      'pending',
+                                                              acceptRequest:
+                                                                  (bool isApproved) async {
+                                                                await processApprovalRequest(
+                                                                  requestId:
+                                                                      requestItem
+                                                                          .id,
+                                                                  isApproved:
+                                                                      isApproved,
+                                                                );
+                                                              },
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(height: 10.0)),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     ),
                                     wrapWithModel(
                                       model: _model.borderlineModel3,
@@ -1627,143 +2098,41 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                         .textScaler,
                                                 text: TextSpan(
                                                   children: [
-                                                    TextSpan(
-                                                      text: FFLocalizations.of(
-                                                              context)
-                                                          .getText(
-                                                        'wpmnt4i2' /* 총: */,
+                                                    const TextSpan(
+                                                      text: '총: ',
+                                                      style: TextStyle(
+                                                        color: Color(0xFF666666),
                                                       ),
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                              ),
                                                     ),
                                                     TextSpan(
-                                                      text: FFLocalizations.of(
-                                                              context)
-                                                          .getText(
-                                                        'ibqzxhk8' /*  10 */,
-                                                      ),
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                                decoration:
-                                                                    TextDecoration
-                                                                        .underline,
-                                                              ),
-                                                    ),
-                                                    TextSpan(
-                                                      text: FFLocalizations.of(
-                                                              context)
-                                                          .getText(
-                                                        'i2wwrk5k' /* 명 */,
-                                                      ),
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                              ),
-                                                    )
-                                                  ],
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        font: GoogleFonts
-                                                            .openSans(
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                                        color:
-                                                            Color(0xFF666666),
-                                                        letterSpacing: 0.0,
+                                                      text:
+                                                          '${_model.totalRequestsCount}',
+                                                      style: const TextStyle(
+                                                        color: Color(0xFF666666),
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
                                                         fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .fontStyle,
+                                                            FontWeight.bold,
                                                       ),
+                                                    ),
+                                                    const TextSpan(
+                                                      text: '명 ',
+                                                      style: TextStyle(
+                                                        color: Color(0xFF666666),
+                                                      ),
+                                                    ),
+                                                    if (_model
+                                                            .pendingRequestsCount >
+                                                        0)
+                                                      TextSpan(
+                                                        text:
+                                                            '(대기: ${_model.pendingRequestsCount})',
+                                                        style: const TextStyle(
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -1894,6 +2263,26 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                           _model.textColor3 = Color(4280831605);
                                           _model.textColor4 = Color(4280831605);
                                           _model.textColor5 = Color(4280831605);
+                                          _model.searchTextFieldTextController
+                                              ?.clear();
+                                          _model.searchKeyword = '';
+                                          _model.searchType = '이름';
+                                          final defaultSearchLabel =
+                                              FFLocalizations.of(context)
+                                                  .getText(
+                                                    'th3amuk0' /* 이 름 */,
+                                                  );
+                                          _model.dropDownValue1 =
+                                              defaultSearchLabel;
+                                          _model.dropDownValueController1
+                                              ?.value = defaultSearchLabel;
+                                          _model.filteredRequestsList.clear();
+                                          _model.classChangeRequestsList
+                                              .clear();
+                                          await loadInitialChangeRequests();
+                                          _model.changeRequestsChannel
+                                              ?.unsubscribe();
+                                          setupRealtimeSubscription();
                                           safeSetState(() {});
                                         },
                                         width: double.infinity,
@@ -2045,6 +2434,26 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                           _model.textColor3 = Color(4280831605);
                                           _model.textColor4 = Color(4280831605);
                                           _model.textColor5 = Color(4280831605);
+                                          _model.searchTextFieldTextController
+                                              ?.clear();
+                                          _model.searchKeyword = '';
+                                          _model.searchType = '이름';
+                                          final defaultSearchLabel =
+                                              FFLocalizations.of(context)
+                                                  .getText(
+                                                    'th3amuk0' /* 이 름 */,
+                                                  );
+                                          _model.dropDownValue1 =
+                                              defaultSearchLabel;
+                                          _model.dropDownValueController1
+                                              ?.value = defaultSearchLabel;
+                                          _model.filteredRequestsList.clear();
+                                          _model.classChangeRequestsList
+                                              .clear();
+                                          await loadInitialChangeRequests();
+                                          _model.changeRequestsChannel
+                                              ?.unsubscribe();
+                                          setupRealtimeSubscription();
                                           safeSetState(() {});
                                         },
                                         width: double.infinity,
@@ -2168,8 +2577,32 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                 color: Color(0xFF666666),
                                 size: 24.0,
                               ),
-                              onPressed: () {
-                                print('IconButton pressed ...');
+                              onPressed: () async {
+                                _model.searchTextFieldTextController?.clear();
+                                _model.searchKeyword = '';
+                                final defaultSearchLabel =
+                                    FFLocalizations.of(context).getText(
+                                          'th3amuk0' /* 이 름 */,
+                                        );
+                                _model.dropDownValue1 = defaultSearchLabel;
+                                _model.searchType = '이름';
+                                _model.dropDownValueController1?.value =
+                                    defaultSearchLabel;
+                                _model.textController2?.clear();
+
+                                await loadInitialChangeRequests();
+
+                                if (!mounted) {
+                                  return;
+                                }
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('목록이 새로고침되었습니다.'),
+                                    duration: Duration(seconds: 1),
+                                    backgroundColor: Colors.blue,
+                                  ),
+                                );
                               },
                             ),
                           ],
@@ -2385,8 +2818,88 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                             Flexible(
                               flex: 1,
                               child: FFButtonWidget(
-                                onPressed: () {
-                                  print('Button pressed ...');
+                                onPressed: () async {
+                                  if (_model.textController2?.text.isEmpty ??
+                                      true) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('검색어를 입력해주세요.'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  _model.isLoadingRequests = true;
+                                  _model.searchKeyword =
+                                      _model.textController2!.text.trim();
+                                  _model.searchType =
+                                      _model.dropDownValue2 ?? '이름';
+                                  safeSetState(() {});
+
+                                  try {
+                                    final normalizedSearchType =
+                                        _model.searchType
+                                            .replaceAll(' ', '');
+                                    List<ClassChangeRequestsRow> searchResults =
+                                        [];
+
+                                    if (normalizedSearchType == '이름') {
+                                      searchResults = await ClassChangeRequestsTable()
+                                          .queryRows(
+                                        queryFn: (q) => q
+                                            .ilike(
+                                              'student_name',
+                                              '%${_model.searchKeyword}%',
+                                            )
+                                            .eq(
+                                              'year',
+                                              _model.years ?? '2025',
+                                            )
+                                            .eq(
+                                              'semester',
+                                              _model.semester ?? '1학기',
+                                            )
+                                            .order(
+                                              'request_date',
+                                              ascending: false,
+                                            ),
+                                      );
+                                    } else if (normalizedSearchType == '학번') {
+                                      searchResults = await ClassChangeRequestsTable()
+                                          .queryRows(
+                                        queryFn: (q) => q
+                                            .eq(
+                                              'student_number',
+                                              _model.searchKeyword,
+                                            )
+                                            .eq(
+                                              'year',
+                                              _model.years ?? '2025',
+                                            )
+                                            .eq(
+                                              'semester',
+                                              _model.semester ?? '1학기',
+                                            )
+                                            .order(
+                                              'request_date',
+                                              ascending: false,
+                                            ),
+                                      );
+                                    }
+
+                                    _model.filteredRequestsList = searchResults;
+                                    updateRequestStatistics();
+                                  } catch (error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            '검색 중 오류가 발생했습니다: $error'),
+                                      ),
+                                    );
+                                  } finally {
+                                    _model.isLoadingRequests = false;
+                                    safeSetState(() {});
+                                  }
                                 },
                                 text: FFLocalizations.of(context).getText(
                                   'wcabyctn' /* 학생 검색 */,
@@ -2661,54 +3174,103 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                     MediaQuery.sizeOf(context).height * 0.7,
                               ),
                               decoration: BoxDecoration(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  ListView(
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    children: [
-                                      wrapWithModel(
-                                        model: _model.classChangeRowMobileModel,
-                                        updateCallback: () =>
-                                            safeSetState(() {}),
-                                        child: ClassChangeRowMobileWidget(
-                                          acceptRequest: (accept) async {},
-                                        ),
-                                      ),
-                                    ].divide(SizedBox(height: 10.0)),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 20.0, 0.0, 0.0),
-                                    child: Text(
-                                      FFLocalizations.of(context).getText(
-                                        'rrwaex0w' /* 현재 요청사항이 없습니다. */,
-                                      ),
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            font: GoogleFonts.inter(
-                                              fontWeight: FontWeight.w500,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
+                              child: _model.isLoadingRequests
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              Color(0xFF284E75),
                                             ),
-                                            color: Color(0xFF666666),
-                                            fontSize: 15.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.w500,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
                                           ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                          SizedBox(height: 16),
+                                          Text('요청 목록을 불러오는 중...'),
+                                        ],
+                                      ),
+                                    )
+                                  : _model.filteredRequestsList.isEmpty
+                                      ? Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.inbox_outlined,
+                                                size: 48,
+                                                color: Colors.grey,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                _model.searchKeyword.isNotEmpty
+                                                    ? '검색 결과가 없습니다.'
+                                                    : '현재 요청사항이 없습니다.',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          itemCount:
+                                              _model.filteredRequestsList.length,
+                                          itemBuilder: (context, index) {
+                                            final requestItem = _model
+                                                .filteredRequestsList[index];
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                10.0,
+                                              ),
+                                              child: ClassChangeRowMobileWidget(
+                                                key: ValueKey(
+                                                    'mobile_request_${requestItem.id}'),
+                                                studentName: requestItem
+                                                        .studentName ??
+                                                    '-',
+                                                studentNumber: requestItem
+                                                        .studentNumber ??
+                                                    '-',
+                                                currentSection: requestItem
+                                                        .currentClassSection ??
+                                                    '-',
+                                                requestedSection: requestItem
+                                                        .requestedClassSection ??
+                                                    '-',
+                                                requestReason: requestItem
+                                                        .requestReason ??
+                                                    '사유 없음',
+                                                requestStatus: requestItem
+                                                        .requestStatus ??
+                                                    'pending',
+                                                requestDate: requestItem
+                                                    .requestDate,
+                                                isProcessing: _model
+                                                        .isProcessingApproval ||
+                                                    (requestItem.requestStatus
+                                                                ?.toLowerCase() ??
+                                                            '') !=
+                                                        'pending',
+                                                acceptRequest:
+                                                    (bool isApproved) async {
+                                                  await processApprovalRequest(
+                                                    requestId: requestItem.id,
+                                                    isApproved: isApproved,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
                             ),
                             wrapWithModel(
                               model: _model.borderlineModel8,
@@ -2736,131 +3298,37 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                             MediaQuery.of(context).textScaler,
                                         text: TextSpan(
                                           children: [
-                                            TextSpan(
-                                              text: FFLocalizations.of(context)
-                                                  .getText(
-                                                'nqgbgc0t' /* 총:  */,
-                                              ),
-                                              style: FlutterFlowTheme.of(
-                                                      context)
-                                                  .bodyMedium
-                                                  .override(
-                                                    font: GoogleFonts.openSans(
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontStyle,
-                                                    ),
-                                                    letterSpacing: 0.0,
-                                                    fontWeight:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontWeight,
-                                                    fontStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontStyle,
-                                                  ),
-                                            ),
-                                            TextSpan(
-                                              text: FFLocalizations.of(context)
-                                                  .getText(
-                                                'uznc4w7s' /* 10 */,
-                                              ),
-                                              style: FlutterFlowTheme.of(
-                                                      context)
-                                                  .bodyMedium
-                                                  .override(
-                                                    font: GoogleFonts.openSans(
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontStyle,
-                                                    ),
-                                                    letterSpacing: 0.0,
-                                                    fontWeight:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontWeight,
-                                                    fontStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontStyle,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                  ),
-                                            ),
-                                            TextSpan(
-                                              text: FFLocalizations.of(context)
-                                                  .getText(
-                                                'maz1zeez' /* 명 */,
-                                              ),
-                                              style: FlutterFlowTheme.of(
-                                                      context)
-                                                  .bodyMedium
-                                                  .override(
-                                                    font: GoogleFonts.openSans(
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontStyle,
-                                                    ),
-                                                    letterSpacing: 0.0,
-                                                    fontWeight:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontWeight,
-                                                    fontStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontStyle,
-                                                  ),
-                                            )
-                                          ],
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                font: GoogleFonts.notoSansKr(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .fontStyle,
-                                                ),
+                                            const TextSpan(
+                                              text: '총: ',
+                                              style: TextStyle(
                                                 color: Color(0xFF666666),
-                                                fontSize: 13.0,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w600,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .fontStyle,
                                               ),
+                                            ),
+                                            TextSpan(
+                                              text:
+                                                  '${_model.totalRequestsCount}',
+                                              style: const TextStyle(
+                                                color: Color(0xFF666666),
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const TextSpan(
+                                              text: '명 ',
+                                              style: TextStyle(
+                                                color: Color(0xFF666666),
+                                              ),
+                                            ),
+                                            if (_model.pendingRequestsCount > 0)
+                                              TextSpan(
+                                                text:
+                                                    '(대기: ${_model.pendingRequestsCount})',
+                                                style: const TextStyle(
+                                                  color: Colors.orange,
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                     ],

@@ -9,21 +9,26 @@ export 'class_change_row_mobile_model.dart';
 class ClassChangeRowMobileWidget extends StatefulWidget {
   const ClassChangeRowMobileWidget({
     super.key,
-    String? studentName,
-    int? studentNumber,
-    String? studentSection,
-    String? studentRequest,
-    this.acceptRequest,
-  })  : this.studentName = studentName ?? '홍길동',
-        this.studentNumber = studentNumber ?? 2025000101,
-        this.studentSection = studentSection ?? '1분반',
-        this.studentRequest = studentRequest ?? '저기서 -> 여기로';
+    required this.studentName,
+    required this.studentNumber,
+    required this.currentSection,
+    required this.requestedSection,
+    required this.requestReason,
+    required this.requestStatus,
+    this.requestDate,
+    required this.acceptRequest,
+    this.isProcessing = false,
+  });
 
   final String studentName;
-  final int studentNumber;
-  final String studentSection;
-  final String studentRequest;
-  final Future Function(bool accept)? acceptRequest;
+  final String studentNumber;
+  final String currentSection;
+  final String requestedSection;
+  final String requestReason;
+  final String requestStatus;
+  final DateTime? requestDate;
+  final Future<void> Function(bool accept) acceptRequest;
+  final bool isProcessing;
 
   @override
   State<ClassChangeRowMobileWidget> createState() =>
@@ -57,144 +62,215 @@ class _ClassChangeRowMobileWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    final status = widget.requestStatus.toLowerCase();
+    final isPending = status == 'pending';
+    final statusLabel = () {
+      switch (status) {
+        case 'approved':
+          return '승인';
+        case 'rejected':
+          return '거절';
+        default:
+          return '대기';
+      }
+    }();
+    final statusColor = () {
+      switch (status) {
+        case 'approved':
+          return const Color(0xFF2E7D32);
+        case 'rejected':
+          return const Color(0xFFC62828);
+        default:
+          return const Color(0xFFFFA000);
+      }
+    }();
+    final formattedDate = widget.requestDate != null
+        ? dateTimeFormat(
+            'yMMMd',
+            widget.requestDate,
+            locale: FFLocalizations.of(context).languageCode,
+          )
+        : '-';
+    final isActionDisabled = widget.isProcessing || !isPending;
+
     return Container(
-      height: 30.0,
-      decoration: BoxDecoration(),
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Flexible(
-              flex: 1,
-              child: Align(
-                alignment: AlignmentDirectional(0.0, 0.0),
-                child: Text(
-                  valueOrDefault<String>(
-                    widget.studentName,
-                    'studentName',
-                  ),
-                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        font: GoogleFonts.inter(
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                        color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
-                        letterSpacing: 0.0,
-                        fontWeight: FontWeight.w500,
-                        fontStyle:
-                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: theme.neutral200, width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12000000),
+            blurRadius: 6.0,
+            offset: Offset(0.0, 2.0),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.studentName,
+                style: theme.titleMedium.override(
+                      font: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontStyle: theme.titleMedium.fontStyle,
                       ),
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Align(
-                alignment: AlignmentDirectional(0.0, 0.0),
-                child: Text(
-                  valueOrDefault<String>(
-                    widget.studentSection,
-                    'studentSection',
-                  ),
-                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        font: GoogleFonts.inter(
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                        color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
-                        letterSpacing: 0.0,
-                        fontWeight: FontWeight.w500,
-                        fontStyle:
-                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                      ),
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 3,
-              child: Align(
-                alignment: AlignmentDirectional(0.0, 0.0),
-                child: Text(
-                  valueOrDefault<String>(
-                    widget.studentRequest,
-                    'studentRequest',
-                  ),
-                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        font: GoogleFonts.inter(
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                        color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
-                        letterSpacing: 0.0,
-                        fontWeight: FontWeight.w500,
-                        fontStyle:
-                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                      ),
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Align(
-                alignment: AlignmentDirectional(0.0, 0.0),
-                child: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: BoxDecoration(),
-                  child: FFButtonWidget(
-                    onPressed: () async {
-                      await widget.acceptRequest?.call(
-                        true,
-                      );
-                    },
-                    text: FFLocalizations.of(context).getText(
-                      'svu01in4' /* 승인 */,
+                      color: const Color(0xFF1F2933),
+                      letterSpacing: 0.0,
                     ),
-                    options: FFButtonOptions(
-                      width: 80.0,
-                      height: 40.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: Color(0xFF666666),
-                      textStyle:
-                          FlutterFlowTheme.of(context).titleSmall.override(
-                                font: GoogleFonts.inter(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontStyle,
-                                ),
-                                color: Colors.white,
-                                fontSize: 13.0,
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .fontStyle,
-                              ),
-                      elevation: 0.0,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 4.0),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Text(
+                  statusLabel,
+                  style: theme.bodySmall.override(
+                        font: GoogleFonts.inter(
+                          fontWeight: FontWeight.w600,
+                          fontStyle: theme.bodySmall.fontStyle,
+                        ),
+                        color: statusColor,
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            '학번: ${widget.studentNumber}',
+            style: theme.bodySmall.override(
+                  font: GoogleFonts.inter(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: theme.bodySmall.fontStyle,
+                  ),
+                  color: const Color(0xFF4B5563),
+                  letterSpacing: 0.0,
+                ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            '현재 분반: ${widget.currentSection}',
+            style: theme.bodyMedium.override(
+                  font: GoogleFonts.inter(
+                    fontWeight: FontWeight.w500,
+                    fontStyle: theme.bodyMedium.fontStyle,
+                  ),
+                  color: const Color(0xFF4B5563),
+                  letterSpacing: 0.0,
+                ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            '희망 분반: ${widget.requestedSection}',
+            style: theme.bodyMedium.override(
+                  font: GoogleFonts.inter(
+                    fontWeight: FontWeight.w500,
+                    fontStyle: theme.bodyMedium.fontStyle,
+                  ),
+                  color: const Color(0xFF4B5563),
+                  letterSpacing: 0.0,
+                ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            '사유: ${widget.requestReason}',
+            style: theme.bodyMedium.override(
+                  font: GoogleFonts.inter(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: theme.bodyMedium.fontStyle,
+                  ),
+                  color: const Color(0xFF1F2933),
+                  letterSpacing: 0.0,
+                ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            '요청일: $formattedDate',
+            style: theme.bodySmall.override(
+                  font: GoogleFonts.inter(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: theme.bodySmall.fontStyle,
+                  ),
+                  color: const Color(0xFF6B7280),
+                  letterSpacing: 0.0,
+                ),
+          ),
+          const SizedBox(height: 12.0),
+          Row(
+            children: [
+              Expanded(
+                child: FFButtonWidget(
+                  onPressed: () async {
+                    if (isActionDisabled) {
+                      return;
+                    }
+                    await widget.acceptRequest(true);
+                  },
+                  text: '승인',
+                  options: FFButtonOptions(
+                    height: 40.0,
+                    color: isActionDisabled
+                        ? const Color(0xFFE5E7EB)
+                        : const Color(0xFF2E7D32),
+                    textStyle: theme.titleSmall.override(
+                          font: GoogleFonts.inter(
+                            fontWeight: theme.titleSmall.fontWeight,
+                            fontStyle: theme.titleSmall.fontStyle,
+                          ),
+                          color: isActionDisabled
+                              ? const Color(0xFF9CA3AF)
+                              : Colors.white,
+                          letterSpacing: 0.0,
+                        ),
+                    elevation: 0.0,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: FFButtonWidget(
+                  onPressed: () async {
+                    if (isActionDisabled) {
+                      return;
+                    }
+                    await widget.acceptRequest(false);
+                  },
+                  text: '거절',
+                  options: FFButtonOptions(
+                    height: 40.0,
+                    color: isActionDisabled
+                        ? const Color(0xFFE5E7EB)
+                        : const Color(0xFFC62828),
+                    textStyle: theme.titleSmall.override(
+                          font: GoogleFonts.inter(
+                            fontWeight: theme.titleSmall.fontWeight,
+                            fontStyle: theme.titleSmall.fontStyle,
+                          ),
+                          color: isActionDisabled
+                              ? const Color(0xFF9CA3AF)
+                              : Colors.white,
+                          letterSpacing: 0.0,
+                        ),
+                    elevation: 0.0,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

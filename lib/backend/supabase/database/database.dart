@@ -36,3 +36,6 @@ export 'tables/attendance.dart';
 export 'tables/users.dart';
 export 'tables/workevalform.dart';
 export 'tables/courses.dart';
+export 'tables/class_change_requests.dart';
+export 'tables/enrollments.dart';
+export 'tables/notifications.dart';

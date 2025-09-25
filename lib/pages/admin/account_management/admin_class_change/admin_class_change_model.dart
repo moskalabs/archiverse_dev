@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 import 'admin_class_change_widget.dart' show AdminClassChangeWidget;
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AdminClassChangeModel extends FlutterFlowModel<AdminClassChangeWidget> {
   ///  Local state fields for this page.
@@ -184,6 +185,30 @@ class AdminClassChangeModel extends FlutterFlowModel<AdminClassChangeWidget> {
   String? courseSelectedByGrade;
 
   bool isSearching = false;
+
+  // 분반 변경 요청 관련 필드
+  List<ClassChangeRequestsRow> classChangeRequestsList = [];
+  List<ClassChangeRequestsRow> filteredRequestsList = [];
+
+  // 통계 데이터
+  int totalRequestsCount = 0;
+  int pendingRequestsCount = 0;
+  int approvedRequestsCount = 0;
+  int rejectedRequestsCount = 0;
+
+  // 로딩 상태
+  bool isLoadingRequests = false;
+  bool isProcessingApproval = false;
+
+  // 검색 관련
+  String searchType = '이름';
+  String searchKeyword = '';
+
+  // 실시간 구독
+  RealtimeChannel? changeRequestsChannel;
+
+  // 에러 메시지
+  String? errorMessage;
 
   ///  State fields for stateful widgets in this page.
 
