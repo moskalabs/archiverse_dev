@@ -753,8 +753,9 @@ void _createCritiquePage(PdfDocument document, dynamic student) {
     cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
   );
 
-  for (final PdfGridCell headerCell in grid.headers[0].cells) {
-    headerCell.style = headerCellStyle;
+  final PdfGridCellCollection headerCells = grid.headers[0].cells;
+  for (int i = 0; i < headerCells.count; i++) {
+    headerCells[i].style = headerCellStyle;
   }
 
   for (final dynamic critique in critiques) {
