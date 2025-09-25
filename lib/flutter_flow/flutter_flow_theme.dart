@@ -1,5 +1,6 @@
 // ignore_for_file: overridden_fields, annotate_overrides
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -318,63 +319,63 @@ class ThemeTypography extends Typography {
   String get displayLargeFamily => 'Open Sans';
   bool get displayLargeIsCustom => false;
   TextStyle get displayLarge =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeXL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get displayMediumFamily => 'Open Sans';
   bool get displayMediumIsCustom => false;
   TextStyle get displayMedium =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get displaySmallFamily => 'Open Sans';
   bool get displaySmallIsCustom => false;
   TextStyle get displaySmall =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeM);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get headlineLargeFamily => 'Open Sans';
   bool get headlineLargeIsCustom => false;
   TextStyle get headlineLarge =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeXL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get headlineMediumFamily => 'Open Sans';
   bool get headlineMediumIsCustom => false;
   TextStyle get headlineMedium =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get headlineSmallFamily => 'Open Sans';
   bool get headlineSmallIsCustom => false;
   TextStyle get headlineSmall =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeM);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get titleLargeFamily => 'Open Sans';
   bool get titleLargeIsCustom => false;
   TextStyle get titleLarge =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeXL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get titleMediumFamily => 'Open Sans';
   bool get titleMediumIsCustom => false;
   TextStyle get titleMedium =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get titleSmallFamily => 'Open Sans';
   bool get titleSmallIsCustom => false;
   TextStyle get titleSmall =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeM);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get labelLargeFamily => 'Open Sans';
   bool get labelLargeIsCustom => false;
   TextStyle get labelLarge =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get labelMediumFamily => 'Open Sans';
   bool get labelMediumIsCustom => false;
   TextStyle get labelMedium =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeM);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get labelSmallFamily => 'Open Sans';
   bool get labelSmallIsCustom => false;
   TextStyle get labelSmall =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeS);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeS : null);
   String get bodyLargeFamily => 'Open Sans';
   bool get bodyLargeIsCustom => false;
   TextStyle get bodyLarge =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeL);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get bodyMediumFamily => 'Open Sans';
   bool get bodyMediumIsCustom => false;
   TextStyle get bodyMedium =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeM);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get bodySmallFamily => 'Open Sans';
   bool get bodySmallIsCustom => false;
   TextStyle get bodySmall =>
-      GoogleFonts.openSans(fontSize: AppTheme.fontSizeS);
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeS : null);
 }
 
 extension TextStyleHelper on TextStyle {
@@ -426,8 +427,8 @@ extension TextStyleHelper on TextStyle {
   }
 
   double? _normalizeFontSize(double? size) {
-    if (size == null) {
-      return null;
+    if (!kIsWeb || size == null) {
+      return size;
     }
     const allowed = <double>{
       AppTheme.fontSizeXL,
