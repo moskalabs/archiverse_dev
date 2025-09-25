@@ -294,6 +294,18 @@ class FFAppState extends ChangeNotifier {
 
   late SharedPreferences prefs;
 
+  double _downloadProgress = 0.0;
+  double get downloadProgress => _downloadProgress;
+  set downloadProgress(double value) {
+    _downloadProgress = value;
+  }
+
+  String _downloadProgressMessage = '';
+  String get downloadProgressMessage => _downloadProgressMessage;
+  set downloadProgressMessage(String value) {
+    _downloadProgressMessage = value;
+  }
+
   bool _drawer = false;
   bool get drawer => _drawer;
   set drawer(bool value) {
