@@ -1104,7 +1104,17 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_studentNavbarMobile', value);
   }
 
-  void refreshCriticCounters() {
+  int _criticCountersVersion = 0;
+  int get criticCountersVersion => _criticCountersVersion;
+
+  String? _criticCountersWeek;
+  String? get criticCountersWeek => _criticCountersWeek;
+
+  Future<void> refreshCriticCounters({String? week}) async {
+    _criticCountersVersion++;
+    if (week != null) {
+      _criticCountersWeek = week;
+    }
     notifyListeners();
   }
 
@@ -1131,6 +1141,8 @@ class FFAppState extends ChangeNotifier {
   }
 
   Future<void> clearUserScopedState() async {
+    _criticCountersVersion = 0;
+    _criticCountersWeek = null;
     _professorNameSelected = '교수님';
     await prefs.remove('ff_professorNameSelected');
     _yearSelected = '';

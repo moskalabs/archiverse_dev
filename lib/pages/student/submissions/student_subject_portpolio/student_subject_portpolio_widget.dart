@@ -755,7 +755,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                             selectedSubjectportpolio.id,
                                                                                           ),
                                                                                         );
-                                                                                        FFAppState().refreshCriticCounters();
+                                                                                        await FFAppState().refreshCriticCounters();
                                                                                       }
                                                                                     }
                                                                                   },
@@ -2886,7 +2886,7 @@ class _StudentSubjectPortpolioWidgetState
                                                                                         selectedSubjectportpolio.id,
                                                                                       ),
                                                                                     );
-                                                                                    FFAppState().refreshCriticCounters();
+                                                                                    await FFAppState().refreshCriticCounters();
                                                                                   }
                                                                                 }
                                                                               },

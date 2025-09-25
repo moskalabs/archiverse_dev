@@ -1576,7 +1576,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           _model.weeks,
                                                                                                         ),
                                                                                                   );
-                                                                                                  FFAppState().refreshCriticCounters();
+                                                                                                  await FFAppState().refreshCriticCounters();
                                                                                                   await showDialog(
                                                                                                     context: context,
                                                                                                     builder: (alertDialogContext) {
@@ -3229,7 +3229,7 @@ class _ProfSubjectPortpolioWidgetState
                                                                                                           _model.weeks,
                                                                                                         ),
                                                                                                   );
-                                                                                                  FFAppState().refreshCriticCounters();
+                                                                                                  await FFAppState().refreshCriticCounters();
                                                                                                   await showDialog(
                                                                                                     context: context,
                                                                                                     builder: (alertDialogContext) {
