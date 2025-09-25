@@ -847,17 +847,16 @@ Future<void> _mergeExternalPdf(PdfDocument targetDoc, String pdfUrl) async {
       final PdfDocument sourceDoc = PdfDocument(inputBytes: response.bodyBytes);
 
       for (int i = 0; i < sourceDoc.pages.count; i++) {
-        final PdfPageTemplateElement template =
-            sourceDoc.pages[i].createTemplate();
+        final PdfPage sourcePage = sourceDoc.pages[i];
+        final PdfTemplate template = sourcePage.createTemplate();
+
+        targetDoc.pageSettings.size = sourcePage.size;
+        targetDoc.pageSettings.margins.all = 0;
+
         final PdfPage newPage = targetDoc.pages.add();
-
-        newPage.section.pageSettings.size = template.size;
-        newPage.section.pageSettings.margins.all = 0;
-
         newPage.graphics.drawPdfTemplate(
           template,
           ui.Offset.zero,
-          template.size,
         );
       }
 
