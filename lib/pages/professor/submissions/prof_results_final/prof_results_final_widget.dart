@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'prof_results_final_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'prof_results_final_model.dart';
 
 class ProfResultsFinalWidget extends StatefulWidget {
@@ -96,7 +97,8 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -111,12 +113,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.naviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: NaviSidebarWidget(
@@ -145,12 +142,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.leftWidgetModel,
@@ -599,7 +591,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                              fontSize: 20.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -643,11 +635,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                               ),
                                             ),
                                           ),
-                                          if (responsiveVisibility(
-                                            context: context,
-                                            phone: false,
-                                          ))
-                                            Align(
+                                          Align(
                                               alignment: AlignmentDirectional(
                                                   0.0, 1.0),
                                               child: Padding(
@@ -1523,12 +1511,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Expanded(
+                                  Expanded(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.rightWidgetModel,
@@ -1547,12 +1530,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -1591,12 +1569,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                   height: double.infinity,
                                   child: Stack(
                                     children: [
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Align(
+                                      Align(
                                           alignment:
                                               AlignmentDirectional(0.0, -1.0),
                                           child: Padding(
@@ -2006,7 +1979,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                          fontSize: 20.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2106,12 +2079,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                                             ),
                                           ),
                                         ),
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Align(
+                                      Align(
                                           alignment:
                                               AlignmentDirectional(0.0, 1.0),
                                           child: Padding(
@@ -3010,6 +2978,7 @@ class _ProfResultsFinalWidgetState extends State<ProfResultsFinalWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

@@ -84,7 +84,7 @@ class _RightWidgetPopupWidgetState extends State<RightWidgetPopupWidget> {
                                   .fontStyle,
                             ),
                             color: Color(0xFF284E75),
-                            fontSize: 20.0,
+                            fontSize: 22.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
                             fontStyle: FlutterFlowTheme.of(context)
@@ -162,7 +162,7 @@ class _RightWidgetPopupWidgetState extends State<RightWidgetPopupWidget> {
                                           .fontStyle,
                                     ),
                                     color: Color(0xFF284E75),
-                                    fontSize: 20.0,
+                                    fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FlutterFlowTheme.of(context)

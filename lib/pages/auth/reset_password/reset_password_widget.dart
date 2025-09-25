@@ -9,6 +9,7 @@ import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'reset_password_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'reset_password_model.dart';
 
 class ResetPasswordWidget extends StatefulWidget {
@@ -60,7 +61,8 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -78,12 +80,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           child: Container(
                             width: double.infinity,
                             height: double.infinity,
@@ -513,12 +510,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                                       Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          if (responsiveVisibility(
-                                            context: context,
-                                            tabletLandscape: false,
-                                            desktop: false,
-                                          ))
-                                            Row(
+                                          Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 ClipRRect(
@@ -1002,11 +994,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                     ],
                   ),
                 ),
-                if (responsiveVisibility(
-                  context: context,
-                  phone: false,
-                ))
-                  Padding(
+                Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(40.0, 0.0, 40.0, 0.0),
                     child: Row(
@@ -1030,6 +1018,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'chat_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'chat_model.dart';
 
 class ChatWidget extends StatefulWidget {
@@ -73,7 +74,8 @@ class _ChatWidgetState extends State<ChatWidget> {
           centerTitle: false,
           elevation: 2.0,
         ),
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: SingleChildScrollView(
             child: Column(
@@ -118,6 +120,7 @@ class _ChatWidgetState extends State<ChatWidget> {
               ].divide(SizedBox(height: 10.0)),
             ),
           ),
+        ),
         ),
       ),
     );

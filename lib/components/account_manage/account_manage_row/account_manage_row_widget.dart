@@ -89,7 +89,7 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
                                 .fontStyle,
                           ),
                           color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
+                          fontSize: 22.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w500,
                           fontStyle:
@@ -180,7 +180,7 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
                                 .fontStyle,
                           ),
                           color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
+                          fontSize: 22.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w500,
                           fontStyle:
@@ -204,7 +204,7 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
                                 .fontStyle,
                           ),
                           color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
+                          fontSize: 22.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w500,
                           fontStyle:

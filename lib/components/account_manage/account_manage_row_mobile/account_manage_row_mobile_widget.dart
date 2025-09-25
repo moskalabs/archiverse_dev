@@ -91,7 +91,7 @@ class _AccountManageRowMobileWidgetState
                                 .fontStyle,
                           ),
                           color: Color(0xFF4E4E4E),
-                          fontSize: 13.0,
+                          fontSize: 12.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w500,
                           fontStyle:
@@ -137,7 +137,7 @@ class _AccountManageRowMobileWidgetState
                                 .bodyMedium
                                 .fontStyle,
                           ),
-                          fontSize: 13.0,
+                          fontSize: 12.0,
                           letterSpacing: 0.0,
                           fontWeight: FlutterFlowTheme.of(context)
                               .bodyMedium
@@ -195,7 +195,7 @@ class _AccountManageRowMobileWidgetState
                                 .bodyMedium
                                 .fontStyle,
                           ),
-                          fontSize: 13.0,
+                          fontSize: 12.0,
                           letterSpacing: 0.0,
                           fontWeight: FlutterFlowTheme.of(context)
                               .bodyMedium

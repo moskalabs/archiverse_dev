@@ -330,13 +330,13 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
                       Text(
                         '${date.day}',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 22.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         _getDayOfWeekInKorean(date),
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        style: TextStyle(fontSize: 16.0, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -395,7 +395,7 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
                                             Text(
                                               timeStr,
                                               style: TextStyle(
-                                                fontSize: 12,
+                                                fontSize: 12.0,
                                                 color: Colors.grey[600],
                                               ),
                                             ),

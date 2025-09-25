@@ -22,6 +22,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'admin_student_submit_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'admin_student_submit_model.dart';
 
 class AdminStudentSubmitWidget extends StatefulWidget {
@@ -98,19 +99,15 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Stack(
+        body: ResponsiveWrapper(
+          child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    wrapWithModel(
+                  wrapWithModel(
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
@@ -118,12 +115,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                         pageIsInSubMenu: false,
                       ),
                     ),
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                  ))
-                    Expanded(
+                  Expanded(
                       flex: 1,
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -138,11 +130,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                ))
-                                  Flexible(
+                                Flexible(
                                     flex: 4,
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
@@ -1000,7 +988,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1094,7 +1082,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1188,7 +1176,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1282,7 +1270,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1376,7 +1364,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              25.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
@@ -1459,7 +1447,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                 ),
                                                                 color: Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 22.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1576,7 +1564,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           color:
                                                                               Color(0xFF666666),
                                                                           fontSize:
-                                                                              20.0,
+                                                                              22.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight:
@@ -1689,7 +1677,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                 ),
                                                                                 color: Color(0xFF666666),
-                                                                                fontSize: 20.0,
+                                                                                fontSize: 22.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -1724,7 +1712,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                             color:
                                                                                 Color(0xFF666666),
                                                                             fontSize:
-                                                                                20.0,
+                                                                                22.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
@@ -1835,7 +1823,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
                                                                                   color: Color(0xFF666666),
-                                                                                  fontSize: 20.0,
+                                                                                  fontSize: 22.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.bold,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -1921,7 +1909,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: _model.isDesign ? FlutterFlowTheme.of(context).mainColor1 : Color(0xFF666666),
-                                                                                                  fontSize: 20.0,
+                                                                                                  fontSize: 22.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -1972,7 +1960,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: _model.isDesign ? FlutterFlowTheme.of(context).mainColor1 : Color(0xFF666666),
-                                                                                                  fontSize: 20.0,
+                                                                                                  fontSize: 22.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2117,7 +2105,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: Color(0xFF666666),
-                                                                                                fontSize: 15.0,
+                                                                                                fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2164,7 +2152,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: Color(0xFF666666),
-                                                                                                fontSize: 15.0,
+                                                                                                fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2262,7 +2250,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
                                                                                   color: Color(0xFF666666),
-                                                                                  fontSize: 20.0,
+                                                                                  fontSize: 22.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.bold,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2293,7 +2281,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
                                                                               color: Color(0xFF666666),
-                                                                              fontSize: 20.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.bold,
                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2337,12 +2325,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                 ],
               ),
             ),
-            if (responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ))
-              ClipRRect(
+            ClipRRect(
                 child: Container(
                   width: MediaQuery.sizeOf(context).width * 1.0,
                   height: MediaQuery.sizeOf(context).height * 1.0,
@@ -2703,7 +2686,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 20.0,
+                                        fontSize: 22.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -2804,7 +2787,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 15.0,
+                                                        fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -2878,7 +2861,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 15.0,
+                                                        fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -2952,7 +2935,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 15.0,
+                                                        fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3026,7 +3009,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 15.0,
+                                                        fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3100,7 +3083,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 15.0,
+                                                        fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3254,7 +3237,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3321,7 +3304,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Colors.white,
-                                                fontSize: 20.0,
+                                                fontSize: 22.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w500,
                                                 fontStyle:
@@ -3368,7 +3351,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Colors.white,
-                                                fontSize: 20.0,
+                                                fontSize: 22.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w500,
                                                 fontStyle:
@@ -3469,7 +3452,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3579,7 +3562,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3631,7 +3614,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -3665,7 +3648,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         .fontStyle,
                                               ),
                                               color: Color(0xFF666666),
-                                              fontSize: 15.0,
+                                              fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
                                               fontStyle:
@@ -3718,7 +3701,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3787,7 +3770,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3829,6 +3812,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                 ),
               ),
           ],
+        ),
         ),
       ),
     );

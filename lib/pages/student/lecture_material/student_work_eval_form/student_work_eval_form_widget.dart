@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_work_eval_form_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_work_eval_form_model.dart';
 
 class StudentWorkEvalFormWidget extends StatefulWidget {
@@ -80,17 +81,13 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
             children: [
-              if (responsiveVisibility(
-                context: context,
-                phone: false,
-                tablet: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -112,12 +109,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            if (responsiveVisibility(
-                              context: context,
-                              phone: false,
-                              tablet: false,
-                            ))
-                              wrapWithModel(
+                            wrapWithModel(
                                 model: _model.headerModel,
                                 updateCallback: () => safeSetState(() {}),
                                 updateOnChange: true,
@@ -134,12 +126,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Flexible(
+                                    Flexible(
                                         flex: 3,
                                         child: wrapWithModel(
                                           model: _model.leftWidgetModel,
@@ -714,12 +701,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                                         ),
                                       ),
                                     ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
+                                    Expanded(
                                         flex: 3,
                                         child: wrapWithModel(
                                           model: _model.rightWidgetModel,
@@ -738,12 +720,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                     ],
                   ),
                 ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -1375,12 +1352,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                                           ),
                                         ),
                                       ),
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        wrapWithModel(
+                                      wrapWithModel(
                                           model: _model.naviSidebarMobileModel,
                                           updateCallback: () =>
                                               safeSetState(() {}),
@@ -1416,6 +1388,7 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

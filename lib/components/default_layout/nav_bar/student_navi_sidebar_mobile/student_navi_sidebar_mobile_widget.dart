@@ -55,22 +55,14 @@ class _StudentNaviSidebarMobileWidgetState
     context.watch<FFAppState>();
 
     return Visibility(
-      visible: responsiveVisibility(
-        context: context,
-        tabletLandscape: false,
-        desktop: false,
-      ),
+      visible: true,
       child: Align(
         alignment: AlignmentDirectional(1.0, 0.0),
         child: MouseRegion(
           opaque: false,
           cursor: MouseCursor.defer,
           child: Visibility(
-            visible: responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ),
+            visible: true,
             child: Align(
               alignment: AlignmentDirectional(1.0, -1.0),
               child: AnimatedContainer(
@@ -87,23 +79,14 @@ class _StudentNaviSidebarMobileWidgetState
                   shape: BoxShape.rectangle,
                 ),
                 child: Visibility(
-                  visible: responsiveVisibility(
-                    context: context,
-                    tabletLandscape: false,
-                    desktop: false,
-                  ),
+                  visible: true,
                   child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 15.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (responsiveVisibility(
-                          context: context,
-                          tabletLandscape: false,
-                          desktop: false,
-                        ))
-                          Flexible(
+                        Flexible(
                             flex: 1,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -124,12 +107,7 @@ class _StudentNaviSidebarMobileWidgetState
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        if (responsiveVisibility(
-                                          context: context,
-                                          tabletLandscape: false,
-                                          desktop: false,
-                                        ))
-                                          Flexible(
+                                        Flexible(
                                             child: Align(
                                               alignment: AlignmentDirectional(
                                                   1.0, 0.0),
@@ -221,12 +199,7 @@ class _StudentNaviSidebarMobileWidgetState
                                                       ),
                                                     ),
                                                   ),
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
-                                                    Expanded(
+                                                  Expanded(
                                                       flex: 1,
                                                       child: Align(
                                                         alignment:
@@ -314,7 +287,7 @@ class _StudentNaviSidebarMobileWidgetState
                                                                             color:
                                                                                 FlutterFlowTheme.of(context).primaryBackground,
                                                                             fontSize:
-                                                                                15.0,
+                                                                                16.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
@@ -343,11 +316,7 @@ class _StudentNaviSidebarMobileWidgetState
                             ),
                           ),
                         if ((FFAppState().studentNavbarMobile == true) &&
-                            responsiveVisibility(
-                              context: context,
-                              tabletLandscape: false,
-                              desktop: false,
-                            ))
+                            true)
                           Flexible(
                             flex: 1,
                             child: Align(
@@ -357,12 +326,7 @@ class _StudentNaviSidebarMobileWidgetState
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    tabletLandscape: false,
-                                    desktop: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 1,
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
@@ -749,12 +713,7 @@ class _StudentNaviSidebarMobileWidgetState
                                               ),
                                             ),
                                           ),
-                                          if (responsiveVisibility(
-                                            context: context,
-                                            tabletLandscape: false,
-                                            desktop: false,
-                                          ))
-                                            InkWell(
+                                          InkWell(
                                               splashColor: Colors.transparent,
                                               focusColor: Colors.transparent,
                                               hoverColor: Colors.transparent,
@@ -772,12 +731,7 @@ class _StudentNaviSidebarMobileWidgetState
                                                   mainAxisSize:
                                                       MainAxisSize.max,
                                                   children: [
-                                                    if (responsiveVisibility(
-                                                      context: context,
-                                                      tabletLandscape: false,
-                                                      desktop: false,
-                                                    ))
-                                                      Padding(
+                                                    Padding(
                                                         padding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
@@ -810,12 +764,7 @@ class _StudentNaviSidebarMobileWidgetState
                                                     if ((FFAppState()
                                                                 .studentNavbarMobile ==
                                                             true) &&
-                                                        responsiveVisibility(
-                                                          context: context,
-                                                          tabletLandscape:
-                                                              false,
-                                                          desktop: false,
-                                                        ))
+                                                        true)
                                                       Expanded(
                                                         child: Container(
                                                           width: 200.0,
@@ -830,14 +779,7 @@ class _StudentNaviSidebarMobileWidgetState
                                                               if ((FFAppState()
                                                                           .studentNavbarMobile ==
                                                                       true) &&
-                                                                  responsiveVisibility(
-                                                                    context:
-                                                                        context,
-                                                                    tabletLandscape:
-                                                                        false,
-                                                                    desktop:
-                                                                        false,
-                                                                  ))
+                                                                  true)
                                                                 Flexible(
                                                                   child: Text(
                                                                     FFLocalizations.of(

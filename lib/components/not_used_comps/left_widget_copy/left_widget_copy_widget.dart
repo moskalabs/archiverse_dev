@@ -214,7 +214,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                                                 .labelLarge
                                                                 .fontStyle,
                                                       ),
-                                                      fontSize: 13.0,
+                                                      fontSize: 12.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FlutterFlowTheme.of(
@@ -255,7 +255,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                                               .bodyMedium
                                                               .fontStyle,
                                                     ),
-                                                    fontSize: 13.0,
+                                                    fontSize: 12.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight:
                                                         FlutterFlowTheme.of(
@@ -335,7 +335,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                           ),
-                                                          fontSize: 17.0,
+                                                          fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -448,7 +448,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                           ),
-                                                          fontSize: 17.0,
+                                                          fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -561,7 +561,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                           ),
-                                                          fontSize: 17.0,
+                                                          fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
@@ -687,7 +687,7 @@ class _LeftWidgetCopyWidgetState extends State<LeftWidgetCopyWidget> {
                                         .titleLarge
                                         .fontStyle,
                                   ),
-                                  fontSize: 15.0,
+                                  fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FlutterFlowTheme.of(context)
                                       .titleLarge

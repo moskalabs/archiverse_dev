@@ -80,7 +80,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -113,7 +113,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -153,7 +153,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -186,7 +186,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -226,7 +226,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -259,7 +259,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -299,7 +299,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -332,7 +332,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -372,7 +372,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -405,7 +405,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -445,7 +445,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -495,7 +495,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -545,7 +545,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -600,7 +600,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -650,7 +650,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -700,7 +700,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -750,7 +750,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -800,7 +800,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -850,7 +850,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -900,7 +900,7 @@ class _CheckSubmittedWidgetState extends State<CheckSubmittedWidget> {
                                     .fontStyle,
                               ),
                               color: Color(0xFF666666),
-                              fontSize: 15.0,
+                              fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
                               fontStyle: FlutterFlowTheme.of(context)

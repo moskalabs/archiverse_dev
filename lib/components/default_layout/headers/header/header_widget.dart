@@ -67,10 +67,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     context.watch<FFAppState>();
 
     return Visibility(
-      visible: responsiveVisibility(
-        context: context,
-        phone: false,
-      ),
+      visible: true,
       child: Container(
         width: double.infinity,
         height: MediaQuery.sizeOf(context).height * 0.06,
@@ -262,13 +259,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (responsiveVisibility(
-                              context: context,
-                              tablet: false,
-                              tabletLandscape: false,
-                              desktop: false,
-                            ))
-                              FlutterFlowIconButton(
+                            FlutterFlowIconButton(
                                 borderRadius: 12.0,
                                 borderWidth: 1.0,
                                 buttonSize: 48.0,
@@ -294,12 +285,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                                 size: 18.0,
                               ),
                             ),
-                            if (responsiveVisibility(
-                              context: context,
-                              phone: false,
-                              tablet: false,
-                            ))
-                              Container(
+                            Container(
                                 width: 300.0,
                                 child: TextFormField(
                                   controller: _model.textController,

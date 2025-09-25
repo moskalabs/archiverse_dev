@@ -194,7 +194,7 @@ class _DashboardClassContainerWidgetState
                                     .fontStyle,
                               ),
                               color: FlutterFlowTheme.of(context).mainColor1,
-                              fontSize: 20.0,
+                              fontSize: 22.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
                               fontStyle: FlutterFlowTheme.of(context)

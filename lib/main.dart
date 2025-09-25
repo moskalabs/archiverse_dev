@@ -7,6 +7,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'auth/supabase_auth/supabase_user_provider.dart';
 import 'auth/supabase_auth/auth_util.dart';
+import 'core/app_theme.dart';
 
 import '/backend/supabase/supabase.dart';
 import 'flutter_flow/flutter_flow_util.dart';
@@ -111,10 +112,7 @@ class _MyAppState extends State<MyApp> {
         Locale('ko'),
         Locale('en'),
       ],
-      theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: false,
-      ),
+      theme: AppTheme.themeData(),
       themeMode: _themeMode,
       routerConfig: _router,
     );

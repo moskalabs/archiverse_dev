@@ -25,6 +25,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'prof_my_profile_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'prof_my_profile_model.dart';
 
 /// make a profile page, with name, email, university, carreer,
@@ -679,7 +680,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -694,12 +696,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.naviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: NaviSidebarWidget(
@@ -711,12 +708,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          if (responsiveVisibility(
-                            context: context,
-                            phone: false,
-                            tablet: false,
-                          ))
-                            wrapWithModel(
+                          wrapWithModel(
                               model: _model.headerModel,
                               updateCallback: () => safeSetState(() {}),
                               updateOnChange: true,
@@ -735,12 +727,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Flexible(
+                                  Flexible(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.leftWidgetModel,
@@ -777,12 +764,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    if (responsiveVisibility(
-                                                      context: context,
-                                                      phone: false,
-                                                      tablet: false,
-                                                    ))
-                                                      Flexible(
+                                                    Flexible(
                                                         flex: 1,
                                                         child: Container(
                                                           height:
@@ -4278,16 +4260,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                       child:
                                                                           Visibility(
                                                                         visible:
-                                                                            responsiveVisibility(
-                                                                          context:
-                                                                              context,
-                                                                          tablet:
-                                                                              false,
-                                                                          tabletLandscape:
-                                                                              false,
-                                                                          desktop:
-                                                                              false,
-                                                                        ),
+                                                                            true,
                                                                         child:
                                                                             FlutterFlowIconButton(
                                                                           borderRadius:
@@ -6010,12 +5983,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    Expanded(
+                                  Expanded(
                                       flex: 3,
                                       child: wrapWithModel(
                                         model: _model.rightWidgetModel,
@@ -6034,14 +6002,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                phone: false,
-                tablet: false,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: MediaQuery.sizeOf(context).width * 1.0,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -6053,12 +6014,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          if (responsiveVisibility(
-                            context: context,
-                            tabletLandscape: false,
-                            desktop: false,
-                          ))
-                            Expanded(
+                          Expanded(
                               child: wrapWithModel(
                                 model: _model.headerMobileModel1,
                                 updateCallback: () => safeSetState(() {}),
@@ -6067,12 +6023,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                             ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -6100,37 +6051,17 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                     ],
                   ),
                 ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Column(
+              Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      tabletLandscape: false,
-                      desktop: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.headerMobileModel2,
                         updateCallback: () => safeSetState(() {}),
                         child: HeaderMobileWidget(),
                       ),
-                    if (responsiveVisibility(
-                      context: context,
-                      tabletLandscape: false,
-                      desktop: false,
-                    ))
-                      Stack(
+                    Stack(
                         children: [
-                          if (responsiveVisibility(
-                            context: context,
-                            tabletLandscape: false,
-                            desktop: false,
-                          ))
-                            Align(
+                          Align(
                               alignment: AlignmentDirectional(0.0, 0.0),
                               child: wrapWithModel(
                                 model: _model.naviSidebarMobileModel2,
@@ -6160,6 +6091,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

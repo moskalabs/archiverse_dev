@@ -949,12 +949,7 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
               ],
             ),
           ),
-          if (responsiveVisibility(
-            context: context,
-            phone: false,
-            tablet: false,
-          ))
-            Flexible(
+          Flexible(
               flex: 7,
               child: Container(
                 width: double.infinity,
@@ -1380,12 +1375,7 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                           ),
                         ),
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                      ))
-                        wrapWithModel(
+                      wrapWithModel(
                           model: _model.dividerModel2,
                           updateCallback: () => safeSetState(() {}),
                           child: DividerWidget(),

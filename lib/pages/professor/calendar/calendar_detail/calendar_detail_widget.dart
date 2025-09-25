@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'calendar_detail_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'calendar_detail_model.dart';
 
 class CalendarDetailWidget extends StatefulWidget {
@@ -119,7 +120,8 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
             elevation: 0.0,
           ),
         ),
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -996,6 +998,7 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

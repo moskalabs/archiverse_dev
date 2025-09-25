@@ -56,10 +56,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
       opaque: false,
       cursor: MouseCursor.defer,
       child: Visibility(
-        visible: responsiveVisibility(
-          context: context,
-          phone: false,
-        ),
+        visible: true,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           curve: Curves.easeInOut,
@@ -141,10 +138,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
                                         ),
                                       ),
                                       if ((FFAppState().navOpen == true) &&
-                                          responsiveVisibility(
-                                            context: context,
-                                            phone: false,
-                                          ))
+                                          true)
                                         Expanded(
                                           flex: 1,
                                           child: Align(
@@ -236,7 +230,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primaryBackground,
-                                                                fontSize: 15.0,
+                                                                fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -827,11 +821,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                    ))
-                                      Padding(
+                                    Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             15.0, 0.0, 0.0, 0.0),
                                         child: Container(
@@ -854,11 +844,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
                                         ),
                                       ),
                                     if ((FFAppState().navOpen == true) &&
-                                        responsiveVisibility(
-                                          context: context,
-                                          phone: false,
-                                          tablet: false,
-                                        ))
+                                        true)
                                       Expanded(
                                         child: Container(
                                           width: 200.0,
@@ -869,10 +855,7 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
                                             children: [
                                               if ((FFAppState().navOpen ==
                                                       true) &&
-                                                  responsiveVisibility(
-                                                    context: context,
-                                                    phone: false,
-                                                  ))
+                                                  true)
                                                 Flexible(
                                                   child: Text(
                                                     FFLocalizations.of(context)

@@ -54,22 +54,14 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
     context.watch<FFAppState>();
 
     return Visibility(
-      visible: responsiveVisibility(
-        context: context,
-        tabletLandscape: false,
-        desktop: false,
-      ),
+      visible: true,
       child: Align(
         alignment: AlignmentDirectional(1.0, 0.0),
         child: MouseRegion(
           opaque: false,
           cursor: MouseCursor.defer,
           child: Visibility(
-            visible: responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ),
+            visible: true,
             child: Align(
               alignment: AlignmentDirectional(1.0, -1.0),
               child: AnimatedContainer(
@@ -193,11 +185,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                                         (FFAppState()
                                                                 .studentNavbarMobile ==
                                                             true)) &&
-                                                    responsiveVisibility(
-                                                      context: context,
-                                                      tabletLandscape: false,
-                                                      desktop: false,
-                                                    ))
+                                                    true)
                                                   Expanded(
                                                     flex: 1,
                                                     child: Align(
@@ -291,7 +279,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                                                           color:
                                                                               FlutterFlowTheme.of(context).primaryBackground,
                                                                           fontSize:
-                                                                              15.0,
+                                                                              16.0,
                                                                           letterSpacing:
                                                                               0.0,
                                                                           fontWeight:
@@ -328,12 +316,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              if (responsiveVisibility(
-                                context: context,
-                                tabletLandscape: false,
-                                desktop: false,
-                              ))
-                                Flexible(
+                              Flexible(
                                   flex: 1,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
@@ -722,12 +705,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      tabletLandscape: false,
-                                      desktop: false,
-                                    ))
-                                      InkWell(
+                                    InkWell(
                                         splashColor: Colors.transparent,
                                         focusColor: Colors.transparent,
                                         hoverColor: Colors.transparent,
@@ -743,12 +721,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
-                                              if (responsiveVisibility(
-                                                context: context,
-                                                tabletLandscape: false,
-                                                desktop: false,
-                                              ))
-                                                Padding(
+                                              Padding(
                                                   padding: EdgeInsetsDirectional
                                                       .fromSTEB(
                                                           15.0, 0.0, 0.0, 0.0),
@@ -779,11 +752,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                                       (FFAppState()
                                                               .studentNavbarMobile ==
                                                           false)) &&
-                                                  responsiveVisibility(
-                                                    context: context,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
+                                                  true)
                                                 Expanded(
                                                   child: Container(
                                                     width: 200.0,
@@ -799,12 +768,7 @@ class _StudentNaviBackupWidgetState extends State<StudentNaviBackupWidget> {
                                                                 (FFAppState()
                                                                         .studentNavbarMobile ==
                                                                     false)) &&
-                                                            responsiveVisibility(
-                                                              context: context,
-                                                              tabletLandscape:
-                                                                  false,
-                                                              desktop: false,
-                                                            ))
+                                                            true)
                                                           Flexible(
                                                             child: Text(
                                                               FFLocalizations.of(

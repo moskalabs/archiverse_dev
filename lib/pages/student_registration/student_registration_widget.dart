@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'student_registration_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_registration_model.dart';
 
 class StudentRegistrationWidget extends StatefulWidget {
@@ -119,7 +120,8 @@ class _StudentRegistrationWidgetState extends State<StudentRegistrationWidget> {
             elevation: 0.0,
           ),
         ),
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -436,12 +438,7 @@ class _StudentRegistrationWidgetState extends State<StudentRegistrationWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                          if (responsiveVisibility(
-                                                                                            context: context,
-                                                                                            phone: false,
-                                                                                            tablet: false,
-                                                                                          ))
-                                                                                            Flexible(
+                                                                                          Flexible(
                                                                                               flex: 2,
                                                                                               child: Container(
                                                                                                 width: double.infinity,
@@ -1030,15 +1027,7 @@ class _StudentRegistrationWidgetState extends State<StudentRegistrationWidget> {
                                                                         MainAxisSize
                                                                             .max,
                                                                     children: [
-                                                                      if (responsiveVisibility(
-                                                                        context:
-                                                                            context,
-                                                                        phone:
-                                                                            false,
-                                                                        tablet:
-                                                                            false,
-                                                                      ))
-                                                                        Expanded(
+                                                                      Expanded(
                                                                           child:
                                                                               Padding(
                                                                             padding:
@@ -2415,6 +2404,7 @@ class _StudentRegistrationWidgetState extends State<StudentRegistrationWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

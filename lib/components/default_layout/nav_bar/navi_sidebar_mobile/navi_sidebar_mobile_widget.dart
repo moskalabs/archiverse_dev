@@ -54,22 +54,14 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
     context.watch<FFAppState>();
 
     return Visibility(
-      visible: responsiveVisibility(
-        context: context,
-        tabletLandscape: false,
-        desktop: false,
-      ),
+      visible: true,
       child: Align(
         alignment: AlignmentDirectional(1.0, 0.0),
         child: MouseRegion(
           opaque: false,
           cursor: MouseCursor.defer,
           child: Visibility(
-            visible: responsiveVisibility(
-              context: context,
-              tabletLandscape: false,
-              desktop: false,
-            ),
+            visible: true,
             child: Align(
               alignment: AlignmentDirectional(1.0, -1.0),
               child: AnimatedContainer(
@@ -85,23 +77,14 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                   color: Color(0xFF284E75),
                 ),
                 child: Visibility(
-                  visible: responsiveVisibility(
-                    context: context,
-                    tabletLandscape: false,
-                    desktop: false,
-                  ),
+                  visible: true,
                   child: Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(15.0, 0.0, 15.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        if (responsiveVisibility(
-                          context: context,
-                          tabletLandscape: false,
-                          desktop: false,
-                        ))
-                          Flexible(
+                        Flexible(
                             flex: 1,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -163,11 +146,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                         ),
                                         if ((FFAppState().navbarMobile ==
                                                 true) &&
-                                            responsiveVisibility(
-                                              context: context,
-                                              tabletLandscape: false,
-                                              desktop: false,
-                                            ))
+                                            true)
                                           Expanded(
                                             flex: 1,
                                             child: Padding(
@@ -176,12 +155,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
                                                 children: [
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
-                                                    Align(
+                                                  Align(
                                                       alignment:
                                                           AlignmentDirectional(
                                                               0.0, 0.0),
@@ -217,12 +191,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                                         ),
                                                       ),
                                                     ),
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    tabletLandscape: false,
-                                                    desktop: false,
-                                                  ))
-                                                    Expanded(
+                                                  Expanded(
                                                       flex: 1,
                                                       child: Align(
                                                         alignment:
@@ -310,7 +279,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                                                             color:
                                                                                 FlutterFlowTheme.of(context).primaryBackground,
                                                                             fontSize:
-                                                                                15.0,
+                                                                                16.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
@@ -339,11 +308,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                             ),
                           ),
                         if ((FFAppState().navbarMobile == true) &&
-                            responsiveVisibility(
-                              context: context,
-                              tabletLandscape: false,
-                              desktop: false,
-                            ))
+                            true)
                           Flexible(
                             flex: 2,
                             child: Column(
@@ -1026,12 +991,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                                   mainAxisSize:
                                                       MainAxisSize.max,
                                                   children: [
-                                                    if (responsiveVisibility(
-                                                      context: context,
-                                                      tabletLandscape: false,
-                                                      desktop: false,
-                                                    ))
-                                                      Padding(
+                                                    Padding(
                                                         padding:
                                                             EdgeInsetsDirectional
                                                                 .fromSTEB(
@@ -1064,12 +1024,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                                     if ((FFAppState()
                                                                 .navbarMobile ==
                                                             true) &&
-                                                        responsiveVisibility(
-                                                          context: context,
-                                                          tabletLandscape:
-                                                              false,
-                                                          desktop: false,
-                                                        ))
+                                                        true)
                                                       Expanded(
                                                         child: Container(
                                                           width: 200.0,
@@ -1084,14 +1039,7 @@ class _NaviSidebarMobileWidgetState extends State<NaviSidebarMobileWidget> {
                                                               if ((FFAppState()
                                                                           .navbarMobile ==
                                                                       true) &&
-                                                                  responsiveVisibility(
-                                                                    context:
-                                                                        context,
-                                                                    tabletLandscape:
-                                                                        false,
-                                                                    desktop:
-                                                                        false,
-                                                                  ))
+                                                                  true)
                                                                 Flexible(
                                                                   child: Text(
                                                                     FFLocalizations.of(

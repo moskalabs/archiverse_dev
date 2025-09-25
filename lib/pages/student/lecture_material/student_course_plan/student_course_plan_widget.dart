@@ -17,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_course_plan_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_course_plan_model.dart';
 
 class StudentCoursePlanWidget extends StatefulWidget {
@@ -78,17 +79,13 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
             children: [
-              if (responsiveVisibility(
-                context: context,
-                phone: false,
-                tablet: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -98,12 +95,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                      ))
-                        wrapWithModel(
+                      wrapWithModel(
                           model: _model.studentNaviSidebarModel,
                           updateCallback: () => safeSetState(() {}),
                           child: StudentNaviSidebarWidget(
@@ -118,12 +110,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                ))
-                                  Flexible(
+                                Flexible(
                                     child: wrapWithModel(
                                       model: _model.studentHeaderModel,
                                       updateCallback: () => safeSetState(() {}),
@@ -143,12 +130,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      wrapWithModel(
+                                    wrapWithModel(
                                         model: _model.studentLeftWidgetModel,
                                         updateCallback: () =>
                                             safeSetState(() {}),
@@ -266,7 +248,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: Color(0xFF284E75),
-                                                                                          fontSize: 20.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -466,12 +448,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                                         ),
                                       ),
                                     ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      wrapWithModel(
+                                    wrapWithModel(
                                         model: _model.studentRightWidgetModel,
                                         updateCallback: () =>
                                             safeSetState(() {}),
@@ -487,12 +464,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                     ],
                   ),
                 ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -513,12 +485,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                           ),
                         ],
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        tabletLandscape: false,
-                        desktop: false,
-                      ))
-                        Expanded(
+                      Expanded(
                           flex: 1,
                           child: Container(
                             width: double.infinity,
@@ -627,7 +594,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
                                                                               color: Color(0xFF284E75),
-                                                                              fontSize: 20.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -910,12 +877,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                                     ),
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  wrapWithModel(
+                                wrapWithModel(
                                     model: _model.studentNaviSidebarMobileModel,
                                     updateCallback: () => safeSetState(() {}),
                                     child: StudentNaviSidebarMobileWidget(
@@ -945,6 +907,7 @@ class _StudentCoursePlanWidgetState extends State<StudentCoursePlanWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

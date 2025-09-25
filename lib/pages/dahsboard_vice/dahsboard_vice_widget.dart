@@ -21,6 +21,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'dahsboard_vice_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'dahsboard_vice_model.dart';
 
 class DahsboardViceWidget extends StatefulWidget {
@@ -113,7 +114,8 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
         if (!snapshot.hasData) {
           return Scaffold(
             backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-            body: Center(
+            body: ResponsiveWrapper(
+              child: Center(
               child: SizedBox(
                 width: 50.0,
                 height: 50.0,
@@ -123,6 +125,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                   ),
                 ),
               ),
+            ),
             ),
           );
         }
@@ -136,7 +139,8 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
           child: Scaffold(
             key: scaffoldKey,
             backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-            body: Column(
+            body: ResponsiveWrapper(
+              child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Container(
@@ -149,11 +153,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                      ))
-                        Flexible(
+                      Flexible(
                           flex: 4,
                           child: Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
@@ -873,12 +873,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            if (responsiveVisibility(
-                              context: context,
-                              phone: false,
-                              tablet: false,
-                            ))
-                              Flexible(
+                            Flexible(
                                 flex: 2,
                                 child: Align(
                                   alignment: AlignmentDirectional(-1.0, -1.0),
@@ -3226,11 +3221,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                             if (((_model.classAfterCourse.firstOrNull !=
                                         null) &&
                                     (_model.courseSelected! >= 0)) &&
-                                responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                ))
+                                true)
                               SafeArea(
                                 child: Container(
                                   width:
@@ -3389,7 +3380,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                               context)
                                                                           .secondaryText,
                                                                       fontSize:
-                                                                          25.0,
+                                                                          22.0,
                                                                       letterSpacing:
                                                                           0.0,
                                                                       fontWeight:
@@ -3493,7 +3484,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                             color:
                                                                                 FlutterFlowTheme.of(context).secondaryText,
                                                                             fontSize:
-                                                                                15.0,
+                                                                                16.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
@@ -3524,7 +3515,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                 ),
                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                fontSize: 15.0,
+                                                                                fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3686,7 +3677,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
                                                                               color: Color(0xFF284E75),
-                                                                              fontSize: 15.0,
+                                                                              fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w500,
                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3763,7 +3754,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                     fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
                                                                                   ),
                                                                                   color: Colors.white,
-                                                                                  fontSize: 15.0,
+                                                                                  fontSize: 16.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
                                                                                   fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -4057,7 +4048,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4104,7 +4095,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4154,7 +4145,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4227,7 +4218,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4286,7 +4277,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4359,7 +4350,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4409,7 +4400,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4482,7 +4473,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4541,7 +4532,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4614,7 +4605,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4664,7 +4655,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4737,7 +4728,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -4857,7 +4848,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 14.0,
+                                                                                                fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5043,7 +5034,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 14.0,
+                                                                                                fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5218,11 +5209,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                         Stack(
                           children: [
                             if ((_model.courseSelected == -1) &&
-                                responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
+                                true)
                               Align(
                                 alignment: AlignmentDirectional(0.0, -1.0),
                                 child: Container(
@@ -5235,13 +5222,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tablet: false,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Flexible(
+                                      Flexible(
                                           flex: 1,
                                           child: Padding(
                                             padding:
@@ -8032,11 +8013,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                             if (((_model.classAfterCourse.firstOrNull !=
                                         null) &&
                                     (_model.courseSelected! >= 0)) &&
-                                responsiveVisibility(
-                                  context: context,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
+                                true)
                               SafeArea(
                                 child: Container(
                                   width: double.infinity,
@@ -8048,12 +8025,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Flexible(
+                                      Flexible(
                                           flex: 1,
                                           child: Align(
                                             alignment:
@@ -8383,12 +8355,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                             ),
                                           ),
                                         ),
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Expanded(
+                                      Expanded(
                                           flex: 3,
                                           child: Align(
                                             alignment:
@@ -8926,7 +8893,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9048,7 +9015,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9179,7 +9146,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9301,7 +9268,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9432,7 +9399,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9554,7 +9521,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -10185,6 +10152,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
         );

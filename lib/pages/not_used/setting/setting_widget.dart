@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'setting_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'setting_model.dart';
 
 class SettingWidget extends StatefulWidget {
@@ -58,7 +59,8 @@ class _SettingWidgetState extends State<SettingWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -866,11 +868,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                     ],
                   ),
                 ),
-                if (responsiveVisibility(
-                  context: context,
-                  phone: false,
-                ))
-                  Align(
+                Align(
                     alignment: AlignmentDirectional(0.8, -0.97),
                     child: wrapWithModel(
                       model: _model.navigatorModel,
@@ -883,6 +881,7 @@ class _SettingWidgetState extends State<SettingWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

@@ -82,7 +82,7 @@ class _ClassChangeRowMobileWidgetState
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
                         color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
+                        fontSize: 12.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
                         fontStyle:
@@ -107,7 +107,7 @@ class _ClassChangeRowMobileWidgetState
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
                         color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
+                        fontSize: 12.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
                         fontStyle:
@@ -132,7 +132,7 @@ class _ClassChangeRowMobileWidgetState
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
                         color: Color(0xFF4E4E4E),
-                        fontSize: 13.0,
+                        fontSize: 12.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
                         fontStyle:
@@ -177,7 +177,7 @@ class _ClassChangeRowMobileWidgetState
                                       .fontStyle,
                                 ),
                                 color: Colors.white,
-                                fontSize: 13.0,
+                                fontSize: 12.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FlutterFlowTheme.of(context)
                                     .titleSmall

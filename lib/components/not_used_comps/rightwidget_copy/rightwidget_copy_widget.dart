@@ -119,7 +119,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              fontSize: 10.0,
+                                              fontSize: 12.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
                                                   FlutterFlowTheme.of(context)
@@ -176,7 +176,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                            fontSize: 10.0,
+                                            fontSize: 12.0,
                                             letterSpacing: 0.0,
                                             fontWeight:
                                                 FlutterFlowTheme.of(context)
@@ -256,7 +256,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                                                           .bodyMedium
                                                           .fontStyle,
                                                 ),
-                                                fontSize: 10.0,
+                                                fontSize: 12.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight:
                                                     FlutterFlowTheme.of(context)
@@ -313,7 +313,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                                                         .bodyMedium
                                                         .fontStyle,
                                               ),
-                                              fontSize: 10.0,
+                                              fontSize: 12.0,
                                               letterSpacing: 0.0,
                                               fontWeight:
                                                   FlutterFlowTheme.of(context)
@@ -490,11 +490,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
               ),
             ),
             if (((FFAppState().chatState == true) && !FFAppState().chatState) &&
-                responsiveVisibility(
-                  context: context,
-                  phone: false,
-                  tablet: false,
-                ))
+                true)
               Expanded(
                 flex: 6,
                 child: Container(
@@ -593,12 +589,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                           ),
                         ),
                       ),
-                      if (responsiveVisibility(
-                        context: context,
-                        phone: false,
-                        tablet: false,
-                      ))
-                        Padding(
+                      Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               20.0, 0.0, 20.0, 0.0),
                           child: wrapWithModel(
@@ -760,12 +751,7 @@ class _RightwidgetCopyWidgetState extends State<RightwidgetCopyWidget> {
                                   ),
                                 ),
                               ),
-                              if (responsiveVisibility(
-                                context: context,
-                                phone: false,
-                                tablet: false,
-                              ))
-                                FlutterFlowIconButton(
+                              FlutterFlowIconButton(
                                   borderRadius: 8.0,
                                   borderWidth: 1.0,
                                   buttonSize: 23.0,

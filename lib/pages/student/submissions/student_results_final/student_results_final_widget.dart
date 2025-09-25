@@ -17,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_results_final_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_results_final_model.dart';
 
 class StudentResultsFinalWidget extends StatefulWidget {
@@ -79,7 +80,8 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -94,12 +96,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                    ))
-                      wrapWithModel(
+                    wrapWithModel(
                         model: _model.studentNaviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
                         child: StudentNaviSidebarWidget(
@@ -134,12 +131,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentLeftWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentLeftWidgetWidget(),
@@ -863,7 +855,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                                                                             color:
                                                                                 FlutterFlowTheme.of(context).secondaryText,
                                                                             fontSize:
-                                                                                20.0,
+                                                                                22.0,
                                                                             letterSpacing:
                                                                                 0.0,
                                                                             fontWeight:
@@ -922,12 +914,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                                       ),
                                     ),
                                   ),
-                                  if (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
-                                    wrapWithModel(
+                                  wrapWithModel(
                                       model: _model.studentRightWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
                                       child: StudentRightWidgetWidget(),
@@ -942,12 +929,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Container(
+              Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
@@ -986,12 +968,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                                   height: double.infinity,
                                   child: Stack(
                                     children: [
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        Align(
+                                      Align(
                                           alignment:
                                               AlignmentDirectional(0.0, -1.0),
                                           child: Padding(
@@ -1485,7 +1462,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                          fontSize: 20.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -1744,12 +1721,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                                             ),
                                           ),
                                         ),
-                                      if (responsiveVisibility(
-                                        context: context,
-                                        tabletLandscape: false,
-                                        desktop: false,
-                                      ))
-                                        wrapWithModel(
+                                      wrapWithModel(
                                           model: _model
                                               .studentNaviSidebarMobileModel,
                                           updateCallback: () =>
@@ -1786,6 +1758,7 @@ class _StudentResultsFinalWidgetState extends State<StudentResultsFinalWidget> {
                 ),
             ],
           ),
+        ),
         ),
       ),
     );

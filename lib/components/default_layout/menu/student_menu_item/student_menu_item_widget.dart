@@ -107,10 +107,7 @@ class _StudentMenuItemWidgetState extends State<StudentMenuItemWidget> {
               child: widget.icon!,
             ),
             if ((FFAppState().navOpen == true) &&
-                responsiveVisibility(
-                  context: context,
-                  phone: false,
-                ))
+                true)
               Expanded(
                 child: Container(
                   width: 200.0,

@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'dahsboard_general_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'dahsboard_general_model.dart';
 
 class DahsboardGeneralWidget extends StatefulWidget {
@@ -74,7 +75,8 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
         if (!snapshot.hasData) {
           return Scaffold(
             backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-            body: Center(
+            body: ResponsiveWrapper(
+              child: Center(
               child: SizedBox(
                 width: 50.0,
                 height: 50.0,
@@ -84,6 +86,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                   ),
                 ),
               ),
+            ),
             ),
           );
         }
@@ -139,16 +142,13 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                 elevation: 0.0,
               ),
             ),
-            body: SafeArea(
+            body: ResponsiveWrapper(
+              child: SafeArea(
               top: true,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                  ))
-                    Container(
+                  Container(
                       width: MediaQuery.sizeOf(context).width * 1.0,
                       height: 55.0,
                       decoration: BoxDecoration(
@@ -683,12 +683,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              if (responsiveVisibility(
-                                context: context,
-                                phone: false,
-                                tablet: false,
-                              ))
-                                Flexible(
+                              Flexible(
                                   flex: 2,
                                   child: Align(
                                     alignment: AlignmentDirectional(-1.0, -1.0),
@@ -751,11 +746,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        if (responsiveVisibility(
-                                                          context: context,
-                                                          phone: false,
-                                                        ))
-                                                          Flexible(
+                                                        Flexible(
                                                             child: Column(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -941,7 +932,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                 _model.textColor1,
                                                                                 Color(0xFF284E75),
                                                                               ),
-                                                                              fontSize: 25.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -1152,7 +1143,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                 _model.textColor2,
                                                                                 Color(0xFF284E75),
                                                                               ),
-                                                                              fontSize: 25.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -1363,7 +1354,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                 _model.textColor3,
                                                                                 Color(0xFF284E75),
                                                                               ),
-                                                                              fontSize: 25.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -1561,7 +1552,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                 _model.textColor4,
                                                                                 Color(0xFF284E75),
                                                                               ),
-                                                                              fontSize: 25.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -1759,7 +1750,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                 _model.textColor5,
                                                                                 Color(0xFF284E75),
                                                                               ),
-                                                                              fontSize: 25.0,
+                                                                              fontSize: 22.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -1921,7 +1912,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                   ),
                                                                                   color: Color(0xFF284E75),
-                                                                                  fontSize: 25.0,
+                                                                                  fontSize: 22.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w600,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2045,7 +2036,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                           ),
                                                                                           color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                          fontSize: 25.0,
+                                                                                          fontSize: 22.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2071,7 +2062,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                fontSize: 20.0,
+                                                                                                fontSize: 22.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2175,10 +2166,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                               .isNotEmpty) ==
                                           true) &&
                                       (_model.courseSelected1 == true)) &&
-                                  responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                  ))
+                                  true)
                                 SafeArea(
                                   child: Container(
                                     width:
@@ -2278,7 +2266,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                         color: Color(
                                                                             0xFF284E75),
                                                                         fontSize:
-                                                                            25.0,
+                                                                            22.0,
                                                                         letterSpacing:
                                                                             0.0,
                                                                         fontWeight:
@@ -2344,7 +2332,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                 ),
                                                                                 color: Color(0xFF284E75),
-                                                                                fontSize: 23.0,
+                                                                                fontSize: 22.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2407,7 +2395,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                           fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
                                                                                         ),
                                                                                         color: Colors.white,
-                                                                                        fontSize: 15.0,
+                                                                                        fontSize: 16.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
                                                                                         fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -2462,7 +2450,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .secondaryText,
                                                                         fontSize:
-                                                                            25.0,
+                                                                            22.0,
                                                                         letterSpacing:
                                                                             0.0,
                                                                         fontWeight:
@@ -2748,7 +2736,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 13.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2796,7 +2784,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 10.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2846,7 +2834,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                fontSize: 13.0,
+                                                                                                fontSize: 12.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2895,7 +2883,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2963,7 +2951,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                    fontSize: 13.0,
+                                                                                                    fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3011,7 +2999,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3056,7 +3044,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 13.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3105,7 +3093,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                    fontSize: 10.0,
+                                                                                                    fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3174,7 +3162,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                    fontSize: 13.0,
+                                                                                                    fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3222,7 +3210,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 10.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3267,7 +3255,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                   ),
                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                  fontSize: 13.0,
+                                                                                                  fontSize: 12.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3316,7 +3304,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                    fontSize: 10.0,
+                                                                                                    fontSize: 12.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3376,7 +3364,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                         ),
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryText,
-                                        fontSize: 25.0,
+                                        fontSize: 22.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -3387,10 +3375,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                               ),
                             ),
                           if (_model.courseSelected1 &&
-                              responsiveVisibility(
-                                context: context,
-                                phone: false,
-                              ))
+                              true)
                             Align(
                               alignment: AlignmentDirectional(1.0, 1.0),
                               child: Padding(
@@ -3418,7 +3403,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        fontSize: 20.0,
+                                        fontSize: 22.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.bold,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -3434,6 +3419,7 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                   ),
                 ],
               ),
+            ),
             ),
           ),
         );

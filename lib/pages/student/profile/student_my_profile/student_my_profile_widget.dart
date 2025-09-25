@@ -28,6 +28,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'student_my_profile_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'student_my_profile_model.dart';
 
 class StudentMyProfileWidget extends StatefulWidget {
@@ -227,7 +228,8 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Container(
+        body: ResponsiveWrapper(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -243,11 +245,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if ((FFAppState().studentMyprofileFirstCheck == false) &&
-                        responsiveVisibility(
-                          context: context,
-                          phone: false,
-                          tablet: false,
-                        ))
+                        true)
                       wrapWithModel(
                         model: _model.studentNaviSidebarModel,
                         updateCallback: () => safeSetState(() {}),
@@ -265,11 +263,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                             children: [
                               if ((FFAppState().studentMyprofileFirstCheck ==
                                       false) &&
-                                  responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                  ))
+                                  true)
                                 Flexible(
                                   child: wrapWithModel(
                                     model: _model.studentHeaderModel,
@@ -293,11 +287,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                   if ((FFAppState()
                                               .studentMyprofileFirstCheck ==
                                           false) &&
-                                      responsiveVisibility(
-                                        context: context,
-                                        phone: false,
-                                        tablet: false,
-                                      ))
+                                      true)
                                     wrapWithModel(
                                       model: _model.studentLeftWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
@@ -331,12 +321,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    if (responsiveVisibility(
-                                                      context: context,
-                                                      phone: false,
-                                                      tablet: false,
-                                                    ))
-                                                      Flexible(
+                                                    Flexible(
                                                         flex: 1,
                                                         child: Container(
                                                           height:
@@ -3341,12 +3326,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                             ),
                                                                             child:
                                                                                 Visibility(
-                                                                              visible: responsiveVisibility(
-                                                                                context: context,
-                                                                                tablet: false,
-                                                                                tabletLandscape: false,
-                                                                                desktop: false,
-                                                                              ),
+                                                                              visible: true,
                                                                               child: FlutterFlowIconButton(
                                                                                 borderRadius: 8.0,
                                                                                 buttonSize: 20.0,
@@ -4498,11 +4478,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                   if ((FFAppState()
                                               .studentMyprofileFirstCheck ==
                                           false) &&
-                                      responsiveVisibility(
-                                        context: context,
-                                        phone: false,
-                                        tablet: false,
-                                      ))
+                                      true)
                                     wrapWithModel(
                                       model: _model.studentRightWidgetModel,
                                       updateCallback: () => safeSetState(() {}),
@@ -4518,12 +4494,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                   ],
                 ),
               ),
-              if (responsiveVisibility(
-                context: context,
-                tabletLandscape: false,
-                desktop: false,
-              ))
-                Column(
+              Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     wrapWithModel(
@@ -4531,12 +4502,7 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                       updateCallback: () => safeSetState(() {}),
                       child: StudentHeaderMobileWidget(),
                     ),
-                    if (responsiveVisibility(
-                      context: context,
-                      tabletLandscape: false,
-                      desktop: false,
-                    ))
-                      Stack(
+                    Stack(
                         children: [
                           wrapWithModel(
                             model: _model.studentNaviSidebarMobileModel,
@@ -4569,4 +4535,5 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
       ),
     );
   }
-}
+},
+        ),

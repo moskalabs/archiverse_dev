@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'admin_login_model.dart';
+import '/core/responsive_wrapper.dart';
 export 'admin_login_model.dart';
 
 class AdminLoginWidget extends StatefulWidget {
@@ -74,7 +75,8 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: SafeArea(
+        body: ResponsiveWrapper(
+          child: SafeArea(
           top: true,
           child: Container(
             width: double.infinity,
@@ -858,6 +860,7 @@ class _AdminLoginWidgetState extends State<AdminLoginWidget> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );
