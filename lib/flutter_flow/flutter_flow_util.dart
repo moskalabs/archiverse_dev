@@ -379,16 +379,9 @@ bool responsiveVisibility({
   bool tabletLandscape = true,
   bool desktop = true,
 }) {
-  final width = MediaQuery.sizeOf(context).width;
-  if (width < kBreakpointSmall) {
-    return phone;
-  } else if (width < kBreakpointMedium) {
-    return tablet;
-  } else if (width < kBreakpointLarge) {
-    return tabletLandscape;
-  } else {
-    return desktop;
-  }
+  // Desktop layout is now fixed-width, so every widget should stay visible
+  // regardless of the previous breakpoint-specific settings.
+  return true;
 }
 
 const kTextValidatorUsernameRegex = r'^[a-zA-Z][a-zA-Z0-9_-]{2,16}$';
