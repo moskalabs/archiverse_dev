@@ -1,4 +1,3 @@
-import 'package:postgrest/postgrest.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 export 'database/database.dart';
@@ -29,12 +28,3 @@ class SupaFlow {
       );
 }
 
-extension PostgrestQueryExtension on PostgrestTransformBuilder {
-  PostgrestTransformBuilder textSearch(String column, String searchText) {
-    return filter(column, 'cs', searchText);
-  }
-
-  PostgrestTransformBuilder ilikeCustom(String column, String pattern) {
-    return filter(column, 'ilike', pattern);
-  }
-}

@@ -4,7 +4,6 @@ import '/components/account_manage/account_manage_row_mobile/account_manage_row_
 import '/components/default_layout/borderline/borderline_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
 import '/components/default_layout/nav_bar/admin_navi_sidebar/admin_navi_sidebar_widget.dart';
-import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -51,6 +50,26 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
 
   void _showError(String message) {
     _showSnackBar(message);
+  }
+
+  Future<List<PostsRow>> searchPosts(String? searchType, String? searchText) async {
+    if (searchText == null || searchText.isEmpty) {
+      return await PostsTable().queryRows(
+        queryFn: (q) => q.order('name', ascending: true),
+      );
+    }
+
+    final allRows = await PostsTable().queryRows(
+      queryFn: (q) => q.order('name', ascending: true),
+    );
+
+    return allRows.where((row) {
+      if (searchType == '이 름') {
+        return row.name?.toLowerCase().contains(searchText.toLowerCase()) ?? false;
+      } else {
+        return row.phone?.contains(searchText) ?? false;
+      }
+    }).toList();
   }
 
   Future<void> _initializeData() async {
@@ -332,89 +351,6 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     return ((total - 1) ~/ _model.itemsPerPage) + 1;
   }
 
-  Future<void> _performSearch({required bool isMobile}) async {
-    final controller = isMobile ? _model.textController2 : _model.textController1;
-    final input = controller?.text.trim() ?? '';
-    final validationMessage = _validateSearchInput(input);
-    if (validationMessage != null) {
-      _showSnackBar(validationMessage);
-      return;
-    }
-
-    final searchType = _model.dropDownValue ?? '이 름';
-
-    if (input.isEmpty) {
-      _model.isLoading = true;
-      safeSetState(() {});
-      try {
-        await _loadPosts(resetSearch: true);
-        _model.currentSearchType = searchType;
-      } catch (e) {
-        _showError('데이터 로드 실패: $e');
-      } finally {
-        _model.isLoading = false;
-        safeSetState(() {});
-      }
-      return;
-    }
-
-    _model.isLoading = true;
-    safeSetState(() {});
-    try {
-      var results = await actions.searchPosts(searchType, input);
-      if (results.isEmpty) {
-        results = await _performClientSideSearch(input, searchType);
-      }
-      final mergedResults = _mergeWithAdminPosts(results);
-      _model.isSearching = true;
-      _model.currentSearchKeyword = input;
-      _model.currentSearchType = searchType;
-      _applyPostsData(mergedResults, resetPage: true, preserveSearch: true);
-      if (results.isEmpty) {
-        _showSnackBar('검색 결과가 없습니다.');
-      }
-    } catch (e) {
-      _showError('데이터 로드 실패: $e');
-      final fallback = await _performClientSideSearch(input, searchType);
-      final mergedFallback = _mergeWithAdminPosts(fallback);
-      _model.isSearching = input.isNotEmpty;
-      _model.currentSearchKeyword = input;
-      _model.currentSearchType = searchType;
-      _applyPostsData(mergedFallback, resetPage: true, preserveSearch: true);
-    } finally {
-      _model.isLoading = false;
-      safeSetState(() {});
-    }
-  }
-
-  Future<List<PostsRow>> _performClientSideSearch(
-    String searchText,
-    String searchType,
-  ) async {
-    if (_model.basePosts.isEmpty) {
-      final posts = await PostsTable().queryRows(
-        queryFn: (q) => q.order('name', ascending: true),
-      );
-      _model.basePosts =
-          posts.map((row) => PostsRow(Map<String, dynamic>.from(row.data))).toList();
-    }
-    if (_model.adminPostRows.isEmpty) {
-      _model.adminPostRows = await AdminPostTable().queryRows(
-        queryFn: (q) => q.order('adminId', ascending: true),
-      );
-    }
-
-    final merged = _mergeWithAdminPosts(_model.basePosts);
-    final keyword = searchText.toLowerCase();
-
-    return merged.where((item) {
-      if (searchType == '이 름') {
-        return item.name?.toLowerCase().contains(keyword) ?? false;
-      }
-      return item.phone?.contains(searchText) ?? false;
-    }).toList();
-  }
-
   String? _validateSearchInput(String? value) {
     final searchType = _model.dropDownValue ?? '이 름';
     if (value == null || value.trim().isEmpty) {
@@ -503,7 +439,33 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     _model = createModel(context, () => AdminAccountManageModel());
 
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      await _initializeData();
+      try {
+        _model.prfoutput = await PostsTable().queryRows(
+          queryFn: (q) => q.order('name', ascending: true),
+        );
+
+        _model.profeesorName =
+            _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
+
+        _model.classSelectedOnload = await ClassTable().queryRows(
+          queryFn: (q) => q,
+        );
+
+        _model.classOnload = _model.classSelectedOnload!
+            .where((e) => (e.year == _model.years) && (e.semester == _model.semester))
+            .toList()
+            .cast<ClassRow>();
+      } catch (e) {
+        print('초기화 에러: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터 로드 실패: $e')),
+        );
+        _model.prfoutput = [];
+        _model.classOnload = [];
+      }
+
+      FFAppState().usertype = 0;
+      safeSetState(() {});
     });
 
     _model.textController1 ??= TextEditingController();
@@ -1678,11 +1640,48 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                   flex: 1,
                                                   child: FFButtonWidget(
                                                     onPressed: () async {
-                                                      FocusScope.of(context)
-                                                          .unfocus();
-                                                      await _performSearch(
-                                                        isMobile: false,
-                                                      );
+                                                      try {
+                                                        final searchText =
+                                                            _model.textController1
+                                                                .text
+                                                                .trim();
+
+                                                        if (searchText.isEmpty) {
+                                                          _model.prfoutput =
+                                                              await PostsTable()
+                                                                  .queryRows(
+                                                            queryFn: (q) => q
+                                                                .order('name',
+                                                                    ascending:
+                                                                        true),
+                                                          );
+                                                        } else {
+                                                          _model.prfoutput =
+                                                              await searchPosts(
+                                                            _model.dropDownValue ??
+                                                                '이 름',
+                                                            searchText,
+                                                          );
+                                                        }
+
+                                                        _model.profeesorName =
+                                                            _model
+                                                                    .prfoutput
+                                                                    ?.firstOrNull
+                                                                    ?.name ??
+                                                                '교수 이름';
+                                                        _updatePagination(
+                                                            resetPage: true);
+                                                        safeSetState(() {});
+                                                      } catch (e) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                              content: Text(
+                                                                  '검색 실패: $e')),
+                                                        );
+                                                      }
                                                     },
                                                     text: FFLocalizations.of(
                                                             context)
@@ -2263,27 +2262,10 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
+                                                                fontFamily:
+                                                                    'Open Sans',
                                                                 letterSpacing:
                                                                     0.0,
-                                                                fontWeight: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
                                                                 decoration:
                                                                     TextDecoration
                                                                         .underline,
@@ -2776,22 +2758,38 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                 showDialog(
                                   context: context,
                                   barrierDismissible: false,
-                                  builder: (context) => const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
+                                  builder: (context) =>
+                                      const Center(child: CircularProgressIndicator()),
                                 );
 
                                 try {
-                                  await _refreshData();
+                                  _model.prfoutput = await PostsTable().queryRows(
+                                    queryFn: (q) => q.order('name', ascending: true),
+                                  );
+
+                                  _model.classSelectedOnload =
+                                      await ClassTable().queryRows(
+                                    queryFn: (q) => q,
+                                  );
+
+                                  _model.classOnload = _model.classSelectedOnload!
+                                      .where((e) =>
+                                          e.year == _model.years &&
+                                          e.semester == _model.semester)
+                                      .toList()
+                                      .cast<ClassRow>();
                                 } catch (e) {
-                                  _showError('새로고침 실패: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('새로고침 실패: $e')),
+                                  );
                                 } finally {
-                                  if (!mounted) {
-                                    return;
-                                  }
                                   Navigator.pop(context);
-                                  safeSetState(() {});
                                 }
+
+                                _model.profeesorName =
+                                    _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
+                                _updatePagination(resetPage: true);
+                                safeSetState(() {});
                               },
                             ),
                           ],
@@ -2954,8 +2952,44 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                               flex: 1,
                               child: FFButtonWidget(
                                 onPressed: () async {
-                                  FocusScope.of(context).unfocus();
-                                  await _performSearch(isMobile: true);
+                                  try {
+                                    final searchText =
+                                        _model.textController2.text.trim();
+
+                                    if (searchText.isEmpty) {
+                                      _model.prfoutput =
+                                          await PostsTable().queryRows(
+                                        queryFn: (q) =>
+                                            q.order('name', ascending: true),
+                                      );
+                                    } else {
+                                      final allData =
+                                          await PostsTable().queryRows(
+                                        queryFn: (q) =>
+                                            q.order('name', ascending: true),
+                                      );
+
+                                      _model.prfoutput = allData.where((item) {
+                                        final searchLower =
+                                            searchText.toLowerCase();
+                                        return item.name
+                                                ?.toLowerCase()
+                                                .contains(searchLower) ??
+                                            false;
+                                      }).toList();
+                                    }
+
+                                    _model.profeesorName =
+                                        _model.prfoutput?.firstOrNull?.name ??
+                                            '교수 이름';
+                                    _updatePagination(resetPage: true);
+                                    safeSetState(() {});
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text('검색 실패: $e')),
+                                    );
+                                  }
                                 },
                                 text: FFLocalizations.of(context).getText(
                                   'byp1bfcg' /* 교수 검색 */,
@@ -3420,31 +3454,10 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                       context)
                                                   .bodyMedium
                                                   .override(
-                                                    font: GoogleFonts.openSans(
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontStyle,
-                                                    ),
+                                                    fontFamily: 'Open Sans',
                                                     letterSpacing: 0.0,
-                                                    fontWeight:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontWeight,
-                                                    fontStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontStyle,
-                                                    decoration: TextDecoration
-                                                        .underline,
+                                                    decoration:
+                                                        TextDecoration.underline,
                                                   ),
                                             ),
                                             TextSpan(

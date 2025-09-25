@@ -200,192 +200,217 @@ class _AccountManageRowMobileWidgetState
       onTap: _model.isEditing ? null : widget.onSelected,
       child: Container(
         padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              alignment: const AlignmentDirectional(0.0, 0.0),
-              child: _model.isEditing
-                  ? TextFormField(
-                      controller: _model.nameTextController,
-                      focusNode: _model.nameFocusNode,
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        border: UnderlineInputBorder(),
-                      ),
-                      style: textStyle,
-                    )
-                  : Text(
-                      widget.post.name ?? '-',
-                      style: textStyle,
-                    ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              alignment: const AlignmentDirectional(0.0, 0.0),
-              child: _model.isEditing
-                  ? FlutterFlowDropDown<String>(
-                      controller: _model.dropDownValueController1 ??=
-                          FormFieldController<String>(
-                        _model.dropDownValue1 ?? widget.post.position,
-                      ),
-                      options: positionOptions,
-                      onChanged: (val) =>
-                          safeSetState(() => _model.dropDownValue1 = val),
-                      height: 40.0,
-                      textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                            font: GoogleFonts.openSans(
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    alignment: const AlignmentDirectional(0.0, 0.0),
+                    child: _model.isEditing
+                        ? TextFormField(
+                            controller: _model.nameTextController,
+                            focusNode: _model.nameFocusNode,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              border: UnderlineInputBorder(),
                             ),
-                            fontSize: 13.0,
-                            letterSpacing: 0.0,
-                            fontWeight:
-                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                            fontStyle:
-                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                            style: textStyle,
+                          )
+                        : Text(
+                            widget.post.name ?? '-',
+                            style: textStyle,
                           ),
-                      hintText: FFLocalizations.of(context)
-                          .getText('z343ki7l' /* 직급 */),
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: FlutterFlowTheme.of(context).secondaryText,
-                        size: 20.0,
-                      ),
-                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                      elevation: 2.0,
-                      borderColor: Colors.transparent,
-                      borderWidth: 0.0,
-                      borderRadius: 8.0,
-                      margin: const EdgeInsetsDirectional.fromSTEB(
-                          12.0, 0.0, 12.0, 0.0),
-                      hidesUnderline: true,
-                      isOverButton: false,
-                      isSearchable: false,
-                      isMultiSelect: false,
-                    )
-                  : Text(
-                      widget.post.position ??
-                          FFLocalizations.of(context).getText('z343ki7l'),
-                      style: textStyle,
-                    ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              alignment: const AlignmentDirectional(0.0, 0.0),
-              child: _model.isEditing
-                  ? FlutterFlowDropDown<String>(
-                      controller: _model.dropDownValueController2 ??=
-                          FormFieldController<String>(
-                        _model.dropDownValue2 ??
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    alignment: const AlignmentDirectional(0.0, 0.0),
+                    child: _model.isEditing
+                        ? FlutterFlowDropDown<String>(
+                            controller: _model.dropDownValueController1 ??=
+                                FormFieldController<String>(
+                              _model.dropDownValue1 ?? widget.post.position,
+                            ),
+                            options: positionOptions,
+                            onChanged: (val) =>
+                                safeSetState(() => _model.dropDownValue1 = val),
+                            height: 40.0,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  font: GoogleFonts.openSans(
+                                    fontWeight: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontWeight,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                                  fontSize: 13.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .fontStyle,
+                                ),
+                            hintText: FFLocalizations.of(context)
+                                .getText('z343ki7l' /* 직급 */),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                              size: 20.0,
+                            ),
+                            fillColor:
+                                FlutterFlowTheme.of(context).secondaryBackground,
+                            elevation: 2.0,
+                            borderColor: Colors.transparent,
+                            borderWidth: 0.0,
+                            borderRadius: 8.0,
+                            margin: const EdgeInsetsDirectional.fromSTEB(
+                                12.0, 0.0, 12.0, 0.0),
+                            hidesUnderline: true,
+                            isOverButton: false,
+                            isSearchable: false,
+                            isMultiSelect: false,
+                          )
+                        : Text(
+                            widget.post.position ??
+                                FFLocalizations.of(context)
+                                    .getText('z343ki7l'),
+                            style: textStyle,
+                          ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    alignment: const AlignmentDirectional(0.0, 0.0),
+                    child: _model.isEditing
+                        ? FlutterFlowDropDown<String>(
+                            controller: _model.dropDownValueController2 ??=
+                                FormFieldController<String>(
+                              _model.dropDownValue2 ??
+                                  _permissionLabelFromLevel(
+                                      widget.post.permissionLevel ?? 1),
+                            ),
+                            options: permissionOptions,
+                            onChanged: (val) =>
+                                safeSetState(() => _model.dropDownValue2 = val),
+                            height: 40.0,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  font: GoogleFonts.openSans(
+                                    fontWeight: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontWeight,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                                  fontSize: 13.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .fontStyle,
+                                ),
+                            hintText: FFLocalizations.of(context)
+                                .getText('b6a4fzbx' /* 권한 */),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: FlutterFlowTheme.of(context).secondaryText,
+                              size: 20.0,
+                            ),
+                            fillColor:
+                                FlutterFlowTheme.of(context).secondaryBackground,
+                            elevation: 2.0,
+                            borderColor: Colors.transparent,
+                            borderWidth: 0.0,
+                            borderRadius: 8.0,
+                            margin: const EdgeInsetsDirectional.fromSTEB(
+                                12.0, 0.0, 12.0, 0.0),
+                            hidesUnderline: true,
+                            isOverButton: false,
+                            isSearchable: false,
+                            isMultiSelect: false,
+                          )
+                        : Text(
                             _permissionLabelFromLevel(
                                 widget.post.permissionLevel ?? 1),
-                      ),
-                      options: permissionOptions,
-                      onChanged: (val) =>
-                          safeSetState(() => _model.dropDownValue2 = val),
-                      height: 40.0,
-                      textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                            font: GoogleFonts.openSans(
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
-                            fontSize: 13.0,
-                            letterSpacing: 0.0,
-                            fontWeight:
-                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                            fontStyle:
-                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                            style: textStyle,
                           ),
-                      hintText: FFLocalizations.of(context)
-                          .getText('b6a4fzbx' /* 권한 */),
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: FlutterFlowTheme.of(context).secondaryText,
-                        size: 20.0,
-                      ),
-                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                      elevation: 2.0,
-                      borderColor: Colors.transparent,
-                      borderWidth: 0.0,
-                      borderRadius: 8.0,
-                      margin: const EdgeInsetsDirectional.fromSTEB(
-                          12.0, 0.0, 12.0, 0.0),
-                      hidesUnderline: true,
-                      isOverButton: false,
-                      isSearchable: false,
-                      isMultiSelect: false,
-                    )
-                  : Text(
-                      _permissionLabelFromLevel(
-                          widget.post.permissionLevel ?? 1),
-                      style: textStyle,
-                    ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              alignment: const AlignmentDirectional(0.0, 0.0),
-              child: FFButtonWidget(
-                onPressed: _handleButtonPressed,
-                text: _model.isSaving
-                    ? '저장중'
-                    : (_model.isEditing ? '완료' : FFLocalizations.of(context)
-                        .getText('ndcle0l5' /* 수정 */)),
-                options: FFButtonOptions(
-                  width: 75.0,
-                  height: 30.0,
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      16.0, 0.0, 16.0, 0.0),
-                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                      0.0, 0.0, 0.0, 0.0),
-                  color: _model.isEditing
-                      ? FlutterFlowTheme.of(context).mainColor1
-                      : Colors.white,
-                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                        font: GoogleFonts.openSans(
-                          fontWeight:
-                              FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                        ),
-                        color: _model.isEditing
-                            ? Colors.white
-                            : const Color(0xFF666666),
-                        letterSpacing: 0.0,
-                        fontWeight:
-                            FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                        fontStyle:
-                            FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                      ),
-                  elevation: 0.0,
-                  borderSide: const BorderSide(
-                    color: Color(0xFF666666),
-                    width: 0.5,
                   ),
-                  borderRadius: BorderRadius.circular(5.0),
                 ),
-              ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    alignment: const AlignmentDirectional(0.0, 0.0),
+                    child: FFButtonWidget(
+                      onPressed: _handleButtonPressed,
+                      text: _model.isSaving
+                          ? '저장중'
+                          : (_model.isEditing
+                              ? '완료'
+                              : FFLocalizations.of(context)
+                                  .getText('ndcle0l5' /* 수정 */)),
+                      options: FFButtonOptions(
+                        width: 75.0,
+                        height: 30.0,
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            16.0, 0.0, 16.0, 0.0),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
+                        color: _model.isEditing
+                            ? FlutterFlowTheme.of(context).mainColor1
+                            : Colors.white,
+                        textStyle:
+                            FlutterFlowTheme.of(context).titleSmall.override(
+                                  font: GoogleFonts.openSans(
+                                    fontWeight: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .fontWeight,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .fontStyle,
+                                  ),
+                                  color: _model.isEditing
+                                      ? Colors.white
+                                      : const Color(0xFF666666),
+                                  letterSpacing: 0.0,
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontStyle,
+                                ),
+                        elevation: 0.0,
+                        borderSide: const BorderSide(
+                          color: Color(0xFF666666),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
+    ),
+  );
   }
 }
