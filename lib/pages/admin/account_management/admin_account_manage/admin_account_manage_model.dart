@@ -240,6 +240,10 @@ class AdminAccountManageModel
 
   List<PostsRow> allPosts = [];
 
+  List<PostsRow> basePosts = [];
+
+  List<AdminPostRow> adminPostRows = [];
+
   List<PostsRow> paginatedPosts = [];
 
   bool isLoading = false;
@@ -255,6 +259,8 @@ class AdminAccountManageModel
   final int itemsPerPage = 10;
 
   StreamSubscription<List<Map<String, dynamic>>>? postsSubscription;
+
+  StreamSubscription<List<Map<String, dynamic>>>? adminPostSubscription;
 
   int? selectedProfessorId;
 
@@ -293,5 +299,6 @@ class AdminAccountManageModel
     borderlineModel8.dispose();
     borderlineModel9.dispose();
     postsSubscription?.cancel();
+    adminPostSubscription?.cancel();
   }
 }

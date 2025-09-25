@@ -25,4 +25,13 @@ class AdminPostRow extends SupabaseDataRow {
 
   String get adminInfo => getField<String>('AdminInfo')!;
   set adminInfo(String value) => setField<String>('AdminInfo', value);
+
+  String? get name => getField<String>('name');
+  set name(String? value) => setField<String>('name', value);
+
+  int? get userType => getField<int>('user_type');
+  set userType(int? value) => setField<int>('user_type', value);
+
+  String get role => getField<String>('role')!;
+  set role(String value) => setField<String>('role', value);
 }

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import 'admin_account_manage_model.dart';
 export 'admin_account_manage_model.dart';
 
@@ -74,13 +75,24 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       final posts = await PostsTable().queryRows(
         queryFn: (q) => q.order('name', ascending: true),
       );
+      final adminRows = await AdminPostTable().queryRows(
+        queryFn: (q) => q.order('adminId', ascending: true),
+      );
+      _model.adminPostRows = adminRows;
+      _model.basePosts = posts
+          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
+          .toList();
+      final merged = _mergeWithAdminPosts(_model.basePosts);
       if (resetSearch) {
         _model.isSearching = false;
         _model.currentSearchKeyword = '';
       }
-      _applyPostsData(posts, resetPage: true, preserveSearch: !resetSearch);
+      _applyPostsData(merged,
+          resetPage: resetSearch, preserveSearch: !resetSearch);
     } catch (e) {
       _showError('데이터 로드 실패: $e');
+      _model.basePosts = [];
+      _model.adminPostRows = [];
       _model.prfoutput = [];
       _model.paginatedPosts = [];
     }
@@ -106,6 +118,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
         (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
       );
     _model.allPosts = sorted;
+    final previousSelection = _model.selectedProfessorId;
     if (!preserveSearch) {
       _model.isSearching = false;
       _model.currentSearchKeyword = '';
@@ -115,10 +128,19 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     if (resetPage) {
       _model.currentPage = 1;
     }
-    _model.selectedProfessorId =
-        filtered.firstOrNull?.id ?? sorted.firstOrNull?.id;
+    final selectedId = previousSelection != null &&
+            filtered.any((row) => row.id == previousSelection)
+        ? previousSelection
+        : filtered.firstOrNull?.id ?? sorted.firstOrNull?.id;
+    _model.selectedProfessorId = selectedId;
+    final selectedRow = selectedId == null
+        ? null
+        : filtered
+                .where((row) => row.id == selectedId)
+                .firstOrNull ??
+            sorted.where((row) => row.id == selectedId).firstOrNull;
     _model.profeesorName = valueOrDefault<String>(
-      filtered.firstOrNull?.name ?? sorted.firstOrNull?.name,
+      selectedRow?.name ?? filtered.firstOrNull?.name ?? sorted.firstOrNull?.name,
       '교수 이름',
     );
     _updatePagination(resetPage: resetPage);
@@ -138,6 +160,144 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       final phoneValue = row.phone ?? '';
       return phoneValue.contains(keyword);
     }).toList();
+  }
+
+  List<PostsRow> _mergeWithAdminPosts(List<PostsRow> source) {
+    if (source.isEmpty) {
+      return [];
+    }
+    final adminRows = _model.adminPostRows;
+    if (adminRows.isEmpty) {
+      return source
+          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
+          .toList();
+    }
+    final adminMap = {
+      for (final admin in adminRows)
+        admin.adminId.toLowerCase(): admin,
+    };
+    return source.map((row) {
+      final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+      final emailKey = (cloned.email ?? '').toLowerCase();
+      final admin = adminMap[emailKey];
+      if (admin != null) {
+        final adminName = admin.name;
+        if (adminName != null && adminName.isNotEmpty) {
+          cloned.name = adminName;
+        }
+        final adminRole = admin.role;
+        if (adminRole.isNotEmpty) {
+          cloned.permissionLevel = _permissionLevelFromRole(adminRole);
+        }
+        final adminUserType = admin.userType;
+        if (adminUserType != null) {
+          cloned.userType = adminUserType;
+        }
+      }
+      return cloned;
+    }).toList();
+  }
+
+  int _permissionLevelFromRole(String role) {
+    final normalized = role.toLowerCase().trim();
+    if (normalized.contains('master') ||
+        normalized.contains('admin') ||
+        normalized.contains('관리')) {
+      return 2;
+    }
+    return 1;
+  }
+
+  String _roleFromPermissionLevel(int level) => level >= 2 ? 'MASTER' : 'MEMBER';
+
+  void _updateBasePostRow(int postId, Map<String, dynamic> updatedData) {
+    if (_model.basePosts.isEmpty) {
+      return;
+    }
+    final index = _model.basePosts.indexWhere((row) => row.id == postId);
+    if (index == -1) {
+      return;
+    }
+    final baseRow = _model.basePosts[index];
+    updatedData.forEach((key, value) {
+      baseRow.setField(key, value);
+    });
+  }
+
+  void _refreshMergedPosts() {
+    if (_model.basePosts.isEmpty) {
+      return;
+    }
+    final merged = _mergeWithAdminPosts(_model.basePosts);
+    _applyPostsData(merged, preserveSearch: true);
+    safeSetState(() {});
+  }
+
+  Future<void> _ensureAdminPostRecord(
+    PostsRow post,
+    Map<String, dynamic> updatedData,
+  ) async {
+    final email = post.email;
+    if (email == null || email.isEmpty) {
+      return;
+    }
+    final effectiveName =
+        (updatedData['name'] as String?) ?? post.name ?? '';
+    final effectivePermission =
+        (updatedData['permission_level'] as int?) ??
+            post.permissionLevel ??
+            1;
+    final effectiveUserType =
+        (updatedData['user_type'] as int?) ?? post.userType ?? 0;
+    final roleValue = _roleFromPermissionLevel(effectivePermission);
+
+    final existing = await AdminPostTable().queryRows(
+      queryFn: (q) => q.eq('adminId', email).limit(1),
+    );
+
+    if (existing.isEmpty) {
+      final inserted = await AdminPostTable().insert({
+        'adminId': email,
+        'AdminInfo': const Uuid().v4(),
+        'name': effectiveName,
+        'user_type': effectiveUserType,
+        'role': roleValue,
+      });
+      _model.adminPostRows = [
+        ..._model.adminPostRows
+            .where((row) => row.adminId.toLowerCase() != email.toLowerCase()),
+        inserted,
+      ];
+    } else {
+      final adminRow = existing.first;
+      final updatePayload = {
+        'name': effectiveName,
+        'user_type': effectiveUserType,
+        'role': roleValue,
+      };
+      await AdminPostTable().update(
+        data: updatePayload,
+        matchingRows: (rows) => rows.eq('id', adminRow.id),
+      );
+      adminRow.name = effectiveName;
+      adminRow.userType = effectiveUserType;
+      adminRow.role = roleValue;
+    }
+  }
+
+  Future<void> _handlePostEdit(
+    PostsRow post,
+    Map<String, dynamic> updatedData,
+  ) async {
+    try {
+      await _ensureAdminPostRecord(post, updatedData);
+      if (updatedData.isNotEmpty) {
+        _updateBasePostRow(post.id, updatedData);
+      }
+      _refreshMergedPosts();
+    } catch (e) {
+      _showError('관리자 정보 동기화 실패: $e');
+    }
   }
 
   void _updatePagination({bool resetPage = false}) {
@@ -187,13 +347,8 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       _model.isLoading = true;
       safeSetState(() {});
       try {
-        final posts = await PostsTable().queryRows(
-          queryFn: (q) => q.order('name', ascending: true),
-        );
-        _model.isSearching = false;
-        _model.currentSearchKeyword = '';
+        await _loadPosts(resetSearch: true);
         _model.currentSearchType = searchType;
-        _applyPostsData(posts, resetPage: true, preserveSearch: false);
       } catch (e) {
         _showError('데이터 로드 실패: $e');
       } finally {
@@ -210,20 +365,22 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       if (results.isEmpty) {
         results = await _performClientSideSearch(input, searchType);
       }
+      final mergedResults = _mergeWithAdminPosts(results);
       _model.isSearching = true;
       _model.currentSearchKeyword = input;
       _model.currentSearchType = searchType;
-      _applyPostsData(results, resetPage: true, preserveSearch: true);
+      _applyPostsData(mergedResults, resetPage: true, preserveSearch: true);
       if (results.isEmpty) {
         _showSnackBar('검색 결과가 없습니다.');
       }
     } catch (e) {
       _showError('데이터 로드 실패: $e');
       final fallback = await _performClientSideSearch(input, searchType);
+      final mergedFallback = _mergeWithAdminPosts(fallback);
       _model.isSearching = input.isNotEmpty;
       _model.currentSearchKeyword = input;
       _model.currentSearchType = searchType;
-      _applyPostsData(fallback, resetPage: true, preserveSearch: true);
+      _applyPostsData(mergedFallback, resetPage: true, preserveSearch: true);
     } finally {
       _model.isLoading = false;
       safeSetState(() {});
@@ -234,13 +391,23 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     String searchText,
     String searchType,
   ) async {
-    final allData = await PostsTable().queryRows(
-      queryFn: (q) => q.order('name', ascending: true),
-    );
+    if (_model.basePosts.isEmpty) {
+      final posts = await PostsTable().queryRows(
+        queryFn: (q) => q.order('name', ascending: true),
+      );
+      _model.basePosts =
+          posts.map((row) => PostsRow(Map<String, dynamic>.from(row.data))).toList();
+    }
+    if (_model.adminPostRows.isEmpty) {
+      _model.adminPostRows = await AdminPostTable().queryRows(
+        queryFn: (q) => q.order('adminId', ascending: true),
+      );
+    }
 
+    final merged = _mergeWithAdminPosts(_model.basePosts);
     final keyword = searchText.toLowerCase();
 
-    return allData.where((item) {
+    return merged.where((item) {
       if (searchType == '이 름') {
         return item.name?.toLowerCase().contains(keyword) ?? false;
       }
@@ -288,10 +455,29 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
         .stream(primaryKey: ['id'])
         .listen((data) {
       final rows = data.map((row) => PostsRow(row)).toList();
-      _applyPostsData(rows, preserveSearch: true);
+      _model.basePosts = rows
+          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
+          .toList();
+      final merged = _mergeWithAdminPosts(_model.basePosts);
+      _applyPostsData(merged, preserveSearch: true);
       safeSetState(() {});
     }, onError: (error) {
       _showError('실시간 데이터 수신 실패: $error');
+    });
+    _model.adminPostSubscription?.cancel();
+    _model.adminPostSubscription = Supabase.instance.client
+        .from('admin_post')
+        .stream(primaryKey: ['id'])
+        .listen((data) {
+      _model.adminPostRows = data.map((row) => AdminPostRow(row)).toList();
+      if (_model.basePosts.isEmpty) {
+        return;
+      }
+      final merged = _mergeWithAdminPosts(_model.basePosts);
+      _applyPostsData(merged, preserveSearch: true);
+      safeSetState(() {});
+    }, onError: (error) {
+      _showError('관리자 계정 실시간 수신 실패: $error');
     });
   }
 
@@ -1916,7 +2102,14 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                           'account_row_${post.id}'),
                                                       post: post,
                                                       confirmEdit:
-                                                          (confirm, data) async {},
+                                                          (confirm, data) async {
+                                                        if (confirm) {
+                                                          await _handlePostEdit(
+                                                            post,
+                                                            data,
+                                                          );
+                                                        }
+                                                      },
                                                       onSelected: () {
                                                         _model.selectedProfessorId =
                                                             post.id;
@@ -3064,7 +3257,14 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                   'account_row_mobile_${post.id}'),
                                               post: post,
                                               confirmEdit:
-                                                  (confirm, data) async {},
+                                                  (confirm, data) async {
+                                                if (confirm) {
+                                                  await _handlePostEdit(
+                                                    post,
+                                                    data,
+                                                  );
+                                                }
+                                              },
                                               onSelected: () {
                                                 _model.selectedProfessorId =
                                                     post.id;
