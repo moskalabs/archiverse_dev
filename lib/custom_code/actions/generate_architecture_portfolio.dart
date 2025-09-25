@@ -743,6 +743,20 @@ void _createCritiquePage(PdfDocument document, dynamic student) {
   grid.headers[0].cells[1].value = '크리틱 요약';
   grid.headers[0].cells[2].value = '피드백 템플릿';
 
+  final PdfGridCellStyle headerCellStyle = PdfGridCellStyle(
+    font: PdfStandardFont(
+      PdfFontFamily.helvetica,
+      12,
+      style: PdfFontStyle.bold,
+    ),
+    backgroundBrush: PdfSolidBrush(SCHColors.lightGray),
+    cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
+  );
+
+  for (final PdfGridCell headerCell in grid.headers[0].cells) {
+    headerCell.style = headerCellStyle;
+  }
+
   for (final dynamic critique in critiques) {
     final PdfGridRow row = grid.rows.add();
     row.cells[0].value = critique['week']?.toString() ?? '-';
@@ -754,11 +768,6 @@ void _createCritiquePage(PdfDocument document, dynamic student) {
 
   grid.style = PdfGridStyle(
     font: PdfStandardFont(PdfFontFamily.helvetica, 12),
-    headerStyle: PdfGridCellStyle(
-      font: PdfStandardFont(PdfFontFamily.helvetica, 12,
-          style: PdfFontStyle.bold),
-      backgroundBrush: PdfSolidBrush(SCHColors.lightGray),
-    ),
     cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
   );
 
