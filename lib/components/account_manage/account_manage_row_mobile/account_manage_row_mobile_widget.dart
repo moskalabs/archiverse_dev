@@ -198,7 +198,7 @@ class _AccountManageRowMobileWidgetState
 
     return InkWell(
       onTap: _model.isEditing ? null : widget.onSelected,
-      child: Padding(
+      child: Container(
         padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,

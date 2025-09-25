@@ -33,6 +33,9 @@ class PostsRow extends SupabaseDataRow {
   set permissionLevel(int? value) =>
       setField<int>('permission_level', value);
 
-  DateTime get createdAt => getField<DateTime>('created_at')!;
-  set createdAt(DateTime value) => setField<DateTime>('created_at', value);
+  int? get userType => getField<int>('user_type');
+  set userType(int? value) => setField<int>('user_type', value);
+
+  DateTime? get createdAt => getField<DateTime>('created_at');
+  set createdAt(DateTime? value) => setField<DateTime>('created_at', value);
 }

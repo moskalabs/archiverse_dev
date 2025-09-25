@@ -4,6 +4,7 @@ import '/components/account_manage/account_manage_row_mobile/account_manage_row_
 import '/components/default_layout/borderline/borderline_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
 import '/components/default_layout/nav_bar/admin_navi_sidebar/admin_navi_sidebar_widget.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -180,37 +181,71 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       return;
     }
 
+    final searchType = _model.dropDownValue ?? '이 름';
+
+    if (input.isEmpty) {
+      _model.isLoading = true;
+      safeSetState(() {});
+      try {
+        final posts = await PostsTable().queryRows(
+          queryFn: (q) => q.order('name', ascending: true),
+        );
+        _model.isSearching = false;
+        _model.currentSearchKeyword = '';
+        _model.currentSearchType = searchType;
+        _applyPostsData(posts, resetPage: true, preserveSearch: false);
+      } catch (e) {
+        _showError('데이터 로드 실패: $e');
+      } finally {
+        _model.isLoading = false;
+        safeSetState(() {});
+      }
+      return;
+    }
+
     _model.isLoading = true;
     safeSetState(() {});
     try {
-      final results = await PostsTable().queryRows(
-        queryFn: (q) {
-          var query = q.order('name', ascending: true);
-          if ((_model.dropDownValue ?? '이 름') == '이 름') {
-            query = query.ilike('name', '%$input%');
-          } else {
-            query = query.ilike('phone', '%$input%');
-          }
-          return query;
-        },
-      );
-      _model.isSearching = input.isNotEmpty;
+      var results = await actions.searchPosts(searchType, input);
+      if (results.isEmpty) {
+        results = await _performClientSideSearch(input, searchType);
+      }
+      _model.isSearching = true;
       _model.currentSearchKeyword = input;
-      _model.currentSearchType = _model.dropDownValue ?? '이 름';
-      _model.prfoutput = results;
-      _model.currentPage = 1;
-      _updatePagination(resetPage: true);
-      _model.selectedProfessorId = results.firstOrNull?.id;
-      _applyClassFilters();
+      _model.currentSearchType = searchType;
+      _applyPostsData(results, resetPage: true, preserveSearch: true);
       if (results.isEmpty) {
         _showSnackBar('검색 결과가 없습니다.');
       }
     } catch (e) {
       _showError('데이터 로드 실패: $e');
+      final fallback = await _performClientSideSearch(input, searchType);
+      _model.isSearching = input.isNotEmpty;
+      _model.currentSearchKeyword = input;
+      _model.currentSearchType = searchType;
+      _applyPostsData(fallback, resetPage: true, preserveSearch: true);
     } finally {
       _model.isLoading = false;
       safeSetState(() {});
     }
+  }
+
+  Future<List<PostsRow>> _performClientSideSearch(
+    String searchText,
+    String searchType,
+  ) async {
+    final allData = await PostsTable().queryRows(
+      queryFn: (q) => q.order('name', ascending: true),
+    );
+
+    final keyword = searchText.toLowerCase();
+
+    return allData.where((item) {
+      if (searchType == '이 름') {
+        return item.name?.toLowerCase().contains(keyword) ?? false;
+      }
+      return item.phone?.contains(searchText) ?? false;
+    }).toList();
   }
 
   String? _validateSearchInput(String? value) {
@@ -2545,7 +2580,25 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                 size: 24.0,
                               ),
                               onPressed: () async {
-                                await _refreshData();
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+
+                                try {
+                                  await _refreshData();
+                                } catch (e) {
+                                  _showError('새로고침 실패: $e');
+                                } finally {
+                                  if (!mounted) {
+                                    return;
+                                  }
+                                  Navigator.pop(context);
+                                  safeSetState(() {});
+                                }
                               },
                             ),
                           ],
