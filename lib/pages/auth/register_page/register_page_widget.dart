@@ -3229,33 +3229,6 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                 _model.insertpfr =
                                                                     await PostsTable()
                                                                         .insert({
-                                                                  'user_type':
-                                                                      valueOrDefault<
-                                                                          int>(
-                                                                    _model
-                                                                        .validationquery
-                                                                        ?.prfType,
-                                                                    2,
-                                                                  ),
-                                                                  'university':
-                                                                      valueOrDefault<
-                                                                          String>(
-                                                                    _model
-                                                                        .universityDropdownValue,
-                                                                    '학교이름',
-                                                                  ),
-                                                                  'user_alias':
-                                                                      valueOrDefault<
-                                                                          String>(
-                                                                    _model
-                                                                        .validationquery
-                                                                        ?.userAlias,
-                                                                    '교수 유형',
-                                                                  ),
-                                                                  'user_email':
-                                                                      currentUserEmail,
-                                                                  'user':
-                                                                      currentUserUid,
                                                                   'name':
                                                                       valueOrDefault<
                                                                           String>(
@@ -3264,6 +3237,26 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                         .text,
                                                                     '교수님 이름',
                                                                   ),
+                                                                  'position':
+                                                                      valueOrDefault<
+                                                                          String>(
+                                                                    _model
+                                                                        .validationquery
+                                                                        ?.userAlias,
+                                                                    '직급',
+                                                                  ),
+                                                                  'email':
+                                                                      currentUserEmail,
+                                                                  'phone':
+                                                                      valueOrDefault<
+                                                                          String>(
+                                                                    _model
+                                                                        .studentIdTextFieldTextController2
+                                                                        .text,
+                                                                    '',
+                                                                  ),
+                                                                  'permission_level':
+                                                                      1,
                                                                 });
                                                                 _shouldSetState =
                                                                     true;

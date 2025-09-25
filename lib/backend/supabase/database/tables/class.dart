@@ -26,6 +26,9 @@ class ClassRow extends SupabaseDataRow {
   String? get professor => getField<String>('professor');
   set professor(String? value) => setField<String>('professor', value);
 
+  int? get professorId => getField<int>('professor_id');
+  set professorId(int? value) => setField<int>('professor_id', value);
+
   String? get year => getField<String>('year');
   set year(String? value) => setField<String>('year', value);
 

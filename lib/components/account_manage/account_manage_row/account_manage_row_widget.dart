@@ -1,3 +1,4 @@
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -11,27 +12,15 @@ export 'account_manage_row_model.dart';
 class AccountManageRowWidget extends StatefulWidget {
   const AccountManageRowWidget({
     super.key,
-    String? professorName,
-    String? professorRole,
-    String? professorEmail,
-    String? professorContact,
-    String? professorAuthority,
+    required this.post,
     this.confirmEdit,
-    bool? isEditing,
-  })  : this.professorName = professorName ?? '홍길동',
-        this.professorRole = professorRole ?? 'PD교수',
-        this.professorEmail = professorEmail ?? 'professor@schd.co.kr',
-        this.professorContact = professorContact ?? '010-1234-5678',
-        this.professorAuthority = professorAuthority ?? '마스터',
-        this.isEditing = isEditing ?? false;
+    this.onSelected,
+  });
 
-  final String professorName;
-  final String professorRole;
-  final String professorEmail;
-  final String professorContact;
-  final String professorAuthority;
-  final Future Function(bool confirm)? confirmEdit;
-  final bool isEditing;
+  final PostsRow post;
+  final Future<void> Function(bool confirm, Map<String, dynamic> updatedData)?
+      confirmEdit;
+  final VoidCallback? onSelected;
 
   @override
   State<AccountManageRowWidget> createState() => _AccountManageRowWidgetState();
@@ -50,282 +39,385 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AccountManageRowModel());
+    _initializeControllers();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
-  @override
-  void dispose() {
-    _model.maybeDispose();
+  void _initializeControllers() {
+    _model.nameTextController ??=
+        TextEditingController(text: widget.post.name ?? '');
+    _model.phoneTextController ??=
+        TextEditingController(text: widget.post.phone ?? '');
+    _model.dropDownValue1 = widget.post.position ?? '';
+    _model.dropDownValueController1 =
+        FormFieldController<String>(_model.dropDownValue1);
+    final permissionLabel =
+        _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
+    _model.dropDownValue2 = permissionLabel;
+    _model.dropDownValueController2 =
+        FormFieldController<String>(_model.dropDownValue2);
+  }
 
-    super.dispose();
+  @override
+  void didUpdateWidget(AccountManageRowWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_model.isEditing) {
+      _model.nameTextController?.text = widget.post.name ?? '';
+      _model.phoneTextController?.text = widget.post.phone ?? '';
+      _model.dropDownValue1 = widget.post.position ?? '';
+      _model.dropDownValueController1?.value = _model.dropDownValue1;
+      final permissionLabel =
+          _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
+      _model.dropDownValue2 = permissionLabel;
+      _model.dropDownValueController2?.value = permissionLabel;
+    }
+  }
+
+  String _permissionLabelFromLevel(int level) {
+    return level >= 2
+        ? FFLocalizations.of(context).getText('cvxeomw7' /* 마스터 */)
+        : FFLocalizations.of(context).getText('1pk19gyt' /* 멤버 */);
+  }
+
+  int _permissionLevelFromLabel(String label) {
+    final masterLabel = FFLocalizations.of(context).getText('cvxeomw7');
+    return label == masterLabel ? 2 : 1;
+  }
+
+  void _enterEditMode() {
+    _model.isEditing = true;
+    _model.nameTextController?.text = widget.post.name ?? '';
+    _model.phoneTextController?.text = widget.post.phone ?? '';
+    _model.dropDownValue1 = widget.post.position ?? '';
+    _model.dropDownValueController1?.value = _model.dropDownValue1;
+    final permissionLabel =
+        _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
+    _model.dropDownValue2 = permissionLabel;
+    _model.dropDownValueController2?.value = permissionLabel;
+    safeSetState(() {});
+  }
+
+  Future<void> _saveChanges() async {
+    final updatedData = <String, dynamic>{};
+    final newName = _model.nameTextController?.text.trim() ?? '';
+    final newPhone = _model.phoneTextController?.text.trim() ?? '';
+    final newPosition = _model.dropDownValue1 ?? '';
+    final newPermissionLabel = _model.dropDownValue2 ??
+        FFLocalizations.of(context).getText('1pk19gyt');
+    final newPermission = _permissionLevelFromLabel(newPermissionLabel);
+
+    if (newName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이름을 입력해주세요.')),
+      );
+      return;
+    }
+
+    if (newName != (widget.post.name ?? '')) {
+      updatedData['name'] = newName;
+    }
+    if (newPosition.isNotEmpty &&
+        newPosition != (widget.post.position ?? '')) {
+      updatedData['position'] = newPosition;
+    }
+    if (newPhone != (widget.post.phone ?? '')) {
+      updatedData['phone'] = newPhone;
+    }
+    if (newPermission != (widget.post.permissionLevel ?? 1)) {
+      updatedData['permission_level'] = newPermission;
+    }
+
+    if (updatedData.isEmpty) {
+      _model.isEditing = false;
+      safeSetState(() {});
+      return;
+    }
+
+    try {
+      _model.isSaving = true;
+      safeSetState(() {});
+      await PostsTable().update(
+        data: updatedData,
+        matchingRows: (rows) => rows.eq('id', widget.post.id),
+      );
+      _model.editedData = updatedData;
+      await widget.confirmEdit?.call(true, updatedData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('정보가 저장되었습니다.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('저장에 실패했습니다: $e')),
+      );
+    } finally {
+      _model.isSaving = false;
+      _model.isEditing = false;
+      safeSetState(() {});
+    }
+  }
+
+  Future<void> _handleButtonPressed() async {
+    if (_model.isSaving) {
+      return;
+    }
+    if (!_model.isEditing) {
+      _enterEditMode();
+      return;
+    }
+    await _saveChanges();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      children: [
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: Text(
-                    widget.professorName,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: FlutterFlowDropDown<String>(
-                    controller: _model.dropDownValueController1 ??=
-                        FormFieldController<String>(null),
-                    options: [
-                      FFLocalizations.of(context).getText(
-                        'knb7lib7' /* PD교수 */,
-                      ),
-                      FFLocalizations.of(context).getText(
-                        'w82m8xf4' /* 정교수 */,
-                      ),
-                      FFLocalizations.of(context).getText(
-                        'l14d8d4d' /* 부교수 */,
-                      ),
-                      FFLocalizations.of(context).getText(
-                        'bdppbwit' /* 겸임교수 */,
-                      ),
-                      FFLocalizations.of(context).getText(
-                        'fpcbi6f2' /* 인증조교 */,
-                      )
-                    ],
-                    onChanged: (val) =>
-                        safeSetState(() => _model.dropDownValue1 = val),
-                    width: 200.0,
-                    height: 40.0,
-                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.openSans(
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          letterSpacing: 0.0,
-                          fontWeight: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .fontWeight,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                    hintText: FFLocalizations.of(context).getText(
-                      'yt5tcduf' /* 직급 선택 */,
-                    ),
-                    icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: FlutterFlowTheme.of(context).secondaryText,
-                      size: 20.0,
-                    ),
-                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                    elevation: 2.0,
-                    borderColor: Colors.transparent,
-                    borderWidth: 0.0,
-                    borderRadius: 8.0,
-                    margin:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
-                    hidesUnderline: true,
-                    isOverButton: false,
-                    isSearchable: false,
-                    isMultiSelect: false,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: Text(
-                    widget.professorEmail,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: Text(
-                    widget.professorContact,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: FlutterFlowDropDown<String>(
-                    controller: _model.dropDownValueController2 ??=
-                        FormFieldController<String>(null),
-                    options: [
-                      FFLocalizations.of(context).getText(
-                        '1pk19gyt' /* 멤버 */,
-                      ),
-                      FFLocalizations.of(context).getText(
-                        'cvxeomw7' /* 마스터 */,
-                      )
-                    ],
-                    onChanged: (val) =>
-                        safeSetState(() => _model.dropDownValue2 = val),
-                    width: 200.0,
-                    height: 40.0,
-                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.openSans(
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          letterSpacing: 0.0,
-                          fontWeight: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .fontWeight,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                    hintText: FFLocalizations.of(context).getText(
-                      'res31ula' /* 권한선택 */,
-                    ),
-                    icon: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: FlutterFlowTheme.of(context).secondaryText,
-                      size: 20.0,
-                    ),
-                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                    elevation: 2.0,
-                    borderColor: Colors.transparent,
-                    borderWidth: 0.0,
-                    borderRadius: 8.0,
-                    margin:
-                        EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
-                    hidesUnderline: true,
-                    isOverButton: false,
-                    isSearchable: false,
-                    isMultiSelect: false,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(),
-                  alignment: AlignmentDirectional(0.0, 0.0),
-                  child: FFButtonWidget(
-                    onPressed: () {
-                      print('Button pressed ...');
-                    },
-                    text: widget.isEditing ? '완료' : '수정',
-                    options: FFButtonOptions(
-                      width: 100.0,
-                      height: 30.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: widget.isEditing
-                          ? FlutterFlowTheme.of(context).mainColor1
-                          : Colors.white,
-                      textStyle:
-                          FlutterFlowTheme.of(context).titleSmall.override(
-                                font: GoogleFonts.openSans(
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontStyle,
-                                ),
-                                color: widget.isEditing
-                                    ? Colors.white
-                                    : Color(0xFF666666),
-                                letterSpacing: 0.0,
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .fontStyle,
-                              ),
-                      elevation: 0.0,
-                      borderSide: BorderSide(
-                        color: Color(0xFF666666),
-                        width: 0.5,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    final positionOptions = [
+      FFLocalizations.of(context).getText('knb7lib7' /* PD교수 */),
+      FFLocalizations.of(context).getText('w82m8xf4' /* 정교수 */),
+      FFLocalizations.of(context).getText('l14d8d4d' /* 부교수 */),
+      FFLocalizations.of(context).getText('bdppbwit' /* 겸임교수 */),
+      FFLocalizations.of(context).getText('fpcbi6f2' /* 인증조교 */),
+    ];
+    final permissionOptions = [
+      FFLocalizations.of(context).getText('1pk19gyt' /* 멤버 */),
+      FFLocalizations.of(context).getText('cvxeomw7' /* 마스터 */),
+    ];
+
+    final nameStyle = FlutterFlowTheme.of(context).bodyMedium.override(
+          font: GoogleFonts.inter(
+            fontWeight: FontWeight.w500,
+            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
           ),
-        ),
-      ].divide(SizedBox(height: 10.0)),
+          color: const Color(0xFF4E4E4E),
+          fontSize: 20.0,
+          letterSpacing: 0.0,
+          fontWeight: FontWeight.w500,
+          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+        );
+
+    return InkWell(
+      onTap: _model.isEditing ? null : widget.onSelected,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: _model.isEditing
+                  ? TextFormField(
+                      controller: _model.nameTextController,
+                      focusNode: _model.nameFocusNode,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        border: UnderlineInputBorder(),
+                      ),
+                      style: nameStyle,
+                    )
+                  : Text(
+                      widget.post.name ?? '-',
+                      style: nameStyle,
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: _model.isEditing
+                  ? FlutterFlowDropDown<String>(
+                      controller: _model.dropDownValueController1 ??=
+                          FormFieldController<String>(
+                        _model.dropDownValue1 ?? widget.post.position,
+                      ),
+                      options: positionOptions,
+                      onChanged: (val) =>
+                          safeSetState(() => _model.dropDownValue1 = val),
+                      width: 200.0,
+                      height: 40.0,
+                      textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.openSans(
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            letterSpacing: 0.0,
+                            fontWeight:
+                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                            fontStyle:
+                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                          ),
+                      hintText: FFLocalizations.of(context)
+                          .getText('yt5tcduf' /* 직급 선택 */),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        size: 20.0,
+                      ),
+                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                      elevation: 2.0,
+                      borderColor: Colors.transparent,
+                      borderWidth: 0.0,
+                      borderRadius: 8.0,
+                      margin: const EdgeInsetsDirectional.fromSTEB(
+                          12.0, 0.0, 12.0, 0.0),
+                      hidesUnderline: true,
+                      isOverButton: false,
+                      isSearchable: false,
+                      isMultiSelect: false,
+                    )
+                  : Text(
+                      widget.post.position ??
+                          FFLocalizations.of(context)
+                              .getText('yt5tcduf' /* 직급 선택 */),
+                      style: nameStyle,
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: Text(
+                widget.post.email ?? '-',
+                style: nameStyle,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: _model.isEditing
+                  ? TextFormField(
+                      controller: _model.phoneTextController,
+                      focusNode: _model.phoneFocusNode,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        border: UnderlineInputBorder(),
+                      ),
+                      style: nameStyle,
+                    )
+                  : Text(
+                      widget.post.phone ?? '-',
+                      style: nameStyle,
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: _model.isEditing
+                  ? FlutterFlowDropDown<String>(
+                      controller: _model.dropDownValueController2 ??=
+                          FormFieldController<String>(
+                        _model.dropDownValue2 ??
+                            _permissionLabelFromLevel(
+                                widget.post.permissionLevel ?? 1),
+                      ),
+                      options: permissionOptions,
+                      onChanged: (val) =>
+                          safeSetState(() => _model.dropDownValue2 = val),
+                      width: 200.0,
+                      height: 40.0,
+                      textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.openSans(
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            letterSpacing: 0.0,
+                            fontWeight:
+                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                            fontStyle:
+                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                          ),
+                      hintText: FFLocalizations.of(context)
+                          .getText('res31ula' /* 권한선택 */),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        size: 20.0,
+                      ),
+                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                      elevation: 2.0,
+                      borderColor: Colors.transparent,
+                      borderWidth: 0.0,
+                      borderRadius: 8.0,
+                      margin: const EdgeInsetsDirectional.fromSTEB(
+                          12.0, 0.0, 12.0, 0.0),
+                      hidesUnderline: true,
+                      isOverButton: false,
+                      isSearchable: false,
+                      isMultiSelect: false,
+                    )
+                  : Text(
+                      _permissionLabelFromLevel(
+                          widget.post.permissionLevel ?? 1),
+                      style: nameStyle,
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              alignment: const AlignmentDirectional(0.0, 0.0),
+              child: FFButtonWidget(
+                onPressed: _handleButtonPressed,
+                text: _model.isSaving
+                    ? '저장중'
+                    : (_model.isEditing
+                        ? '완료'
+                        : FFLocalizations.of(context)
+                            .getText('ndcle0l5' /* 수정 */)),
+                options: FFButtonOptions(
+                  width: 100.0,
+                  height: 30.0,
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      16.0, 0.0, 16.0, 0.0),
+                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                      0.0, 0.0, 0.0, 0.0),
+                  color: _model.isEditing
+                      ? FlutterFlowTheme.of(context).mainColor1
+                      : Colors.white,
+                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        font: GoogleFonts.openSans(
+                          fontWeight:
+                              FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                        ),
+                        color: _model.isEditing
+                            ? Colors.white
+                            : const Color(0xFF666666),
+                        letterSpacing: 0.0,
+                        fontWeight:
+                            FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                        fontStyle:
+                            FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                      ),
+                  elevation: 0.0,
+                  borderSide: const BorderSide(
+                    color: Color(0xFF666666),
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
