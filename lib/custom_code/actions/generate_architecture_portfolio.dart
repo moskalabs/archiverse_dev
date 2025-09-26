@@ -52,6 +52,21 @@ Future<void> generateArchitecturePortfolio() async {
                 Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
             .toList();
 
+    final Set<int> studentIdSet = <int>{};
+    final Map<String, int> studentIdByName = <String, int>{};
+    for (final Map<String, dynamic> student in studentsData) {
+      final int? idValue = _coerceToInt(student['id']);
+      if (idValue != null) {
+        studentIdSet.add(idValue);
+      }
+      final String? normalizedName =
+          _normalizeStudentKey(student['name'] as String?);
+      if (normalizedName != null && idValue != null) {
+        studentIdByName.putIfAbsent(normalizedName, () => idValue);
+      }
+    }
+    final List<int> studentIds = studentIdSet.toList();
+
     final Map<int, List<Map<String, dynamic>>> studentsBySection =
         <int, List<Map<String, dynamic>>>{};
     for (final Map<String, dynamic> student in studentsData) {
@@ -90,6 +105,71 @@ Future<void> generateArchitecturePortfolio() async {
             (studentsBySection[section]?.isNotEmpty ?? false);
         if (section != 0 || hasStudents) {
           orderedSectionNumbers.add(section);
+        }
+      }
+    }
+
+    final Map<String, List<Map<String, dynamic>>> weeklyLookup =
+        await _fetchWeeklyProgressLookup(studentIds, studentIdByName);
+    final Map<String, String> midtermLookup = await _fetchSingleResultLookup(
+      'midterm_results',
+      studentIds,
+      studentIdByName,
+    );
+    final Map<String, String> finalLookup = await _fetchSingleResultLookup(
+      'final_results',
+      studentIds,
+      studentIdByName,
+    );
+    final Map<String, List<Map<String, dynamic>>> critiqueLookup =
+        await _fetchCritiquesLookup(
+      orderedSectionNumbers,
+      studentIdByName,
+    );
+
+    for (final Map<String, dynamic> student in studentsData) {
+      final int? studentId = _coerceToInt(student['id']);
+      final String? studentName = student['name'] as String?;
+      final String idKey = _studentIdLookupKey(studentId);
+      final String nameKey = _studentNameLookupKey(studentName);
+
+      final List<Map<String, dynamic>>? weeklyRecords =
+          weeklyLookup[idKey] ?? weeklyLookup[nameKey];
+      if (weeklyRecords != null && weeklyRecords.isNotEmpty) {
+        final List<Map<String, dynamic>> existingWeekly =
+            _castToMapList(student['weekly_progress']);
+        if (existingWeekly.isEmpty) {
+          student['weekly_progress'] = weeklyRecords
+              .map((Map<String, dynamic> item) =>
+                  Map<String, dynamic>.from(item))
+              .toList();
+        }
+      }
+
+      final String? midtermUrl = midtermLookup[idKey] ?? midtermLookup[nameKey];
+      if (_isNullOrEmptyString(student['midterm_pdf']) &&
+          midtermUrl != null &&
+          midtermUrl.isNotEmpty) {
+        student['midterm_pdf'] = midtermUrl;
+      }
+
+      final String? finalUrl = finalLookup[idKey] ?? finalLookup[nameKey];
+      if (_isNullOrEmptyString(student['final_pdf']) &&
+          finalUrl != null &&
+          finalUrl.isNotEmpty) {
+        student['final_pdf'] = finalUrl;
+      }
+
+      final List<Map<String, dynamic>>? critiqueRecords =
+          critiqueLookup[idKey] ?? critiqueLookup[nameKey];
+      if (critiqueRecords != null && critiqueRecords.isNotEmpty) {
+        final List<Map<String, dynamic>> existingCritiques =
+            _castToMapList(student['critiques']);
+        if (existingCritiques.isEmpty) {
+          student['critiques'] = critiqueRecords
+              .map((Map<String, dynamic> item) =>
+                  Map<String, dynamic>.from(item))
+              .toList();
         }
       }
     }
@@ -1146,14 +1226,29 @@ void _createCritiquePage(
 }
 
 String _buildCritiqueTemplate(dynamic critique) {
-  final String strengths = critique['strengths'] as String? ?? '';
-  final String improvements = critique['improvements'] as String? ?? '';
-  final String actionItems = critique['action_items'] as String? ?? '';
+  final String strengths =
+      _stringValue(critique['strengths'])?.trim() ?? '';
+  final String improvements =
+      _stringValue(critique['improvements'])?.trim() ?? '';
+  final String actionItems =
+      _stringValue(critique['action_items'])?.trim() ?? '';
+  final String content =
+      _stringValue(critique['content'])?.trim() ?? '';
 
-  return [
-    '강점: $strengths',
-    '개선이 필요한 부분: $improvements',
-    '향후 작업 제안: $actionItems',
+  String fallback(String value) {
+    if (value.isNotEmpty) {
+      return value;
+    }
+    if (content.isNotEmpty) {
+      return content;
+    }
+    return '';
+  }
+
+  return <String>[
+    '강점: ${fallback(strengths)}',
+    '개선이 필요한 부분: ${fallback(improvements)}',
+    '향후 작업 제안: ${fallback(actionItems)}',
   ].join('\n');
 }
 
@@ -1307,4 +1402,487 @@ Map<String, dynamic> _coursePlanForSection(
   }
 
   return <String, dynamic>{};
+}
+
+
+String? _stringValue(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is String) {
+    return value;
+  }
+  return value.toString();
+}
+
+bool _isNullOrEmptyString(dynamic value) {
+  final String? text = _stringValue(value);
+  return text == null || text.trim().isEmpty;
+}
+
+int? _coerceToInt(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  if (value is String) {
+    return int.tryParse(value);
+  }
+  return null;
+}
+
+DateTime? _coerceToDateTime(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+  if (value is num) {
+    return DateTime.fromMillisecondsSinceEpoch(value.toInt());
+  }
+  final String? text = _stringValue(value);
+  if (text == null || text.isEmpty) {
+    return null;
+  }
+  return DateTime.tryParse(text);
+}
+
+String? _normalizeStudentKey(String? name) {
+  if (name == null) {
+    return null;
+  }
+  final String trimmed = name.trim();
+  if (trimmed.isEmpty) {
+    return null;
+  }
+  return trimmed.toLowerCase();
+}
+
+String _studentIdLookupKey(int? id) {
+  if (id == null) {
+    return '';
+  }
+  return 'id:$id';
+}
+
+String _studentNameLookupKey(String? name) {
+  final String? normalized = _normalizeStudentKey(name);
+  if (normalized == null) {
+    return '';
+  }
+  return 'name:$normalized';
+}
+
+int _parseWeekNumber(dynamic value) {
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  final String? text = _stringValue(value);
+  if (text == null) {
+    return 0;
+  }
+  final RegExpMatch? match = RegExp(r'\d+').firstMatch(text);
+  if (match != null) {
+    return int.tryParse(match.group(0) ?? '') ?? 0;
+  }
+  return 0;
+}
+
+int _compareWeekValues(dynamic a, dynamic b) {
+  final int weekA = _parseWeekNumber(a);
+  final int weekB = _parseWeekNumber(b);
+  if (weekA != weekB) {
+    return weekA.compareTo(weekB);
+  }
+  final String valueA = _stringValue(a) ?? '';
+  final String valueB = _stringValue(b) ?? '';
+  return valueA.compareTo(valueB);
+}
+
+List<Map<String, dynamic>> _castToMapList(dynamic value) {
+  if (value is! List) {
+    return <Map<String, dynamic>>[];
+  }
+  return value
+      .whereType<Map>()
+      .map((Map<dynamic, dynamic> item) =>
+          Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
+      .toList();
+}
+
+String _stripHtmlTags(String? value) {
+  if (value == null || value.isEmpty) {
+    return '';
+  }
+  String text = value;
+  text = text.replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n');
+  text = text.replaceAll(RegExp(r'</p>', caseSensitive: false), '\n');
+  text = text.replaceAll(RegExp(r'<[^>]+>'), '');
+  text = text.replaceAll('&nbsp;', ' ');
+  text = text.replaceAll('&amp;', '&');
+  text = text.replaceAll('&lt;', '<');
+  text = text.replaceAll('&gt;', '>');
+  return text;
+}
+
+String _removeHeadingLabel(String line) {
+  final int colonIndex = line.indexOf(':');
+  if (colonIndex >= 0) {
+    return line.substring(colonIndex + 1).trim();
+  }
+  final int dashIndex = line.indexOf('-');
+  if (dashIndex >= 0 && dashIndex < line.length - 1) {
+    return line.substring(dashIndex + 1).trim();
+  }
+  return line.trim();
+}
+
+String? _sectionKeyForLine(String line) {
+  final String normalized = line.toLowerCase();
+  if (normalized.contains('강점') || normalized.contains('strength')) {
+    return 'strengths';
+  }
+  if (normalized.contains('개선') ||
+      normalized.contains('보완') ||
+      normalized.contains('약점') ||
+      normalized.contains('improvement') ||
+      normalized.contains('weakness')) {
+    return 'improvements';
+  }
+  if (normalized.contains('향후') ||
+      normalized.contains('계획') ||
+      normalized.contains('제안') ||
+      normalized.contains('action')) {
+    return 'action_items';
+  }
+  return null;
+}
+
+Map<String, String> _extractCritiqueSections(String? html) {
+  final String text = _stripHtmlTags(html).trim();
+  if (text.isEmpty) {
+    return <String, String>{
+      'summary': '',
+      'content': '',
+      'strengths': '',
+      'improvements': '',
+      'action_items': '',
+    };
+  }
+
+  final List<String> lines = text
+      .split(RegExp(r'\r?\n'))
+      .map((String line) => line.trim())
+      .where((String line) => line.isNotEmpty)
+      .toList();
+
+  final Map<String, StringBuffer> sections = <String, StringBuffer>{
+    'strengths': StringBuffer(),
+    'improvements': StringBuffer(),
+    'action_items': StringBuffer(),
+  };
+  final StringBuffer general = StringBuffer();
+  String? summary;
+  String? currentKey;
+
+  for (final String line in lines) {
+    final String? sectionKey = _sectionKeyForLine(line);
+    if (sectionKey != null) {
+      currentKey = sectionKey;
+      final String cleaned = _removeHeadingLabel(line);
+      if (cleaned.isNotEmpty) {
+        sections[sectionKey]!.write(cleaned);
+        sections[sectionKey]!.write('
+');
+      }
+      continue;
+    }
+
+    if (currentKey != null) {
+      sections[currentKey]!
+        ..write(line)
+        ..write('\n');
+    } else {
+      general
+        ..write(line)
+        ..write('\n');
+      summary ??= line;
+    }
+  }
+
+  String bufferToString(StringBuffer buffer) => buffer.toString().trim();
+
+  final String strengths = bufferToString(sections['strengths']!);
+  final String improvements = bufferToString(sections['improvements']!);
+  final String actionItems = bufferToString(sections['action_items']!);
+  final String generalText = general.toString().trim();
+
+  final String computedSummary = summary ??
+      (generalText.isNotEmpty
+          ? generalText.split('\n').first
+          : (strengths.isNotEmpty
+              ? strengths.split('\n').first
+              : (improvements.isNotEmpty
+                  ? improvements.split('\n').first
+                  : (actionItems.isNotEmpty
+                      ? actionItems.split('\n').first
+                      : ''))));
+
+  final String content = generalText.isNotEmpty
+      ? generalText
+      : <String>[strengths, improvements, actionItems]
+          .where((String value) => value.isNotEmpty)
+          .join('\n');
+
+  return <String, String>{
+    'summary': computedSummary,
+    'content': content,
+    'strengths': strengths,
+    'improvements': improvements,
+    'action_items': actionItems,
+  };
+}
+
+String _firstNonEmptyString(List<dynamic> values) {
+  for (final dynamic value in values) {
+    final String? text = _stringValue(value);
+    if (text != null && text.trim().isNotEmpty) {
+      return text.trim();
+    }
+  }
+  return '';
+}
+
+Future<Map<String, List<Map<String, dynamic>>>> _fetchWeeklyProgressLookup(
+  List<int> studentIds,
+  Map<String, int> studentIdByName,
+) async {
+  if (studentIds.isEmpty) {
+    return <String, List<Map<String, dynamic>>>{};
+  }
+
+  try {
+    final dynamic response = await SupaFlow.client
+        .from('weekly_progress')
+        .select('student_id, student_name, week, pdf_url, url, title')
+        .in_('student_id', studentIds)
+        .order('week', ascending: true);
+
+    final List<Map<String, dynamic>> rows = (response as List)
+        .map((dynamic item) =>
+            Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
+        .toList();
+
+    final Map<String, List<Map<String, dynamic>>> lookup =
+        <String, List<Map<String, dynamic>>>{};
+
+    for (final Map<String, dynamic> row in rows) {
+      final int? studentId = _coerceToInt(row['student_id']);
+      final String? studentName = row['student_name'] as String?;
+      final String pdfUrl = _firstNonEmptyString(<dynamic>[
+        row['pdf_url'],
+        row['url'],
+        row['file_url'],
+      ]);
+      if (pdfUrl.isEmpty) {
+        continue;
+      }
+
+      final Map<String, dynamic> normalized = <String, dynamic>{
+        'week': row['week'],
+        'pdf_url': pdfUrl,
+      };
+      final String? title = _stringValue(row['title']);
+      if (title != null && title.isNotEmpty) {
+        normalized['title'] = title;
+      }
+
+      final String idKey = _studentIdLookupKey(studentId);
+      if (idKey.isNotEmpty) {
+        lookup.putIfAbsent(idKey, () => <Map<String, dynamic>>[])
+            .add(normalized);
+      }
+
+      final String nameKey = _studentNameLookupKey(studentName);
+      if (nameKey.isNotEmpty) {
+        lookup.putIfAbsent(nameKey, () => <Map<String, dynamic>>[])
+            .add(normalized);
+      } else if (studentName != null) {
+        final int? mappedId =
+            studentIdByName[_normalizeStudentKey(studentName) ?? ''];
+        final String fallbackKey = _studentIdLookupKey(mappedId);
+        if (fallbackKey.isNotEmpty) {
+          lookup.putIfAbsent(fallbackKey, () => <Map<String, dynamic>>[])
+              .add(normalized);
+        }
+      }
+    }
+
+    for (final List<Map<String, dynamic>> items in lookup.values) {
+      items.sort((Map<String, dynamic> a, Map<String, dynamic> b) =>
+          _compareWeekValues(a['week'], b['week']));
+    }
+
+    return lookup;
+  } catch (error) {
+    print('주차별 포트폴리오 조회 오류: $error');
+    return <String, List<Map<String, dynamic>>>{};
+  }
+}
+
+Future<Map<String, String>> _fetchSingleResultLookup(
+  String tableName,
+  List<int> studentIds,
+  Map<String, int> studentIdByName,
+) async {
+  if (studentIds.isEmpty) {
+    return <String, String>{};
+  }
+
+  try {
+    final dynamic response = await SupaFlow.client
+        .from(tableName)
+        .select(
+            'student_id, student_name, url, pdf_url, file_url, created_date, created_at, updated_at')
+        .in_('student_id', studentIds);
+
+    final List<Map<String, dynamic>> rows = (response as List)
+        .map((dynamic item) =>
+            Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
+        .toList();
+
+    final Map<String, String> lookup = <String, String>{};
+    final Map<String, DateTime?> timestamps = <String, DateTime?>{};
+
+    void assign(String key, String url, DateTime? timestamp) {
+      if (key.isEmpty || url.isEmpty) {
+        return;
+      }
+      final DateTime? existing = timestamps[key];
+      if (existing == null ||
+          (timestamp != null &&
+              (existing == null || timestamp.isAfter(existing)))) {
+        lookup[key] = url;
+        timestamps[key] = timestamp ?? existing;
+      } else if (!lookup.containsKey(key)) {
+        lookup[key] = url;
+      }
+    }
+
+    for (final Map<String, dynamic> row in rows) {
+      final int? studentId = _coerceToInt(row['student_id']);
+      final String? studentName = row['student_name'] as String?;
+      final String url = _firstNonEmptyString(<dynamic>[
+        row['pdf_url'],
+        row['url'],
+        row['file_url'],
+      ]);
+      if (url.isEmpty) {
+        continue;
+      }
+      final DateTime? timestamp = _coerceToDateTime(
+        row['updated_at'] ?? row['created_at'] ?? row['created_date'],
+      );
+      assign(_studentIdLookupKey(studentId), url, timestamp);
+      final String nameKey = _studentNameLookupKey(studentName);
+      if (nameKey.isNotEmpty) {
+        assign(nameKey, url, timestamp);
+      } else if (studentName != null) {
+        final int? mappedId =
+            studentIdByName[_normalizeStudentKey(studentName) ?? ''];
+        assign(_studentIdLookupKey(mappedId), url, timestamp);
+      }
+    }
+
+    return lookup;
+  } catch (error) {
+    print('결과물($tableName) 조회 오류: $error');
+    return <String, String>{};
+  }
+}
+
+Future<Map<String, List<Map<String, dynamic>>>> _fetchCritiquesLookup(
+  List<int> sectionNumbers,
+  Map<String, int> studentIdByName,
+) async {
+  if (sectionNumbers.isEmpty) {
+    return <String, List<Map<String, dynamic>>>{};
+  }
+
+  final List<int> validSections =
+      sectionNumbers.where((int value) => value != 0).toSet().toList();
+  if (validSections.isEmpty) {
+    return <String, List<Map<String, dynamic>>>{};
+  }
+
+  try {
+    final dynamic response = await SupaFlow.client
+        .from('subjectportpolio')
+        .select('student_name, week, critic_html, class')
+        .in_('class', validSections);
+
+    final List<Map<String, dynamic>> rows = (response as List)
+        .map((dynamic item) =>
+            Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
+        .toList();
+
+    final Map<String, List<Map<String, dynamic>>> lookup =
+        <String, List<Map<String, dynamic>>>{};
+
+    for (final Map<String, dynamic> row in rows) {
+      final String html = _stringValue(row['critic_html']) ?? '';
+      if (html.trim().isEmpty) {
+        continue;
+      }
+
+      final Map<String, String> sections = _extractCritiqueSections(html);
+      final Map<String, dynamic> normalized = <String, dynamic>{
+        'week': row['week'],
+        'summary': sections['summary'] ?? '',
+        'content': sections['content'] ?? '',
+        'strengths': sections['strengths'] ?? '',
+        'improvements': sections['improvements'] ?? '',
+        'action_items': sections['action_items'] ?? '',
+      };
+
+      final String? studentName = _stringValue(row['student_name']);
+      final String nameKey = _studentNameLookupKey(studentName);
+      if (nameKey.isNotEmpty) {
+        lookup.putIfAbsent(nameKey, () => <Map<String, dynamic>>[])
+            .add(normalized);
+      }
+
+      if (studentName != null) {
+        final int? mappedId =
+            studentIdByName[_normalizeStudentKey(studentName) ?? ''];
+        final String idKey = _studentIdLookupKey(mappedId);
+        if (idKey.isNotEmpty) {
+          lookup.putIfAbsent(idKey, () => <Map<String, dynamic>>[])
+              .add(normalized);
+        }
+      }
+    }
+
+    for (final List<Map<String, dynamic>> items in lookup.values) {
+      items.sort((Map<String, dynamic> a, Map<String, dynamic> b) =>
+          _compareWeekValues(a['week'], b['week']));
+    }
+
+    return lookup;
+  } catch (error) {
+    print('크리틱 데이터 조회 오류: $error');
+    return <String, List<Map<String, dynamic>>>{};
+  }
 }
