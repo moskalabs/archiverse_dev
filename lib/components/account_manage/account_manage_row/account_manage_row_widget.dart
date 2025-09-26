@@ -243,7 +243,7 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
     return InkWell(
       onTap: _model.isEditing ? null : widget.onSelected,
       child: Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(20.0, 8.0, 20.0, 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,

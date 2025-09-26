@@ -9,104 +9,41 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-Future<List<PostsRow>> searchPosts(
-  String? searchType,
-  String? searchText,
-) async {
-  final normalizedSearch = searchText?.trim() ?? '';
-
-  final posts = await PostsTable().queryRows(
-    queryFn: (q) {
-      var query = q.order('name', ascending: true);
-      if (normalizedSearch.isNotEmpty) {
-        query = query.ilike('name', '%$normalizedSearch%');
-      }
-      return query;
-    },
-  );
-  final adminRows = await AdminPostTable().queryRows(
-    queryFn: (q) => q.order('adminId', ascending: true),
-  );
-  final merged = _mergeAdminRows(posts, adminRows);
-  if (normalizedSearch.isEmpty) {
-    return merged;
+Future<List<PostsRow>> searchPosts(String? searchType, String? searchText) async {
+  if (searchText == null || searchText.isEmpty) {
+    return await PostsTable().queryRows(
+      queryFn: (q) => q.order('name', ascending: true),
+    );
   }
-  final lowerKeyword = normalizedSearch.toLowerCase();
-  return merged
-      .where((row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
-      .toList();
-}
 
-List<PostsRow> _mergeAdminRows(
-  List<PostsRow> posts,
-  List<AdminPostRow> adminRows,
-) {
-  if (posts.isEmpty) {
+  List<PostsRow> allRows;
+  try {
+    allRows = await PostsTable().queryRows(
+      queryFn: (q) => q.order('name', ascending: true),
+    );
+  } catch (e) {
+    debugPrint('데이터 로드 실패: $e');
     return [];
   }
-  if (adminRows.isEmpty) {
-    return posts.map(_cloneWithDefaults).toList();
+
+  final normalizedSearch = searchText.trim().toLowerCase();
+
+  if (searchType == '이 름') {
+    return allRows.where((row) {
+      final name = row.name?.toLowerCase() ?? '';
+      return name.contains(normalizedSearch);
+    }).toList();
   }
-  final adminMap = {
-    for (final admin in adminRows) admin.adminId.toLowerCase(): admin,
-  };
-  final merged = posts.map((row) {
-    final cloned = _cloneWithDefaults(row);
-    final emailKey = (cloned.email ?? '').toLowerCase();
-    final admin = adminMap[emailKey];
-    if (admin != null) {
-      final adminName = admin.name;
-      if (adminName != null && adminName.isNotEmpty) {
-        cloned.name = adminName;
-      }
-      final role = admin.role;
-      if (role.isNotEmpty) {
-        cloned.permissionLevel = _permissionFromRole(role);
-      }
-      final userType = admin.userType;
-      if (userType != null) {
-        cloned.userType = userType;
-      }
-    }
-    cloned.userType = cloned.userType ?? 3;
-    cloned.position = _userTypeLabel(cloned.userType);
-    return cloned;
+
+  if (searchType == '학 번' || searchType == '연락처') {
+    return allRows.where((row) {
+      final phone = row.phone ?? '';
+      return phone.contains(searchText.trim());
+    }).toList();
+  }
+
+  return allRows.where((row) {
+    final name = row.name?.toLowerCase() ?? '';
+    return name.contains(normalizedSearch);
   }).toList();
-  merged.sort(
-    (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
-  );
-  return merged;
-}
-
-PostsRow _cloneWithDefaults(PostsRow row) {
-  final cloned = PostsRow(Map<String, dynamic>.from(row.data));
-  cloned.userType = cloned.userType ?? 3;
-  cloned.position = _userTypeLabel(cloned.userType);
-  return cloned;
-}
-
-int _permissionFromRole(String role) {
-  final normalized = role.toLowerCase().trim();
-  if (normalized.contains('master') ||
-      normalized.contains('admin') ||
-      normalized.contains('관리')) {
-    return 2;
-  }
-  return 1;
-}
-
-String _userTypeLabel(int? userType) {
-  switch (userType) {
-    case 0:
-      return '마스터';
-    case 1:
-      return '전임';
-    case 2:
-      return '겸임';
-    case 4:
-      return '조교';
-    case 3:
-    default:
-      return '일반';
-  }
 }

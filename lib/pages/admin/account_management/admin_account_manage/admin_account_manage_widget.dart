@@ -4,6 +4,7 @@ import '/components/account_manage/account_manage_row_mobile/account_manage_row_
 import '/components/default_layout/borderline/borderline_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
 import '/components/default_layout/nav_bar/admin_navi_sidebar/admin_navi_sidebar_widget.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -52,32 +53,32 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     _showSnackBar(message);
   }
 
-  Future<List<PostsRow>> searchPosts(String? searchType, String? searchText) async {
+  Future<List<PostsRow>> searchPostsInWidget(
+      String? searchType, String? searchText) async {
     final keyword = searchText?.trim() ?? '';
 
     final posts = await PostsTable().queryRows(
-      queryFn: (q) {
-        var query = q.order('name', ascending: true);
-        if (keyword.isNotEmpty) {
-          query = query.ilike('name', '%$keyword%');
-        }
-        return query;
-      },
+      queryFn: (q) => q.order('name', ascending: true),
     );
-
     final adminRows = await AdminPostTable().queryRows(
       queryFn: (q) => q.order('adminId', ascending: true),
     );
     _model.adminPostRows = adminRows;
-
     final merged = _mergeWithAdminPosts(posts, adminRows: adminRows);
+
     if (keyword.isEmpty) {
       return merged;
     }
+
     final lowerKeyword = keyword.toLowerCase();
-    return merged
-        .where((row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
-        .toList();
+    return merged.where((row) {
+      if (searchType == '학 번' || searchType == '연락처') {
+        final phone = row.phone ?? '';
+        return phone.contains(keyword);
+      }
+      final name = row.name?.toLowerCase() ?? '';
+      return name.contains(lowerKeyword);
+    }).toList();
   }
 
   String _userTypeLabel(int? userType) {
@@ -1674,38 +1675,65 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                 .trim();
 
                                                         final results =
-                                                            await searchPosts(
+                                                            await actions.searchPosts(
                                                           _model.dropDownValue ??
                                                               '이 름',
                                                           searchText,
                                                         );
+                                                        List<PostsRow>
+                                                            mergedResults;
+                                                        if (results.isEmpty) {
+                                                          mergedResults =
+                                                              await searchPostsInWidget(
+                                                            _model.dropDownValue ??
+                                                                '이 름',
+                                                            searchText,
+                                                          );
+                                                        } else {
+                                                          mergedResults =
+                                                              _mergeWithAdminPosts(
+                                                                  results);
+                                                        }
 
                                                         _model.isSearching =
                                                             searchText
                                                                 .isNotEmpty;
                                                         _model
-                                                            .currentSearchKeyword =
+                                                                .currentSearchKeyword =
                                                             searchText;
                                                         _model.currentSearchType =
                                                             _model.dropDownValue ??
                                                                 '이 름';
                                                         _model.prfoutput =
-                                                            results;
+                                                            mergedResults;
                                                         _model.profeesorName =
-                                                            results
+                                                            mergedResults
                                                                     .firstOrNull
                                                                     ?.name ??
                                                                 '교수 이름';
                                                         _updatePagination(
                                                             resetPage: true);
                                                         safeSetState(() {});
+
+                                                        if (_model.prfoutput
+                                                                ?.isEmpty ??
+                                                            true) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  '검색 결과가 없습니다.'),
+                                                            ),
+                                                          );
+                                                        }
                                                       } catch (e) {
                                                         ScaffoldMessenger.of(
                                                                 context)
                                                             .showSnackBar(
                                                           SnackBar(
                                                               content: Text(
-                                                                  '검색 실패: $e')),
+                                                                  '검색 중 오류가 발생했습니다: $e')),
                                                         );
                                                       }
                                                     },
@@ -2983,26 +3011,44 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                     final searchText =
                                         _model.textController2.text.trim();
 
-                                    final results = await searchPosts(
-                                      _model.dropDownValue ?? '이 름',
+                                    final results = await actions.searchPosts(
+                                      '이 름',
                                       searchText,
                                     );
+                                    List<PostsRow> mergedResults;
+                                    if (results.isEmpty) {
+                                      mergedResults =
+                                          await searchPostsInWidget(
+                                        '이 름',
+                                        searchText,
+                                      );
+                                    } else {
+                                      mergedResults =
+                                          _mergeWithAdminPosts(results);
+                                    }
 
                                     _model.isSearching = searchText.isNotEmpty;
                                     _model.currentSearchKeyword = searchText;
-                                    _model.currentSearchType =
-                                        _model.dropDownValue ?? '이 름';
-                                    _model.prfoutput = results;
-                                    _model.profeesorName = results
+                                    _model.currentSearchType = '이 름';
+                                    _model.prfoutput = mergedResults;
+                                    _model.profeesorName = mergedResults
                                             .firstOrNull
                                             ?.name ??
                                         '교수 이름';
                                     _updatePagination(resetPage: true);
                                     safeSetState(() {});
+
+                                    if (_model.prfoutput?.isEmpty ?? true) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('검색 결과가 없습니다.'),
+                                        ),
+                                      );
+                                    }
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content: Text('검색 실패: $e')),
+                                          content: Text('검색 중 오류가 발생했습니다: $e')),
                                     );
                                   }
                                 },
