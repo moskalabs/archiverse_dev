@@ -491,33 +491,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     _model = createModel(context, () => AdminAccountManageModel());
 
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      try {
-        _model.prfoutput = await PostsTable().queryRows(
-          queryFn: (q) => q.order('name', ascending: true),
-        );
-
-        _model.profeesorName =
-            _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
-
-        _model.classSelectedOnload = await ClassTable().queryRows(
-          queryFn: (q) => q,
-        );
-
-        _model.classOnload = _model.classSelectedOnload!
-            .where((e) => (e.year == _model.years) && (e.semester == _model.semester))
-            .toList()
-            .cast<ClassRow>();
-      } catch (e) {
-        print('초기화 에러: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('데이터 로드 실패: $e')),
-        );
-        _model.prfoutput = [];
-        _model.classOnload = [];
-      }
-
-      FFAppState().usertype = 0;
-      safeSetState(() {});
+      await _initializeData();
     });
 
     _model.textController1 ??= TextEditingController();
@@ -571,7 +545,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
-                        activePageName: 'AdminStudentId',
+                        activePageName: 'AdminManager',
                         pageIsInSubMenu: false,
                       ),
                     ),
