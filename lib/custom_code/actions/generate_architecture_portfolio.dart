@@ -17,6 +17,13 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
+const String _firstCoverPdfUrl =
+    'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/pdfdefault/PDF_cover_first.pdf';
+const String _indexPdfUrl =
+    'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/pdfdefault/02.PDF_INDEX.pdf';
+const String _lastCoverPdfUrl =
+    'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/pdfdefault/20.PDF_COVER_LAST.pdf';
+
 // 순천향대학교 건축설계9 포트폴리오 자동 병합 시스템
 // 2024년도 1학기 - SPC 11 연구기반 종합설계
 Future<void> generateArchitecturePortfolio() async {
@@ -99,8 +106,12 @@ Future<void> generateArchitecturePortfolio() async {
     final PdfDocument document = PdfDocument();
     document.pageSettings.margins.all = 0;
 
-    _createFirstCoverPage(document, courseData);
-    _createIndexPage(document, sections);
+    if (!await _mergeExternalPdf(document, _firstCoverPdfUrl)) {
+      _createFirstCoverPage(document, courseData);
+    }
+    if (!await _mergeExternalPdf(document, _indexPdfUrl)) {
+      _createIndexPage(document, sections);
+    }
     _createCoverPage(document, courseData);
     _createCourseOverviewPage(document, courseData);
     _createCourseHighlightsPage(document, courseData);
@@ -150,7 +161,9 @@ Future<void> generateArchitecturePortfolio() async {
       );
     }
 
-    _createLastCoverPage(document, courseData);
+    if (!await _mergeExternalPdf(document, _lastCoverPdfUrl)) {
+      _createLastCoverPage(document, courseData);
+    }
 
     final Uint8List bytes = Uint8List.fromList(await document.save());
     document.dispose();
@@ -1209,12 +1222,16 @@ void _createStudentDivider(
   _drawSALogo(graphics, page.size.width - 250, page.size.height - 250, 200);
 }
 
-Future<void> _mergeExternalPdf(PdfDocument targetDoc, String pdfUrl) async {
+Future<bool> _mergeExternalPdf(PdfDocument targetDoc, String pdfUrl) async {
   try {
     final http.Response response = await http.get(Uri.parse(pdfUrl));
-    if (response.statusCode == 200) {
-      final PdfDocument sourceDoc = PdfDocument(inputBytes: response.bodyBytes);
+    if (response.statusCode != 200) {
+      print('PDF 다운로드 실패: $pdfUrl (status: ${response.statusCode})');
+      return false;
+    }
 
+    final PdfDocument sourceDoc = PdfDocument(inputBytes: response.bodyBytes);
+    try {
       for (int i = 0; i < sourceDoc.pages.count; i++) {
         final PdfPage sourcePage = sourceDoc.pages[i];
         final PdfTemplate template = sourcePage.createTemplate();
@@ -1228,11 +1245,14 @@ Future<void> _mergeExternalPdf(PdfDocument targetDoc, String pdfUrl) async {
           ui.Offset.zero,
         );
       }
-
+    } finally {
       sourceDoc.dispose();
     }
+
+    return true;
   } catch (e) {
     print('PDF 병합 실패: $pdfUrl - $e');
+    return false;
   }
 }
 
