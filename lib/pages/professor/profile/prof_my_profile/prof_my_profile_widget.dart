@@ -2588,8 +2588,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                 ),
                                                                               ),
                                                                             ),
-                                                                            Flexible(
-                                                                              flex: 6,
+                                                                 Flexible(
+                                                                   flex: 3,
                                                                               child: Container(
                                                                                 width: double.infinity,
                                                                                 height: double.infinity,
@@ -4361,387 +4361,524 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                             child: Column(
                                                               mainAxisSize:
                                                                   MainAxisSize
-                                                                      .min,
+                                                                      .max,
                                                               children: [
-                                                                Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          7.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  child:
-                                                                      Container(
-                                                                    width: double
-                                                                        .infinity,
-                                                                    height:
-                                                                        40.0,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBackground,
-                                                                    ),
-                                                                    child:
-                                                                        Align(
-                                                                      alignment: AlignmentDirectional(
-                                                                          -1.0,
-                                                                          -1.0),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                                                            5.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
+                                                                Flexible(
+                                                                  flex: 4,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .stretch,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional
+                                                                            .fromSTEB(
+                                                                                0.0,
+                                                                                7.0,
+                                                                                0.0,
+                                                                                0.0),
                                                                         child:
-                                                                            Text(
-                                                                          FFLocalizations.of(context)
-                                                                              .getText(
-                                                                            'ib59489c' /* [학력 설정] */,
+                                                                            Container(
+                                                                          width:
+                                                                              double.infinity,
+                                                                          height:
+                                                                              40.0,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: FlutterFlowTheme.of(context)
+                                                                                .primaryBackground,
                                                                           ),
-                                                                          style: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .override(
-                                                                                font: GoogleFonts.openSans(
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                          child:
+                                                                              Align(
+                                                                            alignment:
+                                                                                AlignmentDirectional(-1.0, -1.0),
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                  5.0,
+                                                                                  0.0,
+                                                                                  0.0,
+                                                                                  0.0),
+                                                                              child:
+                                                                                  Text(
+                                                                                FFLocalizations.of(context)
+                                                                                    .getText(
+                                                                                  'ib59489c' /* [학력 설정] */,
                                                                                 ),
-                                                                                fontSize: () {
-                                                                                  if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                    return 10.0;
-                                                                                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                    return 12.0;
-                                                                                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                    return 18.0;
-                                                                                  } else {
-                                                                                    return 22.0;
-                                                                                  }
-                                                                                }(),
-                                                                                letterSpacing: 0.0,
-                                                                                fontWeight: FontWeight.w600,
-                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                style: FlutterFlowTheme.of(context)
+                                                                                    .bodyMedium
+                                                                                    .override(
+                                                                                      font: GoogleFonts.openSans(
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        fontStyle: FlutterFlowTheme.of(context)
+                                                                                            .bodyMedium
+                                                                                            .fontStyle,
+                                                                                      ),
+                                                                                      fontSize: () {
+                                                                                        if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointSmall) {
+                                                                                          return 10.0;
+                                                                                        } else if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointMedium) {
+                                                                                          return 12.0;
+                                                                                        } else if (MediaQuery.sizeOf(context).width <
+                                                                                            kBreakpointLarge) {
+                                                                                          return 18.0;
+                                                                                        } else {
+                                                                                          return 22.0;
+                                                                                        }
+                                                                                      }(),
+                                                                                      letterSpacing: 0.0,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      fontStyle: FlutterFlowTheme.of(context)
+                                                                                          .bodyMedium
+                                                                                          .fontStyle,
+                                                                                    ),
                                                                               ),
+                                                                            ),
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          0.0,
-                                                                          -1.0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            5.0,
-                                                                            0.0,
-                                                                            5.0,
-                                                                            0.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height: 250.0,
-                                                                      decoration:
-                                                                          BoxDecoration(),
-                                                                      child:
-                                                                          Builder(
-                                                                        builder:
-                                                                            (context) {
-                                                                          final recordCount =
-                                                                              _model.academicGetDateTextControllers.length;
+                                                                      Expanded(
+                                                                        child: Padding(
+                                                                          padding: EdgeInsetsDirectional
+                                                                              .fromSTEB(
+                                                                                  5.0,
+                                                                                  0.0,
+                                                                                  5.0,
+                                                                                  0.0),
+                                                                          child: Builder(
+                                                                              builder:
+                                                                                  (context) {
+                                                                            final recordCount =
+                                                                                _model.academicGetDateTextControllers
+                                                                                    .length;
 
-                                                                          return Column(
-                                                                            mainAxisSize: MainAxisSize.max,
+                                                                            return Column(
+                                                                              mainAxisSize:
+                                                                                  MainAxisSize
+                                                                                      .max,
+                                                                              children: [
+                                                                                _buildRecordHeaderRow(
+                                                                                  context,
+                                                                                  const [
+                                                                                    '취득일',
+                                                                                    '학교',
+                                                                                    '전공',
+                                                                                    '학위',
+                                                                                  ],
+                                                                                ),
+                                                                                SizedBox(height: 8.0),
+                                                                                Expanded(
+                                                                                  child:
+                                                                                      SingleChildScrollView(
+                                                                                    child:
+                                                                                        Column(
+                                                                                      mainAxisSize:
+                                                                                          MainAxisSize
+                                                                                              .min,
+                                                                                      children:
+                                                                                          List.generate(
+                                                                                        recordCount,
+                                                                                        (academicIndex) =>
+                                                                                            Padding(
+                                                                                              padding:
+                                                                                                  EdgeInsets.symmetric(
+                                                                                                vertical:
+                                                                                                    8.0,
+                                                                                              ),
+                                                                                              child:
+                                                                                                  Row(
+                                                                                                mainAxisSize:
+                                                                                                    MainAxisSize
+                                                                                                        .max,
+                                                                                                children:
+                                                                                                    [
+                                                                                                  Expanded(
+                                                                                                    child:
+                                                                                                        TextFormField(
+                                                                                                      controller:
+                                                                                                          _model.academicGetDateTextControllers[academicIndex],
+                                                                                                      focusNode:
+                                                                                                          _model.academicGetDateFocusNodes[academicIndex],
+                                                                                                      decoration:
+                                                                                                          _recordInputDecoration(
+                                                                                                        context,
+                                                                                                        'YYYY.MM',
+                                                                                                      ),
+                                                                                                      style:
+                                                                                                          _recordTextStyle(context),
+                                                                                                      onChanged:
+                                                                                                          (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                                      autofocus:
+                                                                                                          false,
+                                                                                                      obscureText:
+                                                                                                          false,
+                                                                                                      keyboardType:
+                                                                                                          TextInputType.datetime,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  SizedBox(width: 8.0),
+                                                                                                  Expanded(
+                                                                                                    child:
+                                                                                                        TextFormField(
+                                                                                                      controller:
+                                                                                                          _model.academicUniversityTextControllers[academicIndex],
+                                                                                                      focusNode:
+                                                                                                          _model.academicUniversityFocusNodes[academicIndex],
+                                                                                                      decoration:
+                                                                                                          _recordInputDecoration(
+                                                                                                        context,
+                                                                                                        'OO대학교',
+                                                                                                      ),
+                                                                                                      style:
+                                                                                                          _recordTextStyle(context),
+                                                                                                      onChanged:
+                                                                                                          (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                                      autofocus:
+                                                                                                          false,
+                                                                                                      obscureText:
+                                                                                                          false,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  SizedBox(width: 8.0),
+                                                                                                  Expanded(
+                                                                                                    child:
+                                                                                                        TextFormField(
+                                                                                                      controller:
+                                                                                                          _model.academicMajorTextControllers[academicIndex],
+                                                                                                      focusNode:
+                                                                                                          _model.academicMajorFocusNodes[academicIndex],
+                                                                                                      decoration:
+                                                                                                          _recordInputDecoration(
+                                                                                                        context,
+                                                                                                        '건축학과',
+                                                                                                      ),
+                                                                                                      style:
+                                                                                                          _recordTextStyle(context),
+                                                                                                      onChanged:
+                                                                                                          (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                                      autofocus:
+                                                                                                          false,
+                                                                                                      obscureText:
+                                                                                                          false,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  SizedBox(width: 8.0),
+                                                                                                  Expanded(
+                                                                                                    child:
+                                                                                                        TextFormField(
+                                                                                                      controller:
+                                                                                                          _model.academicDegreeTextControllers[academicIndex],
+                                                                                                      focusNode:
+                                                                                                          _model.academicDegreeFocusNodes[academicIndex],
+                                                                                                      decoration:
+                                                                                                          _recordInputDecoration(
+                                                                                                        context,
+                                                                                                        '학위',
+                                                                                                      ),
+                                                                                                      style:
+                                                                                                          _recordTextStyle(context),
+                                                                                                      onChanged:
+                                                                                                          (_) => _handleAcademicFieldChanged(academicIndex),
+                                                                                                      autofocus:
+                                                                                                          false,
+                                                                                                      obscureText:
+                                                                                                          false,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            25.0,
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: FlutterFlowTheme.of(context)
+                                                                                .primaryBackground,
+                                                                          ),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize
+                                                                                    .min,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment
+                                                                                    .start,
                                                                             children: [
-                                                                              _buildRecordHeaderRow(
-                                                                                context,
-                                                                                const [
-                                                                                  '취득일',
-                                                                                  '학교',
-                                                                                  '전공',
-                                                                                  '학위',
-                                                                                ],
-                                                                              ),
-                                                                              SizedBox(height: 8.0),
-                                                                              Expanded(
-                                                                                child: SingleChildScrollView(
-                                                                                  child: Column(
-                                                                                    mainAxisSize: MainAxisSize.min,
-                                                                                    children: List.generate(
-                                                                                      recordCount,
-                                                                                      (academicIndex) => Padding(
-                                                                                        padding: EdgeInsets.symmetric(
-                                                                                          vertical: 8.0,
-                                                                                        ),
-                                                                                        child: Row(
-                                                                                          mainAxisSize: MainAxisSize.max,
-                                                                                          children: [
-                                                                                            Expanded(
-                                                                                              child: TextFormField(
-                                                                                                controller: _model.academicGetDateTextControllers[academicIndex],
-                                                                                                focusNode: _model.academicGetDateFocusNodes[academicIndex],
-                                                                                                decoration: _recordInputDecoration(
-                                                                                                  context,
-                                                                                                  'YYYY.MM',
-                                                                                                ),
-                                                                                                style: _recordTextStyle(context),
-                                                                                                onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
-                                                                                                autofocus: false,
-                                                                                                obscureText: false,
-                                                                                                keyboardType: TextInputType.datetime,
-                                                                                              ),
+                                                                              if (_model
+                                                                                      .academicRecords
+                                                                                      .length <
+                                                                                  3)
+                                                                                Flexible(
+                                                                                  child:
+                                                                                      Align(
+                                                                                    alignment:
+                                                                                        AlignmentDirectional(-1.0, 0.0),
+                                                                                    child:
+                                                                                        Padding(
+                                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                          5.0,
+                                                                                          0.0,
+                                                                                          0.0,
+                                                                                          0.0),
+                                                                                      child:
+                                                                                          FFButtonWidget(
+                                                                                            onPressed: () async {
+                                                                                              if (_model.academicRecords.length <
+                                                                                                  3) {
+                                                                                                final newRecord = <String, dynamic>{
+                                                                                                  'getDate': '',
+                                                                                                  'university': '',
+                                                                                                  'major': '',
+                                                                                                  'degree': '',
+                                                                                                };
+                                                                                                FFAppState().addToMypageAcademicRecords(newRecord);
+                                                                                                _model.addToAcademicRecords(newRecord);
+                                                                                                _model.addAcademicRecordControllers(
+                                                                                                  getDate: '',
+                                                                                                  university: '',
+                                                                                                  major: '',
+                                                                                                  degree: '',
+                                                                                                );
+                                                                                                safeSetState(() {});
+                                                                                              }
+                                                                                            },
+                                                                                            text: FFLocalizations.of(context).getText(
+                                                                                              'wbc1rycr' /* 추가 + */,
                                                                                             ),
-                                                                                            SizedBox(width: 8.0),
-                                                                                            Expanded(
-                                                                                              child: TextFormField(
-                                                                                                controller: _model.academicUniversityTextControllers[academicIndex],
-                                                                                                focusNode: _model.academicUniversityFocusNodes[academicIndex],
-                                                                                                decoration: _recordInputDecoration(
-                                                                                                  context,
-                                                                                                  'OO대학교',
-                                                                                                ),
-                                                                                                style: _recordTextStyle(context),
-                                                                                                onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
-                                                                                                autofocus: false,
-                                                                                                obscureText: false,
-                                                                                              ),
+                                                                                            icon:
+                                                                                                Icon(
+                                                                                              Icons.add_to_photos_outlined,
+                                                                                              size: 15.0,
                                                                                             ),
-                                                                                            SizedBox(width: 8.0),
-                                                                                            Expanded(
-                                                                                              child: TextFormField(
-                                                                                                controller: _model.academicMajorTextControllers[academicIndex],
-                                                                                                focusNode: _model.academicMajorFocusNodes[academicIndex],
-                                                                                                decoration: _recordInputDecoration(
-                                                                                                  context,
-                                                                                                  '건축학과',
-                                                                                                ),
-                                                                                                style: _recordTextStyle(context),
-                                                                                                onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
-                                                                                                autofocus: false,
-                                                                                                obscureText: false,
-                                                                                              ),
+                                                                                            options:
+                                                                                                FFButtonOptions(
+                                                                                              height: () {
+                                                                                                if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointSmall) {
+                                                                                                  return 20.0;
+                                                                                                } else if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointMedium) {
+                                                                                                  return 25.0;
+                                                                                                } else if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointLarge) {
+                                                                                                  return 30.0;
+                                                                                                } else {
+                                                                                                  return 35.0;
+                                                                                                }
+                                                                                              }(),
+                                                                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                                  16.0,
+                                                                                                  0.0,
+                                                                                                  16.0,
+                                                                                                  0.0),
+                                                                                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                                                  0.0,
+                                                                                                  0.0,
+                                                                                                  0.0,
+                                                                                                  0.0),
+                                                                                              iconColor:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .primaryBackground,
+                                                                                              color: Color(0xFFA6B6C3),
+                                                                                              textStyle:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .titleSmall
+                                                                                                      .override(
+                                                                                                        font: GoogleFonts.openSans(
+                                                                                                          fontWeight:
+                                                                                                              FlutterFlowTheme.of(context)
+                                                                                                                  .titleSmall
+                                                                                                                  .fontWeight,
+                                                                                                          fontStyle:
+                                                                                                              FlutterFlowTheme.of(context)
+                                                                                                                  .titleSmall
+                                                                                                                  .fontStyle,
+                                                                                                        ),
+                                                                                                        color:
+                                                                                                            Colors.white,
+                                                                                                        fontSize: () {
+                                                                                                          if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointSmall) {
+                                                                                                            return 8.0;
+                                                                                                          } else if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointMedium) {
+                                                                                                            return 10.0;
+                                                                                                          } else if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointLarge) {
+                                                                                                            return 12.0;
+                                                                                                          } else {
+                                                                                                            return 16.0;
+                                                                                                          }
+                                                                                                        }(),
+                                                                                                        letterSpacing:
+                                                                                                            0.0,
+                                                                                                        fontWeight:
+                                                                                                            FlutterFlowTheme.of(context)
+                                                                                                                .titleSmall
+                                                                                                                .fontWeight,
+                                                                                                        fontStyle:
+                                                                                                            FlutterFlowTheme.of(context)
+                                                                                                                .titleSmall
+                                                                                                                .fontStyle,
+                                                                                                      ),
+                                                                                              elevation: 0.0,
+                                                                                              borderRadius:
+                                                                                                  BorderRadius.circular(8.0),
                                                                                             ),
-                                                                                            SizedBox(width: 8.0),
-                                                                                            Expanded(
-                                                                                              child: TextFormField(
-                                                                                                controller: _model.academicDegreeTextControllers[academicIndex],
-                                                                                                focusNode: _model.academicDegreeFocusNodes[academicIndex],
-                                                                                                decoration: _recordInputDecoration(
-                                                                                                  context,
-                                                                                                  '학위',
-                                                                                                ),
-                                                                                                style: _recordTextStyle(context),
-                                                                                                onChanged: (_) => _handleAcademicFieldChanged(academicIndex),
-                                                                                                autofocus: false,
-                                                                                                obscureText: false,
-                                                                                              ),
-                                                                                            ),
-                                                                                          ],
+                                                                                          ),
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
+                                                                              if (_model
+                                                                                      .academicRecords
+                                                                                      .length >
+                                                                                  1)
+                                                                                Flexible(
+                                                                                  child:
+                                                                                      Align(
+                                                                                    alignment:
+                                                                                        AlignmentDirectional(1.0, 0.0),
+                                                                                    child:
+                                                                                        Padding(
+                                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                          0.0,
+                                                                                          0.0,
+                                                                                          5.0,
+                                                                                          0.0),
+                                                                                      child:
+                                                                                          FFButtonWidget(
+                                                                                            onPressed: () async {
+                                                                                              if (_model.academicRecords.length >
+                                                                                                  1) {
+                                                                                                final removeIndex =
+                                                                                                    _model.academicRecords.length - 1;
+                                                                                                FFAppState().removeAtIndexFromMypageAcademicRecords(removeIndex);
+                                                                                                if (_model.academicRecords.length >
+                                                                                                    removeIndex) {
+                                                                                                  _model.removeAtIndexFromAcademicRecords(removeIndex);
+                                                                                                }
+                                                                                                if (_model.academicGetDateTextControllers.length >
+                                                                                                    removeIndex) {
+                                                                                                  _model.removeAcademicRecordControllers(removeIndex);
+                                                                                                }
+                                                                                                safeSetState(() {});
+                                                                                              }
+                                                                                            },
+                                                                                            text: FFLocalizations.of(context).getText(
+                                                                                              'adyemods' /* 삭제 - */,
+                                                                                            ),
+                                                                                            icon:
+                                                                                                Icon(
+                                                                                              Icons.delete_forever,
+                                                                                              size: 15.0,
+                                                                                            ),
+                                                                                            options:
+                                                                                                FFButtonOptions(
+                                                                                              height: () {
+                                                                                                if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointSmall) {
+                                                                                                  return 20.0;
+                                                                                                } else if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointMedium) {
+                                                                                                  return 25.0;
+                                                                                                } else if (MediaQuery.sizeOf(context).width <
+                                                                                                    kBreakpointLarge) {
+                                                                                                  return 30.0;
+                                                                                                } else {
+                                                                                                  return 35.0;
+                                                                                                }
+                                                                                              }(),
+                                                                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                                  16.0,
+                                                                                                  0.0,
+                                                                                                  16.0,
+                                                                                                  0.0),
+                                                                                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                                                  0.0,
+                                                                                                  0.0,
+                                                                                                  0.0,
+                                                                                                  0.0),
+                                                                                              iconColor:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .primaryBackground,
+                                                                                              color: FlutterFlowTheme.of(context)
+                                                                                                  .secondaryText,
+                                                                                              textStyle:
+                                                                                                  FlutterFlowTheme.of(context)
+                                                                                                      .titleSmall
+                                                                                                      .override(
+                                                                                                        font: GoogleFonts.openSans(
+                                                                                                          fontWeight:
+                                                                                                              FlutterFlowTheme.of(context)
+                                                                                                                  .titleSmall
+                                                                                                                  .fontWeight,
+                                                                                                          fontStyle:
+                                                                                                              FlutterFlowTheme.of(context)
+                                                                                                                  .titleSmall
+                                                                                                                  .fontStyle,
+                                                                                                        ),
+                                                                                                        color:
+                                                                                                            Colors.white,
+                                                                                                        fontSize: () {
+                                                                                                          if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointSmall) {
+                                                                                                            return 8.0;
+                                                                                                          } else if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointMedium) {
+                                                                                                            return 10.0;
+                                                                                                          } else if (MediaQuery.sizeOf(context).width <
+                                                                                                              kBreakpointLarge) {
+                                                                                                            return 12.0;
+                                                                                                          } else {
+                                                                                                            return 16.0;
+                                                                                                          }
+                                                                                                        }(),
+                                                                                                        letterSpacing:
+                                                                                                            0.0,
+                                                                                                        fontWeight:
+                                                                                                            FlutterFlowTheme.of(context)
+                                                                                                                .titleSmall
+                                                                                                                .fontWeight,
+                                                                                                        fontStyle:
+                                                                                                            FlutterFlowTheme.of(context)
+                                                                                                                .titleSmall
+                                                                                                                .fontStyle,
+                                                                                                      ),
+                                                                                              elevation: 0.0,
+                                                                                              borderRadius:
+                                                                                                  BorderRadius.circular(8.0),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
                                                                             ],
-                                                                          );
-                                                                        },
+                                                                          ),
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 25.0,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBackground,
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      if (_model
-                                                                              .academicRecords
-                                                                              .length <
-                                                                          3)
-                                                                        Flexible(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                AlignmentDirectional(-1.0, 0.0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
-                                                                              child: FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  if (_model.academicRecords.length <
-                                                                                      3) {
-                                                                                    final newRecord = <String, dynamic>{
-                                                                                      'getDate': '',
-                                                                                      'university': '',
-                                                                                      'major': '',
-                                                                                      'degree': '',
-                                                                                    };
-                                                                                    FFAppState().addToMypageAcademicRecords(newRecord);
-                                                                                    _model.addToAcademicRecords(newRecord);
-                                                                                    _model.addAcademicRecordControllers(
-                                                                                      getDate: '',
-                                                                                      university: '',
-                                                                                      major: '',
-                                                                                      degree: '',
-                                                                                    );
-                                                                                    safeSetState(() {});
-                                                                                  }
-                                                                                },
-                                                                                text: FFLocalizations.of(context).getText(
-                                                                                  'wbc1rycr' /* 추가 + */,
-                                                                                ),
-                                                                                icon: Icon(
-                                                                                  Icons.add_to_photos_outlined,
-                                                                                  size: 15.0,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  height: () {
-                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                      return 20.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                      return 25.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                      return 30.0;
-                                                                                    } else {
-                                                                                      return 35.0;
-                                                                                    }
-                                                                                  }(),
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                  iconColor: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                  color: Color(0xFFA6B6C3),
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                        ),
-                                                                                        color: Colors.white,
-                                                                                        fontSize: () {
-                                                                                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 8.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                            return 10.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 12.0;
-                                                                                          } else {
-                                                                                            return 16.0;
-                                                                                          }
-                                                                                        }(),
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                      ),
-                                                                                  elevation: 0.0,
-                                                                                  borderRadius: BorderRadius.circular(8.0),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      if (_model
-                                                                              .academicRecords
-                                                                              .length >
-                                                                          1)
-                                                                        Flexible(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                AlignmentDirectional(1.0, 0.0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
-                                                                              child: FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  if (_model.academicRecords.length >
-                                                                                      1) {
-                                                                                    final removeIndex =
-                                                                                        _model.academicRecords.length - 1;
-                                                                                    FFAppState().removeAtIndexFromMypageAcademicRecords(removeIndex);
-                                                                                    if (_model.academicRecords.length > removeIndex) {
-                                                                                      _model.removeAtIndexFromAcademicRecords(removeIndex);
-                                                                                    }
-                                                                                    if (_model.academicGetDateTextControllers.length > removeIndex) {
-                                                                                      _model.removeAcademicRecordControllers(removeIndex);
-                                                                                    }
-                                                                                    safeSetState(() {});
-                                                                                  }
-                                                                                },
-                                                                                text: FFLocalizations.of(context).getText(
-                                                                                  'adyemods' /* 삭제 - */,
-                                                                                ),
-                                                                                icon: Icon(
-                                                                                  Icons.delete_forever,
-                                                                                  size: 15.0,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  height: () {
-                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                      return 20.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                      return 25.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                      return 30.0;
-                                                                                    } else {
-                                                                                      return 35.0;
-                                                                                    }
-                                                                                  }(),
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                  iconColor: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                        ),
-                                                                                        color: Colors.white,
-                                                                                        fontSize: () {
-                                                                                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 8.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                            return 10.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 12.0;
-                                                                                          } else {
-                                                                                            return 16.0;
-                                                                                          }
-                                                                                        }(),
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                      ),
-                                                                                  elevation: 0.0,
-                                                                                  borderSide: BorderSide(
-                                                                                    color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                  ),
-                                                                                  borderRadius: BorderRadius.circular(8.0),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                Padding(
+                                                                Flexible(
+                                                                  flex: 4,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment.stretch,
+                                                                    children: [
+                                                                      Padding(
                                                                   padding: EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                           0.0,
@@ -4805,34 +4942,21 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                Align(
-                                                                  alignment:
-                                                                      AlignmentDirectional(
-                                                                          0.0,
-                                                                          -1.0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            5.0,
-                                                                            0.0,
-                                                                            5.0,
-                                                                            0.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height: 300.0,
-                                                                      decoration:
-                                                                          BoxDecoration(),
-                                                                      child:
-                                                                          Builder(
-                                                                        builder:
-                                                                            (context) {
-                                                                          final recordCount =
-                                                                              _model.teachingPeriodTextControllers.length;
+                                                                 Expanded(
+                                                                   child: Padding(
+                                                                     padding: EdgeInsetsDirectional
+                                                                         .fromSTEB(
+                                                                             5.0,
+                                                                             0.0,
+                                                                             5.0,
+                                                                             0.0),
+                                                                     child: Builder(
+                                                                         builder:
+                                                                             (context) {
+                                                                              final recordCount =
+                                                                                  _model.teachingPeriodTextControllers.length;
 
-                                                                          return Column(
+                                                                              return Column(
                                                                             mainAxisSize: MainAxisSize.max,
                                                                             children: [
                                                                               _buildRecordHeaderRow(
@@ -4926,22 +5050,23 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               ),
                                                                             ],
                                                                           );
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 25.0,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBackground,
-                                                                  ),
-                                                                  child: Row(
+                                                                         },
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 ),
+                                                                 SizedBox(
+                                                                   height: 25.0,
+                                                                   child: Container(
+                                                                     width: double
+                                                                         .infinity,
+                                                                     decoration:
+                                                                         BoxDecoration(
+                                                                       color: FlutterFlowTheme.of(
+                                                                               context)
+                                                                           .primaryBackground,
+                                                                     ),
+                                                                     child: Row(
                                                                     mainAxisSize:
                                                                         MainAxisSize
                                                                             .min,
@@ -5028,8 +5153,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                       ),
                                                                                   elevation: 0.0,
                                                                                   borderRadius: BorderRadius.circular(8.0),
-                                                                                ),
-                                                                              ),
+                                                                   ),
+                                                                 ),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -5187,7 +5312,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                   ),
                                                                 ),
                                                                 Flexible(
-                                                                  flex: 6,
+                                                                  flex: 3,
                                                                   child:
                                                                       Padding(
                                                                     padding: EdgeInsetsDirectional
@@ -5211,11 +5336,11 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         ),
                                                                         child:
                                                                             Column(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            Flexible(
-                                                                              child: Container(
+                                                                              mainAxisSize:
+                                                                                  MainAxisSize.max,
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Container(
                                                                                 width: double.infinity,
                                                                                 child: TextFormField(
                                                                                   controller: _model.projectTextFieldTextController,
