@@ -1461,6 +1461,12 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                       decoration:
                                                           InputDecoration(
                                                         isDense: true,
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 12.0,
+                                                          vertical: 10.0,
+                                                        ),
                                                         labelStyle:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -1683,11 +1689,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                         );
                                                       }
                                                     },
-                                                    text: FFLocalizations.of(
-                                                            context)
-                                                        .getText(
-                                                      'o13eae5a' /* 학생 검색 */,
-                                                    ),
+                                                    text: '관리자 계정 검색',
                                                     options: FFButtonOptions(
                                                       height: 40.0,
                                                       padding:
@@ -2823,6 +2825,11 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     isDense: true,
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical: 10.0,
+                                    ),
                                     labelStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -2991,9 +2998,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                     );
                                   }
                                 },
-                                text: FFLocalizations.of(context).getText(
-                                  'byp1bfcg' /* 교수 검색 */,
-                                ),
+                                  text: '관리자 계정 검색',
                                 options: FFButtonOptions(
                                   height: 30.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(

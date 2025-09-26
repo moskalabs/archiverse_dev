@@ -30,6 +30,7 @@ class AccountManageRowMobileWidget extends StatefulWidget {
 class _AccountManageRowMobileWidgetState
     extends State<AccountManageRowMobileWidget> {
   late AccountManageRowMobileModel _model;
+  bool _hasInitializedLocalizedValues = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -41,12 +42,6 @@ class _AccountManageRowMobileWidgetState
   void initState() {
     super.initState();
     _model = createModel(context, () => AccountManageRowMobileModel());
-    _initializeControllers();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
-  }
-
-  void _initializeControllers() {
     _model.nameTextController ??=
         TextEditingController(text: widget.post.name ?? '');
     _model.phoneTextController ??=
@@ -54,11 +49,22 @@ class _AccountManageRowMobileWidgetState
     _model.dropDownValue1 = widget.post.position ?? '';
     _model.dropDownValueController1 =
         FormFieldController<String>(_model.dropDownValue1);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasInitializedLocalizedValues) {
+      return;
+    }
     final permissionLabel =
         _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
     _model.dropDownValue2 = permissionLabel;
     _model.dropDownValueController2 =
-        FormFieldController<String>(_model.dropDownValue2);
+        FormFieldController<String>(permissionLabel);
+    _hasInitializedLocalizedValues = true;
   }
 
   @override
@@ -73,6 +79,7 @@ class _AccountManageRowMobileWidgetState
           _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
       _model.dropDownValue2 = permissionLabel;
       _model.dropDownValueController2?.value = permissionLabel;
+      _hasInitializedLocalizedValues = true;
     }
   }
 
@@ -199,19 +206,23 @@ class _AccountManageRowMobileWidgetState
     return InkWell(
       onTap: _model.isEditing ? null : widget.onSelected,
       child: Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 10.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(10.0, 8.0, 10.0, 8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 1,
-                  child: Container(
-                    alignment: const AlignmentDirectional(0.0, 0.0),
-                    child: _model.isEditing
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        6.0, 0.0, 6.0, 0.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: _model.isEditing
                         ? TextFormField(
                             controller: _model.nameTextController,
                             focusNode: _model.nameFocusNode,
@@ -225,13 +236,17 @@ class _AccountManageRowMobileWidgetState
                             widget.post.name ?? '-',
                             style: textStyle,
                           ),
+                    ),
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: Container(
-                    alignment: const AlignmentDirectional(0.0, 0.0),
-                    child: _model.isEditing
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        6.0, 0.0, 6.0, 0.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: _model.isEditing
                         ? FlutterFlowDropDown<String>(
                             controller: _model.dropDownValueController1 ??=
                                 FormFieldController<String>(
@@ -240,6 +255,7 @@ class _AccountManageRowMobileWidgetState
                             options: positionOptions,
                             onChanged: (val) =>
                                 safeSetState(() => _model.dropDownValue1 = val),
+                            width: double.infinity,
                             height: 40.0,
                             textStyle: FlutterFlowTheme.of(context)
                                 .bodyMedium
@@ -275,7 +291,7 @@ class _AccountManageRowMobileWidgetState
                             borderWidth: 0.0,
                             borderRadius: 8.0,
                             margin: const EdgeInsetsDirectional.fromSTEB(
-                                12.0, 0.0, 12.0, 0.0),
+                                6.0, 0.0, 6.0, 0.0),
                             hidesUnderline: true,
                             isOverButton: false,
                             isSearchable: false,
@@ -287,13 +303,17 @@ class _AccountManageRowMobileWidgetState
                                     .getText('z343ki7l'),
                             style: textStyle,
                           ),
+                    ),
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: Container(
-                    alignment: const AlignmentDirectional(0.0, 0.0),
-                    child: _model.isEditing
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        6.0, 0.0, 6.0, 0.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: _model.isEditing
                         ? FlutterFlowDropDown<String>(
                             controller: _model.dropDownValueController2 ??=
                                 FormFieldController<String>(
@@ -304,6 +324,7 @@ class _AccountManageRowMobileWidgetState
                             options: permissionOptions,
                             onChanged: (val) =>
                                 safeSetState(() => _model.dropDownValue2 = val),
+                            width: double.infinity,
                             height: 40.0,
                             textStyle: FlutterFlowTheme.of(context)
                                 .bodyMedium
@@ -339,7 +360,7 @@ class _AccountManageRowMobileWidgetState
                             borderWidth: 0.0,
                             borderRadius: 8.0,
                             margin: const EdgeInsetsDirectional.fromSTEB(
-                                12.0, 0.0, 12.0, 0.0),
+                                6.0, 0.0, 6.0, 0.0),
                             hidesUnderline: true,
                             isOverButton: false,
                             isSearchable: false,
@@ -350,33 +371,48 @@ class _AccountManageRowMobileWidgetState
                                 widget.post.permissionLevel ?? 1),
                             style: textStyle,
                           ),
+                    ),
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: Container(
-                    alignment: const AlignmentDirectional(0.0, 0.0),
-                    child: FFButtonWidget(
-                      onPressed: _handleButtonPressed,
-                      text: _model.isSaving
-                          ? '저장중'
-                          : (_model.isEditing
-                              ? '완료'
-                              : FFLocalizations.of(context)
-                                  .getText('ndcle0l5' /* 수정 */)),
-                      options: FFButtonOptions(
-                        width: 75.0,
-                        height: 30.0,
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            16.0, 0.0, 16.0, 0.0),
-                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                            0.0, 0.0, 0.0, 0.0),
-                        color: _model.isEditing
-                            ? FlutterFlowTheme.of(context).mainColor1
-                            : Colors.white,
-                        textStyle:
-                            FlutterFlowTheme.of(context).titleSmall.override(
-                                  font: GoogleFonts.openSans(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        6.0, 0.0, 6.0, 0.0),
+                    child: SizedBox(
+                      height: 34.0,
+                      child: FFButtonWidget(
+                        onPressed: _handleButtonPressed,
+                        text: _model.isSaving
+                            ? '저장중'
+                            : (_model.isEditing
+                                ? '완료'
+                                : FFLocalizations.of(context)
+                                    .getText('ndcle0l5' /* 수정 */)),
+                        options: FFButtonOptions(
+                          width: double.infinity,
+                          height: 34.0,
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              12.0, 0.0, 12.0, 0.0),
+                          iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                              0.0, 0.0, 0.0, 0.0),
+                          color: _model.isEditing
+                              ? FlutterFlowTheme.of(context).mainColor1
+                              : Colors.white,
+                          textStyle:
+                              FlutterFlowTheme.of(context).titleSmall.override(
+                                    font: GoogleFonts.openSans(
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontWeight,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontStyle,
+                                    ),
+                                    color: _model.isEditing
+                                        ? Colors.white
+                                        : const Color(0xFF666666),
+                                    letterSpacing: 0.0,
                                     fontWeight: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .fontWeight,
@@ -384,23 +420,13 @@ class _AccountManageRowMobileWidgetState
                                         .titleSmall
                                         .fontStyle,
                                   ),
-                                  color: _model.isEditing
-                                      ? Colors.white
-                                      : const Color(0xFF666666),
-                                  letterSpacing: 0.0,
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontStyle,
-                                ),
-                        elevation: 0.0,
-                        borderSide: const BorderSide(
-                          color: Color(0xFF666666),
-                          width: 0.5,
+                          elevation: 0.0,
+                          borderSide: const BorderSide(
+                            color: Color(0xFF666666),
+                            width: 0.5,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
-                        borderRadius: BorderRadius.circular(5.0),
                       ),
                     ),
                   ),
