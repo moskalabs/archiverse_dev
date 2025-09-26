@@ -53,23 +53,47 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
   }
 
   Future<List<PostsRow>> searchPosts(String? searchType, String? searchText) async {
-    if (searchText == null || searchText.isEmpty) {
-      return await PostsTable().queryRows(
-        queryFn: (q) => q.order('name', ascending: true),
-      );
-    }
+    final keyword = searchText?.trim() ?? '';
 
-    final allRows = await PostsTable().queryRows(
-      queryFn: (q) => q.order('name', ascending: true),
+    final posts = await PostsTable().queryRows(
+      queryFn: (q) {
+        var query = q.order('name', ascending: true);
+        if (keyword.isNotEmpty) {
+          query = query.ilike('name', '%$keyword%');
+        }
+        return query;
+      },
     );
 
-    return allRows.where((row) {
-      if (searchType == '이 름') {
-        return row.name?.toLowerCase().contains(searchText.toLowerCase()) ?? false;
-      } else {
-        return row.phone?.contains(searchText) ?? false;
-      }
-    }).toList();
+    final adminRows = await AdminPostTable().queryRows(
+      queryFn: (q) => q.order('adminId', ascending: true),
+    );
+    _model.adminPostRows = adminRows;
+
+    final merged = _mergeWithAdminPosts(posts, adminRows: adminRows);
+    if (keyword.isEmpty) {
+      return merged;
+    }
+    final lowerKeyword = keyword.toLowerCase();
+    return merged
+        .where((row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
+        .toList();
+  }
+
+  String _userTypeLabel(int? userType) {
+    switch (userType) {
+      case 0:
+        return '마스터';
+      case 1:
+        return '전임';
+      case 2:
+        return '겸임';
+      case 4:
+        return '조교';
+      case 3:
+      default:
+        return '일반';
+    }
   }
 
   Future<void> _initializeData() async {
@@ -98,9 +122,12 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
         queryFn: (q) => q.order('adminId', ascending: true),
       );
       _model.adminPostRows = adminRows;
-      _model.basePosts = posts
-          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
-          .toList();
+      _model.basePosts = posts.map((row) {
+        final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+        cloned.userType = cloned.userType ?? 3;
+        cloned.position = _userTypeLabel(cloned.userType);
+        return cloned;
+      }).toList();
       final merged = _mergeWithAdminPosts(_model.basePosts);
       if (resetSearch) {
         _model.isSearching = false;
@@ -171,28 +198,29 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       return List<PostsRow>.from(source);
     }
     final keyword = _model.currentSearchKeyword;
-    final searchType = _model.currentSearchType ?? '이 름';
-    return source.where((row) {
-      if (searchType == '이 름') {
-        return (row.name ?? '').toLowerCase().contains(keyword.toLowerCase());
-      }
-      final phoneValue = row.phone ?? '';
-      return phoneValue.contains(keyword);
-    }).toList();
+    final lowerKeyword = keyword.toLowerCase();
+    return source
+        .where(
+            (row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
+        .toList();
   }
 
-  List<PostsRow> _mergeWithAdminPosts(List<PostsRow> source) {
+  List<PostsRow> _mergeWithAdminPosts(List<PostsRow> source,
+      {List<AdminPostRow>? adminRows}) {
     if (source.isEmpty) {
       return [];
     }
-    final adminRows = _model.adminPostRows;
-    if (adminRows.isEmpty) {
-      return source
-          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
-          .toList();
+    final effectiveAdminRows = adminRows ?? _model.adminPostRows;
+    if (effectiveAdminRows.isEmpty) {
+      return source.map((row) {
+        final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+        cloned.userType = cloned.userType ?? 3;
+        cloned.position = _userTypeLabel(cloned.userType);
+        return cloned;
+      }).toList();
     }
     final adminMap = {
-      for (final admin in adminRows)
+      for (final admin in effectiveAdminRows)
         admin.adminId.toLowerCase(): admin,
     };
     return source.map((row) {
@@ -213,6 +241,8 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
           cloned.userType = adminUserType;
         }
       }
+      cloned.userType = cloned.userType ?? 3;
+      cloned.position = _userTypeLabel(cloned.userType);
       return cloned;
     }).toList();
   }
@@ -352,12 +382,8 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
   }
 
   String? _validateSearchInput(String? value) {
-    final searchType = _model.dropDownValue ?? '이 름';
     if (value == null || value.trim().isEmpty) {
       return '검색어를 입력해주세요';
-    }
-    if (searchType == '학 번' && int.tryParse(value.trim()) == null) {
-      return '올바른 학번 형식이 아닙니다';
     }
     return null;
   }
@@ -1367,11 +1393,6 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                 context)
                                                             .getText(
                                                           'n15kxnyz' /* 이 름 */,
-                                                        ),
-                                                        FFLocalizations.of(
-                                                                context)
-                                                            .getText(
-                                                          'dyvx85vc' /* 학 번 */,
                                                         )
                                                       ],
                                                       onChanged: (val) {
@@ -1652,28 +1673,27 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                 .text
                                                                 .trim();
 
-                                                        if (searchText.isEmpty) {
-                                                          _model.prfoutput =
-                                                              await PostsTable()
-                                                                  .queryRows(
-                                                            queryFn: (q) => q
-                                                                .order('name',
-                                                                    ascending:
-                                                                        true),
-                                                          );
-                                                        } else {
-                                                          _model.prfoutput =
-                                                              await searchPosts(
-                                                            _model.dropDownValue ??
-                                                                '이 름',
-                                                            searchText,
-                                                          );
-                                                        }
+                                                        final results =
+                                                            await searchPosts(
+                                                          _model.dropDownValue ??
+                                                              '이 름',
+                                                          searchText,
+                                                        );
 
+                                                        _model.isSearching =
+                                                            searchText
+                                                                .isNotEmpty;
+                                                        _model
+                                                            .currentSearchKeyword =
+                                                            searchText;
+                                                        _model.currentSearchType =
+                                                            _model.dropDownValue ??
+                                                                '이 름';
+                                                        _model.prfoutput =
+                                                            results;
                                                         _model.profeesorName =
-                                                            _model
-                                                                    .prfoutput
-                                                                    ?.firstOrNull
+                                                            results
+                                                                    .firstOrNull
                                                                     ?.name ??
                                                                 '교수 이름';
                                                         _updatePagination(
@@ -2963,32 +2983,20 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                     final searchText =
                                         _model.textController2.text.trim();
 
-                                    if (searchText.isEmpty) {
-                                      _model.prfoutput =
-                                          await PostsTable().queryRows(
-                                        queryFn: (q) =>
-                                            q.order('name', ascending: true),
-                                      );
-                                    } else {
-                                      final allData =
-                                          await PostsTable().queryRows(
-                                        queryFn: (q) =>
-                                            q.order('name', ascending: true),
-                                      );
+                                    final results = await searchPosts(
+                                      _model.dropDownValue ?? '이 름',
+                                      searchText,
+                                    );
 
-                                      _model.prfoutput = allData.where((item) {
-                                        final searchLower =
-                                            searchText.toLowerCase();
-                                        return item.name
-                                                ?.toLowerCase()
-                                                .contains(searchLower) ??
-                                            false;
-                                      }).toList();
-                                    }
-
-                                    _model.profeesorName =
-                                        _model.prfoutput?.firstOrNull?.name ??
-                                            '교수 이름';
+                                    _model.isSearching = searchText.isNotEmpty;
+                                    _model.currentSearchKeyword = searchText;
+                                    _model.currentSearchType =
+                                        _model.dropDownValue ?? '이 름';
+                                    _model.prfoutput = results;
+                                    _model.profeesorName = results
+                                            .firstOrNull
+                                            ?.name ??
+                                        '교수 이름';
                                     _updatePagination(resetPage: true);
                                     safeSetState(() {});
                                   } catch (e) {

@@ -15,42 +15,26 @@ Future<List<PostsRow>> searchPosts(
 ) async {
   final normalizedSearch = searchText?.trim() ?? '';
 
-  if (normalizedSearch.isEmpty) {
-    final posts = await PostsTable().queryRows(
-      queryFn: (q) => q.order('name', ascending: true),
-    );
-    final adminRows = await AdminPostTable().queryRows(
-      queryFn: (q) => q.order('adminId', ascending: true),
-    );
-    return _mergeAdminRows(posts, adminRows);
-  }
-
-  final supabase = SupaFlow.client;
-
-  final type = searchType ?? '이 름';
-
-  final response = type == '이 름'
-      ? await supabase
-          .from('posts')
-          .select()
-          .textSearch('name', normalizedSearch)
-      : await supabase
-          .from('posts')
-          .select()
-          .eq('phone', normalizedSearch);
-
-  if (response is! List) {
-    return [];
-  }
-
-  final posts = response
-      .whereType<Map<String, dynamic>>()
-      .map((e) => PostsRow(Map<String, dynamic>.from(e)))
-      .toList();
+  final posts = await PostsTable().queryRows(
+    queryFn: (q) {
+      var query = q.order('name', ascending: true);
+      if (normalizedSearch.isNotEmpty) {
+        query = query.ilike('name', '%$normalizedSearch%');
+      }
+      return query;
+    },
+  );
   final adminRows = await AdminPostTable().queryRows(
     queryFn: (q) => q.order('adminId', ascending: true),
   );
-  return _mergeAdminRows(posts, adminRows);
+  final merged = _mergeAdminRows(posts, adminRows);
+  if (normalizedSearch.isEmpty) {
+    return merged;
+  }
+  final lowerKeyword = normalizedSearch.toLowerCase();
+  return merged
+      .where((row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
+      .toList();
 }
 
 List<PostsRow> _mergeAdminRows(
@@ -61,15 +45,13 @@ List<PostsRow> _mergeAdminRows(
     return [];
   }
   if (adminRows.isEmpty) {
-    return posts
-        .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
-        .toList();
+    return posts.map(_cloneWithDefaults).toList();
   }
   final adminMap = {
     for (final admin in adminRows) admin.adminId.toLowerCase(): admin,
   };
   final merged = posts.map((row) {
-    final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+    final cloned = _cloneWithDefaults(row);
     final emailKey = (cloned.email ?? '').toLowerCase();
     final admin = adminMap[emailKey];
     if (admin != null) {
@@ -86,12 +68,21 @@ List<PostsRow> _mergeAdminRows(
         cloned.userType = userType;
       }
     }
+    cloned.userType = cloned.userType ?? 3;
+    cloned.position = _userTypeLabel(cloned.userType);
     return cloned;
   }).toList();
   merged.sort(
     (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
   );
   return merged;
+}
+
+PostsRow _cloneWithDefaults(PostsRow row) {
+  final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+  cloned.userType = cloned.userType ?? 3;
+  cloned.position = _userTypeLabel(cloned.userType);
+  return cloned;
 }
 
 int _permissionFromRole(String role) {
@@ -102,4 +93,20 @@ int _permissionFromRole(String role) {
     return 2;
   }
   return 1;
+}
+
+String _userTypeLabel(int? userType) {
+  switch (userType) {
+    case 0:
+      return '마스터';
+    case 1:
+      return '전임';
+    case 2:
+      return '겸임';
+    case 4:
+      return '조교';
+    case 3:
+    default:
+      return '일반';
+  }
 }

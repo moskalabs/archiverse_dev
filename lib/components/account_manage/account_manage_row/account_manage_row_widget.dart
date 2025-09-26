@@ -44,9 +44,10 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
         TextEditingController(text: widget.post.name ?? '');
     _model.phoneTextController ??=
         TextEditingController(text: widget.post.phone ?? '');
-    _model.dropDownValue1 = widget.post.position ?? '';
+    final initialUserTypeLabel = _userTypeLabel(widget.post.userType);
+    _model.dropDownValue1 = initialUserTypeLabel;
     _model.dropDownValueController1 =
-        FormFieldController<String>(_model.dropDownValue1);
+        FormFieldController<String>(initialUserTypeLabel);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -71,8 +72,9 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
     if (!_model.isEditing) {
       _model.nameTextController?.text = widget.post.name ?? '';
       _model.phoneTextController?.text = widget.post.phone ?? '';
-      _model.dropDownValue1 = widget.post.position ?? '';
-      _model.dropDownValueController1?.value = _model.dropDownValue1;
+      final userTypeLabel = _userTypeLabel(widget.post.userType);
+      _model.dropDownValue1 = userTypeLabel;
+      _model.dropDownValueController1?.value = userTypeLabel;
       final permissionLabel =
           _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
       _model.dropDownValue2 = permissionLabel;
@@ -87,6 +89,38 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
         : FFLocalizations.of(context).getText('1pk19gyt' /* 멤버 */);
   }
 
+  String _userTypeLabel(int? userType) {
+    switch (userType) {
+      case 0:
+        return '마스터';
+      case 1:
+        return '전임';
+      case 2:
+        return '겸임';
+      case 4:
+        return '조교';
+      case 3:
+      default:
+        return '일반';
+    }
+  }
+
+  int _userTypeValueFromLabel(String? label) {
+    switch (label) {
+      case '마스터':
+        return 0;
+      case '전임':
+        return 1;
+      case '겸임':
+        return 2;
+      case '조교':
+        return 4;
+      case '일반':
+      default:
+        return 3;
+    }
+  }
+
   int _permissionLevelFromLabel(String label) {
     final masterLabel = FFLocalizations.of(context).getText('cvxeomw7');
     return label == masterLabel ? 2 : 1;
@@ -96,8 +130,9 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
     _model.isEditing = true;
     _model.nameTextController?.text = widget.post.name ?? '';
     _model.phoneTextController?.text = widget.post.phone ?? '';
-    _model.dropDownValue1 = widget.post.position ?? '';
-    _model.dropDownValueController1?.value = _model.dropDownValue1;
+    final userTypeLabel = _userTypeLabel(widget.post.userType);
+    _model.dropDownValue1 = userTypeLabel;
+    _model.dropDownValueController1?.value = userTypeLabel;
     final permissionLabel =
         _permissionLabelFromLevel(widget.post.permissionLevel ?? 1);
     _model.dropDownValue2 = permissionLabel;
@@ -109,7 +144,8 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
     final updatedData = <String, dynamic>{};
     final newName = _model.nameTextController?.text.trim() ?? '';
     final newPhone = _model.phoneTextController?.text.trim() ?? '';
-    final newPosition = _model.dropDownValue1 ?? '';
+    final newUserTypeLabel =
+        _model.dropDownValue1 ?? _userTypeLabel(widget.post.userType);
     final newPermissionLabel = _model.dropDownValue2 ??
         FFLocalizations.of(context).getText('1pk19gyt');
     final newPermission = _permissionLevelFromLabel(newPermissionLabel);
@@ -124,9 +160,12 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
     if (newName != (widget.post.name ?? '')) {
       updatedData['name'] = newName;
     }
-    if (newPosition.isNotEmpty &&
-        newPosition != (widget.post.position ?? '')) {
-      updatedData['position'] = newPosition;
+    final newUserType = _userTypeValueFromLabel(newUserTypeLabel);
+    if (widget.post.userType == null || widget.post.userType != newUserType) {
+      updatedData['user_type'] = newUserType;
+    }
+    if (newUserTypeLabel != (widget.post.position ?? '')) {
+      updatedData['position'] = newUserTypeLabel;
     }
     if (newPhone != (widget.post.phone ?? '')) {
       updatedData['phone'] = newPhone;
@@ -178,11 +217,11 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
   @override
   Widget build(BuildContext context) {
     final positionOptions = [
-      FFLocalizations.of(context).getText('knb7lib7' /* PD교수 */),
-      FFLocalizations.of(context).getText('w82m8xf4' /* 정교수 */),
-      FFLocalizations.of(context).getText('l14d8d4d' /* 부교수 */),
-      FFLocalizations.of(context).getText('bdppbwit' /* 겸임교수 */),
-      FFLocalizations.of(context).getText('fpcbi6f2' /* 인증조교 */),
+      _userTypeLabel(0),
+      _userTypeLabel(1),
+      _userTypeLabel(2),
+      _userTypeLabel(3),
+      _userTypeLabel(4),
     ];
     final permissionOptions = [
       FFLocalizations.of(context).getText('1pk19gyt' /* 멤버 */),
@@ -246,7 +285,8 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
                     ? FlutterFlowDropDown<String>(
                         controller: _model.dropDownValueController1 ??=
                             FormFieldController<String>(
-                          _model.dropDownValue1 ?? widget.post.position,
+                          _model.dropDownValue1 ??
+                              _userTypeLabel(widget.post.userType),
                         ),
                         options: positionOptions,
                         onChanged: (val) =>
@@ -293,9 +333,7 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
                         isMultiSelect: false,
                       )
                     : Text(
-                        widget.post.position ??
-                            FFLocalizations.of(context)
-                                .getText('yt5tcduf' /* 직급 선택 */),
+                        _userTypeLabel(widget.post.userType),
                         style: nameStyle,
                       ),
                 ),
