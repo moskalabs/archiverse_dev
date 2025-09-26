@@ -410,7 +410,6 @@ class _AccountManageRowMobileWidgetState
           ],
         ),
       ),
-    ),
-  );
+    );
   }
 }

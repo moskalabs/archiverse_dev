@@ -429,7 +429,6 @@ class _AccountManageRowWidgetState extends State<AccountManageRowWidget> {
           ],
         ),
       ),
-    ),
-  );
+    );
   }
 }
