@@ -10,6 +10,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/index.dart';
+import '/core/responsive_wrapper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -113,10 +114,11 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
+        body: ResponsiveWrapper(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
               width: MediaQuery.sizeOf(context).width * 1.0,
               height: 50.0,
               decoration: BoxDecoration(
@@ -9639,7 +9641,8 @@ class _StudentDashboardWidgetState extends State<StudentDashboardWidget> {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

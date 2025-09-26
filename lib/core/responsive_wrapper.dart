@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'scrollable_wrapper.dart';
+
 /// Provides a fixed-width layout container for every page body so that the
-/// desktop experience is no longer dependent on responsive breakpoints.
+/// desktop experience is no longer dependent on responsive breakpoints while
+/// still allowing the content to scroll when it exceeds the viewport.
 class ResponsiveWrapper extends StatelessWidget {
   const ResponsiveWrapper({
     super.key,
@@ -9,26 +12,26 @@ class ResponsiveWrapper extends StatelessWidget {
     this.maxWidth = 1280,
     this.alignment = Alignment.topCenter,
     this.padding,
+    this.enableHorizontalScroll = true,
+    this.enableVerticalScroll = true,
   });
 
   final Widget child;
   final double maxWidth;
   final Alignment alignment;
   final EdgeInsetsGeometry? padding;
+  final bool enableHorizontalScroll;
+  final bool enableVerticalScroll;
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+    return ScrollableWrapper(
+      child: child,
+      fixedWidth: maxWidth,
       alignment: alignment,
-      child: Container(
-        width: double.infinity,
-        padding: padding,
-        alignment: alignment,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: child,
-        ),
-      ),
+      padding: padding,
+      enableHorizontalScroll: enableHorizontalScroll,
+      enableVerticalScroll: enableVerticalScroll,
     );
   }
 }

@@ -16,3 +16,6 @@
 
 ## 2025-09-27
 - Reinstated breakpoint-aware `responsiveVisibility` logic across all platforms so desktop layouts render on the web while still collapsing to mobile when the viewport narrows (`flutter_flow_util.dart`).
+- Added a scrollable fixed-width wrapper that only activates on web builds to prevent dashboard overflow while keeping mobile layouts unchanged (`lib/core/scrollable_wrapper.dart`, `lib/core/responsive_wrapper.dart`).
+- Updated high-traffic dashboard pages to wrap their bodies in the responsive wrapper so wide layouts gain horizontal scrolling instead of clipping (`lib/pages/**/dahsboard*_widget.dart`, `lib/pages/professor/dashboard/prof_dashboard/prof_dashboard_widget.dart`, `lib/pages/student/dashboard/student_dashboard/student_dashboard_widget.dart`).
+- Noted again that neither `dart format` nor `flutter analyze` can run because the SDKs are not available in the container.
