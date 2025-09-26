@@ -4825,10 +4825,8 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                       height: 300.0,
                                                                       decoration:
                                                                           BoxDecoration(),
-                                                                      child:
-                                                                          Builder(
-                                                                        builder:
-                                                                            (context) {
+                                                                      child: Builder(
+                                                                        builder: (context) {
                                                                           final recordCount =
                                                                               _model.teachingPeriodTextControllers.length;
 
@@ -4860,8 +4858,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                           children: [
                                                                                             Expanded(
                                                                                               child: TextFormField(
-                                                                                                controller: _model.teachingPeriodTextControllers[teachingIndex],
-                                                                                                focusNode: _model.teachingPeriodFocusNodes[teachingIndex],
+                                                                                                controller: _model
+                                                                                                    .teachingPeriodTextControllers[teachingIndex],
+                                                                                                focusNode: _model
+                                                                                                    .teachingPeriodFocusNodes[teachingIndex],
                                                                                                 decoration: _recordInputDecoration(
                                                                                                   context,
                                                                                                   '기간',
@@ -4875,8 +4875,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                             SizedBox(width: 8.0),
                                                                                             Expanded(
                                                                                               child: TextFormField(
-                                                                                                controller: _model.teachingSchoolTextControllers[teachingIndex],
-                                                                                                focusNode: _model.teachingSchoolFocusNodes[teachingIndex],
+                                                                                                controller: _model
+                                                                                                    .teachingSchoolTextControllers[teachingIndex],
+                                                                                                focusNode:
+                                                                                                    _model.teachingSchoolFocusNodes[teachingIndex],
                                                                                                 decoration: _recordInputDecoration(
                                                                                                   context,
                                                                                                   'OO대학교/OO과',
@@ -4890,8 +4892,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                             SizedBox(width: 8.0),
                                                                                             Expanded(
                                                                                               child: TextFormField(
-                                                                                                controller: _model.teachingSubjectTextControllers[teachingIndex],
-                                                                                                focusNode: _model.teachingSubjectFocusNodes[teachingIndex],
+                                                                                                controller: _model
+                                                                                                    .teachingSubjectTextControllers[teachingIndex],
+                                                                                                focusNode:
+                                                                                                    _model.teachingSubjectFocusNodes[teachingIndex],
                                                                                                 decoration: _recordInputDecoration(
                                                                                                   context,
                                                                                                   '강의과목',
@@ -4905,8 +4909,10 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                             SizedBox(width: 8.0),
                                                                                             Expanded(
                                                                                               child: TextFormField(
-                                                                                                controller: _model.teachingCreditTextControllers[teachingIndex],
-                                                                                                focusNode: _model.teachingCreditFocusNodes[teachingIndex],
+                                                                                                controller: _model
+                                                                                                    .teachingCreditTextControllers[teachingIndex],
+                                                                                                focusNode:
+                                                                                                    _model.teachingCreditFocusNodes[teachingIndex],
                                                                                                 decoration: _recordInputDecoration(
                                                                                                   context,
                                                                                                   '학점/시간',
@@ -4928,193 +4934,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                           );
                                                                         },
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 25.0,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBackground,
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      if (_model
-                                                                              .teachingRecords
-                                                                              .length <
-                                                                          4)
-                                                                        Flexible(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                AlignmentDirectional(-1.0, 0.0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
-                                                                              child: FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  if (_model.teachingRecords.length <
-                                                                                      4) {
-                                                                                    final newRecord = <String, dynamic>{
-                                                                                      'period': '',
-                                                                                      'schoolDepartment': '',
-                                                                                      'subject': '',
-                                                                                      'creditsHours': '',
-                                                                                    };
-                                                                                    FFAppState().addToMypageTeachingRecords(newRecord);
-                                                                                    _model.addToTeachingRecords(newRecord);
-                                                                                    _model.addTeachingRecordControllers(
-                                                                                      period: '',
-                                                                                      schoolDepartment: '',
-                                                                                      subject: '',
-                                                                                      creditsHours: '',
-                                                                                    );
-                                                                                    safeSetState(() {});
-                                                                                  }
-                                                                                },
-                                                                                text: FFLocalizations.of(context).getText(
-                                                                                  '0ci94j6j' /* 추가 + */,
-                                                                                ),
-                                                                                icon: Icon(
-                                                                                  Icons.add_to_photos_outlined,
-                                                                                  size: 15.0,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  height: () {
-                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                      return 20.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                      return 25.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                      return 30.0;
-                                                                                    } else {
-                                                                                      return 35.0;
-                                                                                    }
-                                                                                  }(),
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                  iconColor: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                  color: Color(0xFFA6B6C3),
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                        ),
-                                                                                        color: Colors.white,
-                                                                                        fontSize: () {
-                                                                                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 8.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                            return 10.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 12.0;
-                                                                                          } else {
-                                                                                            return 16.0;
-                                                                                          }
-                                                                                        }(),
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                      ),
-                                                                                  elevation: 0.0,
-                                                                                  borderRadius: BorderRadius.circular(8.0),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      if (_model
-                                                                              .teachingRecords
-                                                                              .length >
-                                                                          1)
-                                                                        Flexible(
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                AlignmentDirectional(1.0, 0.0),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
-                                                                              child: FFButtonWidget(
-                                                                                onPressed: () async {
-                                                                                  if (_model.teachingRecords.length >
-                                                                                      1) {
-                                                                                    final removeIndex =
-                                                                                        _model.teachingRecords.length - 1;
-                                                                                    FFAppState().removeAtIndexFromMypageTeachingRecords(removeIndex);
-                                                                                    if (_model.teachingRecords.length > removeIndex) {
-                                                                                      _model.removeAtIndexFromTeachingRecords(removeIndex);
-                                                                                    }
-                                                                                    if (_model.teachingPeriodTextControllers.length > removeIndex) {
-                                                                                      _model.removeTeachingRecordControllers(removeIndex);
-                                                                                    }
-                                                                                    safeSetState(() {});
-                                                                                  }
-                                                                                },
-                                                                                text: FFLocalizations.of(context).getText(
-                                                                                  'd31dksav' /* 삭제 - */,
-                                                                                ),
-                                                                                icon: Icon(
-                                                                                  Icons.delete_forever,
-                                                                                  size: 15.0,
-                                                                                ),
-                                                                                options: FFButtonOptions(
-                                                                                  height: () {
-                                                                                    if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                      return 20.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                      return 25.0;
-                                                                                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                      return 30.0;
-                                                                                    } else {
-                                                                                      return 35.0;
-                                                                                    }
-                                                                                  }(),
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                                                                  iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                  iconColor: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                        font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                        ),
-                                                                                        color: Colors.white,
-                                                                                        fontSize: () {
-                                                                                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 8.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                            return 10.0;
-                                                                                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 12.0;
-                                                                                          } else {
-                                                                                            return 16.0;
-                                                                                          }
-                                                                                        }(),
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                      ),
-                                                                                  elevation: 0.0,
-                                                                                  borderSide: BorderSide(
-                                                                                    color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                  ),
-                                                                                  borderRadius: BorderRadius.circular(8.0),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -5184,6 +5003,162 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         ),
                                                                       ],
                                                                     ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  width: double.infinity,
+                                                                  height: 25.0,
+                                                                  decoration: BoxDecoration(
+                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+                                                                      if (_model.teachingRecords.length < 4)
+                                                                        Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                                                                          child: FFButtonWidget(
+                                                                            onPressed: () async {
+                                                                              if (_model.teachingRecords.length < 4) {
+                                                                                final newRecord = <String, dynamic>{
+                                                                                  'period': '',
+                                                                                  'schoolDepartment': '',
+                                                                                  'subject': '',
+                                                                                  'creditsHours': '',
+                                                                                };
+                                                                                FFAppState().addToMypageTeachingRecords(newRecord);
+                                                                                _model.addToTeachingRecords(newRecord);
+                                                                                _model.addTeachingRecordControllers(
+                                                                                  period: '',
+                                                                                  schoolDepartment: '',
+                                                                                  subject: '',
+                                                                                  creditsHours: '',
+                                                                                );
+                                                                                safeSetState(() {});
+                                                                              }
+                                                                            },
+                                                                            text: FFLocalizations.of(context).getText(
+                                                                              '0ci94j6j' /* 추가 + */,
+                                                                            ),
+                                                                            icon: Icon(
+                                                                              Icons.add_to_photos_outlined,
+                                                                              size: 15.0,
+                                                                            ),
+                                                                            options: FFButtonOptions(
+                                                                              height: () {
+                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                  return 20.0;
+                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                  return 25.0;
+                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                  return 30.0;
+                                                                                } else {
+                                                                                  return 35.0;
+                                                                                }
+                                                                              }(),
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                                                              iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                              iconColor: FlutterFlowTheme.of(context).primaryBackground,
+                                                                              color: Color(0xFFA6B6C3),
+                                                                              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                    font: GoogleFonts.openSans(
+                                                                                      fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                                                                                      fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                                                    ),
+                                                                                    color: Colors.white,
+                                                                                    fontSize: () {
+                                                                                      if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                        return 8.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                        return 10.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                        return 12.0;
+                                                                                      } else {
+                                                                                        return 16.0;
+                                                                                      }
+                                                                                    }(),
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                                                                                    fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                                                  ),
+                                                                              elevation: 0.0,
+                                                                              borderRadius: BorderRadius.circular(8.0),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      if (_model.teachingRecords.length > 1)
+                                                                        Padding(
+                                                                          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
+                                                                          child: FFButtonWidget(
+                                                                            onPressed: () async {
+                                                                              if (_model.teachingRecords.length > 1) {
+                                                                                final removeIndex =
+                                                                                    _model.teachingRecords.length - 1;
+                                                                                FFAppState()
+                                                                                    .removeAtIndexFromMypageTeachingRecords(removeIndex);
+                                                                                if (_model.teachingRecords.length > removeIndex) {
+                                                                                  _model.removeAtIndexFromTeachingRecords(removeIndex);
+                                                                                }
+                                                                                if (_model.teachingPeriodTextControllers.length > removeIndex) {
+                                                                                  _model.removeTeachingRecordControllers(removeIndex);
+                                                                                }
+                                                                                safeSetState(() {});
+                                                                              }
+                                                                            },
+                                                                            text: FFLocalizations.of(context).getText(
+                                                                              'd31dksav' /* 삭제 - */,
+                                                                            ),
+                                                                            icon: Icon(
+                                                                              Icons.delete_forever,
+                                                                              size: 15.0,
+                                                                            ),
+                                                                            options: FFButtonOptions(
+                                                                              height: () {
+                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                  return 20.0;
+                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                  return 25.0;
+                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                  return 30.0;
+                                                                                } else {
+                                                                                  return 35.0;
+                                                                                }
+                                                                              }(),
+                                                                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                                                              iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                              iconColor: FlutterFlowTheme.of(context).primaryBackground,
+                                                                              color: FlutterFlowTheme.of(context).secondaryText,
+                                                                              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                    font: GoogleFonts.openSans(
+                                                                                      fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                                                                                      fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                                                    ),
+                                                                                    color: Colors.white,
+                                                                                    fontSize: () {
+                                                                                      if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                        return 8.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                        return 10.0;
+                                                                                      } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                        return 12.0;
+                                                                                      } else {
+                                                                                        return 16.0;
+                                                                                      }
+                                                                                    }(),
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
+                                                                                    fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                                                  ),
+                                                                              elevation: 0.0,
+                                                                              borderSide: BorderSide(
+                                                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                                              ),
+                                                                              borderRadius: BorderRadius.circular(8.0),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                                 Flexible(
