@@ -29,47 +29,51 @@ class ScrollableWrapper extends StatelessWidget {
       return padding != null ? Padding(padding: padding!, child: child) : child;
     }
 
-    Widget constrainedChild = SizedBox(
-      width: fixedWidth,
+    final constrainedChild = ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: fixedWidth,
+        maxWidth: fixedWidth,
+      ),
       child: child,
     );
 
-    Widget wrapped = Align(
+    final paddedChild = padding != null
+        ? Padding(
+            padding: padding!,
+            child: constrainedChild,
+          )
+        : constrainedChild;
+
+    final alignedChild = Align(
       alignment: alignment,
-      child: constrainedChild,
+      child: paddedChild,
     );
 
-    if (enableHorizontalScroll) {
-      wrapped = SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Align(
-          alignment: alignment,
-          child: constrainedChild,
-        ),
-      );
-    }
-
-    if (enableVerticalScroll) {
-      wrapped = LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            padding: padding ?? EdgeInsets.zero,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: wrapped,
+    final horizontalWrapped = enableHorizontalScroll
+        ? SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Align(
+              alignment: alignment,
+              child: paddedChild,
             ),
-          );
-        },
-      );
-    } else if (padding != null) {
-      wrapped = Padding(
-        padding: padding!,
-        child: wrapped,
-      );
+          )
+        : alignedChild;
+
+    if (!enableVerticalScroll) {
+      return horizontalWrapped;
     }
 
-    return wrapped;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: horizontalWrapped,
+          ),
+        );
+      },
+    );
   }
 }

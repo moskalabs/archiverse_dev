@@ -20,3 +20,8 @@
 - Updated high-traffic dashboard pages to wrap their bodies in the responsive wrapper so wide layouts gain horizontal scrolling instead of clipping (`lib/pages/**/dahsboard*_widget.dart`, `lib/pages/professor/dashboard/prof_dashboard/prof_dashboard_widget.dart`, `lib/pages/student/dashboard/student_dashboard/student_dashboard_widget.dart`).
 - Noted again that neither `dart format` nor `flutter analyze` can run because the SDKs are not available in the container.
 - Addressed a Dart Dev Compiler type error by loosening the stored route builder type in `lib/flutter_flow/nav/nav.dart`, preventing web builds from crashing on invalid function signatures.
+
+## 2025-09-28
+- Restored the strongly typed `FFRoute` builder signature to its original `FFParameters`-aware form so the Dart Dev Compiler no longer encounters invalid dynamic function metadata during web builds (`lib/flutter_flow/nav/nav.dart`).
+- Simplified the fixed-width scroll wrapper so horizontal and vertical scrolling logic is clearer while maintaining the mobile passthrough behavior (`lib/core/scrollable_wrapper.dart`).
+- Flutter tooling (`flutter analyze`) remains unavailable in the container environment.
