@@ -37,27 +37,120 @@ Future<void> generateArchitecturePortfolio() async {
     final dynamic studentsDataResponse = await SupaFlow.client
         .from('students')
         .select('*, weekly_progress(*), critiques(*)')
-        .eq('class_section', 1)
+        .order('class_section')
         .order('name');
-    final List<dynamic> studentsData =
-        List<dynamic>.from(studentsDataResponse as List);
+    final List<Map<String, dynamic>> studentsData =
+        (studentsDataResponse as List)
+            .map((dynamic item) =>
+                Map<String, dynamic>.from(item as Map<dynamic, dynamic>))
+            .toList();
+
+    final Map<int, List<Map<String, dynamic>>> studentsBySection =
+        <int, List<Map<String, dynamic>>>{};
+    for (final Map<String, dynamic> student in studentsData) {
+      final int section = _parseSection(student['class_section']);
+      studentsBySection.putIfAbsent(section, () => <Map<String, dynamic>>[]);
+      studentsBySection[section]!.add(student);
+    }
+
+    for (final List<Map<String, dynamic>> sectionStudents
+        in studentsBySection.values) {
+      sectionStudents.sort((Map<String, dynamic> a, Map<String, dynamic> b) {
+        final String aName = (a['name'] as String?)?.toLowerCase() ?? '';
+        final String bName = (b['name'] as String?)?.toLowerCase() ?? '';
+        return aName.compareTo(bName);
+      });
+    }
+
+    const Map<int, String> sectionTitles = <int, String>{
+      1: '천준호 교수 / 1분반',
+      2: '이재 교수 / 2분반',
+      3: '김승 교수 / 3분반',
+    };
+
+    final Set<int> discoveredSections = <int>{}
+      ..addAll(sectionTitles.keys)
+      ..addAll(studentsBySection.keys);
+    final List<int> orderedSectionNumbers = <int>[];
+    for (final int key in sectionTitles.keys) {
+      if (!orderedSectionNumbers.contains(key)) {
+        orderedSectionNumbers.add(key);
+      }
+    }
+    for (final int section in discoveredSections) {
+      if (!orderedSectionNumbers.contains(section)) {
+        final bool hasStudents =
+            (studentsBySection[section]?.isNotEmpty ?? false);
+        if (section != 0 || hasStudents) {
+          orderedSectionNumbers.add(section);
+        }
+      }
+    }
+
+    final List<_SectionBundle> sections = orderedSectionNumbers
+        .map((int sectionNumber) => _SectionBundle(
+              number: sectionNumber,
+              title: sectionTitles[sectionNumber] ?? '분반 $sectionNumber',
+              students:
+                  studentsBySection[sectionNumber] ?? <Map<String, dynamic>>[],
+            ))
+        .toList();
 
     final PdfDocument document = PdfDocument();
     document.pageSettings.margins.all = 0;
 
-    _createIndexPage(document);
-    _createCoverPage(document);
+    _createFirstCoverPage(document, courseData);
+    _createIndexPage(document, sections);
+    _createCoverPage(document, courseData);
     _createCourseOverviewPage(document, courseData);
+    _createCourseHighlightsPage(document, courseData);
     _createWeeklyPlanPages(document, courseData);
-    _createSectionDividerPage(document, '천준호 교수 / 1분반');
-    _createCoursePlanPage(document, courseData);
-    _createAttendancePage(document, studentsData);
-    _createGradeRecordPage(document, studentsData);
-    _createEvaluationPages(document, studentsData);
-    _createLectureMaterialsSection(document);
-    await _createWeeklyProgressSection(document, studentsData);
-    await _createMidtermSection(document, studentsData);
-    await _createFinalSection(document, studentsData);
+
+    for (final _SectionBundle section in sections) {
+      _createSectionDividerPage(document, section.title);
+      _createCoursePlanPage(
+        document,
+        courseData,
+        sectionLabel: section.title,
+        sectionNumber: section.number,
+      );
+      _createAttendancePage(
+        document,
+        section.students,
+        sectionLabel: section.title,
+      );
+      _createGradeRecordPage(
+        document,
+        section.students,
+        sectionLabel: section.title,
+      );
+      _createEvaluationPages(
+        document,
+        section.students,
+        sectionLabel: section.title,
+      );
+      _createLectureMaterialsSection(
+        document,
+        sectionLabel: section.title,
+      );
+      await _createWeeklyProgressSection(
+        document,
+        section.students,
+        section.title,
+      );
+      await _createMidtermSection(
+        document,
+        section.students,
+        section.title,
+      );
+      await _createFinalSection(
+        document,
+        section.students,
+        section.title,
+      );
+    }
+
+    _createLastCoverPage(document, courseData);
 
     final Uint8List bytes = Uint8List.fromList(await document.save());
     document.dispose();
@@ -74,6 +167,18 @@ Future<void> generateArchitecturePortfolio() async {
       FFAppState().downloadProgressMessage = '오류 발생: $e';
     });
   }
+}
+
+class _SectionBundle {
+  const _SectionBundle({
+    required this.number,
+    required this.title,
+    required this.students,
+  });
+
+  final int number;
+  final String title;
+  final List<Map<String, dynamic>> students;
 }
 
 class SCHColors {
@@ -98,7 +203,148 @@ void _drawSALogo(PdfGraphics graphics, double x, double y, double size) {
   }
 }
 
-void _createIndexPage(PdfDocument document) {
+void _createFirstCoverPage(
+  PdfDocument document,
+  Map<String, dynamic> courseData,
+) {
+  final PdfPage page = document.pages.add();
+  final PdfGraphics graphics = page.graphics;
+
+  graphics.drawRectangle(
+    bounds: ui.Rect.fromLTWH(0, 0, page.size.width, page.size.height),
+    brush: PdfSolidBrush(PdfColor(250, 250, 252)),
+  );
+
+  graphics.drawRectangle(
+    bounds: ui.Rect.fromLTWH(0, 0, page.size.width, page.size.height * 0.35),
+    brush: PdfSolidBrush(SCHColors.lightBlue),
+  );
+
+  final String portfolioTitle =
+      courseData['portfolio_title'] as String? ?? 'Architecture 9 Portfolio';
+  final String department =
+      courseData['department'] as String? ?? '순천향대학교 건축학과';
+  final String semesterLabel = courseData['semester_label'] as String? ??
+      courseData['semester'] as String? ??
+      '2024년도 1학기';
+  final String tagline = courseData['portfolio_tagline'] as String? ??
+      'SPC 11 연구기반 종합설계';
+
+  graphics.drawString(
+    department,
+    PdfStandardFont(PdfFontFamily.helvetica, 18, style: PdfFontStyle.bold),
+    bounds: ui.Rect.fromLTWH(60, page.size.height * 0.12, page.size.width - 120, 30),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  graphics.drawString(
+    semesterLabel,
+    PdfStandardFont(PdfFontFamily.helvetica, 16),
+    bounds: ui.Rect.fromLTWH(60, page.size.height * 0.18, page.size.width - 120, 24),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  graphics.drawString(
+    portfolioTitle,
+    PdfStandardFont(PdfFontFamily.helvetica, 48, style: PdfFontStyle.bold),
+    bounds: ui.Rect.fromLTWH(60, page.size.height * 0.4, page.size.width - 120, 60),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  graphics.drawString(
+    tagline,
+    PdfStandardFont(PdfFontFamily.helvetica, 20),
+    bounds: ui.Rect.fromLTWH(60, page.size.height * 0.48, page.size.width - 120, 30),
+    brush: PdfSolidBrush(SCHColors.mediumGray),
+  );
+
+  final String preparedBy = courseData['prepared_by'] as String? ??
+      '순천향대학교 건축설계9 포트폴리오 자동 병합 시스템';
+
+  graphics.drawString(
+    preparedBy,
+    PdfStandardFont(PdfFontFamily.helvetica, 14),
+    bounds: ui.Rect.fromLTWH(60, page.size.height * 0.7, page.size.width - 120, 40),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  _drawSALogo(graphics, page.size.width - 220, page.size.height - 220, 180);
+}
+
+void _createCourseHighlightsPage(
+  PdfDocument document,
+  Map<String, dynamic> courseData,
+) {
+  final PdfPage page = document.pages.add();
+  final PdfGraphics graphics = page.graphics;
+
+  graphics.drawRectangle(
+    bounds: ui.Rect.fromLTWH(0, 0, page.size.width, page.size.height),
+    brush: PdfSolidBrush(PdfColor(255, 255, 255)),
+  );
+
+  graphics.drawString(
+    '교과목 주요 성과 요약',
+    PdfStandardFont(PdfFontFamily.helvetica, 36, style: PdfFontStyle.bold),
+    bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  final String highlights =
+      courseData['achievement_summary'] as String? ??
+          courseData['achievements'] as String? ??
+          courseData['course_highlights'] as String? ??
+          '교과목 주요 성과가 아직 등록되지 않았습니다.';
+
+  final PdfTextElement textElement = PdfTextElement(
+    text: highlights,
+    font: PdfStandardFont(PdfFontFamily.helvetica, 14),
+    brush: PdfSolidBrush(PdfColor(50, 50, 50)),
+  );
+
+  textElement.draw(
+    page: page,
+    bounds: ui.Rect.fromLTWH(60, 130, page.size.width - 120, 600),
+  );
+}
+
+void _createLastCoverPage(
+  PdfDocument document,
+  Map<String, dynamic> courseData,
+) {
+  final PdfPage page = document.pages.add();
+  final PdfGraphics graphics = page.graphics;
+
+  graphics.drawRectangle(
+    bounds: ui.Rect.fromLTWH(0, 0, page.size.width, page.size.height),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
+
+  final String courseTitle =
+      courseData['course_title'] as String? ?? '건축설계 9 포트폴리오';
+  final String closingMessage = courseData['closing_message'] as String? ??
+      '수고하셨습니다';
+
+  graphics.drawString(
+    courseTitle,
+    PdfStandardFont(PdfFontFamily.helvetica, 40, style: PdfFontStyle.bold),
+    bounds: ui.Rect.fromLTWH(0, page.size.height * 0.35, page.size.width, 50),
+    format: PdfStringFormat(alignment: PdfTextAlignment.center),
+    brush: PdfSolidBrush(PdfColor(255, 255, 255)),
+  );
+
+  graphics.drawString(
+    closingMessage,
+    PdfStandardFont(PdfFontFamily.helvetica, 20),
+    bounds: ui.Rect.fromLTWH(0, page.size.height * 0.45, page.size.width, 30),
+    format: PdfStringFormat(alignment: PdfTextAlignment.center),
+    brush: PdfSolidBrush(PdfColor(255, 255, 255)),
+  );
+
+  _drawSALogo(graphics, page.size.width - 220, page.size.height - 220, 180);
+}
+
+void _createIndexPage(PdfDocument document, List<_SectionBundle> sections) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
@@ -114,13 +360,25 @@ void _createIndexPage(PdfDocument document) {
     format: PdfStringFormat(alignment: PdfTextAlignment.center),
   );
 
-  final List<String> indexItems = <String>[
+  final List<String> introItems = <String>[
     '건축설계9',
     '교과목 개요',
     '교과목 주요 성과 요약',
     '공통 주차별 강의 계획서',
-    '',
-    '천준호 교수 / 1분반',
+  ];
+
+  double yPos = 240;
+  for (final String item in introItems) {
+    graphics.drawString(
+      item,
+      PdfStandardFont(PdfFontFamily.helvetica, 16, style: PdfFontStyle.bold),
+      bounds: ui.Rect.fromLTWH(100, yPos, 420, 25),
+      brush: PdfSolidBrush(SCHColors.darkNavy),
+    );
+    yPos += 32;
+  }
+
+  const List<String> sectionItems = <String>[
     '01 수업계획서',
     '02 출석부',
     '03 성적기록표',
@@ -131,31 +389,46 @@ void _createIndexPage(PdfDocument document) {
     '08 최종 결과물',
   ];
 
-  double yPos = 250;
-  for (final String item in indexItems) {
-    if (item.isEmpty) {
-      yPos += 20;
-      continue;
-    }
+  if (sections.isNotEmpty) {
+    yPos += 12;
+  }
 
-    final PdfFont font = item.startsWith('0')
-        ? PdfStandardFont(PdfFontFamily.helvetica, 14)
-        : PdfStandardFont(PdfFontFamily.helvetica, 16,
-            style: PdfFontStyle.bold);
-
+  for (final _SectionBundle section in sections) {
     graphics.drawString(
-      item,
-      font,
-      bounds: ui.Rect.fromLTWH(100, yPos, 400, 25),
+      section.title,
+      PdfStandardFont(PdfFontFamily.helvetica, 16, style: PdfFontStyle.bold),
+      bounds: ui.Rect.fromLTWH(100, yPos, 420, 25),
       brush: PdfSolidBrush(SCHColors.darkNavy),
     );
     yPos += 30;
+
+    for (final String item in sectionItems) {
+      graphics.drawString(
+        item,
+        PdfStandardFont(PdfFontFamily.helvetica, 14),
+        bounds: ui.Rect.fromLTWH(130, yPos, 420, 22),
+        brush: PdfSolidBrush(SCHColors.darkNavy),
+      );
+      yPos += 26;
+    }
+
+    yPos += 12;
   }
+
+  graphics.drawString(
+    '마지막 표지',
+    PdfStandardFont(PdfFontFamily.helvetica, 16, style: PdfFontStyle.bold),
+    bounds: ui.Rect.fromLTWH(100, yPos, 420, 25),
+    brush: PdfSolidBrush(SCHColors.darkNavy),
+  );
 
   _drawSALogo(graphics, page.size.width - 250, page.size.height - 250, 200);
 }
 
-void _createCoverPage(PdfDocument document) {
+void _createCoverPage(
+  PdfDocument document,
+  Map<String, dynamic> courseData,
+) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
@@ -164,22 +437,37 @@ void _createCoverPage(PdfDocument document) {
     brush: PdfSolidBrush(SCHColors.navy),
   );
 
+  final String department =
+      courseData['department'] as String? ?? '순천향대학교 건축학과';
+  final String semesterLabel = courseData['semester_label'] as String? ??
+      courseData['semester'] as String? ??
+      '2024년도 1학기';
+  final String courseTitle =
+      courseData['course_title'] as String? ?? '건축설계 9';
+  final String professor = courseData['professor'] as String? ??
+      courseData['main_professor'] as String? ??
+      '담당교수 미정';
+  final String sectionSummary = courseData['section_summary'] as String? ??
+      '5학년 1분반';
+  final String tagline = courseData['course_tagline'] as String? ??
+      'SPC 11 연구기반 종합설계';
+
   graphics.drawString(
-    '순천향대학교 건축학과',
+    department,
     PdfStandardFont(PdfFontFamily.helvetica, 14),
     bounds: ui.Rect.fromLTWH(50, 50, 300, 20),
     brush: PdfSolidBrush(PdfColor(255, 255, 255)),
   );
 
   graphics.drawString(
-    '2024년도 1학기',
+    semesterLabel,
     PdfStandardFont(PdfFontFamily.helvetica, 16),
     bounds: ui.Rect.fromLTWH(page.size.width - 150, 50, 100, 20),
     brush: PdfSolidBrush(PdfColor(255, 255, 255)),
   );
 
   graphics.drawString(
-    '건축설계 9',
+    courseTitle,
     PdfStandardFont(PdfFontFamily.helvetica, 72, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(
       0,
@@ -192,7 +480,7 @@ void _createCoverPage(PdfDocument document) {
   );
 
   graphics.drawString(
-    '교수 천준호 | 5학년 1분반',
+    '교수 $professor | $sectionSummary',
     PdfStandardFont(PdfFontFamily.helvetica, 20),
     bounds: ui.Rect.fromLTWH(
       0,
@@ -205,7 +493,7 @@ void _createCoverPage(PdfDocument document) {
   );
 
   graphics.drawString(
-    'SPC 11 연구기반 종합설계',
+    tagline,
     PdfStandardFont(PdfFontFamily.helvetica, 18),
     bounds: ui.Rect.fromLTWH(
       0,
@@ -362,20 +650,24 @@ void _createSectionDividerPage(PdfDocument document, String title) {
 
 void _createCoursePlanPage(
   PdfDocument document,
-  Map<String, dynamic> courseData,
-) {
+  Map<String, dynamic> courseData, {
+  String? sectionLabel,
+  int? sectionNumber,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
   graphics.drawString(
-    '01 수업계획서',
+    sectionLabel == null
+        ? '01 수업계획서'
+        : '01 수업계획서 - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
   );
 
   final Map<String, dynamic> plan =
-      courseData['course_plan'] as Map<String, dynamic>? ?? <String, dynamic>{};
+      _coursePlanForSection(courseData, sectionNumber);
   if (plan.isEmpty) {
     graphics.drawString(
       '수업계획서 데이터가 없습니다.',
@@ -405,20 +697,23 @@ void _createCoursePlanPage(
 
 void _createAttendancePage(
   PdfDocument document,
-  List<dynamic> students,
-) {
+  List<Map<String, dynamic>> students, {
+  String? sectionLabel,
+}) {
   PdfPage currentPage = document.pages.add();
   PdfGraphics graphics = currentPage.graphics;
 
   graphics.drawString(
-    '02 출석부',
+    sectionLabel == null
+        ? '02 출석부'
+        : '02 출석부 - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, currentPage.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
   );
 
   double yPos = 120;
-  for (final dynamic student in students) {
+  for (final Map<String, dynamic> student in students) {
     if (yPos > currentPage.size.height - 80) {
       graphics.drawString(
         '계속',
@@ -449,20 +744,23 @@ void _createAttendancePage(
 
 void _createGradeRecordPage(
   PdfDocument document,
-  List<dynamic> students,
-) {
+  List<Map<String, dynamic>> students, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
   graphics.drawString(
-    '03 성적기록표',
+    sectionLabel == null
+        ? '03 성적기록표'
+        : '03 성적기록표 - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
   );
 
   double yPos = 140;
-  for (final dynamic student in students) {
+  for (final Map<String, dynamic> student in students) {
     final String name = student['name'] as String? ?? '이름 미상';
     final String id = student['student_id']?.toString() ?? '-';
     final String grade = student['grade']?.toString() ?? '미평가';
@@ -485,14 +783,17 @@ void _createGradeRecordPage(
 
 void _createEvaluationPages(
   PdfDocument document,
-  List<dynamic> students,
-) {
-  for (final dynamic student in students) {
+  List<Map<String, dynamic>> students, {
+  String? sectionLabel,
+}) {
+  for (final Map<String, dynamic> student in students) {
     final PdfPage page = document.pages.add();
     final PdfGraphics graphics = page.graphics;
 
     graphics.drawString(
-      '04 학생 작품 평가표',
+      sectionLabel == null
+          ? '04 학생 작품 평가표'
+          : '04 학생 작품 평가표 - $sectionLabel',
       PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
       bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
       brush: PdfSolidBrush(SCHColors.darkNavy),
@@ -540,12 +841,17 @@ void _createEvaluationPages(
   }
 }
 
-void _createLectureMaterialsSection(PdfDocument document) {
+void _createLectureMaterialsSection(
+  PdfDocument document, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
   graphics.drawString(
-    '05 강의자료',
+    sectionLabel == null
+        ? '05 강의자료'
+        : '05 강의자료 - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
@@ -560,13 +866,19 @@ void _createLectureMaterialsSection(PdfDocument document) {
 
 Future<void> _createWeeklyProgressSection(
   PdfDocument document,
-  List<dynamic> students,
+  List<Map<String, dynamic>> students,
+  String sectionLabel,
 ) async {
-  _createSectionTitlePage(document, '06 주차별 설계 진행표', '');
-  _createStudentListPage(document, students, '주차별 설계 진행표');
+  _createSectionTitlePage(document, '06 주차별 설계 진행표', sectionLabel);
+  _createStudentListPage(
+    document,
+    students,
+    '주차별 설계 진행표',
+    sectionLabel: sectionLabel,
+  );
 
-  for (final dynamic student in students) {
-    _createStudentProgressDivider(document, student);
+  for (final Map<String, dynamic> student in students) {
+    _createStudentProgressDivider(document, student, sectionLabel: sectionLabel);
 
     final List<dynamic> progressList =
         student['weekly_progress'] as List<dynamic>? ?? <dynamic>[];
@@ -577,19 +889,30 @@ Future<void> _createWeeklyProgressSection(
       }
     }
 
-    _createCritiquePage(document, student);
+    _createCritiquePage(document, student, sectionLabel: sectionLabel);
   }
 }
 
 Future<void> _createMidtermSection(
   PdfDocument document,
-  List<dynamic> students,
+  List<Map<String, dynamic>> students,
+  String sectionLabel,
 ) async {
-  _createSectionTitlePage(document, '07 중간 결과물', '');
-  _createStudentListPage(document, students, '중간 결과물');
+  _createSectionTitlePage(document, '07 중간 결과물', sectionLabel);
+  _createStudentListPage(
+    document,
+    students,
+    '중간 결과물',
+    sectionLabel: sectionLabel,
+  );
 
-  for (final dynamic student in students) {
-    _createStudentDivider(document, student, '07 중간 결과물');
+  for (final Map<String, dynamic> student in students) {
+    _createStudentDivider(
+      document,
+      student,
+      '07 중간 결과물',
+      sectionLabel: sectionLabel,
+    );
     final String? pdfUrl = student['midterm_pdf'] as String?;
     if (pdfUrl != null && pdfUrl.isNotEmpty) {
       await _mergeExternalPdf(document, pdfUrl);
@@ -599,13 +922,24 @@ Future<void> _createMidtermSection(
 
 Future<void> _createFinalSection(
   PdfDocument document,
-  List<dynamic> students,
+  List<Map<String, dynamic>> students,
+  String sectionLabel,
 ) async {
-  _createSectionTitlePage(document, '08 기말 결과물', '');
-  _createStudentListPage(document, students, '기말 결과물');
+  _createSectionTitlePage(document, '08 기말 결과물', sectionLabel);
+  _createStudentListPage(
+    document,
+    students,
+    '기말 결과물',
+    sectionLabel: sectionLabel,
+  );
 
-  for (final dynamic student in students) {
-    _createStudentDivider(document, student, '08 기말 결과물');
+  for (final Map<String, dynamic> student in students) {
+    _createStudentDivider(
+      document,
+      student,
+      '08 기말 결과물',
+      sectionLabel: sectionLabel,
+    );
     final String? pdfUrl = student['final_pdf'] as String?;
     if (pdfUrl != null && pdfUrl.isNotEmpty) {
       await _mergeExternalPdf(document, pdfUrl);
@@ -654,21 +988,24 @@ void _createSectionTitlePage(
 
 void _createStudentListPage(
   PdfDocument document,
-  List<dynamic> students,
-  String sectionTitle,
-) {
+  List<Map<String, dynamic>> students,
+  String sectionTitle, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
   graphics.drawString(
-    sectionTitle,
+    sectionLabel == null
+        ? sectionTitle
+        : '$sectionTitle - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
   );
 
   double yPos = 120;
-  for (final dynamic student in students) {
+  for (final Map<String, dynamic> student in students) {
     final String name = student['name'] as String? ?? '이름 미상';
     final String id = student['student_id']?.toString() ?? '-';
 
@@ -684,8 +1021,9 @@ void _createStudentListPage(
 
 void _createStudentProgressDivider(
   PdfDocument document,
-  dynamic student,
-) {
+  Map<String, dynamic> student, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
@@ -701,6 +1039,16 @@ void _createStudentProgressDivider(
     brush: PdfSolidBrush(SCHColors.darkNavy),
   );
 
+  if (sectionLabel != null) {
+    graphics.drawString(
+      sectionLabel,
+      PdfStandardFont(PdfFontFamily.helvetica, 14),
+      bounds: ui.Rect.fromLTWH(page.size.width - 260, 20, 200, 24),
+      format: PdfStringFormat(alignment: PdfTextAlignment.right),
+      brush: PdfSolidBrush(SCHColors.darkNavy),
+    );
+  }
+
   final String name = student['name'] as String? ?? '이름 미상';
   final String id = student['student_id']?.toString() ?? '-';
 
@@ -711,12 +1059,18 @@ void _createStudentProgressDivider(
   );
 }
 
-void _createCritiquePage(PdfDocument document, dynamic student) {
+void _createCritiquePage(
+  PdfDocument document,
+  Map<String, dynamic> student, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
   graphics.drawString(
-    '크리틱 기록',
+    sectionLabel == null
+        ? '크리틱 기록'
+        : '크리틱 기록 - $sectionLabel',
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(60, 60, page.size.width - 120, 40),
     brush: PdfSolidBrush(SCHColors.darkNavy),
@@ -792,9 +1146,10 @@ String _buildCritiqueTemplate(dynamic critique) {
 
 void _createStudentDivider(
   PdfDocument document,
-  dynamic student,
-  String section,
-) {
+  Map<String, dynamic> student,
+  String section, {
+  String? sectionLabel,
+}) {
   final PdfPage page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
 
@@ -818,8 +1173,12 @@ void _createStudentDivider(
     brush: PdfSolidBrush(PdfColor(255, 255, 255)),
   );
 
+  final String sectionTitle = sectionLabel == null
+      ? section
+      : '$section - $sectionLabel';
+
   graphics.drawString(
-    section,
+    sectionTitle,
     PdfStandardFont(PdfFontFamily.helvetica, 32, style: PdfFontStyle.bold),
     bounds: ui.Rect.fromLTWH(0, page.size.height * 0.4, page.size.width, 50),
     format: PdfStringFormat(alignment: PdfTextAlignment.center),
@@ -891,4 +1250,41 @@ void _downloadPdf(Uint8List bytes, String fileName) {
         ..download = fileName;
   anchor.click();
   html.Url.revokeObjectUrl(url);
+}
+
+int _parseSection(dynamic value) {
+  if (value is int) {
+    return value;
+  }
+  if (value is String) {
+    return int.tryParse(value) ?? 0;
+  }
+  return 0;
+}
+
+Map<String, dynamic> _coursePlanForSection(
+  Map<String, dynamic> courseData,
+  int? sectionNumber,
+) {
+  if (sectionNumber != null) {
+    final List<String> potentialKeys = <String>[
+      'course_plan_section_$sectionNumber',
+      'course_plan_section$sectionNumber',
+      'course_plan_${sectionNumber}',
+      'course_plan${sectionNumber}',
+    ];
+    for (final String key in potentialKeys) {
+      final dynamic value = courseData[key];
+      if (value is Map) {
+        return Map<String, dynamic>.from(value as Map<dynamic, dynamic>);
+      }
+    }
+  }
+
+  final dynamic defaultPlan = courseData['course_plan'];
+  if (defaultPlan is Map) {
+    return Map<String, dynamic>.from(defaultPlan as Map<dynamic, dynamic>);
+  }
+
+  return <String, dynamic>{};
 }
