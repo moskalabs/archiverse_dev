@@ -584,17 +584,17 @@ class FFRoute {
   const FFRoute({
     required this.name,
     required this.path,
-    required this.builder,
+    required Widget Function(BuildContext, dynamic) builder,
     this.requireAuth = false,
     this.asyncParams = const {},
     this.routes = const [],
-  });
+  }) : _builder = builder;
 
   final String name;
   final String path;
   final bool requireAuth;
   final Map<String, Future<dynamic> Function(String)> asyncParams;
-  final Widget Function(BuildContext, FFParameters) builder;
+  final Widget Function(BuildContext, dynamic) _builder;
   final List<GoRoute> routes;
 
   GoRoute toRoute(AppStateNotifier appStateNotifier) => GoRoute(
@@ -619,9 +619,9 @@ class FFRoute {
           final page = ffParams.hasFutures
               ? FutureBuilder(
                   future: ffParams.completeFutures(),
-                  builder: (context, _) => builder(context, ffParams),
+                  builder: (context, _) => _builder(context, ffParams),
                 )
-              : builder(context, ffParams);
+              : _builder(context, ffParams);
           final child = appStateNotifier.loading
               ? Container(
                   color: Colors.transparent,
