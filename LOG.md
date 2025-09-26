@@ -30,3 +30,8 @@
 - Added reusable font-size constants to keep desktop typography constrained to 22/18/16/12 points and referenced them from the shared app theme (`lib/core/font_constants.dart`, `lib/core/app_theme.dart`).
 - Reworked the scrollable wrapper to apply padding consistently and to avoid nested layout errors encountered during earlier scripted replacements (`lib/core/scrollable_wrapper.dart`).
 - Relaxed the stored route builder signature to accept dynamic parameters so Dart Dev Compiler no longer reports invalid FFParameters function types when compiling the web target (`lib/flutter_flow/nav/nav.dart`).
+
+## 2025-09-30
+- Replaced the scripted scrollable wrapper with a simpler fixed-width implementation and aligned the responsive wrapper to use it directly (`lib/core/scrollable_wrapper.dart`, `lib/core/responsive_wrapper.dart`).
+- Introduced a reusable zoom wrapper utility and refreshed the desktop font constants to match the scripted specification (`lib/core/zoomable_wrapper.dart`, `lib/core/font_constants.dart`).
+- Rebuilt the primary dashboard screens around the fixed layout specification so they render predictable placeholders with constrained typography while leveraging the new wrapper (`lib/pages/dahsboard/dahsboard_widget.dart`, `lib/pages/professor/dashboard/prof_dashboard/prof_dashboard_widget.dart`, `lib/pages/student/dashboard/student_dashboard/student_dashboard_widget.dart`).
