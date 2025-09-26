@@ -1,6 +1,6 @@
+import 'dart:async';
+
 import '/backend/supabase/supabase.dart';
-import '/components/account_manage/account_manage_row/account_manage_row_widget.dart';
-import '/components/account_manage/account_manage_row_mobile/account_manage_row_mobile_widget.dart';
 import '/components/default_layout/borderline/borderline_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
 import '/components/default_layout/nav_bar/admin_navi_sidebar/admin_navi_sidebar_widget.dart';
@@ -209,10 +209,6 @@ class AdminAccountManageModel
   late BorderlineModel borderlineModel1;
   // Model for Borderline component.
   late BorderlineModel borderlineModel2;
-  // Model for AccountManageRow component.
-  late AccountManageRowModel accountManageRowModel1;
-  // Model for AccountManageRow component.
-  late AccountManageRowModel accountManageRowModel2;
   // Model for Borderline component.
   late BorderlineModel borderlineModel3;
   // Model for Borderline component.
@@ -235,30 +231,50 @@ class AdminAccountManageModel
   late BorderlineModel borderlineModel6;
   // Model for Borderline component.
   late BorderlineModel borderlineModel7;
-  // Model for AccountManageRow_Mobile component.
-  late AccountManageRowMobileModel accountManageRowMobileModel;
   // Model for Borderline component.
   late BorderlineModel borderlineModel8;
   // Model for Borderline component.
   late BorderlineModel borderlineModel9;
+
+  /// Data management fields.
+
+  List<PostsRow> allPosts = [];
+
+  List<PostsRow> basePosts = [];
+
+  List<AdminPostRow> adminPostRows = [];
+
+  List<PostsRow> paginatedPosts = [];
+
+  bool isLoading = false;
+
+  bool isSearching = false;
+
+  String currentSearchKeyword = '';
+
+  String? currentSearchType;
+
+  int currentPage = 1;
+
+  final int itemsPerPage = 10;
+
+  StreamSubscription<List<Map<String, dynamic>>>? postsSubscription;
+
+  StreamSubscription<List<Map<String, dynamic>>>? adminPostSubscription;
+
+  int? selectedProfessorId;
 
   @override
   void initState(BuildContext context) {
     adminNaviSidebarModel = createModel(context, () => AdminNaviSidebarModel());
     borderlineModel1 = createModel(context, () => BorderlineModel());
     borderlineModel2 = createModel(context, () => BorderlineModel());
-    accountManageRowModel1 =
-        createModel(context, () => AccountManageRowModel());
-    accountManageRowModel2 =
-        createModel(context, () => AccountManageRowModel());
     borderlineModel3 = createModel(context, () => BorderlineModel());
     borderlineModel4 = createModel(context, () => BorderlineModel());
     headerMobileModel = createModel(context, () => HeaderMobileModel());
     borderlineModel5 = createModel(context, () => BorderlineModel());
     borderlineModel6 = createModel(context, () => BorderlineModel());
     borderlineModel7 = createModel(context, () => BorderlineModel());
-    accountManageRowMobileModel =
-        createModel(context, () => AccountManageRowMobileModel());
     borderlineModel8 = createModel(context, () => BorderlineModel());
     borderlineModel9 = createModel(context, () => BorderlineModel());
   }
@@ -271,8 +287,6 @@ class AdminAccountManageModel
 
     borderlineModel1.dispose();
     borderlineModel2.dispose();
-    accountManageRowModel1.dispose();
-    accountManageRowModel2.dispose();
     borderlineModel3.dispose();
     borderlineModel4.dispose();
     headerMobileModel.dispose();
@@ -282,8 +296,9 @@ class AdminAccountManageModel
 
     borderlineModel6.dispose();
     borderlineModel7.dispose();
-    accountManageRowMobileModel.dispose();
     borderlineModel8.dispose();
     borderlineModel9.dispose();
+    postsSubscription?.cancel();
+    adminPostSubscription?.cancel();
   }
 }

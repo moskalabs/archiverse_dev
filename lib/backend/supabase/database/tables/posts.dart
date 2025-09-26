@@ -17,24 +17,25 @@ class PostsRow extends SupabaseDataRow {
   int get id => getField<int>('id')!;
   set id(int value) => setField<int>('id', value);
 
-  DateTime get createdAt => getField<DateTime>('created_at')!;
-  set createdAt(DateTime value) => setField<DateTime>('created_at', value);
+  String? get name => getField<String>('name');
+  set name(String? value) => setField<String>('name', value);
 
-  String? get user => getField<String>('user');
-  set user(String? value) => setField<String>('user', value);
+  String? get position => getField<String>('position');
+  set position(String? value) => setField<String>('position', value);
+
+  String? get email => getField<String>('email');
+  set email(String? value) => setField<String>('email', value);
+
+  String? get phone => getField<String>('phone');
+  set phone(String? value) => setField<String>('phone', value);
+
+  int? get permissionLevel => getField<int>('permission_level');
+  set permissionLevel(int? value) =>
+      setField<int>('permission_level', value);
 
   int? get userType => getField<int>('user_type');
   set userType(int? value) => setField<int>('user_type', value);
 
-  String? get userAlias => getField<String>('user_alias');
-  set userAlias(String? value) => setField<String>('user_alias', value);
-
-  String? get userEmail => getField<String>('user_email');
-  set userEmail(String? value) => setField<String>('user_email', value);
-
-  String? get university => getField<String>('university');
-  set university(String? value) => setField<String>('university', value);
-
-  String? get name => getField<String>('name');
-  set name(String? value) => setField<String>('name', value);
+  DateTime? get createdAt => getField<DateTime>('created_at');
+  set createdAt(DateTime? value) => setField<DateTime>('created_at', value);
 }

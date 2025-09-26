@@ -27,3 +27,4 @@ class SupaFlow {
             FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
       );
 }
+

@@ -13,9 +13,31 @@ class AccountManageRowModel extends FlutterFlowModel<AccountManageRowWidget> {
   String? dropDownValue2;
   FormFieldController<String>? dropDownValueController2;
 
-  @override
-  void initState(BuildContext context) {}
+  bool isEditing = false;
+
+  Map<String, dynamic> editedData = {};
+
+  FocusNode? nameFocusNode;
+
+  TextEditingController? nameTextController;
+
+  FocusNode? phoneFocusNode;
+
+  TextEditingController? phoneTextController;
+
+  bool isSaving = false;
 
   @override
-  void dispose() {}
+  void initState(BuildContext context) {
+    nameFocusNode = FocusNode();
+    phoneFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    nameFocusNode?.dispose();
+    nameTextController?.dispose();
+    phoneFocusNode?.dispose();
+    phoneTextController?.dispose();
+  }
 }

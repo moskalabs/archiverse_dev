@@ -606,8 +606,8 @@ class _AdminNaviSidebarWidgetState extends State<AdminNaviSidebarWidget> {
                                           FFIcons.kadminidicon,
                                           color: valueOrDefault<Color>(
                                             widget.activePageName ==
-                                                    'SubjectPortpolio'
-                                                ? Color(0xFF284E75)
+                                                    'AdminManager'
+                                                ? const Color(0xFF284E75)
                                                 : FlutterFlowTheme.of(context)
                                                     .primaryBackground,
                                             FlutterFlowTheme.of(context)
