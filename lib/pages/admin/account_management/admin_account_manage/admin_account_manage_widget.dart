@@ -125,8 +125,14 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       _model.adminPostRows = adminRows;
       _model.basePosts = posts.map((row) {
         final cloned = PostsRow(Map<String, dynamic>.from(row.data));
-        cloned.userType = cloned.userType ?? 3;
-        cloned.position = _userTypeLabel(cloned.userType);
+        final resolvedUserType = row.userType ?? 3;
+        cloned
+          ..name = row.name
+          ..email = row.email
+          ..phone = row.phone
+          ..permissionLevel = row.permissionLevel
+          ..userType = resolvedUserType
+          ..position = _userTypeLabel(resolvedUserType);
         return cloned;
       }).toList();
       final merged = _mergeWithAdminPosts(_model.basePosts);
@@ -215,9 +221,14 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     if (effectiveAdminRows.isEmpty) {
       return source.map((row) {
         final cloned = PostsRow(Map<String, dynamic>.from(row.data));
-        final resolvedUserType = cloned.userType ?? 3;
-        cloned.userType = resolvedUserType;
-        cloned.position = _userTypeLabel(resolvedUserType);
+        final resolvedUserType = row.userType ?? cloned.userType ?? 3;
+        cloned
+          ..name = row.name
+          ..email = row.email
+          ..phone = row.phone
+          ..permissionLevel = row.permissionLevel
+          ..userType = resolvedUserType
+          ..position = _userTypeLabel(resolvedUserType);
         if (resolvedUserType == 0 || resolvedUserType == 1) {
           final currentLevel = cloned.permissionLevel ?? 1;
           if (currentLevel < 2) {
@@ -233,6 +244,11 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     };
     return source.map((row) {
       final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+      cloned
+        ..name = row.name
+        ..email = row.email
+        ..phone = row.phone
+        ..permissionLevel = row.permissionLevel;
       final emailKey = (cloned.email ?? '').toLowerCase();
       final admin = adminMap[emailKey];
       if (admin != null) {
@@ -1365,18 +1381,21 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                           ),
                                           Container(
                                             width: 512.0,
-                                            height: 30.0,
-                                            decoration: BoxDecoration(),
+                                            decoration: const BoxDecoration(),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
-                                                Expanded(
-                                                  flex: 1,
+                                                Flexible(
+                                                  flex: 2,
+                                                  fit: FlexFit.tight,
                                                   child: Container(
                                                     decoration: BoxDecoration(
                                                       border: Border.all(
                                                         color:
-                                                            Color(0xFFE3E3E3),
+                                                            const Color(
+                                                                0xFFE3E3E3),
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -1403,7 +1422,6 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                               val;
                                                         });
                                                       },
-                                                      width: 200.0,
                                                       height: 40.0,
                                                       textStyle:
                                                           FlutterFlowTheme.of(
@@ -1420,9 +1438,9 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1457,9 +1475,9 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                       margin:
                                                           EdgeInsetsDirectional
                                                               .fromSTEB(
-                                                                  12.0,
+                                                                  8.0,
                                                                   0.0,
-                                                                  12.0,
+                                                                  8.0,
                                                                   0.0),
                                                       hidesUnderline: true,
                                                       isOverButton: false,
@@ -1468,11 +1486,10 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                     ),
                                                   ),
                                                 ),
+                                                const SizedBox(width: 12.0),
                                                 Expanded(
-                                                  flex: 3,
-                                                  child: Container(
-                                                    width: 200.0,
-                                                    child: TextFormField(
+                                                  flex: 4,
+                                                  child: TextFormField(
                                                       controller: _model
                                                           .textController1,
                                                       focusNode: _model
@@ -1486,7 +1503,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                             const EdgeInsets
                                                                 .symmetric(
                                                           horizontal: 12.0,
-                                                          vertical: 10.0,
+                                                          vertical: 8.0,
                                                         ),
                                                         labelStyle:
                                                             FlutterFlowTheme.of(
@@ -1638,9 +1655,9 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1662,13 +1679,16 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                           .asValidator(context),
                                                     ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: FFButtonWidget(
-                                                    onPressed: () async {
-                                                      try {
-                                                        final searchText =
+                                                const SizedBox(width: 12.0),
+                                                Flexible(
+                                                  flex: 2,
+                                                  fit: FlexFit.tight,
+                                                  child: SizedBox(
+                                                    height: 40.0,
+                                                    child: FFButtonWidget(
+                                                      onPressed: () async {
+                                                        try {
+                                                          final searchText =
                                                             _model.textController1
                                                                 .text
                                                                 .trim();
@@ -1739,13 +1759,12 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                     text: '관리자 계정 검색',
                                                     options: FFButtonOptions(
                                                       height: 40.0,
+                                                      width: double.infinity,
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  16.0,
-                                                                  0.0),
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      12.0),
                                                       iconPadding:
                                                           EdgeInsetsDirectional
                                                               .fromSTEB(
@@ -1769,9 +1788,9 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                       .titleSmall
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF666666),
-                                                                fontSize: 20.0,
+                                                                fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight:
@@ -1783,12 +1802,12 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                                     .fontStyle,
                                                               ),
                                                       elevation: 0.0,
-                                                      borderSide: BorderSide(
+                                                      borderSide: const BorderSide(
                                                         color:
                                                             Color(0xFFE3E3E3),
                                                       ),
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                          const BorderRadius.only(
                                                         bottomLeft:
                                                             Radius.circular(
                                                                 0.0),
