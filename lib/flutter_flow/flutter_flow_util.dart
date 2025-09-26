@@ -379,9 +379,6 @@ bool responsiveVisibility({
   bool tabletLandscape = true,
   bool desktop = true,
 }) {
-  if (kIsWeb) {
-    return true;
-  }
   final width = MediaQuery.sizeOf(context).width;
   if (width < kBreakpointSmall) {
     return phone;

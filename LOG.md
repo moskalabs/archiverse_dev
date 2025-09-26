@@ -13,3 +13,6 @@
 - Restored breakpoint-based `responsiveVisibility` behavior on mobile while keeping all widgets visible on web (`flutter_flow_util.dart`).
 - Adjusted typography helpers to clamp font sizes on web but preserve original dynamic sizing on mobile (`flutter_flow_theme.dart`).
 - Confirmed Flutter tooling is still unavailable when attempting to run `flutter analyze`.
+
+## 2025-09-27
+- Reinstated breakpoint-aware `responsiveVisibility` logic across all platforms so desktop layouts render on the web while still collapsing to mobile when the viewport narrows (`flutter_flow_util.dart`).
