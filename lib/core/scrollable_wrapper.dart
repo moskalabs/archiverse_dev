@@ -23,57 +23,49 @@ class ScrollableWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kIsWeb) {
-      // Mobile and desktop builds outside the web target should keep the
-      // original layout behaviour.
-      return padding != null ? Padding(padding: padding!, child: child) : child;
+    Widget addPadding(Widget input) {
+      if (padding == null) {
+        return input;
+      }
+      return Padding(
+        padding: padding!,
+        child: input,
+      );
     }
 
-    final constrainedChild = ConstrainedBox(
+    if (!kIsWeb) {
+      return addPadding(child);
+    }
+
+    final constrained = ConstrainedBox(
       constraints: BoxConstraints(
         minWidth: fixedWidth,
         maxWidth: fixedWidth,
       ),
-      child: child,
+      child: SizedBox(
+        width: fixedWidth,
+        child: child,
+      ),
     );
 
-    final paddedChild = padding != null
-        ? Padding(
-            padding: padding!,
-            child: constrainedChild,
-          )
-        : constrainedChild;
-
-    final alignedChild = Align(
+    Widget content = Align(
       alignment: alignment,
-      child: paddedChild,
+      child: addPadding(constrained),
     );
 
-    final horizontalWrapped = enableHorizontalScroll
-        ? SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Align(
-              alignment: alignment,
-              child: paddedChild,
-            ),
-          )
-        : alignedChild;
-
-    if (!enableVerticalScroll) {
-      return horizontalWrapped;
+    if (enableHorizontalScroll) {
+      content = SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: content,
+      );
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight,
-            ),
-            child: horizontalWrapped,
-          ),
-        );
-      },
+    if (!enableVerticalScroll) {
+      return content;
+    }
+
+    return SingleChildScrollView(
+      child: content,
     );
   }
 }

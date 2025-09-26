@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'font_constants.dart';
+
 /// Centralizes application-wide typography rules so that every text style
 /// adheres to the fixed desktop layout requirements.
 class AppTheme {
   const AppTheme._();
 
-  static const double fontSizeXL = 22;
-  static const double fontSizeL = 18;
-  static const double fontSizeM = 16;
-  static const double fontSizeS = 12;
+  static const double fontSizeXL = FontConstants.sizeXLarge;
+  static const double fontSizeL = FontConstants.sizeLarge;
+  static const double fontSizeM = FontConstants.sizeMedium;
+  static const double fontSizeS = FontConstants.sizeSmall;
 
   static TextStyle textStyleXL({
     Color? color,

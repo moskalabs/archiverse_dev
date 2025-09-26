@@ -25,3 +25,8 @@
 - Restored the strongly typed `FFRoute` builder signature to its original `FFParameters`-aware form so the Dart Dev Compiler no longer encounters invalid dynamic function metadata during web builds (`lib/flutter_flow/nav/nav.dart`).
 - Simplified the fixed-width scroll wrapper so horizontal and vertical scrolling logic is clearer while maintaining the mobile passthrough behavior (`lib/core/scrollable_wrapper.dart`).
 - Flutter tooling (`flutter analyze`) remains unavailable in the container environment.
+
+## 2025-09-29
+- Added reusable font-size constants to keep desktop typography constrained to 22/18/16/12 points and referenced them from the shared app theme (`lib/core/font_constants.dart`, `lib/core/app_theme.dart`).
+- Reworked the scrollable wrapper to apply padding consistently and to avoid nested layout errors encountered during earlier scripted replacements (`lib/core/scrollable_wrapper.dart`).
+- Relaxed the stored route builder signature to accept dynamic parameters so Dart Dev Compiler no longer reports invalid FFParameters function types when compiling the web target (`lib/flutter_flow/nav/nav.dart`).
