@@ -9,14 +9,18 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import '../utils/pdf_js_merge.dart';
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
+  if (!kIsWeb) {
+    print('[mergeAndDownloadPdf] 현재 플랫폼에서는 PDF 병합을 지원하지 않습니다.');
+    return;
+  }
+
   final List<String> validUrls = pdfUrls
       .map((url) => url.trim())
       .where((url) => url.isNotEmpty)
@@ -27,11 +31,9 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
     return;
   }
 
-  final PdfDocument finalDoc = PdfDocument();
+  final List<Uint8List> pdfByteChunks = <Uint8List>[];
   Uint8List? outputBytes;
   final int totalFiles = validUrls.length;
-  bool appendedAnyPage = false;
-  bool removedPlaceholderPage = false;
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -54,15 +56,12 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
   updateProgress(0, '총 $totalFiles개 파일 다운로드 준비 중');
 
   try {
-    finalDoc.pageSettings.margins.all = 0;
-
     for (int index = 0; index < totalFiles; index++) {
       final displayIndex = index + 1;
       final url = validUrls[index];
 
       updateProgress(index, '파일 $displayIndex / $totalFiles 다운로드 중');
 
-      PdfDocument? currentDoc;
       try {
         final resp = await http
             .get(Uri.parse(url))
@@ -77,8 +76,8 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
-        currentDoc = PdfDocument(inputBytes: resp.bodyBytes);
-        if (currentDoc.pages.count == 0) {
+        final bytes = resp.bodyBytes;
+        if (bytes.isEmpty) {
           updateProgress(
             displayIndex,
             '파일 $displayIndex / $totalFiles 빈 문서 건너뜀',
@@ -86,31 +85,7 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           continue;
         }
 
-        for (int pageIndex = 0; pageIndex < currentDoc.pages.count; pageIndex++) {
-          final PdfPage srcPage = currentDoc.pages[pageIndex];
-          final PdfTemplate template = srcPage.createTemplate();
-
-          if (!appendedAnyPage && !removedPlaceholderPage) {
-            if (finalDoc.pages.count == 1) {
-              finalDoc.pages.removeAt(0);
-            }
-            removedPlaceholderPage = true;
-          }
-
-          finalDoc.pageSettings.margins.all = 0;
-          finalDoc.pageSettings.size = template.size;
-
-          final PdfPage dstPage = finalDoc.pages.add()
-            ..rotation = srcPage.rotation;
-
-          dstPage.graphics.drawPdfTemplate(
-            template,
-            ui.Offset.zero,
-            template.size,
-          );
-
-          appendedAnyPage = true;
-        }
+        pdfByteChunks.add(Uint8List.fromList(bytes));
 
         updateProgress(
           displayIndex,
@@ -122,27 +97,23 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
           displayIndex,
           '파일 $displayIndex / $totalFiles 처리 중 오류',
         );
-      } finally {
-        currentDoc?.dispose();
       }
     }
 
-    if (!appendedAnyPage || finalDoc.pages.count == 0) {
+    if (pdfByteChunks.isEmpty) {
       throw Exception('병합할 PDF 페이지가 없습니다.');
     }
 
-    updateProgress(totalFiles, 'PDF 파일 생성 중');
-    outputBytes = Uint8List.fromList(await finalDoc.save());
+    updateProgress(totalFiles, 'PDF 파일 병합 중');
+    outputBytes = await mergePdfBytes(pdfByteChunks);
     updateProgress(totalFiles, 'PDF 다운로드 준비 완료');
   } catch (e) {
     updateProgress(totalFiles, 'PDF 병합 중 오류가 발생했습니다');
     print('[mergeAndDownloadPdf] 오류: $e');
     throw Exception('PDF 병합 중 오류가 발생했습니다: $e');
-  } finally {
-    finalDoc.dispose();
   }
 
-  if (!kIsWeb || outputBytes == null) {
+  if (outputBytes == null) {
     return;
   }
 
