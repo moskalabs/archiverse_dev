@@ -4,16 +4,19 @@ import '/components/account_manage/account_manage_row_mobile/account_manage_row_
 import '/components/default_layout/borderline/borderline_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
 import '/components/default_layout/nav_bar/admin_navi_sidebar/admin_navi_sidebar_widget.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import 'admin_account_manage_model.dart';
 export 'admin_account_manage_model.dart';
 
@@ -40,31 +43,454 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _showError(String message) {
+    _showSnackBar(message);
+  }
+
+  Future<List<PostsRow>> searchPostsInWidget(
+      String? searchType, String? searchText) async {
+    final keyword = searchText?.trim() ?? '';
+
+    final posts = await PostsTable().queryRows(
+      queryFn: (q) => q.order('name', ascending: true),
+    );
+    final adminRows = await AdminPostTable().queryRows(
+      queryFn: (q) => q.order('adminId', ascending: true),
+    );
+    _model.adminPostRows = adminRows;
+    final merged = _mergeWithAdminPosts(posts, adminRows: adminRows);
+
+    if (keyword.isEmpty) {
+      return merged;
+    }
+
+    final lowerKeyword = keyword.toLowerCase();
+    return merged.where((row) {
+      if (searchType == '학 번' || searchType == '연락처') {
+        final phone = row.phone ?? '';
+        return phone.contains(keyword);
+      }
+      final name = row.name?.toLowerCase() ?? '';
+      return name.contains(lowerKeyword);
+    }).toList();
+  }
+
+  String _userTypeLabel(int? userType) {
+    switch (userType) {
+      case 0:
+        return '마스터';
+      case 1:
+        return '전임';
+      case 2:
+        return '겸임';
+      case 4:
+        return '조교';
+      case 3:
+      default:
+        return '일반';
+    }
+  }
+
+  Future<void> _initializeData() async {
+    _model.isLoading = true;
+    safeSetState(() {});
+    await _loadPostsAndClasses(resetSearch: true);
+    _setupRealtimeSubscription();
+    _model.isLoading = false;
+    safeSetState(() {});
+  }
+
+  Future<void> _loadPostsAndClasses({required bool resetSearch}) async {
+    await Future.wait([
+      _loadPosts(resetSearch: resetSearch),
+      _loadClasses(),
+    ]);
+    FFAppState().usertype = 0;
+  }
+
+  Future<void> _loadPosts({required bool resetSearch}) async {
+    try {
+      final posts = await PostsTable().queryRows(
+        queryFn: (q) => q.order('name', ascending: true),
+      );
+      final adminRows = await AdminPostTable().queryRows(
+        queryFn: (q) => q.order('adminId', ascending: true),
+      );
+      _model.adminPostRows = adminRows;
+      _model.basePosts = posts.map((row) {
+        final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+        cloned.userType = cloned.userType ?? 3;
+        cloned.position = _userTypeLabel(cloned.userType);
+        return cloned;
+      }).toList();
+      final merged = _mergeWithAdminPosts(_model.basePosts);
+      if (resetSearch) {
+        _model.isSearching = false;
+        _model.currentSearchKeyword = '';
+      }
+      _applyPostsData(merged,
+          resetPage: resetSearch, preserveSearch: !resetSearch);
+    } catch (e) {
+      _showError('데이터 로드 실패: $e');
+      _model.basePosts = [];
+      _model.adminPostRows = [];
+      _model.prfoutput = [];
+      _model.paginatedPosts = [];
+    }
+  }
+
+  Future<void> _loadClasses() async {
+    try {
+      _model.classSelectedOnload = await ClassTable().queryRows(
+        queryFn: (q) => q,
+      );
+      _applyClassFilters();
+    } catch (e) {
+      _showError('강의 정보 로드 실패: $e');
+      _model.classSelectedOnload = [];
+      _model.classOnload = [];
+    }
+  }
+
+  void _applyPostsData(List<PostsRow> posts,
+      {bool resetPage = false, bool preserveSearch = true}) {
+    final sorted = [...posts]
+      ..sort(
+        (a, b) => (a.name ?? '').compareTo(b.name ?? ''),
+      );
+    _model.allPosts = sorted;
+    final previousSelection = _model.selectedProfessorId;
+    if (!preserveSearch) {
+      _model.isSearching = false;
+      _model.currentSearchKeyword = '';
+    }
+    final filtered = _filterPosts(sorted);
+    _model.prfoutput = filtered;
+    if (resetPage) {
+      _model.currentPage = 1;
+    }
+    final selectedId = previousSelection != null &&
+            filtered.any((row) => row.id == previousSelection)
+        ? previousSelection
+        : filtered.firstOrNull?.id ?? sorted.firstOrNull?.id;
+    _model.selectedProfessorId = selectedId;
+    final selectedRow = selectedId == null
+        ? null
+        : filtered
+                .where((row) => row.id == selectedId)
+                .firstOrNull ??
+            sorted.where((row) => row.id == selectedId).firstOrNull;
+    _model.profeesorName = valueOrDefault<String>(
+      selectedRow?.name ?? filtered.firstOrNull?.name ?? sorted.firstOrNull?.name,
+      '교수 이름',
+    );
+    _updatePagination(resetPage: resetPage);
+    _applyClassFilters();
+  }
+
+  List<PostsRow> _filterPosts(List<PostsRow> source) {
+    if (!_model.isSearching || _model.currentSearchKeyword.isEmpty) {
+      return List<PostsRow>.from(source);
+    }
+    final keyword = _model.currentSearchKeyword;
+    final lowerKeyword = keyword.toLowerCase();
+    return source
+        .where(
+            (row) => (row.name ?? '').toLowerCase().contains(lowerKeyword))
+        .toList();
+  }
+
+  List<PostsRow> _mergeWithAdminPosts(List<PostsRow> source,
+      {List<AdminPostRow>? adminRows}) {
+    if (source.isEmpty) {
+      return [];
+    }
+    final effectiveAdminRows = adminRows ?? _model.adminPostRows;
+    if (effectiveAdminRows.isEmpty) {
+      return source.map((row) {
+        final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+        cloned.userType = cloned.userType ?? 3;
+        cloned.position = _userTypeLabel(cloned.userType);
+        return cloned;
+      }).toList();
+    }
+    final adminMap = {
+      for (final admin in effectiveAdminRows)
+        admin.adminId.toLowerCase(): admin,
+    };
+    return source.map((row) {
+      final cloned = PostsRow(Map<String, dynamic>.from(row.data));
+      final emailKey = (cloned.email ?? '').toLowerCase();
+      final admin = adminMap[emailKey];
+      if (admin != null) {
+        final adminName = admin.name;
+        if (adminName != null && adminName.isNotEmpty) {
+          cloned.name = adminName;
+        }
+        final adminRole = admin.role;
+        if (adminRole.isNotEmpty) {
+          cloned.permissionLevel = _permissionLevelFromRole(adminRole);
+        }
+        final adminUserType = admin.userType;
+        if (adminUserType != null) {
+          cloned.userType = adminUserType;
+        }
+      }
+      cloned.userType = cloned.userType ?? 3;
+      cloned.position = _userTypeLabel(cloned.userType);
+      return cloned;
+    }).toList();
+  }
+
+  int _permissionLevelFromRole(String role) {
+    final normalized = role.toLowerCase().trim();
+    if (normalized.contains('master') ||
+        normalized.contains('admin') ||
+        normalized.contains('관리')) {
+      return 2;
+    }
+    return 1;
+  }
+
+  String _roleFromPermissionLevel(int level) => level >= 2 ? 'MASTER' : 'MEMBER';
+
+  void _updateBasePostRow(int postId, Map<String, dynamic> updatedData) {
+    if (_model.basePosts.isEmpty) {
+      return;
+    }
+    final index = _model.basePosts.indexWhere((row) => row.id == postId);
+    if (index == -1) {
+      return;
+    }
+    final baseRow = _model.basePosts[index];
+    updatedData.forEach((key, value) {
+      baseRow.setField(key, value);
+    });
+  }
+
+  void _refreshMergedPosts() {
+    if (_model.basePosts.isEmpty) {
+      return;
+    }
+    final merged = _mergeWithAdminPosts(_model.basePosts);
+    _applyPostsData(merged, preserveSearch: true);
+    safeSetState(() {});
+  }
+
+  Future<void> _ensureAdminPostRecord(
+    PostsRow post,
+    Map<String, dynamic> updatedData,
+  ) async {
+    final email = post.email;
+    if (email == null || email.isEmpty) {
+      return;
+    }
+    final effectiveName =
+        (updatedData['name'] as String?) ?? post.name ?? '';
+    final effectivePermission =
+        (updatedData['permission_level'] as int?) ??
+            post.permissionLevel ??
+            1;
+    final effectiveUserType =
+        (updatedData['user_type'] as int?) ?? post.userType ?? 0;
+    final roleValue = _roleFromPermissionLevel(effectivePermission);
+
+    final existing = await AdminPostTable().queryRows(
+      queryFn: (q) => q.eq('adminId', email).limit(1),
+    );
+
+    if (existing.isEmpty) {
+      final inserted = await AdminPostTable().insert({
+        'adminId': email,
+        'AdminInfo': const Uuid().v4(),
+        'name': effectiveName,
+        'user_type': effectiveUserType,
+        'role': roleValue,
+      });
+      _model.adminPostRows = [
+        ..._model.adminPostRows
+            .where((row) => row.adminId.toLowerCase() != email.toLowerCase()),
+        inserted,
+      ];
+    } else {
+      final adminRow = existing.first;
+      final updatePayload = {
+        'name': effectiveName,
+        'user_type': effectiveUserType,
+        'role': roleValue,
+      };
+      await AdminPostTable().update(
+        data: updatePayload,
+        matchingRows: (rows) => rows.eq('id', adminRow.id),
+      );
+      adminRow.name = effectiveName;
+      adminRow.userType = effectiveUserType;
+      adminRow.role = roleValue;
+    }
+  }
+
+  Future<void> _handlePostEdit(
+    PostsRow post,
+    Map<String, dynamic> updatedData,
+  ) async {
+    try {
+      await _ensureAdminPostRecord(post, updatedData);
+      if (updatedData.isNotEmpty) {
+        _updateBasePostRow(post.id, updatedData);
+      }
+      _refreshMergedPosts();
+    } catch (e) {
+      _showError('관리자 정보 동기화 실패: $e');
+    }
+  }
+
+  void _updatePagination({bool resetPage = false}) {
+    final data = List<PostsRow>.from(_model.prfoutput ?? []);
+    if (resetPage) {
+      _model.currentPage = 1;
+    }
+    final totalCount = data.length;
+    final totalPages = totalCount == 0
+        ? 1
+        : ((totalCount - 1) ~/ _model.itemsPerPage) + 1;
+    if (_model.currentPage > totalPages) {
+      _model.currentPage = totalPages;
+    }
+    if (_model.currentPage < 1) {
+      _model.currentPage = 1;
+    }
+    final startIndex = (_model.currentPage - 1) * _model.itemsPerPage;
+    final endIndex = math.min(startIndex + _model.itemsPerPage, totalCount);
+    if (startIndex < 0 || startIndex >= totalCount) {
+      _model.paginatedPosts = [];
+      return;
+    }
+    _model.paginatedPosts = data.sublist(startIndex, endIndex);
+  }
+
+  int get _totalPages {
+    final total = _model.prfoutput?.length ?? 0;
+    if (total == 0) {
+      return 1;
+    }
+    return ((total - 1) ~/ _model.itemsPerPage) + 1;
+  }
+
+  String? _validateSearchInput(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return '검색어를 입력해주세요';
+    }
+    return null;
+  }
+
+  Future<void> _refreshData() async {
+    _model.isLoading = true;
+    safeSetState(() {});
+    await _loadPostsAndClasses(resetSearch: false);
+    _model.isLoading = false;
+    safeSetState(() {});
+  }
+
+  void _applyClassFilters() {
+    if (_model.classSelectedOnload == null) {
+      return;
+    }
+    _model.classOnload = _model.classSelectedOnload!
+        .where((e) =>
+            e.year == _model.years &&
+            e.semester == _model.semester &&
+            (_model.selectedProfessorId == null ||
+                e.professorId == _model.selectedProfessorId))
+        .toList()
+        .cast<ClassRow>();
+  }
+
+  void _setupRealtimeSubscription() {
+    _model.postsSubscription?.cancel();
+    _model.postsSubscription = Supabase.instance.client
+        .from('posts')
+        .stream(primaryKey: ['id'])
+        .listen((data) {
+      final rows = data.map((row) => PostsRow(row)).toList();
+      _model.basePosts = rows
+          .map((row) => PostsRow(Map<String, dynamic>.from(row.data)))
+          .toList();
+      final merged = _mergeWithAdminPosts(_model.basePosts);
+      _applyPostsData(merged, preserveSearch: true);
+      safeSetState(() {});
+    }, onError: (error) {
+      _showError('실시간 데이터 수신 실패: $error');
+    });
+    _model.adminPostSubscription?.cancel();
+    _model.adminPostSubscription = Supabase.instance.client
+        .from('admin_post')
+        .stream(primaryKey: ['id'])
+        .listen((data) {
+      _model.adminPostRows = data.map((row) => AdminPostRow(row)).toList();
+      if (_model.basePosts.isEmpty) {
+        return;
+      }
+      final merged = _mergeWithAdminPosts(_model.basePosts);
+      _applyPostsData(merged, preserveSearch: true);
+      safeSetState(() {});
+    }, onError: (error) {
+      _showError('관리자 계정 실시간 수신 실패: $error');
+    });
+  }
+
+  void _handlePageChange(bool isNext) {
+    if (isNext) {
+      if (_model.currentPage < _totalPages) {
+        _model.currentPage += 1;
+        _updatePagination();
+        safeSetState(() {});
+      }
+    } else {
+      if (_model.currentPage > 1) {
+        _model.currentPage -= 1;
+        _updatePagination();
+        safeSetState(() {});
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AdminAccountManageModel());
 
-    // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.prfoutput = await PostsTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.profeesorName = valueOrDefault<String>(
-        _model.prfoutput?.firstOrNull?.name,
-        '교수 이름',
-      );
-      safeSetState(() {});
-      _model.classSelectedOnload = await ClassTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.classOnload = _model.classSelectedOnload!
-          .where((e) =>
-              (e.year == _model.years) && (e.semester == _model.semester))
-          .toList()
-          .toList()
-          .cast<ClassRow>();
-      safeSetState(() {});
+      try {
+        _model.prfoutput = await PostsTable().queryRows(
+          queryFn: (q) => q.order('name', ascending: true),
+        );
+
+        _model.profeesorName =
+            _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
+
+        _model.classSelectedOnload = await ClassTable().queryRows(
+          queryFn: (q) => q,
+        );
+
+        _model.classOnload = _model.classSelectedOnload!
+            .where((e) => (e.year == _model.years) && (e.semester == _model.semester))
+            .toList()
+            .cast<ClassRow>();
+      } catch (e) {
+        print('초기화 에러: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터 로드 실패: $e')),
+        );
+        _model.prfoutput = [];
+        _model.classOnload = [];
+      }
+
       FFAppState().usertype = 0;
       safeSetState(() {});
     });
@@ -74,6 +500,13 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+
+    _model.dropDownValue ??= '이 름';
+    _model.currentSearchType ??= _model.dropDownValue;
+    _model.textController1Validator =
+        (context, value) => _validateSearchInput(value);
+    _model.textController2Validator =
+        (context, value) => _validateSearchInput(value);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -953,23 +1386,24 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                       controller: _model
                                                               .dropDownValueController ??=
                                                           FormFieldController<
-                                                              String>(null),
+                                                              String>(_model
+                                                                  .dropDownValue ??
+                                                              '이 름'),
                                                       options: [
                                                         FFLocalizations.of(
                                                                 context)
                                                             .getText(
                                                           'n15kxnyz' /* 이 름 */,
-                                                        ),
-                                                        FFLocalizations.of(
-                                                                context)
-                                                            .getText(
-                                                          'dyvx85vc' /* 학 번 */,
                                                         )
                                                       ],
-                                                      onChanged: (val) =>
-                                                          safeSetState(() =>
-                                                              _model.dropDownValue =
-                                                                  val),
+                                                      onChanged: (val) {
+                                                        safeSetState(() {
+                                                          _model.dropDownValue =
+                                                              val;
+                                                          _model.currentSearchType =
+                                                              val;
+                                                        });
+                                                      },
                                                       width: 200.0,
                                                       height: 40.0,
                                                       textStyle:
@@ -1049,6 +1483,12 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                       decoration:
                                                           InputDecoration(
                                                         isDense: true,
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 12.0,
+                                                          vertical: 10.0,
+                                                        ),
                                                         labelStyle:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -1227,15 +1667,77 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                 Expanded(
                                                   flex: 1,
                                                   child: FFButtonWidget(
-                                                    onPressed: () {
-                                                      print(
-                                                          'Button pressed ...');
+                                                    onPressed: () async {
+                                                      try {
+                                                        final searchText =
+                                                            _model.textController1
+                                                                .text
+                                                                .trim();
+
+                                                        final results =
+                                                            await actions.searchPosts(
+                                                          _model.dropDownValue ??
+                                                              '이 름',
+                                                          searchText,
+                                                        );
+                                                        List<PostsRow>
+                                                            mergedResults;
+                                                        if (results.isEmpty) {
+                                                          mergedResults =
+                                                              await searchPostsInWidget(
+                                                            _model.dropDownValue ??
+                                                                '이 름',
+                                                            searchText,
+                                                          );
+                                                        } else {
+                                                          mergedResults =
+                                                              _mergeWithAdminPosts(
+                                                                  results);
+                                                        }
+
+                                                        _model.isSearching =
+                                                            searchText
+                                                                .isNotEmpty;
+                                                        _model
+                                                                .currentSearchKeyword =
+                                                            searchText;
+                                                        _model.currentSearchType =
+                                                            _model.dropDownValue ??
+                                                                '이 름';
+                                                        _model.prfoutput =
+                                                            mergedResults;
+                                                        _model.profeesorName =
+                                                            mergedResults
+                                                                    .firstOrNull
+                                                                    ?.name ??
+                                                                '교수 이름';
+                                                        _updatePagination(
+                                                            resetPage: true);
+                                                        safeSetState(() {});
+
+                                                        if (_model.prfoutput
+                                                                ?.isEmpty ??
+                                                            true) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  '검색 결과가 없습니다.'),
+                                                            ),
+                                                          );
+                                                        }
+                                                      } catch (e) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                              content: Text(
+                                                                  '검색 중 오류가 발생했습니다: $e')),
+                                                        );
+                                                      }
                                                     },
-                                                    text: FFLocalizations.of(
-                                                            context)
-                                                        .getText(
-                                                      'o13eae5a' /* 학생 검색 */,
-                                                    ),
+                                                    text: '관리자 계정 검색',
                                                     options: FFButtonOptions(
                                                       height: 40.0,
                                                       padding:
@@ -1621,25 +2123,52 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            wrapWithModel(
-                                              model:
-                                                  _model.accountManageRowModel1,
-                                              updateCallback: () =>
-                                                  safeSetState(() {}),
-                                              child: AccountManageRowWidget(
-                                                confirmEdit: (confirm) async {},
+                                            if ((_model.paginatedPosts).isEmpty)
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        20.0, 20.0, 20.0, 20.0),
+                                                child: Text(
+                                                  '표시할 데이터가 없습니다.',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                ),
                                               ),
-                                            ),
-                                            wrapWithModel(
-                                              model:
-                                                  _model.accountManageRowModel2,
-                                              updateCallback: () =>
-                                                  safeSetState(() {}),
-                                              child: AccountManageRowWidget(
-                                                isEditing: true,
-                                                confirmEdit: (confirm) async {},
-                                              ),
-                                            ),
+                                            ..._model.paginatedPosts
+                                                .map(
+                                                  (post) => Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                0.0,
+                                                                0.0,
+                                                                0.0,
+                                                                10.0),
+                                                    child:
+                                                        AccountManageRowWidget(
+                                                      key: ValueKey(
+                                                          'account_row_${post.id}'),
+                                                      post: post,
+                                                      confirmEdit:
+                                                          (confirm, data) async {
+                                                        if (confirm) {
+                                                          await _handlePostEdit(
+                                                            post,
+                                                            data,
+                                                          );
+                                                        }
+                                                      },
+                                                      onSelected: () {
+                                                        _model.selectedProfessorId =
+                                                            post.id;
+                                                        _applyClassFilters();
+                                                        safeSetState(() {});
+                                                      },
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
                                           ],
                                         ),
                                       ),
@@ -1662,8 +2191,79 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.end,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.chevron_left,
+                                                      color: _model.currentPage >
+                                                              1
+                                                          ? Color(0xFF666666)
+                                                          : Color(0xFFCCCCCC),
+                                                    ),
+                                                    onPressed: _model
+                                                                .currentPage >
+                                                            1
+                                                        ? () =>
+                                                            _handlePageChange(
+                                                                false)
+                                                        : null,
+                                                  ),
+                                                  Text(
+                                                    '${_model.currentPage} / ${_totalPages}',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          font: GoogleFonts
+                                                              .openSans(
+                                                            fontWeight:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontWeight,
+                                                            fontStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .fontStyle,
+                                                          ),
+                                                          color:
+                                                              Color(0xFF666666),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.chevron_right,
+                                                      color: _model.currentPage <
+                                                              _totalPages
+                                                          ? Color(0xFF666666)
+                                                          : Color(0xFFCCCCCC),
+                                                    ),
+                                                    onPressed: _model
+                                                                .currentPage <
+                                                            _totalPages
+                                                        ? () =>
+                                                            _handlePageChange(
+                                                                true)
+                                                        : null,
+                                                  ),
+                                                ],
+                                              ),
                                               RichText(
                                                 textScaler:
                                                     MediaQuery.of(context)
@@ -1705,37 +2305,17 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                               ),
                                                     ),
                                                     TextSpan(
-                                                      text: FFLocalizations.of(
-                                                              context)
-                                                          .getText(
-                                                        '3kswy82q' /*  10 */,
-                                                      ),
+                                                      text:
+                                                          ' ${_model.prfoutput?.length ?? 0} ',
                                                       style:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .bodyMedium
                                                               .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
+                                                                fontFamily:
+                                                                    'Open Sans',
                                                                 letterSpacing:
                                                                     0.0,
-                                                                fontWeight: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
                                                                 decoration:
                                                                     TextDecoration
                                                                         .underline,
@@ -1830,6 +2410,19 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                 ],
               ),
             ),
+            if (_model.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black26,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF284E75),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (responsiveVisibility(
               context: context,
               tabletLandscape: false,
@@ -2211,8 +2804,42 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                 color: Color(0xFF666666),
                                 size: 24.0,
                               ),
-                              onPressed: () {
-                                print('IconButton pressed ...');
+                              onPressed: () async {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      const Center(child: CircularProgressIndicator()),
+                                );
+
+                                try {
+                                  _model.prfoutput = await PostsTable().queryRows(
+                                    queryFn: (q) => q.order('name', ascending: true),
+                                  );
+
+                                  _model.classSelectedOnload =
+                                      await ClassTable().queryRows(
+                                    queryFn: (q) => q,
+                                  );
+
+                                  _model.classOnload = _model.classSelectedOnload!
+                                      .where((e) =>
+                                          e.year == _model.years &&
+                                          e.semester == _model.semester)
+                                      .toList()
+                                      .cast<ClassRow>();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('새로고침 실패: $e')),
+                                  );
+                                } finally {
+                                  Navigator.pop(context);
+                                }
+
+                                _model.profeesorName =
+                                    _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
+                                _updatePagination(resetPage: true);
+                                safeSetState(() {});
                               },
                             ),
                           ],
@@ -2246,6 +2873,11 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                   obscureText: false,
                                   decoration: InputDecoration(
                                     isDense: true,
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical: 10.0,
+                                    ),
                                     labelStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -2374,12 +3006,53 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                             Flexible(
                               flex: 1,
                               child: FFButtonWidget(
-                                onPressed: () {
-                                  print('Button pressed ...');
+                                onPressed: () async {
+                                  try {
+                                    final searchText =
+                                        _model.textController2.text.trim();
+
+                                    final results = await actions.searchPosts(
+                                      '이 름',
+                                      searchText,
+                                    );
+                                    List<PostsRow> mergedResults;
+                                    if (results.isEmpty) {
+                                      mergedResults =
+                                          await searchPostsInWidget(
+                                        '이 름',
+                                        searchText,
+                                      );
+                                    } else {
+                                      mergedResults =
+                                          _mergeWithAdminPosts(results);
+                                    }
+
+                                    _model.isSearching = searchText.isNotEmpty;
+                                    _model.currentSearchKeyword = searchText;
+                                    _model.currentSearchType = '이 름';
+                                    _model.prfoutput = mergedResults;
+                                    _model.profeesorName = mergedResults
+                                            .firstOrNull
+                                            ?.name ??
+                                        '교수 이름';
+                                    _updatePagination(resetPage: true);
+                                    safeSetState(() {});
+
+                                    if (_model.prfoutput?.isEmpty ?? true) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('검색 결과가 없습니다.'),
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text('검색 중 오류가 발생했습니다: $e')),
+                                    );
+                                  }
                                 },
-                                text: FFLocalizations.of(context).getText(
-                                  'byp1bfcg' /* 교수 검색 */,
-                                ),
+                                  text: '관리자 계정 검색',
                                 options: FFButtonOptions(
                                   height: 30.0,
                                   padding: EdgeInsetsDirectional.fromSTEB(
@@ -2650,26 +3323,53 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                     MediaQuery.sizeOf(context).height * 0.7,
                               ),
                               decoration: BoxDecoration(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  ListView(
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    children: [
-                                      wrapWithModel(
-                                        model:
-                                            _model.accountManageRowMobileModel,
-                                        updateCallback: () =>
-                                            safeSetState(() {}),
-                                        child: AccountManageRowMobileWidget(
-                                          confirmEdit: (confirm) async {},
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    if ((_model.paginatedPosts).isEmpty)
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            10.0, 20.0, 10.0, 20.0),
+                                        child: Text(
+                                          '표시할 데이터가 없습니다.',
+                                          style:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium,
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 10.0)),
-                                  ),
-                                ],
+                                    ..._model.paginatedPosts
+                                        .map(
+                                          (post) => Padding(
+                                            padding: EdgeInsetsDirectional
+                                                .fromSTEB(
+                                                    0.0, 0.0, 0.0, 10.0),
+                                            child:
+                                                AccountManageRowMobileWidget(
+                                              key: ValueKey(
+                                                  'account_row_mobile_${post.id}'),
+                                              post: post,
+                                              confirmEdit:
+                                                  (confirm, data) async {
+                                                if (confirm) {
+                                                  await _handlePostEdit(
+                                                    post,
+                                                    data,
+                                                  );
+                                                }
+                                              },
+                                              onSelected: () {
+                                                _model.selectedProfessorId =
+                                                    post.id;
+                                                _applyClassFilters();
+                                                safeSetState(() {});
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ],
+                                ),
                               ),
                             ),
                             wrapWithModel(
@@ -2691,8 +3391,82 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                       10.0, 0.0, 10.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.chevron_left,
+                                              color: _model.currentPage > 1
+                                                  ? Color(0xFF666666)
+                                                  : Color(0xFFCCCCCC),
+                                            ),
+                                            iconSize: 20.0,
+                                            padding: EdgeInsets.zero,
+                                            onPressed: _model.currentPage > 1
+                                                ? () =>
+                                                    _handlePageChange(false)
+                                                : null,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    4.0, 0.0, 4.0, 0.0),
+                                            child: Text(
+                                              '${_model.currentPage} / ${_totalPages}',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        font: GoogleFonts
+                                                            .openSans(
+                                                          fontWeight:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontWeight,
+                                                          fontStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMedium
+                                                                  .fontStyle,
+                                                        ),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontWeight,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .fontStyle,
+                                                      ),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.chevron_right,
+                                              color: _model.currentPage <
+                                                      _totalPages
+                                                  ? Color(0xFF666666)
+                                                  : Color(0xFFCCCCCC),
+                                            ),
+                                            iconSize: 20.0,
+                                            padding: EdgeInsets.zero,
+                                            onPressed:
+                                                _model.currentPage < _totalPages
+                                                    ? () => _handlePageChange(
+                                                          true,
+                                                        )
+                                                    : null,
+                                          ),
+                                        ],
+                                      ),
                                       RichText(
                                         textScaler:
                                             MediaQuery.of(context).textScaler,
@@ -2733,39 +3507,16 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                   ),
                                             ),
                                             TextSpan(
-                                              text: FFLocalizations.of(context)
-                                                  .getText(
-                                                'semk81sv' /* 10 */,
-                                              ),
+                                              text:
+                                                  ' ${_model.prfoutput?.length ?? 0} ',
                                               style: FlutterFlowTheme.of(
                                                       context)
                                                   .bodyMedium
                                                   .override(
-                                                    font: GoogleFonts.openSans(
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMedium
-                                                              .fontStyle,
-                                                    ),
+                                                    fontFamily: 'Open Sans',
                                                     letterSpacing: 0.0,
-                                                    fontWeight:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontWeight,
-                                                    fontStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .fontStyle,
-                                                    decoration: TextDecoration
-                                                        .underline,
+                                                    decoration:
+                                                        TextDecoration.underline,
                                                   ),
                                             ),
                                             TextSpan(

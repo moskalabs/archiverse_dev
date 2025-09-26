@@ -1498,7 +1498,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         .queryRows(
                                                                   queryFn: (q) =>
                                                                       q.eqOrNull(
-                                                                    'user_email',
+                                                                    'email',
                                                                     _model
                                                                         .emailTextFieldTextController
                                                                         .text,
@@ -1514,7 +1514,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                     _model
                                                                         .userTypeOutput
                                                                         ?.firstOrNull
-                                                                        ?.userType,
+                                                                        ?.permissionLevel,
                                                                     0,
                                                                   );
                                                                   _model.emailField =
