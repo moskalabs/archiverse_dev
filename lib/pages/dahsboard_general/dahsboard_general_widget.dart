@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
+import '/core/responsive_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -139,16 +140,17 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                 elevation: 0.0,
               ),
             ),
-            body: SafeArea(
-              top: true,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  if (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                  ))
-                    Container(
+            body: ResponsiveWrapper(
+              child: SafeArea(
+                top: true,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    if (responsiveVisibility(
+                      context: context,
+                      phone: false,
+                    ))
+                      Container(
                       width: MediaQuery.sizeOf(context).width * 1.0,
                       height: 55.0,
                       decoration: BoxDecoration(
@@ -3432,7 +3434,8 @@ class _DahsboardGeneralWidgetState extends State<DahsboardGeneralWidget> {
                       ),
                     ),
                   ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/random_data_util.dart' as random_data;
 import '/index.dart';
+import '/core/responsive_wrapper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -96,15 +97,16 @@ class _DahsboardMasterWidgetState extends State<DahsboardMasterWidget> {
             elevation: 0.0,
           ),
         ),
-        body: SafeArea(
-          top: true,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Column(
+        body: ResponsiveWrapper(
+          child: SafeArea(
+            top: true,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       if (responsiveVisibility(
@@ -118,8 +120,8 @@ class _DahsboardMasterWidgetState extends State<DahsboardMasterWidget> {
                             color: Color(0xFFEEF1F6),
                             shape: BoxShape.rectangle,
                           ),
-                          child: Flex(
-                            direction: () {
+                            child: Flex(
+                              direction: () {
                               if (MediaQuery.sizeOf(context).width <
                                   kBreakpointSmall) {
                                 return false;
@@ -136,12 +138,12 @@ class _DahsboardMasterWidgetState extends State<DahsboardMasterWidget> {
                                 ? Axis.horizontal
                                 : Axis.vertical,
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           24.0, 0.0, 24.0, 0.0),
@@ -7661,7 +7663,8 @@ class _DahsboardMasterWidgetState extends State<DahsboardMasterWidget> {
                       LoginPageWidget.routeName, context.mounted);
                 },
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

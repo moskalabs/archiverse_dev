@@ -1,7 +1,10 @@
 // ignore_for_file: overridden_fields, annotate_overrides
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../core/app_theme.dart';
 
 abstract class FlutterFlowTheme {
   static FlutterFlowTheme of(BuildContext context) {
@@ -315,49 +318,64 @@ class ThemeTypography extends Typography {
 
   String get displayLargeFamily => 'Open Sans';
   bool get displayLargeIsCustom => false;
-  TextStyle get displayLarge => GoogleFonts.openSans();
+  TextStyle get displayLarge =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get displayMediumFamily => 'Open Sans';
   bool get displayMediumIsCustom => false;
-  TextStyle get displayMedium => GoogleFonts.openSans();
+  TextStyle get displayMedium =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get displaySmallFamily => 'Open Sans';
   bool get displaySmallIsCustom => false;
-  TextStyle get displaySmall => GoogleFonts.openSans();
+  TextStyle get displaySmall =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get headlineLargeFamily => 'Open Sans';
   bool get headlineLargeIsCustom => false;
-  TextStyle get headlineLarge => GoogleFonts.openSans();
+  TextStyle get headlineLarge =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get headlineMediumFamily => 'Open Sans';
   bool get headlineMediumIsCustom => false;
-  TextStyle get headlineMedium => GoogleFonts.openSans();
+  TextStyle get headlineMedium =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get headlineSmallFamily => 'Open Sans';
   bool get headlineSmallIsCustom => false;
-  TextStyle get headlineSmall => GoogleFonts.openSans();
+  TextStyle get headlineSmall =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get titleLargeFamily => 'Open Sans';
   bool get titleLargeIsCustom => false;
-  TextStyle get titleLarge => GoogleFonts.openSans();
+  TextStyle get titleLarge =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeXL : null);
   String get titleMediumFamily => 'Open Sans';
   bool get titleMediumIsCustom => false;
-  TextStyle get titleMedium => GoogleFonts.openSans();
+  TextStyle get titleMedium =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get titleSmallFamily => 'Open Sans';
   bool get titleSmallIsCustom => false;
-  TextStyle get titleSmall => GoogleFonts.openSans();
+  TextStyle get titleSmall =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get labelLargeFamily => 'Open Sans';
   bool get labelLargeIsCustom => false;
-  TextStyle get labelLarge => GoogleFonts.openSans();
+  TextStyle get labelLarge =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get labelMediumFamily => 'Open Sans';
   bool get labelMediumIsCustom => false;
-  TextStyle get labelMedium => GoogleFonts.openSans();
+  TextStyle get labelMedium =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get labelSmallFamily => 'Open Sans';
   bool get labelSmallIsCustom => false;
-  TextStyle get labelSmall => GoogleFonts.openSans();
+  TextStyle get labelSmall =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeS : null);
   String get bodyLargeFamily => 'Open Sans';
   bool get bodyLargeIsCustom => false;
-  TextStyle get bodyLarge => GoogleFonts.openSans();
+  TextStyle get bodyLarge =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeL : null);
   String get bodyMediumFamily => 'Open Sans';
   bool get bodyMediumIsCustom => false;
-  TextStyle get bodyMedium => GoogleFonts.openSans();
+  TextStyle get bodyMedium =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeM : null);
   String get bodySmallFamily => 'Open Sans';
   bool get bodySmallIsCustom => false;
-  TextStyle get bodySmall => GoogleFonts.openSans();
+  TextStyle get bodySmall =>
+      GoogleFonts.openSans(fontSize: kIsWeb ? AppTheme.fontSizeS : null);
 }
 
 extension TextStyleHelper on TextStyle {
@@ -381,10 +399,12 @@ extension TextStyleHelper on TextStyle {
           fontStyle: fontStyle ?? this.fontStyle);
     }
 
+    final normalizedFontSize = _normalizeFontSize(fontSize ?? this.fontSize);
+
     return font != null
         ? font.copyWith(
             color: color ?? this.color,
-            fontSize: fontSize ?? this.fontSize,
+            fontSize: normalizedFontSize ?? font.fontSize,
             letterSpacing: letterSpacing ?? this.letterSpacing,
             fontWeight: fontWeight ?? this.fontWeight,
             fontStyle: fontStyle ?? this.fontStyle,
@@ -396,7 +416,7 @@ extension TextStyleHelper on TextStyle {
             fontFamily: fontFamily,
             package: package,
             color: color,
-            fontSize: fontSize,
+            fontSize: normalizedFontSize,
             letterSpacing: letterSpacing,
             fontWeight: fontWeight,
             fontStyle: fontStyle,
@@ -404,5 +424,27 @@ extension TextStyleHelper on TextStyle {
             height: lineHeight,
             shadows: shadows,
           );
+  }
+
+  double? _normalizeFontSize(double? size) {
+    if (!kIsWeb || size == null) {
+      return size;
+    }
+    const allowed = <double>{
+      AppTheme.fontSizeXL,
+      AppTheme.fontSizeL,
+      AppTheme.fontSizeM,
+      AppTheme.fontSizeS,
+    };
+    double closest = allowed.first;
+    double minDiff = double.infinity;
+    for (final candidate in allowed) {
+      final diff = (candidate - size).abs();
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = candidate;
+      }
+    }
+    return closest;
   }
 }

@@ -10,6 +10,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/index.dart';
+import '/core/responsive_wrapper.dart';
 import 'dart:math' as math;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
@@ -136,10 +137,11 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
           child: Scaffold(
             key: scaffoldKey,
             backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-            body: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
+            body: ResponsiveWrapper(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
                   width: MediaQuery.sizeOf(context).width * 1.0,
                   height: 50.0,
                   decoration: BoxDecoration(
@@ -10184,7 +10186,8 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                     ),
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         );
