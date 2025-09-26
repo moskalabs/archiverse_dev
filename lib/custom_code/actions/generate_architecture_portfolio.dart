@@ -1604,8 +1604,7 @@ Map<String, String> _extractCritiqueSections(String? html) {
       final String cleaned = _removeHeadingLabel(line);
       if (cleaned.isNotEmpty) {
         sections[sectionKey]!.write(cleaned);
-        sections[sectionKey]!.write('
-');
+        sections[sectionKey]!.write('\n');
       }
       continue;
     }
@@ -1677,7 +1676,7 @@ Future<Map<String, List<Map<String, dynamic>>>> _fetchWeeklyProgressLookup(
     final dynamic response = await SupaFlow.client
         .from('weekly_progress')
         .select('student_id, student_name, week, pdf_url, url, title')
-        .in_('student_id', studentIds)
+        .inFilter('student_id', studentIds)
         .order('week', ascending: true);
 
     final List<Map<String, dynamic>> rows = (response as List)
@@ -1756,7 +1755,7 @@ Future<Map<String, String>> _fetchSingleResultLookup(
         .from(tableName)
         .select(
             'student_id, student_name, url, pdf_url, file_url, created_date, created_at, updated_at')
-        .in_('student_id', studentIds);
+        .inFilter('student_id', studentIds);
 
     final List<Map<String, dynamic>> rows = (response as List)
         .map((dynamic item) =>
@@ -1831,7 +1830,7 @@ Future<Map<String, List<Map<String, dynamic>>>> _fetchCritiquesLookup(
     final dynamic response = await SupaFlow.client
         .from('subjectportpolio')
         .select('student_name, week, critic_html, class')
-        .in_('class', validSections);
+        .inFilter('class', validSections);
 
     final List<Map<String, dynamic>> rows = (response as List)
         .map((dynamic item) =>
