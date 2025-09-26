@@ -707,6 +707,8 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
 
                         try {
                           final selectedClassId = FFAppState().classSelectedID;
+                          await actions
+                              .customMergeAndDownload(selectedClassId);
                           final documentUrls =
                               await actions.getClassDocuments(selectedClassId);
 

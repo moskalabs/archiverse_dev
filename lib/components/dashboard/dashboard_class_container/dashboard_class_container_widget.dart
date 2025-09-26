@@ -405,6 +405,7 @@ class _DashboardClassContainerWidgetState
                           try {
                             final classId =
                                 widget.classID ?? FFAppState().classSelectedID;
+                            await actions.customMergeAndDownload(classId);
                             final documentUrls = await actions
                                 .getClassDocuments(classId);
 

@@ -34,4 +34,10 @@ class AttendanceRow extends SupabaseDataRow {
 
   String? get week => getField<String>('week');
   set week(String? value) => setField<String>('week', value);
+
+  String? get section => getField<String>('section');
+  set section(String? value) => setField<String>('section', value);
+
+  String? get professorName => getField<String>('professor_name');
+  set professorName(String? value) => setField<String>('professor_name', value);
 }

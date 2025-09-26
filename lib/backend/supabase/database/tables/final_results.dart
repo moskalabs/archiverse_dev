@@ -50,4 +50,7 @@ class FinalResultsRow extends SupabaseDataRow {
 
   int? get grade => getField<int>('grade');
   set grade(int? value) => setField<int>('grade', value);
+
+  String? get section => getField<String>('section');
+  set section(String? value) => setField<String>('section', value);
 }

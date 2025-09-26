@@ -921,6 +921,43 @@ class FFAppState extends ChangeNotifier {
     prefs.setStringList('ff_mergepdfs', _mergepdfs);
   }
 
+  List<PortfolioSectionStruct> _classPortfolioSections = [];
+  List<PortfolioSectionStruct> get classPortfolioSections =>
+      _classPortfolioSections;
+  set classPortfolioSections(List<PortfolioSectionStruct> value) {
+    _classPortfolioSections = value;
+  }
+
+  void addToClassPortfolioSections(PortfolioSectionStruct value) {
+    classPortfolioSections.add(value);
+  }
+
+  void removeFromClassPortfolioSections(PortfolioSectionStruct value) {
+    classPortfolioSections.remove(value);
+  }
+
+  void removeAtIndexFromClassPortfolioSections(int index) {
+    classPortfolioSections.removeAt(index);
+  }
+
+  void updateClassPortfolioSectionsAtIndex(
+    int index,
+    PortfolioSectionStruct Function(PortfolioSectionStruct) updateFn,
+  ) {
+    classPortfolioSections[index] = updateFn(_classPortfolioSections[index]);
+  }
+
+  void insertAtIndexInClassPortfolioSections(
+    int index,
+    PortfolioSectionStruct value,
+  ) {
+    classPortfolioSections.insert(index, value);
+  }
+
+  void clearClassPortfolioSections() {
+    classPortfolioSections = [];
+  }
+
   double _downloadProgress = 0.0;
   double get downloadProgress => _downloadProgress;
   set downloadProgress(double value) {
