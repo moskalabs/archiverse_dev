@@ -2276,6 +2276,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                 searchedResultsItem.section,
                                                                             professor:
                                                                                 searchedResultsItem.professor!,
+                                                                            year: searchedResultsItem.year,
+                                                                            semester: searchedResultsItem.semester,
+                                                                            grade: searchedResultsItem.grade,
                                                                             classID:
                                                                                 searchedResultsItem.id,
                                                                             currentlySelectedID:

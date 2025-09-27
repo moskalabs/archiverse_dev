@@ -17,14 +17,27 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
-  if (pdfUrls.isEmpty) {
+  final Set<String> seen = <String>{};
+  final List<String> sanitizedUrls = [];
+
+  for (final rawUrl in pdfUrls) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty || trimmed.toLowerCase() == 'null') {
+      continue;
+    }
+    if (seen.add(trimmed)) {
+      sanitizedUrls.add(trimmed);
+    }
+  }
+
+  if (sanitizedUrls.isEmpty) {
     print('[mergeAndDownloadPdf] 병합할 PDF URL이 없습니다.');
     return;
   }
 
   final PdfDocument finalDoc = PdfDocument();
   Uint8List? outputBytes;
-  final int totalFiles = pdfUrls.length;
+  final int totalFiles = sanitizedUrls.length;
 
   double _progressValue(int processed) {
     if (totalFiles <= 0) {
@@ -51,19 +64,9 @@ Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
 
     for (int index = 0; index < totalFiles; index++) {
       final displayIndex = index + 1;
-      final url = pdfUrls[index];
-      final trimmedUrl = url.trim();
+      final trimmedUrl = sanitizedUrls[index];
 
       updateProgress(index, '파일 $displayIndex / $totalFiles 다운로드 중');
-
-      if (trimmedUrl.isEmpty) {
-        print('[mergeAndDownloadPdf] 빈 URL 건너뜀: index $index');
-        updateProgress(
-          displayIndex,
-          '파일 $displayIndex / $totalFiles 건너뜀',
-        );
-        continue;
-      }
 
       PdfDocument? src;
       try {
