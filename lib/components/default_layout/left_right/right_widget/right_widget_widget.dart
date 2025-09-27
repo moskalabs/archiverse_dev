@@ -708,7 +708,15 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                         try {
                           final selectedClassId = FFAppState().classSelectedID;
                           final documentUrls =
-                              await actions.getClassDocuments(selectedClassId);
+                              await actions.getClassDocuments(
+                            selectedClassId,
+                            year: FFAppState().yearSelected,
+                            semester: FFAppState().semesterSelected,
+                            grade: FFAppState().gradeSelected,
+                            courseName: FFAppState().courseNameSelected,
+                            professorName: FFAppState().professorNameSelected,
+                            section: FFAppState().sectionSelected,
+                          );
 
                           FFAppState().update(() {
                             FFAppState().downloadProgressMessage = 'PDF 병합 준비 중';

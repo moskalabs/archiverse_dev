@@ -442,8 +442,16 @@ class _DashboardClassContainerWidgetState
                                   '[DashboardClassContainerWidget] 선택된 수업 학생 (${fetchedStudents.length}명): $studentNames');
                             }
 
-                            final documentUrls = await actions
-                                .getClassDocuments(classId);
+                            final documentUrls =
+                                await actions.getClassDocuments(
+                              classId,
+                              year: widget.year,
+                              semester: widget.semester,
+                              grade: widget.grade,
+                              courseName: widget.courseName,
+                              professorName: widget.professor,
+                              section: widget.section,
+                            );
 
                             FFAppState().update(() {
                               FFAppState().downloadProgressMessage =
