@@ -1,3 +1,4 @@
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -16,6 +17,9 @@ class DashboardClassContainerWidget extends StatefulWidget {
     required this.isDesign,
     String? section,
     required this.professor,
+    this.year,
+    this.semester,
+    this.grade,
     required this.getDetailClassID,
     required this.classID,
     int? currentlySelectedID,
@@ -33,6 +37,15 @@ class DashboardClassContainerWidget extends StatefulWidget {
 
   /// 교수님
   final String? professor;
+
+  /// 학년도
+  final String? year;
+
+  /// 학기
+  final String? semester;
+
+  /// 학년
+  final int? grade;
 
   /// 수업 진행사항 컴포넌트에 필요한 정보를 읽어오고 'displayClassDetail'과 같은 boolean을 토대로 화면에 띄울지
   /// 말지 결정
@@ -405,6 +418,30 @@ class _DashboardClassContainerWidgetState
                           try {
                             final classId =
                                 widget.classID ?? FFAppState().classSelectedID;
+
+                            if (classId <= 0) {
+                              debugPrint(
+                                  '[DashboardClassContainerWidget] 유효하지 않은 클래스 ID: $classId');
+                            } else {
+                              final fetchedStudents =
+                                  await actions.fetchClassStudents(
+                                classId: classId,
+                                year: widget.year,
+                                semester: widget.semester,
+                                grade: widget.grade,
+                                courseName: widget.courseName,
+                                professorName: widget.professor,
+                                section: widget.section,
+                              );
+
+                              final studentNames = fetchedStudents
+                                  .map((student) => student.studentName ?? '이름 없음')
+                                  .join(', ');
+
+                              debugPrint(
+                                  '[DashboardClassContainerWidget] 선택된 수업 학생 (${fetchedStudents.length}명): $studentNames');
+                            }
+
                             final documentUrls = await actions
                                 .getClassDocuments(classId);
 

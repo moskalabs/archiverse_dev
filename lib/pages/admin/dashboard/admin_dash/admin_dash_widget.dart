@@ -2117,6 +2117,9 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                   visibleClassItem.professor,
                                                                                   '이름',
                                                                                 ),
+                                                                                year: visibleClassItem.year,
+                                                                                semester: visibleClassItem.semester,
+                                                                                grade: visibleClassItem.grade,
                                                                                 classID: visibleClassItem.id,
                                                                                 currentlySelectedID: _model.selectedClassDetailID,
                                                                                 getDetailClassID: (displayClassDetailID) async {
@@ -2280,6 +2283,9 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                 searchedResultsItem.section,
                                                                             professor:
                                                                                 searchedResultsItem.professor!,
+                                                                            year: searchedResultsItem.year,
+                                                                            semester: searchedResultsItem.semester,
+                                                                            grade: searchedResultsItem.grade,
                                                                             classID:
                                                                                 searchedResultsItem.id,
                                                                             currentlySelectedID:
