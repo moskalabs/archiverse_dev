@@ -955,34 +955,66 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
-                                                Flexible(
-                                                  child: MouseRegion(
-                                                    opaque: false,
-                                                    cursor: MouseCursor.defer,
-                                                    child: Container(
-                                                      width: 236.0,
-                                                      height: 37.0,
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .primaryBackground,
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .getText(
-                                                              'xzh7t6s2' /* 확인된 크리틱 */,
-                                                            ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .openSans(
+                                                if (false)
+                                                  /// Hidden until confirmed critic sync is completed.
+                                                  Flexible(
+                                                    child: MouseRegion(
+                                                      opaque: false,
+                                                      cursor: MouseCursor.defer,
+                                                      child: Container(
+                                                        width: 236.0,
+                                                        height: 37.0,
+                                                        decoration: BoxDecoration(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBackground,
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Text(
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .getText(
+                                                                'xzh7t6s2' /* 확인된 크리틱 */,
+                                                              ),
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    font: GoogleFonts
+                                                                        .openSans(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryText,
+                                                                    fontSize: () {
+                                                                      if (MediaQuery.sizeOf(context)
+                                                                              .width <
+                                                                          kBreakpointSmall) {
+                                                                        return 12.0;
+                                                                      } else if (MediaQuery.sizeOf(context)
+                                                                              .width <
+                                                                          kBreakpointMedium) {
+                                                                        return 12.0;
+                                                                      } else if (MediaQuery.sizeOf(context)
+                                                                              .width <
+                                                                          kBreakpointLarge) {
+                                                                        return 12.0;
+                                                                      } else {
+                                                                        return 16.0;
+                                                                      }
+                                                                    }(),
+                                                                    letterSpacing:
+                                                                        0.0,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
@@ -991,67 +1023,63 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontSize: () {
-                                                                    if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointSmall) {
-                                                                      return 12.0;
-                                                                    } else if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointMedium) {
-                                                                      return 12.0;
-                                                                    } else if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointLarge) {
-                                                                      return 12.0;
-                                                                    } else {
-                                                                      return 16.0;
-                                                                    }
-                                                                  }(),
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
-                                                          ),
-                                                          Flexible(
-                                                            child: Align(
-                                                              alignment:
-                                                                  AlignmentDirectional(
-                                                                      1.0, 0.0),
-                                                              child: Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            5.0,
-                                                                            0.0),
-                                                                child: Text(
-                                                                  formatNumber(
-                                                                    FFAppState()
-                                                                        .confirmedCriticCount,
-                                                                    formatType:
-                                                                        FormatType
-                                                                            .decimal,
-                                                                    decimalType:
-                                                                        DecimalType
-                                                                            .automatic,
-                                                                  ),
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        font: GoogleFonts
-                                                                            .openSans(
+                                                            ),
+                                                            Flexible(
+                                                              child: Align(
+                                                                alignment:
+                                                                    AlignmentDirectional(
+                                                                        1.0, 0.0),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                              0.0,
+                                                                              0.0,
+                                                                              5.0,
+                                                                              0.0),
+                                                                  child: Text(
+                                                                    formatNumber(
+                                                                      FFAppState()
+                                                                          .confirmedCriticCount,
+                                                                      formatType:
+                                                                          FormatType
+                                                                              .decimal,
+                                                                      decimalType:
+                                                                          DecimalType
+                                                                              .automatic,
+                                                                    ),
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          font: GoogleFonts
+                                                                              .openSans(
+                                                                            fontWeight: FlutterFlowTheme.of(context)
+                                                                                .bodyMedium
+                                                                                .fontWeight,
+                                                                            fontStyle: FlutterFlowTheme.of(context)
+                                                                                .bodyMedium
+                                                                                .fontStyle,
+                                                                          ),
+                                                                          color: FlutterFlowTheme.of(context)
+                                                                              .primaryText,
+                                                                          fontSize:
+                                                                              () {
+                                                                            if (MediaQuery.sizeOf(context).width <
+                                                                                kBreakpointSmall) {
+                                                                              return 12.0;
+                                                                            } else if (MediaQuery.sizeOf(context).width <
+                                                                                kBreakpointMedium) {
+                                                                              return 10.0;
+                                                                            } else if (MediaQuery.sizeOf(context).width <
+                                                                                kBreakpointLarge) {
+                                                                              return 10.0;
+                                                                            } else {
+                                                                              return 12.0;
+                                                                            }
+                                                                          }(),
+                                                                          letterSpacing:
+                                                                              0.0,
                                                                           fontWeight: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .fontWeight,
@@ -1059,51 +1087,25 @@ class _LeftWidgetWidgetState extends State<LeftWidgetWidget> {
                                                                               .bodyMedium
                                                                               .fontStyle,
                                                                         ),
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontSize:
-                                                                            () {
-                                                                          if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointSmall) {
-                                                                            return 12.0;
-                                                                          } else if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointMedium) {
-                                                                            return 10.0;
-                                                                          } else if (MediaQuery.sizeOf(context).width <
-                                                                              kBreakpointLarge) {
-                                                                            return 10.0;
-                                                                          } else {
-                                                                            return 12.0;
-                                                                          }
-                                                                        }(),
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
+                                                      onEnter: ((event) async {
+                                                        safeSetState(() => _model
+                                                                .mouseRegionHovered4 =
+                                                            true);
+                                                      }),
+                                                      onExit: ((event) async {
+                                                        safeSetState(() => _model
+                                                                .mouseRegionHovered4 =
+                                                            false);
+                                                      }),
                                                     ),
-                                                    onEnter: ((event) async {
-                                                      safeSetState(() => _model
-                                                              .mouseRegionHovered4 =
-                                                          true);
-                                                    }),
-                                                    onExit: ((event) async {
-                                                      safeSetState(() => _model
-                                                              .mouseRegionHovered4 =
-                                                          false);
-                                                    }),
                                                   ),
-                                                ),
                                               ],
                                             ),
                                           ),*/
