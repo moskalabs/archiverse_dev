@@ -15,12 +15,33 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 
+const String _indexPdfUrl =
+    'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/pdfdefault/02.PDF_INDEX.pdf';
+
 Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
+  final List<String> normalizedUrls = <String>[];
+  for (final String url in pdfUrls) {
+    final String trimmed = url.trim();
+    if (trimmed.isNotEmpty) {
+      normalizedUrls.add(trimmed);
+    }
+  }
+
+  final bool alreadyContainsIndex =
+      normalizedUrls.any((String url) => url == _indexPdfUrl);
+  if (!alreadyContainsIndex) {
+    if (normalizedUrls.isEmpty) {
+      normalizedUrls.add(_indexPdfUrl);
+    } else {
+      normalizedUrls.insert(1, _indexPdfUrl);
+    }
+  }
+
   final PdfDocument finalDoc = PdfDocument();
   try {
     // 기본 여백 제거 (새로 추가되는 페이지들에 적용)
     finalDoc.pageSettings.margins.all = 0;
-    for (final url in pdfUrls) {
+    for (final String url in normalizedUrls) {
       final resp = await http.get(Uri.parse(url));
       if (resp.statusCode != 200) {
         print('[mergeAndDownloadPdf] 다운로드 실패: $url (${resp.statusCode})');
