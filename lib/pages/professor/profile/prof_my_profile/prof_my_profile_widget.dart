@@ -595,6 +595,23 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     }
   }
 
+  BoxDecoration _sectionContainerDecoration(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return BoxDecoration(
+      color: theme.secondaryBackground,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x1A000000),
+          blurRadius: 6.0,
+          offset: Offset(0.0, 2.0),
+        ),
+      ],
+    );
+  }
+
+  EdgeInsets _sectionContentPadding() => const EdgeInsets.all(16.0);
+
   Widget _buildSectionHeader(
     BuildContext context,
     String localizationKey,
@@ -603,25 +620,29 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     return Container(
       width: double.infinity,
       height: 40.0,
-      decoration: BoxDecoration(
-        color: theme.primaryBackground,
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color(0xFFE5E5E5),
+            width: 1.0,
+          ),
+        ),
       ),
-      child: Align(
-        alignment: AlignmentDirectional(-1.0, -1.0),
-        child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
-          child: Text(
-            FFLocalizations.of(context).getText(localizationKey),
-            style: theme.bodyMedium.override(
-              font: GoogleFonts.openSans(
-                fontWeight: FontWeight.w600,
-                fontStyle: theme.bodyMedium.fontStyle,
-              ),
-              fontSize: _sectionTitleFontSize(context),
-              letterSpacing: 0.0,
+      alignment: AlignmentDirectional(-1.0, 0.0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          FFLocalizations.of(context).getText(localizationKey),
+          style: theme.bodyMedium.override(
+            font: GoogleFonts.openSans(
               fontWeight: FontWeight.w600,
               fontStyle: theme.bodyMedium.fontStyle,
             ),
+            color: const Color(0xFF333333),
+            fontSize: 16.0,
+            letterSpacing: 0.0,
+            fontWeight: FontWeight.w600,
+            fontStyle: theme.bodyMedium.fontStyle,
           ),
         ),
       ),
@@ -632,16 +653,14 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     final recordCount = _model.academicGetDateTextControllers.length;
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: FlutterFlowTheme.of(context).primaryBackground,
-      ),
+      decoration: _sectionContainerDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildSectionHeader(context, 'ib59489c' /* [학력 설정] */),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 5.0, 0.0),
+              padding: _sectionContentPadding(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -766,7 +785,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     final showAdd = _model.academicRecords.length < 3;
     final showRemove = _model.academicRecords.length > 1;
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(5.0, 8.0, 5.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 16.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -967,16 +986,14 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     final recordCount = _model.teachingPeriodTextControllers.length;
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: FlutterFlowTheme.of(context).primaryBackground,
-      ),
+      decoration: _sectionContainerDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildSectionHeader(context, 'bagrzgyr' /* [강사 경력] */),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 5.0, 0.0),
+              padding: _sectionContentPadding(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -1099,7 +1116,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     final showAdd = _model.teachingRecords.length < 4;
     final showRemove = _model.teachingRecords.length > 1;
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(5.0, 8.0, 5.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 16.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -1300,95 +1317,89 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     final theme = FlutterFlowTheme.of(context);
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: theme.primaryBackground,
-      ),
+      decoration: _sectionContainerDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildSectionHeader(context, 'tshfg401' /* [주요성과 및 프로젝트] */),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 5.0, 0.0),
+              padding: _sectionContentPadding(),
               child: SafeArea(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: theme.primaryBackground,
-                  ),
-                  child: TextFormField(
-                    controller: _model.projectTextFieldTextController,
-                    focusNode: _model.projectTextFieldFocusNode,
-                    autofocus: true,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelStyle: theme.labelMedium.override(
-                        font: GoogleFonts.openSans(
-                          fontWeight: theme.labelMedium.fontWeight,
-                          fontStyle: theme.labelMedium.fontStyle,
-                        ),
-                        letterSpacing: 0.0,
+                top: false,
+                bottom: false,
+                child: TextFormField(
+                  controller: _model.projectTextFieldTextController,
+                  focusNode: _model.projectTextFieldFocusNode,
+                  autofocus: true,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelStyle: theme.labelMedium.override(
+                      font: GoogleFonts.openSans(
                         fontWeight: theme.labelMedium.fontWeight,
                         fontStyle: theme.labelMedium.fontStyle,
                       ),
-                      hintText: FFLocalizations.of(context).getText(
-                        'bbx9df2u' /* 논문. 프로젝트 등 경력사항 */,
-                      ),
-                      hintStyle: theme.labelMedium.override(
-                        font: GoogleFonts.openSans(
-                          fontWeight: theme.labelMedium.fontWeight,
-                          fontStyle: theme.labelMedium.fontStyle,
-                        ),
-                        letterSpacing: 0.0,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x00000000),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x00000000),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: theme.error,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: theme.error,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: theme.secondaryBackground,
+                      letterSpacing: 0.0,
+                      fontWeight: theme.labelMedium.fontWeight,
+                      fontStyle: theme.labelMedium.fontStyle,
                     ),
-                    style: theme.bodyMedium.override(
+                    hintText: FFLocalizations.of(context).getText(
+                      'bbx9df2u' /* 논문. 프로젝트 등 경력사항 */,
+                    ),
+                    hintStyle: theme.labelMedium.override(
                       font: GoogleFonts.openSans(
-                        fontWeight: theme.bodyMedium.fontWeight,
-                        fontStyle: theme.bodyMedium.fontStyle,
+                        fontWeight: theme.labelMedium.fontWeight,
+                        fontStyle: theme.labelMedium.fontStyle,
                       ),
                       letterSpacing: 0.0,
                     ),
-                    maxLines: null,
-                    minLines: 8,
-                    maxLength: 500,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    cursorColor: theme.primaryText,
-                    validator: _model
-                        .projectTextFieldTextControllerValidator
-                        .asValidator(context),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.error,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.error,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    filled: true,
+                    fillColor: theme.secondaryBackground,
                   ),
+                  style: theme.bodyMedium.override(
+                    font: GoogleFonts.openSans(
+                      fontWeight: theme.bodyMedium.fontWeight,
+                      fontStyle: theme.bodyMedium.fontStyle,
+                    ),
+                    letterSpacing: 0.0,
+                  ),
+                  maxLines: null,
+                  minLines: 8,
+                  maxLength: 500,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                  cursorColor: theme.primaryText,
+                  validator: _model
+                      .projectTextFieldTextControllerValidator
+                      .asValidator(context),
                 ),
               ),
             ),
@@ -4929,30 +4940,55 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                   MainAxisSize
                                                                       .max,
                                                               children: [
-                                                                                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 7.0, 0.0, 0.0),
-                        child: _buildAcademicSection(context),
-                      ),
-                    ),
-                    SizedBox(height: 12.0),
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
-                        child: _buildTeachingSection(context),
-                      ),
-                    ),
-                    SizedBox(height: 12.0),
-                    Expanded(
-                      flex: 4,
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
-                        child: _buildProjectSection(context),
-                      ),
-                    ),
-                    SizedBox(height: 12.0),
+                                                                Expanded(
+                                                                  flex: 7,
+                                                                  child:
+                                                                      Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                                                                          child:
+                                                                              _buildAcademicSection(context),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              8.0),
+                                                                      Expanded(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                          child:
+                                                                              _buildTeachingSection(context),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height:
+                                                                        8.0),
+                                                                Expanded(
+                                                                  flex: 3,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                    child:
+                                                                        _buildProjectSection(
+                                                                            context),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height:
+                                                                        12.0),
 
                                                                 Row(
                                                                   mainAxisSize:
