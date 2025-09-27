@@ -538,23 +538,51 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
 
   TextStyle _recordTextStyle(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final fontSize = () {
+      if (width < kBreakpointSmall) {
+        return 11.0;
+      } else if (width < kBreakpointMedium) {
+        return 12.0;
+      } else if (width < kBreakpointLarge) {
+        return 13.0;
+      } else {
+        return 14.0;
+      }
+    }();
+
     return theme.bodyMedium.override(
       font: GoogleFonts.openSans(
         fontWeight: theme.bodyMedium.fontWeight,
         fontStyle: theme.bodyMedium.fontStyle,
       ),
+      fontSize: fontSize,
       letterSpacing: 0.0,
     );
   }
 
   TextStyle _sectionLabelStyle(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final fontSize = () {
+      if (width < kBreakpointSmall) {
+        return 11.0;
+      } else if (width < kBreakpointMedium) {
+        return 12.0;
+      } else if (width < kBreakpointLarge) {
+        return 14.0;
+      } else {
+        return 16.0;
+      }
+    }();
+
     return theme.labelMedium.override(
       font: GoogleFonts.openSans(
         fontWeight: FontWeight.w600,
         fontStyle: theme.labelMedium.fontStyle,
       ),
       color: theme.secondaryText,
+      fontSize: fontSize,
       letterSpacing: 0.0,
       fontWeight: FontWeight.w600,
       fontStyle: theme.labelMedium.fontStyle,
@@ -4920,11 +4948,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                           child: Container(
                                                             width:
                                                                 double.infinity,
-                                                            height: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .height *
-                                                                0.86,
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: FlutterFlowTheme
@@ -4941,7 +4964,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                       .max,
                                                               children: [
                                                                 Expanded(
-                                                                  flex: 7,
                                                                   child:
                                                                       Column(
                                                                     mainAxisSize:
@@ -4949,6 +4971,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                             .max,
                                                                     children: [
                                                                       Expanded(
+                                                                        flex: 4,
                                                                         child:
                                                                             Padding(
                                                                           padding:
@@ -4961,6 +4984,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                           height:
                                                                               8.0),
                                                                       Expanded(
+                                                                        flex: 4,
                                                                         child:
                                                                             Padding(
                                                                           padding:
@@ -4969,21 +4993,21 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                               _buildTeachingSection(context),
                                                                         ),
                                                                       ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              8.0),
+                                                                      Expanded(
+                                                                        flex: 3,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                          child:
+                                                                              _buildProjectSection(
+                                                                                  context),
+                                                                        ),
+                                                                      ),
                                                                     ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    height:
-                                                                        8.0),
-                                                                Expanded(
-                                                                  flex: 3,
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                    child:
-                                                                        _buildProjectSection(
-                                                                            context),
                                                                   ),
                                                                 ),
                                                                 SizedBox(
