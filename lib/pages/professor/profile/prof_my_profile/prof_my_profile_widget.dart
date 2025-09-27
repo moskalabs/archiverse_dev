@@ -923,6 +923,76 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       _model.updateTeachingRecordsAtIndex(index, (_) => record);
     }
 
+    Widget _buildAcademicRecordRow(
+      BuildContext context,
+      int index,
+    ) {
+      return Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicGetDateTextControllers[index],
+              focusNode: _model.academicGetDateFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'YYYY.MM',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+              keyboardType: TextInputType.datetime,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicUniversityTextControllers[index],
+              focusNode: _model.academicUniversityFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'OO대학교',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicMajorTextControllers[index],
+              focusNode: _model.academicMajorFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '전공',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicDegreeTextControllers[index],
+              focusNode: _model.academicDegreeFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '석사/박사',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+        ],
+      );
+    }
+
     Widget _buildAcademicSection(BuildContext context) {
       final recordCount = _model.academicGetDateTextControllers.length;
       return Column(
@@ -961,164 +1031,147 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                         child: Column(
                           children: List.generate(
                             recordCount,
-                            (academicIndex) => Padding(
+                            (index) => Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 8.0,
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _model.academicGetDateTextControllers[
-                                              academicIndex],
-                                      focusNode:
-                                          _model.academicGetDateFocusNodes[
-                                              academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'YYYY.MM',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                      keyboardType: TextInputType.datetime,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                          .academicUniversityTextControllers[
-                                              academicIndex],
-                                      focusNode: _model
-                                          .academicUniversityFocusNodes[
-                                              academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'OO대학교',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _model.academicMajorTextControllers[
-                                              academicIndex],
-                                      focusNode:
-                                          _model.academicMajorFocusNodes[
-                                              academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '전공',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _model.academicDegreeTextControllers[
-                                              academicIndex],
-                                      focusNode:
-                                          _model.academicDegreeFocusNodes[
-                                              academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '석사/박사',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: _buildAcademicRecordRow(context, index),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  rightChild: _buildSectionSidePanel(
+                    ),
+                  ],
+                ),
+                rightChild: _buildSectionSidePanel(
+                  context: context,
+                  title: FFLocalizations.of(context)
+                      .getText('vy01bq1t' /* [항목 관리] */),
+                  child: _buildRecordActionPanel(
                     context: context,
-                    title: FFLocalizations.of(context)
-                        .getText('vy01bq1t' /* [항목 관리] */),
-                    child: _buildRecordActionPanel(
-                      context: context,
-                      canAdd: _model.academicRecords.length < 3,
-                      onAdd: () async {
-                        if (_model.academicRecords.length < 3) {
-                          final newRecord = <String, dynamic>{
-                            'getDate': '',
-                            'university': '',
-                            'major': '',
-                            'degree': '',
-                          };
-                          FFAppState().addToMypageAcademicRecords(newRecord);
-                          _model.addToAcademicRecords(newRecord);
-                          _model.addAcademicRecordControllers(
-                            getDate: '',
-                            university: '',
-                            major: '',
-                            degree: '',
-                          );
-                          safeSetState(() {});
-                        }
-                      },
-                      addLabel: FFLocalizations.of(context)
-                          .getText('wbc1rycr' /* 추가 + */),
-                      canRemove: _model.academicRecords.length > 1,
-                      onRemove: () async {
-                        if (_model.academicRecords.length > 1) {
-                          final removeIndex =
-                              _model.academicRecords.length - 1;
-                          FFAppState().removeAtIndexFromMypageAcademicRecords(
+                    canAdd: _model.academicRecords.length < 3,
+                    onAdd: () async {
+                      if (_model.academicRecords.length < 3) {
+                        final newRecord = <String, dynamic>{
+                          'getDate': '',
+                          'university': '',
+                          'major': '',
+                          'degree': '',
+                        };
+                        FFAppState().addToMypageAcademicRecords(newRecord);
+                        _model.addToAcademicRecords(newRecord);
+                        _model.addAcademicRecordControllers(
+                          getDate: '',
+                          university: '',
+                          major: '',
+                          degree: '',
+                        );
+                        safeSetState(() {});
+                      }
+                    },
+                    addLabel: FFLocalizations.of(context)
+                        .getText('wbc1rycr' /* 추가 + */),
+                    canRemove: _model.academicRecords.length > 1,
+                    onRemove: () async {
+                      if (_model.academicRecords.length > 1) {
+                        final removeIndex = _model.academicRecords.length - 1;
+                        FFAppState().removeAtIndexFromMypageAcademicRecords(
+                          removeIndex,
+                        );
+                        if (_model.academicRecords.length > removeIndex) {
+                          _model.removeAtIndexFromAcademicRecords(
                             removeIndex,
                           );
-                          if (_model.academicRecords.length > removeIndex) {
-                            _model.removeAtIndexFromAcademicRecords(
-                              removeIndex,
-                            );
-                          }
-                          if (_model.academicGetDateTextControllers.length >
-                              removeIndex) {
-                            _model.removeAcademicRecordControllers(
-                              removeIndex,
-                            );
-                          }
-                          safeSetState(() {});
                         }
-                      },
-                      removeLabel: FFLocalizations.of(context)
-                          .getText('adyemods' /* 삭제 - */),
-                    ),
+                        if (_model.academicGetDateTextControllers.length >
+                            removeIndex) {
+                          _model.removeAcademicRecordControllers(
+                            removeIndex,
+                          );
+                        }
+                        safeSetState(() {});
+                      }
+                    },
+                    removeLabel: FFLocalizations.of(context)
+                        .getText('adyemods' /* 삭제 - */),
                   ),
                 ),
               ),
             ),
-          ],
-        );
-      }
+          ),
+        ],
+      );
+    }
+
+    Widget _buildTeachingRecordRow(
+      BuildContext context,
+      int index,
+    ) {
+      return Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingPeriodTextControllers[index],
+              focusNode: _model.teachingPeriodFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '기간',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingSchoolTextControllers[index],
+              focusNode: _model.teachingSchoolFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'OO대학교/OO과',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingSubjectTextControllers[index],
+              focusNode: _model.teachingSubjectFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '강의과목',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingCreditTextControllers[index],
+              focusNode: _model.teachingCreditFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '학점/시간',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+        ],
+      );
+    }
+
     Widget _buildTeachingSection(BuildContext context) {
       final recordCount = _model.teachingPeriodTextControllers.length;
       return Column(
@@ -1157,160 +1210,74 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                         child: Column(
                           children: List.generate(
                             recordCount,
-                            (teachingIndex) => Padding(
+                            (index) => Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 8.0,
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                          .teachingPeriodTextControllers[
-                                              teachingIndex],
-                                      focusNode: _model
-                                          .teachingPeriodFocusNodes[
-                                              teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '기간',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                          .teachingSchoolTextControllers[
-                                              teachingIndex],
-                                      focusNode: _model
-                                          .teachingSchoolFocusNodes[
-                                              teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'OO대학교/OO과',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                          .teachingSubjectTextControllers[
-                                              teachingIndex],
-                                      focusNode: _model
-                                          .teachingSubjectFocusNodes[
-                                              teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '강의과목',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                          .teachingCreditTextControllers[
-                                              teachingIndex],
-                                      focusNode: _model
-                                          .teachingCreditFocusNodes[
-                                              teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '학점/시간',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: _buildTeachingRecordRow(context, index),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  rightChild: _buildSectionSidePanel(
+                    ),
+                  ],
+                ),
+                rightChild: _buildSectionSidePanel(
+                  context: context,
+                  title: FFLocalizations.of(context)
+                      .getText('vy01bq1t' /* [항목 관리] */),
+                  child: _buildRecordActionPanel(
                     context: context,
-                    title: FFLocalizations.of(context)
-                        .getText('vy01bq1t' /* [항목 관리] */),
-                    child: _buildRecordActionPanel(
-                      context: context,
-                      canAdd: _model.teachingRecords.length < 4,
-                      onAdd: () async {
-                        if (_model.teachingRecords.length < 4) {
-                          final newRecord = <String, dynamic>{
-                            'period': '',
-                            'schoolDepartment': '',
-                            'subject': '',
-                            'creditsHours': '',
-                          };
-                          FFAppState().addToMypageTeachingRecords(newRecord);
-                          _model.addToTeachingRecords(newRecord);
-                          _model.addTeachingRecordControllers(
-                            period: '',
-                            schoolDepartment: '',
-                            subject: '',
-                            creditsHours: '',
-                          );
-                          safeSetState(() {});
-                        }
-                      },
-                      addLabel: FFLocalizations.of(context)
-                          .getText('0ci94j6j' /* 추가 + */),
-                      canRemove: _model.teachingRecords.length > 1,
-                      onRemove: () async {
-                        if (_model.teachingRecords.length > 1) {
-                          final removeIndex =
-                              _model.teachingRecords.length - 1;
-                          FFAppState().removeAtIndexFromMypageTeachingRecords(
+                    canAdd: _model.teachingRecords.length < 4,
+                    onAdd: () async {
+                      if (_model.teachingRecords.length < 4) {
+                        final newRecord = <String, dynamic>{
+                          'period': '',
+                          'schoolDepartment': '',
+                          'subject': '',
+                          'creditsHours': '',
+                        };
+                        FFAppState().addToMypageTeachingRecords(newRecord);
+                        _model.addToTeachingRecords(newRecord);
+                        _model.addTeachingRecordControllers(
+                          period: '',
+                          schoolDepartment: '',
+                          subject: '',
+                          creditsHours: '',
+                        );
+                        safeSetState(() {});
+                      }
+                    },
+                    addLabel: FFLocalizations.of(context)
+                        .getText('0ci94j6j' /* 추가 + */),
+                    canRemove: _model.teachingRecords.length > 1,
+                    onRemove: () async {
+                      if (_model.teachingRecords.length > 1) {
+                        final removeIndex = _model.teachingRecords.length - 1;
+                        FFAppState().removeAtIndexFromMypageTeachingRecords(
+                          removeIndex,
+                        );
+                        if (_model.teachingRecords.length > removeIndex) {
+                          _model.removeAtIndexFromTeachingRecords(
                             removeIndex,
                           );
-                          if (_model.teachingRecords.length > removeIndex) {
-                            _model.removeAtIndexFromTeachingRecords(
-                              removeIndex,
-                            );
-                          }
-                          if (_model.teachingPeriodTextControllers.length >
-                              removeIndex) {
-                            _model.removeTeachingRecordControllers(
-                              removeIndex,
-                            );
-                          }
-                          safeSetState(() {});
                         }
-                      },
-                      removeLabel: FFLocalizations.of(context)
-                          .getText('d31dksav' /* 삭제 - */),
-                    ),
+                        if (_model.teachingPeriodTextControllers.length >
+                            removeIndex) {
+                          _model.removeTeachingRecordControllers(
+                            removeIndex,
+                          );
+                        }
+                        safeSetState(() {});
+                      }
+                    },
+                    removeLabel: FFLocalizations.of(context)
+                        .getText('d31dksav' /* 삭제 - */),
                   ),
                 ),
               ),
             ),
+          ),
         ],
       );
     }
