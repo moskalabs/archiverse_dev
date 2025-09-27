@@ -612,7 +612,90 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       );
     }
 
-    Widget _buildRecordActionRow({
+    Widget _buildSectionContainer({
+      required BuildContext context,
+      required Widget leftChild,
+      Widget? rightChild,
+    }) {
+      final theme = FlutterFlowTheme.of(context);
+      return Container(
+        decoration: BoxDecoration(
+          color: theme.primaryBackground,
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(
+            color: theme.alternate,
+            width: 1.0,
+          ),
+        ),
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 7,
+              child: leftChild,
+            ),
+            if (rightChild != null) ...[
+              const SizedBox(width: 16.0),
+              Expanded(
+                flex: 3,
+                child: rightChild!,
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    Widget _buildActionButton({
+      required BuildContext context,
+      required VoidCallback onPressed,
+      required String label,
+      required IconData icon,
+      required Color backgroundColor,
+      Color? borderColor,
+      Color iconColor = Colors.white,
+    }) {
+      final theme = FlutterFlowTheme.of(context);
+      return FFButtonWidget(
+        onPressed: onPressed,
+        text: label,
+        icon: Icon(
+          icon,
+          size: 18.0,
+        ),
+        options: FFButtonOptions(
+          height: _recordButtonHeight(context),
+          padding: const EdgeInsetsDirectional.fromSTEB(
+            16.0,
+            0.0,
+            16.0,
+            0.0,
+          ),
+          iconPadding: EdgeInsetsDirectional.zero,
+          iconColor: iconColor,
+          color: backgroundColor,
+          textStyle: theme.titleSmall.override(
+            font: GoogleFonts.openSans(
+              fontWeight: theme.titleSmall.fontWeight,
+              fontStyle: theme.titleSmall.fontStyle,
+            ),
+            color: Colors.white,
+            fontSize: _recordButtonFontSize(context),
+            letterSpacing: 0.0,
+            fontWeight: theme.titleSmall.fontWeight,
+            fontStyle: theme.titleSmall.fontStyle,
+          ),
+          elevation: 0.0,
+          borderSide: borderColor != null
+              ? BorderSide(color: borderColor)
+              : const BorderSide(color: Colors.transparent),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      );
+    }
+
+    Widget _buildRecordActionPanel({
       required BuildContext context,
       required bool canAdd,
       required VoidCallback onAdd,
@@ -622,96 +705,138 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       required String removeLabel,
     }) {
       final theme = FlutterFlowTheme.of(context);
-      if (!canAdd && !canRemove) {
+      final actionWidgets = <Widget>[];
+
+      if (canAdd) {
+        actionWidgets.add(
+          _buildActionButton(
+            context: context,
+            onPressed: onAdd,
+            label: addLabel,
+            icon: Icons.add_to_photos_outlined,
+            backgroundColor: const Color(0xFFA6B6C3),
+            iconColor: theme.primaryBackground,
+          ),
+        );
+      }
+
+      if (canAdd && canRemove) {
+        actionWidgets.add(const SizedBox(height: 12.0));
+      }
+
+      if (canRemove) {
+        actionWidgets.add(
+          _buildActionButton(
+            context: context,
+            onPressed: onRemove,
+            label: removeLabel,
+            icon: Icons.delete_forever,
+            backgroundColor: theme.secondaryText,
+            borderColor: theme.secondaryText,
+            iconColor: theme.primaryBackground,
+          ),
+        );
+      }
+
+      if (actionWidgets.isEmpty) {
         return const SizedBox.shrink();
       }
+
       return Container(
-        color: theme.primaryBackground,
-        padding: const EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 5.0, 0.0),
-        child: Row(
+        decoration: BoxDecoration(
+          color: theme.secondaryBackground,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: actionWidgets,
+        ),
+      );
+    }
+
+    Widget _buildSectionSidePanel({
+      required BuildContext context,
+      required String title,
+      required Widget child,
+    }) {
+      final theme = FlutterFlowTheme.of(context);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: theme.titleSmall.override(
+              font: GoogleFonts.openSans(
+                fontWeight: theme.titleSmall.fontWeight,
+                fontStyle: theme.titleSmall.fontStyle,
+              ),
+              fontSize: _recordButtonFontSize(context),
+              letterSpacing: 0.0,
+              fontWeight: FontWeight.w600,
+              fontStyle: theme.titleSmall.fontStyle,
+            ),
+          ),
+          const SizedBox(height: 12.0),
+          child,
+        ],
+      );
+    }
+
+    Widget _buildProjectGuidePanel({
+      required BuildContext context,
+      required int charCount,
+    }) {
+      final theme = FlutterFlowTheme.of(context);
+      return Container(
+        decoration: BoxDecoration(
+          color: theme.secondaryBackground,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (canAdd)
-              FFButtonWidget(
-                onPressed: onAdd,
-                text: addLabel,
-                icon: const Icon(
-                  Icons.add_to_photos_outlined,
-                  size: 15.0,
+            Text(
+              FFLocalizations.of(context)
+                  .getText('k3syibn2' /* • 500자 이내로 작성해주세요. */),
+              style: theme.labelMedium.override(
+                font: GoogleFonts.openSans(
+                  fontWeight: theme.labelMedium.fontWeight,
+                  fontStyle: theme.labelMedium.fontStyle,
                 ),
-                options: FFButtonOptions(
-                  height: _recordButtonHeight(context),
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                    16.0,
-                    0.0,
-                    16.0,
-                    0.0,
-                  ),
-                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                  ),
-                  iconColor: theme.primaryBackground,
-                  color: const Color(0xFFA6B6C3),
-                  textStyle: theme.titleSmall.override(
-                    font: GoogleFonts.openSans(
-                      fontWeight: theme.titleSmall.fontWeight,
-                      fontStyle: theme.titleSmall.fontStyle,
-                    ),
-                    color: Colors.white,
-                    fontSize: _recordButtonFontSize(context),
-                    letterSpacing: 0.0,
-                    fontWeight: theme.titleSmall.fontWeight,
-                    fontStyle: theme.titleSmall.fontStyle,
-                  ),
-                  elevation: 0.0,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                letterSpacing: 0.0,
+                fontWeight: theme.labelMedium.fontWeight,
+                fontStyle: theme.labelMedium.fontStyle,
               ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              FFLocalizations.of(context)
+                  .getText('xj0z9d34' /* • 최신 순으로 핵심 성과를 정리해주세요. */),
+              style: theme.labelMedium.override(
+                font: GoogleFonts.openSans(
+                  fontWeight: theme.labelMedium.fontWeight,
+                  fontStyle: theme.labelMedium.fontStyle,
+                ),
+                letterSpacing: 0.0,
+                fontWeight: theme.labelMedium.fontWeight,
+                fontStyle: theme.labelMedium.fontStyle,
+              ),
+            ),
             const Spacer(),
-            if (canRemove)
-              FFButtonWidget(
-                onPressed: onRemove,
-                text: removeLabel,
-                icon: const Icon(
-                  Icons.delete_forever,
-                  size: 15.0,
+            Text(
+              '${FFLocalizations.of(context).getText('vwgfg9ii' /* 현재 글자 수 */)}: $charCount / 500',
+              style: theme.bodySmall.override(
+                font: GoogleFonts.openSans(
+                  fontWeight: theme.bodySmall.fontWeight,
+                  fontStyle: theme.bodySmall.fontStyle,
                 ),
-                options: FFButtonOptions(
-                  height: _recordButtonHeight(context),
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                    16.0,
-                    0.0,
-                    16.0,
-                    0.0,
-                  ),
-                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                  ),
-                  iconColor: theme.primaryBackground,
-                  color: theme.secondaryText,
-                  textStyle: theme.titleSmall.override(
-                    font: GoogleFonts.openSans(
-                      fontWeight: theme.titleSmall.fontWeight,
-                      fontStyle: theme.titleSmall.fontStyle,
-                    ),
-                    color: Colors.white,
-                    fontSize: _recordButtonFontSize(context),
-                    letterSpacing: 0.0,
-                    fontWeight: theme.titleSmall.fontWeight,
-                    fontStyle: theme.titleSmall.fontStyle,
-                  ),
-                  elevation: 0.0,
-                  borderSide: BorderSide(
-                    color: theme.secondaryText,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                letterSpacing: 0.0,
+                fontWeight: FontWeight.w600,
+                fontStyle: theme.bodySmall.fontStyle,
               ),
+            ),
           ],
         ),
       );
@@ -798,6 +923,76 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       _model.updateTeachingRecordsAtIndex(index, (_) => record);
     }
 
+    Widget _buildAcademicRecordRow(
+      BuildContext context,
+      int index,
+    ) {
+      return Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicGetDateTextControllers[index],
+              focusNode: _model.academicGetDateFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'YYYY.MM',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+              keyboardType: TextInputType.datetime,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicUniversityTextControllers[index],
+              focusNode: _model.academicUniversityFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'OO대학교',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicMajorTextControllers[index],
+              focusNode: _model.academicMajorFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '전공',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.academicDegreeTextControllers[index],
+              focusNode: _model.academicDegreeFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '석사/박사',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleAcademicFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+        ],
+      );
+    }
+
     Widget _buildAcademicSection(BuildContext context) {
       final recordCount = _model.academicGetDateTextControllers.length;
       return Column(
@@ -816,11 +1011,9 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 5.0,
                 8.0,
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
-                child: Column(
+              child: _buildSectionContainer(
+                context: context,
+                leftChild: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildRecordHeaderRow(
@@ -832,162 +1025,147 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                         '학위',
                       ],
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: 12.0),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: List.generate(
                             recordCount,
-                            (academicIndex) => Padding(
+                            (index) => Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 8.0,
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _model.academicGetDateTextControllers[
-                                              academicIndex],
-                                      focusNode:
-                                          _model.academicGetDateFocusNodes[
-                                              academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'YYYY.MM',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                      keyboardType: TextInputType.datetime,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .academicUniversityTextControllers[
-                                          academicIndex],
-                                      focusNode: _model
-                                              .academicUniversityFocusNodes[
-                                          academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'OO대학교',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .academicMajorTextControllers[
-                                          academicIndex],
-                                      focusNode: _model
-                                              .academicMajorFocusNodes[
-                                          academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '건축학과',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .academicDegreeTextControllers[
-                                          academicIndex],
-                                      focusNode: _model
-                                              .academicDegreeFocusNodes[
-                                          academicIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '학위',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleAcademicFieldChanged(
-                                              academicIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: _buildAcademicRecordRow(context, index),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    _buildRecordActionRow(
-                      context: context,
-                      canAdd: _model.academicRecords.length < 3,
-                      onAdd: () async {
-                        if (_model.academicRecords.length < 3) {
-                          final newRecord = <String, dynamic>{
-                            'getDate': '',
-                            'university': '',
-                            'major': '',
-                            'degree': '',
-                          };
-                          FFAppState().addToMypageAcademicRecords(newRecord);
-                          _model.addToAcademicRecords(newRecord);
-                          _model.addAcademicRecordControllers(
-                            getDate: '',
-                            university: '',
-                            major: '',
-                            degree: '',
-                          );
-                          safeSetState(() {});
-                        }
-                      },
-                      addLabel: FFLocalizations.of(context)
-                          .getText('wbc1rycr' /* 추가 + */),
-                      canRemove: _model.academicRecords.length > 1,
-                      onRemove: () async {
-                        if (_model.academicRecords.length > 1) {
-                          final removeIndex =
-                              _model.academicRecords.length - 1;
-                          FFAppState().removeAtIndexFromMypageAcademicRecords(
-                            removeIndex,
-                          );
-                          if (_model.academicRecords.length > removeIndex) {
-                            _model.removeAtIndexFromAcademicRecords(
-                              removeIndex,
-                            );
-                          }
-                          if (_model.academicGetDateTextControllers.length >
-                              removeIndex) {
-                            _model.removeAcademicRecordControllers(
-                              removeIndex,
-                            );
-                          }
-                          safeSetState(() {});
-                        }
-                      },
-                      removeLabel: FFLocalizations.of(context)
-                          .getText('adyemods' /* 삭제 - */),
-                    ),
                   ],
                 ),
+                rightChild: _buildSectionSidePanel(
+                  context: context,
+                  title: FFLocalizations.of(context)
+                      .getText('vy01bq1t' /* [항목 관리] */),
+                  child: _buildRecordActionPanel(
+                    context: context,
+                    canAdd: _model.academicRecords.length < 3,
+                    onAdd: () async {
+                      if (_model.academicRecords.length < 3) {
+                        final newRecord = <String, dynamic>{
+                          'getDate': '',
+                          'university': '',
+                          'major': '',
+                          'degree': '',
+                        };
+                        FFAppState().addToMypageAcademicRecords(newRecord);
+                        _model.addToAcademicRecords(newRecord);
+                        _model.addAcademicRecordControllers(
+                          getDate: '',
+                          university: '',
+                          major: '',
+                          degree: '',
+                        );
+                        safeSetState(() {});
+                      }
+                    },
+                    addLabel: FFLocalizations.of(context)
+                        .getText('wbc1rycr' /* 추가 + */),
+                    canRemove: _model.academicRecords.length > 1,
+                    onRemove: () async {
+                      if (_model.academicRecords.length > 1) {
+                        final removeIndex = _model.academicRecords.length - 1;
+                        FFAppState().removeAtIndexFromMypageAcademicRecords(
+                          removeIndex,
+                        );
+                        if (_model.academicRecords.length > removeIndex) {
+                          _model.removeAtIndexFromAcademicRecords(
+                            removeIndex,
+                          );
+                        }
+                        if (_model.academicGetDateTextControllers.length >
+                            removeIndex) {
+                          _model.removeAcademicRecordControllers(
+                            removeIndex,
+                          );
+                        }
+                        safeSetState(() {});
+                      }
+                    },
+                    removeLabel: FFLocalizations.of(context)
+                        .getText('adyemods' /* 삭제 - */),
+                  ),
+                ),
               ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget _buildTeachingRecordRow(
+      BuildContext context,
+      int index,
+    ) {
+      return Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingPeriodTextControllers[index],
+              focusNode: _model.teachingPeriodFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '기간',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingSchoolTextControllers[index],
+              focusNode: _model.teachingSchoolFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                'OO대학교/OO과',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingSubjectTextControllers[index],
+              focusNode: _model.teachingSubjectFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '강의과목',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: TextFormField(
+              controller: _model.teachingCreditTextControllers[index],
+              focusNode: _model.teachingCreditFocusNodes[index],
+              decoration: _recordInputDecoration(
+                context,
+                '학점/시간',
+              ),
+              style: _recordTextStyle(context),
+              onChanged: (_) => _handleTeachingFieldChanged(index),
+              autofocus: false,
+              obscureText: false,
             ),
           ),
         ],
@@ -1012,11 +1190,9 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 5.0,
                 8.0,
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
-                child: Column(
+              child: _buildSectionContainer(
+                context: context,
+                leftChild: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildRecordHeaderRow(
@@ -1028,159 +1204,76 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                         '학점/시간',
                       ],
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: 12.0),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: List.generate(
                             recordCount,
-                            (teachingIndex) => Padding(
+                            (index) => Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 8.0,
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .teachingPeriodTextControllers[
-                                          teachingIndex],
-                                      focusNode: _model
-                                              .teachingPeriodFocusNodes[
-                                          teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '기간',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .teachingSchoolTextControllers[
-                                          teachingIndex],
-                                      focusNode: _model
-                                              .teachingSchoolFocusNodes[
-                                          teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        'OO대학교/OO과',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .teachingSubjectTextControllers[
-                                          teachingIndex],
-                                      focusNode: _model
-                                              .teachingSubjectFocusNodes[
-                                          teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '강의과목',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _model
-                                              .teachingCreditTextControllers[
-                                          teachingIndex],
-                                      focusNode: _model
-                                              .teachingCreditFocusNodes[
-                                          teachingIndex],
-                                      decoration: _recordInputDecoration(
-                                        context,
-                                        '학점/시간',
-                                      ),
-                                      style: _recordTextStyle(context),
-                                      onChanged: (_) =>
-                                          _handleTeachingFieldChanged(
-                                              teachingIndex),
-                                      autofocus: false,
-                                      obscureText: false,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: _buildTeachingRecordRow(context, index),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    _buildRecordActionRow(
-                      context: context,
-                      canAdd: _model.teachingRecords.length < 4,
-                      onAdd: () async {
-                        if (_model.teachingRecords.length < 4) {
-                          final newRecord = <String, dynamic>{
-                            'period': '',
-                            'schoolDepartment': '',
-                            'subject': '',
-                            'creditsHours': '',
-                          };
-                          FFAppState().addToMypageTeachingRecords(newRecord);
-                          _model.addToTeachingRecords(newRecord);
-                          _model.addTeachingRecordControllers(
-                            period: '',
-                            schoolDepartment: '',
-                            subject: '',
-                            creditsHours: '',
-                          );
-                          safeSetState(() {});
-                        }
-                      },
-                      addLabel: FFLocalizations.of(context)
-                          .getText('0ci94j6j' /* 추가 + */),
-                      canRemove: _model.teachingRecords.length > 1,
-                      onRemove: () async {
-                        if (_model.teachingRecords.length > 1) {
-                          final removeIndex =
-                              _model.teachingRecords.length - 1;
-                          FFAppState().removeAtIndexFromMypageTeachingRecords(
+                  ],
+                ),
+                rightChild: _buildSectionSidePanel(
+                  context: context,
+                  title: FFLocalizations.of(context)
+                      .getText('vy01bq1t' /* [항목 관리] */),
+                  child: _buildRecordActionPanel(
+                    context: context,
+                    canAdd: _model.teachingRecords.length < 4,
+                    onAdd: () async {
+                      if (_model.teachingRecords.length < 4) {
+                        final newRecord = <String, dynamic>{
+                          'period': '',
+                          'schoolDepartment': '',
+                          'subject': '',
+                          'creditsHours': '',
+                        };
+                        FFAppState().addToMypageTeachingRecords(newRecord);
+                        _model.addToTeachingRecords(newRecord);
+                        _model.addTeachingRecordControllers(
+                          period: '',
+                          schoolDepartment: '',
+                          subject: '',
+                          creditsHours: '',
+                        );
+                        safeSetState(() {});
+                      }
+                    },
+                    addLabel: FFLocalizations.of(context)
+                        .getText('0ci94j6j' /* 추가 + */),
+                    canRemove: _model.teachingRecords.length > 1,
+                    onRemove: () async {
+                      if (_model.teachingRecords.length > 1) {
+                        final removeIndex = _model.teachingRecords.length - 1;
+                        FFAppState().removeAtIndexFromMypageTeachingRecords(
+                          removeIndex,
+                        );
+                        if (_model.teachingRecords.length > removeIndex) {
+                          _model.removeAtIndexFromTeachingRecords(
                             removeIndex,
                           );
-                          if (_model.teachingRecords.length > removeIndex) {
-                            _model.removeAtIndexFromTeachingRecords(
-                              removeIndex,
-                            );
-                          }
-                          if (_model.teachingPeriodTextControllers.length >
-                              removeIndex) {
-                            _model.removeTeachingRecordControllers(
-                              removeIndex,
-                            );
-                          }
-                          safeSetState(() {});
                         }
-                      },
-                      removeLabel: FFLocalizations.of(context)
-                          .getText('d31dksav' /* 삭제 - */),
-                    ),
-                  ],
+                        if (_model.teachingPeriodTextControllers.length >
+                            removeIndex) {
+                          _model.removeTeachingRecordControllers(
+                            removeIndex,
+                          );
+                        }
+                        safeSetState(() {});
+                      }
+                    },
+                    removeLabel: FFLocalizations.of(context)
+                        .getText('d31dksav' /* 삭제 - */),
+                  ),
                 ),
               ),
             ),
@@ -1188,9 +1281,11 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         ],
       );
     }
-
+    
     Widget _buildProjectSection(BuildContext context) {
       final theme = FlutterFlowTheme.of(context);
+      final charCount =
+          _model.projectTextFieldTextController?.text.length ?? 0;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -1208,107 +1303,120 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 5.0,
                 8.0,
               ),
-              child: SafeArea(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: theme.primaryBackground,
-                  ),
-                  child: TextFormField(
-                    controller: _model.projectTextFieldTextController,
-                    focusNode: _model.projectTextFieldFocusNode,
-                    autofocus: true,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelStyle: theme.labelMedium.override(
-                        font: GoogleFonts.openSans(
-                          fontWeight: theme.labelMedium.fontWeight,
-                          fontStyle: theme.labelMedium.fontStyle,
+              child: _buildSectionContainer(
+                context: context,
+                leftChild: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _model.projectTextFieldTextController,
+                        focusNode: _model.projectTextFieldFocusNode,
+                        autofocus: false,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelStyle: theme.labelMedium.override(
+                            font: GoogleFonts.openSans(
+                              fontWeight: theme.labelMedium.fontWeight,
+                              fontStyle: theme.labelMedium.fontStyle,
+                            ),
+                            letterSpacing: 0.0,
+                            fontWeight: theme.labelMedium.fontWeight,
+                            fontStyle: theme.labelMedium.fontStyle,
+                          ),
+                          hintText: FFLocalizations.of(context)
+                              .getText('bbx9df2u' /* 논문. 프로젝트 등 경력사항 */),
+                          hintStyle: theme.labelMedium.override(
+                            font: GoogleFonts.openSans(
+                              fontWeight: theme.labelMedium.fontWeight,
+                              fontStyle: theme.labelMedium.fontStyle,
+                            ),
+                            fontSize: () {
+                              final width = MediaQuery.sizeOf(context).width;
+                              if (width < kBreakpointSmall) {
+                                return 6.0;
+                              } else if (width < kBreakpointMedium) {
+                                return 8.0;
+                              } else if (width < kBreakpointLarge) {
+                                return 10.0;
+                              }
+                              return 12.0;
+                            }(),
+                            letterSpacing: 0.0,
+                            fontWeight: theme.labelMedium.fontWeight,
+                            fontStyle: theme.labelMedium.fontStyle,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0x00000000),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0x00000000),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: theme.error,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: theme.error,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          filled: true,
+                          fillColor: theme.secondaryBackground,
                         ),
-                        letterSpacing: 0.0,
-                        fontWeight: theme.labelMedium.fontWeight,
-                        fontStyle: theme.labelMedium.fontStyle,
-                      ),
-                      hintText: FFLocalizations.of(context)
-                          .getText('bbx9df2u' /* 논문. 프로젝트 등 경력사항 */),
-                      hintStyle: theme.labelMedium.override(
-                        font: GoogleFonts.openSans(
-                          fontWeight: theme.labelMedium.fontWeight,
-                          fontStyle: theme.labelMedium.fontStyle,
+                        style: theme.bodyMedium.override(
+                          font: GoogleFonts.openSans(
+                            fontWeight: theme.bodyMedium.fontWeight,
+                            fontStyle: theme.bodyMedium.fontStyle,
+                          ),
+                          fontSize: () {
+                            final width = MediaQuery.sizeOf(context).width;
+                            if (width < kBreakpointSmall) {
+                              return 6.0;
+                            } else if (width < kBreakpointMedium) {
+                              return 8.0;
+                            } else if (width < kBreakpointLarge) {
+                              return 10.0;
+                            }
+                            return 12.0;
+                          }(),
+                          letterSpacing: 0.0,
+                          fontWeight: theme.bodyMedium.fontWeight,
+                          fontStyle: theme.bodyMedium.fontStyle,
                         ),
-                        fontSize: () {
-                          final width = MediaQuery.sizeOf(context).width;
-                          if (width < kBreakpointSmall) {
-                            return 6.0;
-                          } else if (width < kBreakpointMedium) {
-                            return 8.0;
-                          } else if (width < kBreakpointLarge) {
-                            return 10.0;
-                          }
-                          return 12.0;
-                        }(),
-                        letterSpacing: 0.0,
-                        fontWeight: theme.labelMedium.fontWeight,
-                        fontStyle: theme.labelMedium.fontStyle,
+                        maxLines: null,
+                        minLines: 8,
+                        maxLength: 500,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                        cursorColor: theme.primaryText,
+                        onChanged: (_) => safeSetState(() {}),
+                        validator: _model.projectTextFieldTextControllerValidator
+                            .asValidator(context),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0x00000000),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0x00000000),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: theme.error,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: theme.error,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: theme.secondaryBackground,
                     ),
-                    style: theme.bodyMedium.override(
-                      font: GoogleFonts.openSans(
-                        fontWeight: theme.bodyMedium.fontWeight,
-                        fontStyle: theme.bodyMedium.fontStyle,
-                      ),
-                      fontSize: () {
-                        final width = MediaQuery.sizeOf(context).width;
-                        if (width < kBreakpointSmall) {
-                          return 6.0;
-                        } else if (width < kBreakpointMedium) {
-                          return 8.0;
-                        } else if (width < kBreakpointLarge) {
-                          return 10.0;
-                        }
-                        return 12.0;
-                      }(),
-                      letterSpacing: 0.0,
-                      fontWeight: theme.bodyMedium.fontWeight,
-                      fontStyle: theme.bodyMedium.fontStyle,
-                    ),
-                    maxLines: null,
-                    minLines: 8,
-                    maxLength: 500,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    cursorColor: theme.primaryText,
-                    validator: _model.projectTextFieldTextControllerValidator
-                        .asValidator(context),
+                  ],
+                ),
+                rightChild: _buildSectionSidePanel(
+                  context: context,
+                  title: FFLocalizations.of(context)
+                      .getText('nt4t0nqj' /* [작성 가이드] */),
+                  child: _buildProjectGuidePanel(
+                    context: context,
+                    charCount: charCount,
                   ),
                 ),
               ),
@@ -1317,7 +1425,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         ],
       );
     }
-
   List<Map<String, dynamic>> _collectAcademicRecords() {
     final records = <Map<String, dynamic>>[];
     for (var i = 0; i < _model.academicGetDateTextControllers.length; i++) {

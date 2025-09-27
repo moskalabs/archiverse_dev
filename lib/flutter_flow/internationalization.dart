@@ -8821,6 +8821,26 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'ko': '기타 전문분야',
       'en': '',
     },
+    'vy01bq1t': {
+      'ko': '[항목 관리]',
+      'en': '[Manage Items]',
+    },
+    'nt4t0nqj': {
+      'ko': '[작성 가이드]',
+      'en': '[Writing Guide]',
+    },
+    'k3syibn2': {
+      'ko': '• 500자 이내로 작성해주세요.',
+      'en': '• Please keep within 500 characters.',
+    },
+    'xj0z9d34': {
+      'ko': '• 최신 순으로 핵심 성과를 정리해주세요.',
+      'en': '• Outline key achievements in reverse chronological order.',
+    },
+    'vwgfg9ii': {
+      'ko': '현재 글자 수',
+      'en': 'Current characters',
+    },
     'ib59489c': {
       'ko': '[학력 설정]',
       'en': '',
