@@ -1679,6 +1679,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                           .asValidator(context),
                                                     ),
                                                   ),
+                                                ),
                                                 const SizedBox(width: 12.0),
                                                 Flexible(
                                                   flex: 2,
