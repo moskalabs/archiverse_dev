@@ -1498,7 +1498,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         .queryRows(
                                                                   queryFn: (q) =>
                                                                       q.eqOrNull(
-                                                                    'email',
+                                                                    'adminId',
                                                                     _model
                                                                         .emailTextFieldTextController
                                                                         .text,

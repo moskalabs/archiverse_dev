@@ -3245,7 +3245,7 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                                         ?.userAlias,
                                                                     '직급',
                                                                   ),
-                                                                  'email':
+                                                                  'adminId':
                                                                       currentUserEmail,
                                                                   'phone':
                                                                       valueOrDefault<
