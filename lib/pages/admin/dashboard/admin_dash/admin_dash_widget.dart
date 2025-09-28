@@ -1,4 +1,5 @@
 import '/backend/schema/enums/enums.dart';
+import '/components/layout/responsive_layout_wrapper/responsive_layout_wrapper_widget.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/dashboard/dashboard_class_container/dashboard_class_container_widget.dart';
 import '/components/dashboard/dashboard_class_container_m/dashboard_class_container_m_widget.dart';
@@ -130,7 +131,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Stack(
+        body: ResponsiveLayoutWrapperWidget(
+          child: Stack(
           children: [
             Container(
               constraints: BoxConstraints(
@@ -3725,7 +3727,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3803,7 +3805,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3881,7 +3883,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3959,7 +3961,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4037,7 +4039,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4411,7 +4413,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4594,7 +4596,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4628,7 +4630,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .mainColor1,
-                                              fontSize: 15.0,
+                                              fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.bold,
                                               fontStyle:
@@ -4678,7 +4680,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                 .fontStyle,
                                                       ),
                                                       color: Colors.white,
-                                                      fontSize: 15.0,
+                                                      fontSize: 16.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FlutterFlowTheme.of(
@@ -4740,7 +4742,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               .fontStyle,
                                                     ),
                                                     color: Color(0xFF666666),
-                                                    fontSize: 15.0,
+                                                    fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
                                                     fontStyle:
@@ -5147,6 +5149,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
           ],
         ),
       ),
+        ),
     );
   }
 }

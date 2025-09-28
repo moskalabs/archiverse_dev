@@ -920,7 +920,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                             .fontStyle,
                                                   ),
                                                   color: Color(0xFF666666),
-                                                  fontSize: 25.0,
+                                                  fontSize: 20.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.bold,
                                                   fontStyle:
@@ -2227,7 +2227,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -2365,7 +2365,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                     .fontStyle,
                                           ),
                                           color: Color(0xFF666666),
-                                          fontSize: 15.0,
+                                          fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.normal,
                                           fontStyle:
@@ -2409,7 +2409,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -2697,7 +2697,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
                                             fontStyle:
@@ -2853,7 +2853,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 13.0,
+                                                fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:

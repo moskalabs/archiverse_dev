@@ -190,7 +190,7 @@ class _MenuItemCopyWidgetState extends State<MenuItemCopyWidget> {
                                     ),
                                     color: FlutterFlowTheme.of(context)
                                         .primaryBackground,
-                                    fontSize: 11.0,
+                                    fontSize: 12.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FlutterFlowTheme.of(context)

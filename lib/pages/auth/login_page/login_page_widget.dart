@@ -1515,120 +1515,69 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         .userTypeOutput
                                                                         ?.firstOrNull !=
                                                                     null) {
-                                                                  _model.professorUserType =
-                                                                      valueOrDefault<
-                                                                          int>(
-                                                                    _model
-                                                                        .userTypeOutput
-                                                                        ?.firstOrNull
-                                                                        ?.permissionLevel,
-                                                                    1, // 기본값을 1로 변경
-                                                                  );
+                                                                  // user_type을 기준으로 대시보드 결정
+                                                                  final userType = _model.userTypeOutput?.firstOrNull?.userType ?? 1;
+                                                                  final permissionLevel = _model.userTypeOutput?.firstOrNull?.permissionLevel ?? 1;
                                                                   
-                                                                  print('교수 권한 레벨: ${_model.professorUserType}');
+                                                                  // user_type: 1=전임교수, 2=겸임교수
+                                                                  _model.professorUserType = userType;
+                                                                  
+                                                                  print('교수 유형 (user_type): $userType');
+                                                                  print('교수 권한 (permission_level): $permissionLevel');
+                                                                  print('교수 이름: ${_model.userTypeOutput?.first.name}');
+                                                                  print('교수 이메일: ${_model.userTypeOutput?.first.email}');
+                                                                  print('교수 직책: ${_model.userTypeOutput?.first.position}');
+                                                                  print('교수 별칭: ${_model.userTypeOutput?.first.userAlias}');
                                                                   _model.emailField =
                                                                       _model
                                                                           .emailTextFieldTextController
                                                                           .text;
                                                                   safeSetState(
                                                                       () {});
-                                                                  print('대시보드 리다이렉트 시작, 권한: ${_model.professorUserType}');
+                                                                  print('대시보드 리다이렉트 시작, user_type: ${userType}');
                                                                   
-                                                                  if (_model
-                                                                          .professorUserType ==
-                                                                      0) {
-                                                                    print('관리자 대시보드로 이동');
-                                                                    context
-                                                                        .pushNamedAuth(
-                                                                      DahsboardWidget
-                                                                          .routeName,
-                                                                      context
-                                                                          .mounted,
-                                                                      queryParameters:
-                                                                          {
-                                                                        'professorType':
-                                                                            serializeParam(
-                                                                          _model
-                                                                              .professorUserType,
-                                                                          ParamType
-                                                                              .int,
-                                                                        ),
+                                                                  // permission_level = 0이면 관리자 대시보드
+                                                                  if (permissionLevel == 0) {
+                                                                    print('관리자 대시보드로 이동 (permission_level: 0)');
+                                                                    context.pushNamedAuth(
+                                                                      DahsboardWidget.routeName,
+                                                                      context.mounted,
+                                                                      queryParameters: {
+                                                                        'professorType': serializeParam(permissionLevel, ParamType.int),
+                                                                      }.withoutNulls,
+                                                                    );
+                                                                  }
+                                                                  // user_type에 따른 대시보드 결정
+                                                                  else if (userType == 1) {
+                                                                    print('전임교수 대시보드로 이동 (user_type: 1) - 1,2,3분반 모두');
+                                                                    context.pushNamedAuth(
+                                                                      ProfDashboardWidget.routeName,
+                                                                      context.mounted,
+                                                                      queryParameters: {
+                                                                        'userType': serializeParam(userType, ParamType.int),
+                                                                        'email': serializeParam(_model.emailField, ParamType.String),
+                                                                      }.withoutNulls,
+                                                                    );
+                                                                  } else if (userType == 2) {
+                                                                    print('겸임교수 대시보드로 이동 (user_type: 2) - 특정 분반만');
+                                                                    context.pushNamedAuth(
+                                                                      DahsboardViceWidget.routeName,
+                                                                      context.mounted,
+                                                                      queryParameters: {
+                                                                        'userType': serializeParam(userType, ParamType.int),
+                                                                        'email': serializeParam(_model.emailTextFieldTextController.text, ParamType.String),
                                                                       }.withoutNulls,
                                                                     );
                                                                   } else {
-                                                                    if (_model
-                                                                            .professorUserType ==
-                                                                        1) {
-                                                                      print('교수 대시보드로 이동 (permission: 1)');
-                                                                      context
-                                                                          .pushNamedAuth(
-                                                                        ProfDashboardWidget
-                                                                            .routeName,
-                                                                        context
-                                                                            .mounted,
-                                                                        queryParameters:
-                                                                            {
-                                                                          'userType':
-                                                                              serializeParam(
-                                                                            _model.professorUserType,
-                                                                            ParamType.int,
-                                                                          ),
-                                                                          'email':
-                                                                              serializeParam(
-                                                                            _model.emailField,
-                                                                            ParamType.String,
-                                                                          ),
-                                                                        }.withoutNulls,
-                                                                      );
-                                                                    } else {
-                                                                      if (_model
-                                                                              .professorUserType ==
-                                                                          2) {
-                                                                        print('부교수 대시보드로 이동 (permission: 2)');
-                                                                        context
-                                                                            .pushNamedAuth(
-                                                                          DahsboardViceWidget
-                                                                              .routeName,
-                                                                          context
-                                                                              .mounted,
-                                                                          queryParameters:
-                                                                              {
-                                                                            'userType':
-                                                                                serializeParam(
-                                                                              _model.professorUserType,
-                                                                              ParamType.int,
-                                                                            ),
-                                                                            'email':
-                                                                                serializeParam(
-                                                                              _model.emailTextFieldTextController.text,
-                                                                              ParamType.String,
-                                                                            ),
-                                                                          }.withoutNulls,
-                                                                        );
-                                                                      } else {
-                                                                        print('일반 대시보드로 이동 (permission: ${_model.professorUserType})');
-                                                                        context
-                                                                            .pushNamedAuth(
-                                                                          DahsboardGeneralWidget
-                                                                              .routeName,
-                                                                          context
-                                                                              .mounted,
-                                                                          queryParameters:
-                                                                              {
-                                                                            'userType':
-                                                                                serializeParam(
-                                                                              _model.professorUserType,
-                                                                              ParamType.int,
-                                                                            ),
-                                                                            'email':
-                                                                                serializeParam(
-                                                                              _model.emailTextFieldTextController.text,
-                                                                              ParamType.String,
-                                                                            ),
-                                                                          }.withoutNulls,
-                                                                        );
-                                                                      }
-                                                                    }
+                                                                    print('기타 교수 일반 대시보드로 이동 (user_type: $userType)');
+                                                                    context.pushNamedAuth(
+                                                                      DahsboardGeneralWidget.routeName,
+                                                                      context.mounted,
+                                                                      queryParameters: {
+                                                                        'userType': serializeParam(userType, ParamType.int),
+                                                                        'email': serializeParam(_model.emailTextFieldTextController.text, ParamType.String),
+                                                                      }.withoutNulls,
+                                                                    );
                                                                   }
                                                                 } else {
                                                                   print('PostsTable에서 교수 정보를 찾지 못함');
@@ -2169,7 +2118,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                                     fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                   ),
                                                                                   color: Color(0xFF284E75),
-                                                                                  fontSize: 18.0,
+                                                                                  fontSize: 16.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FlutterFlowTheme.of(context).labelMedium.fontWeight,
                                                                                   fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,

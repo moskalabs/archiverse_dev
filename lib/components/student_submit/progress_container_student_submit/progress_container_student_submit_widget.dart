@@ -167,7 +167,7 @@ class _ProgressContainerStudentSubmitWidgetState
                                     ),
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryText,
-                                    fontSize: 15.0,
+                                    fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -195,7 +195,7 @@ class _ProgressContainerStudentSubmitWidgetState
                                         ),
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryText,
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)

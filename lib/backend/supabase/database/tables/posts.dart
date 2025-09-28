@@ -36,6 +36,9 @@ class PostsRow extends SupabaseDataRow {
   int? get userType => getField<int>('user_type');
   set userType(int? value) => setField<int>('user_type', value);
 
+  String? get userAlias => getField<String>('user_alias');
+  set userAlias(String? value) => setField<String>('user_alias', value);
+
   DateTime? get createdAt => getField<DateTime>('created_at');
   set createdAt(DateTime? value) => setField<DateTime>('created_at', value);
 }

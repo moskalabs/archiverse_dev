@@ -1,4 +1,5 @@
 import '/backend/supabase/supabase.dart';
+import '/components/layout/responsive_layout_wrapper/responsive_layout_wrapper_widget.dart';
 import '/components/account_manage/account_manage_row/account_manage_row_widget.dart';
 import '/components/account_manage/account_manage_row_mobile/account_manage_row_mobile_widget.dart';
 import '/components/default_layout/borderline/borderline_widget.dart';
@@ -530,7 +531,8 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Stack(
+        body: ResponsiveLayoutWrapperWidget(
+          child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(),
@@ -1354,7 +1356,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                             .fontStyle,
                                                   ),
                                                   color: Color(0xFF666666),
-                                                  fontSize: 25.0,
+                                                  fontSize: 20.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.bold,
                                                   fontStyle:
@@ -2988,7 +2990,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -3071,7 +3073,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                   .fontStyle,
                                         ),
                                         color: Color(0xFF666666),
-                                        fontSize: 15.0,
+                                        fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -3566,7 +3568,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 13.0,
+                                                fontSize: 14.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -3594,6 +3596,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                 ),
               ),
           ],
+        ),
         ),
       ),
     );

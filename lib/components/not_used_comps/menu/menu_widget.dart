@@ -480,7 +480,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
                                                                       .bodySmall
                                                                       .fontStyle,
                                                                 ),
-                                                                fontSize: 11.0,
+                                                                fontSize: 12.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight: FlutterFlowTheme.of(

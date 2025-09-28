@@ -196,7 +196,7 @@ class _DashboardClassContainerMWidgetState
                                             .fontStyle,
                                       ),
                                       color: Color(0xFF666666),
-                                      fontSize: 13.0,
+                                      fontSize: 14.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -232,7 +232,7 @@ class _DashboardClassContainerMWidgetState
                                           .fontStyle,
                                     ),
                                     color: Color(0xFF666666),
-                                    fontSize: 13.0,
+                                    fontSize: 14.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FlutterFlowTheme.of(context)
                                         .bodyMedium

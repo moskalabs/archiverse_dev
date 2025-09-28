@@ -1,4 +1,5 @@
 import '/auth/supabase_auth/auth_util.dart';
+import '/components/layout/responsive_layout_wrapper/responsive_layout_wrapper_widget.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/default_layout/headers/student_header/student_header_widget.dart';
 import '/components/default_layout/headers/student_header_mobile/student_header_mobile_widget.dart';
@@ -153,7 +154,8 @@ class _StudentHomeWidgetState extends State<StudentHomeWidget>
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Container(
+        body: ResponsiveLayoutWrapperWidget(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -2508,7 +2510,7 @@ class _StudentHomeWidgetState extends State<StudentHomeWidget>
                                                                                                                   fontWeight: FontWeight.w500,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                 ),
-                                                                                                                fontSize: 15.0,
+                                                                                                                fontSize: 16.0,
                                                                                                                 letterSpacing: 0.0,
                                                                                                                 fontWeight: FontWeight.w500,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7860,7 +7862,7 @@ class _StudentHomeWidgetState extends State<StudentHomeWidget>
                                                                                                                     fontWeight: FontWeight.w500,
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
-                                                                                                                  fontSize: 15.0,
+                                                                                                                  fontSize: 16.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FontWeight.w500,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -10812,6 +10814,7 @@ class _StudentHomeWidgetState extends State<StudentHomeWidget>
           ),
         ),
       ),
+        ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import '/auth/supabase_auth/auth_util.dart';
+import '/components/layout/responsive_layout_wrapper/responsive_layout_wrapper_widget.dart';
 import '/backend/supabase/supabase.dart';
 import '/components/default_layout/headers/header/header_widget.dart';
 import '/components/default_layout/headers/header_mobile/header_mobile_widget.dart';
@@ -147,7 +148,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: Container(
+        body: ResponsiveLayoutWrapperWidget(
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -1761,7 +1763,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       fontWeight: FontWeight.w500,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
-                                                                                                    fontSize: 15.0,
+                                                                                                    fontSize: 16.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.w500,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9681,6 +9683,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
           ),
         ),
       ),
+        ),
     );
   }
 }

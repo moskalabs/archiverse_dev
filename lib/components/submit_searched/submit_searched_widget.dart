@@ -69,7 +69,7 @@ class _SubmitSearchedWidgetState extends State<SubmitSearchedWidget> {
                                 .fontStyle,
                           ),
                           color: FlutterFlowTheme.of(context).secondaryText,
-                          fontSize: 18.0,
+                          fontSize: 16.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w800,
                           fontStyle:

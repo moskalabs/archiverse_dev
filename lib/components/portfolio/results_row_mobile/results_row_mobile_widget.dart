@@ -82,7 +82,7 @@ class _ResultsRowMobileWidgetState extends State<ResultsRowMobileWidget> {
                           FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                     ),
                     color: Color(0xFF4E4E4E),
-                    fontSize: 13.0,
+                    fontSize: 14.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w500,
                     fontStyle:
@@ -113,7 +113,7 @@ class _ResultsRowMobileWidgetState extends State<ResultsRowMobileWidget> {
                             FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                       ),
                       color: Color(0xFF4E4E4E),
-                      fontSize: 13.0,
+                      fontSize: 14.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w500,
                       fontStyle:

@@ -82,7 +82,7 @@ class _GradeSelectChipWidgetState extends State<GradeSelectChipWidget> {
                                   .fontStyle,
                             ),
                             color: Color(0xFF666666),
-                            fontSize: 25.0,
+                            fontSize: 20.0,
                             letterSpacing: 0.0,
                             fontWeight: FlutterFlowTheme.of(context)
                                 .bodyMedium
@@ -108,7 +108,7 @@ class _GradeSelectChipWidgetState extends State<GradeSelectChipWidget> {
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
                         color: Color(0xFF666666),
-                        fontSize: 25.0,
+                        fontSize: 20.0,
                         letterSpacing: 0.0,
                         fontWeight:
                             FlutterFlowTheme.of(context).bodyMedium.fontWeight,

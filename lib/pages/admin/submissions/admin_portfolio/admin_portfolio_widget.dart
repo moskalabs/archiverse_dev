@@ -2762,7 +2762,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                     ),
                                                                                     color: Color(0xFF666666),
-                                                                                    fontSize: 15.0,
+                                                                                    fontSize: 16.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w500,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2889,7 +2889,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
                                                                                             ),
                                                                                             color: Color(0xFF666666),
-                                                                                            fontSize: 15.0,
+                                                                                            fontSize: 16.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
                                                                                             fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
@@ -2958,7 +2958,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                                           fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                         ),
-                                                                                                        fontSize: 15.0,
+                                                                                                        fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3110,7 +3110,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                     ),
                                                                                                     color: Color(0xFF333333),
-                                                                                                    fontSize: 13.0,
+                                                                                                    fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -3688,7 +3688,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3766,7 +3766,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3844,7 +3844,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3922,7 +3922,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4000,7 +4000,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 15.0,
+                                                          fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -4249,7 +4249,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4433,7 +4433,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4720,7 +4720,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 15.0,
+                                                fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -4808,7 +4808,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                     .fontStyle,
                                           ),
                                           color: Color(0xFF666666),
-                                          fontSize: 15.0,
+                                          fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.bold,
                                           fontStyle:
@@ -5023,7 +5023,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                               .fontStyle,
                                                     ),
                                                     color: Color(0xFF666666),
-                                                    fontSize: 15.0,
+                                                    fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
                                                     fontStyle:
@@ -5119,7 +5119,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                                 ),
-                                                                fontSize: 15.0,
+                                                                fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
                                                                 fontWeight: FlutterFlowTheme.of(
@@ -5429,7 +5429,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF333333),
-                                                        fontSize: 13.0,
+                                                        fontSize: 14.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FlutterFlowTheme.of(
@@ -5592,7 +5592,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                               .fontStyle,
                                                     ),
                                                     color: Color(0xFF666666),
-                                                    fontSize: 15.0,
+                                                    fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
                                                     fontStyle:
@@ -5662,7 +5662,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 15.0,
+                                                            fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -5698,7 +5698,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                             ),
                                                             color: Color(
                                                                 0xFF4E4E4E),
-                                                            fontSize: 15.0,
+                                                            fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -5999,7 +5999,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 13.0,
+                                                        fontSize: 14.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -6055,7 +6055,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                             .fontStyle,
                                                   ),
                                                   color: Color(0xFF666666),
-                                                  fontSize: 15.0,
+                                                  fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w500,
                                                   fontStyle:

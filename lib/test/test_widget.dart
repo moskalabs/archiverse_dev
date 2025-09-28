@@ -66,7 +66,7 @@ class _TestWidgetState extends State<TestWidget> {
                             .fontStyle,
                       ),
                       color: Colors.white,
-                      fontSize: 22.0,
+                      fontSize: 20.0,
                       letterSpacing: 0.0,
                       fontWeight: FlutterFlowTheme.of(context)
                           .headlineMedium

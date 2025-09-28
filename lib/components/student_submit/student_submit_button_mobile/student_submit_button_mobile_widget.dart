@@ -97,7 +97,7 @@ class _StudentSubmitButtonMobileWidgetState
                           FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                     ),
                     color: Color(0xFF666666),
-                    fontSize: 15.0,
+                    fontSize: 16.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.normal,
                     fontStyle:
@@ -124,7 +124,7 @@ class _StudentSubmitButtonMobileWidgetState
                             FlutterFlowTheme.of(context).titleSmall.fontStyle,
                       ),
                       color: Colors.white,
-                      fontSize: 15.0,
+                      fontSize: 16.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.w500,
                       fontStyle:

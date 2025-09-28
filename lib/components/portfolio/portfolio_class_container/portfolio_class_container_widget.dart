@@ -199,7 +199,7 @@ class _PortfolioClassContainerWidgetState
                                             .fontStyle,
                                       ),
                                       color: Color(0xFF666666),
-                                      fontSize: 13.0,
+                                      fontSize: 14.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -235,7 +235,7 @@ class _PortfolioClassContainerWidgetState
                                           .fontStyle,
                                     ),
                                     color: Color(0xFF666666),
-                                    fontSize: 13.0,
+                                    fontSize: 14.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FlutterFlowTheme.of(context)
                                         .bodyMedium
@@ -292,7 +292,7 @@ class _PortfolioClassContainerWidgetState
                                         .fontStyle,
                                   ),
                                   color: Colors.white,
-                                  fontSize: 15.0,
+                                  fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FlutterFlowTheme.of(context)
                                       .titleSmall

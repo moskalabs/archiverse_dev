@@ -98,7 +98,7 @@ class _WeekChipWidgetState extends State<WeekChipWidget>
               color: widget.week == widget.selectedWeek
                   ? Colors.white
                   : Color(0xFF666666),
-              fontSize: 15.0,
+              fontSize: 16.0,
               letterSpacing: 0.0,
               fontWeight: FontWeight.bold,
               fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
