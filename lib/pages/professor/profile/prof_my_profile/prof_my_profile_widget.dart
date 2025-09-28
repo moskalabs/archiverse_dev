@@ -224,6 +224,15 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
   @override
   void initState() {
     super.initState();
+    
+    // 인증 체크
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!loggedIn) {
+        context.goNamedAuth('LoginPage', context.mounted);
+        return;
+      }
+    });
+    
     _model = createModel(context, () => ProfMyProfileModel());
 
     final initialAcademicRecords = _normalizeRecords(
@@ -249,6 +258,11 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // 추가 인증 체크
+      if (!loggedIn) {
+        context.goNamedAuth('LoginPage', context.mounted);
+        return;
+      }
       _model.pfrValList = await ProfessorValidationTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'name',
@@ -1390,11 +1404,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Container(
-        constraints: BoxConstraints(
-          minWidth: 1400.0,
-          minHeight: 800.0,
-        ),
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -1504,11 +1513,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                       Flexible(
                                                         flex: 1,
                                                         child: Container(
-                                                          height:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .height *
-                                                                  0.86,
+                                                          height: 600.0,
                                                           decoration:
                                                               BoxDecoration(
                                                             color: FlutterFlowTheme
@@ -1538,47 +1543,35 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                     width: double
                                                                         .infinity,
                                                                     height:
-                                                                        35.0,
+                                                                        40.0,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .primaryBackground,
                                                                     ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          10.0,
-                                                                          0.0,
-                                                                          10.0,
-                                                                          0.0),
-                                                                      child:
+                                                                    child: Align(
+                                                                      alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                      child: Padding(
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                                                                        child:
                                                                           Text(
-                                                                        FFLocalizations.of(context)
-                                                                            .getText(
-                                                                          '3uadb3vu' /* [기본 설정] */,
-                                                                        ),
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              font: GoogleFonts.openSans(
+                                                                          FFLocalizations.of(context)
+                                                                              .getText(
+                                                                            '3uadb3vu' /* [기본 설정] */,
+                                                                          ),
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
+                                                                                font: GoogleFonts.openSans(
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                ),
+                                                                                fontSize: _sectionTitleFontSize(context),
+                                                                                letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                               ),
-                                                                              fontSize: () {
-                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                  return 10.0;
-                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                  return 12.0;
-                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                  return 18.0;
-                                                                                } else {
-                                                                                  return 22.0;
-                                                                                }
-                                                                              }(),
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FontWeight.w600,
-                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                             ),
                                                                       ),
                                                                     ),
@@ -5939,7 +5932,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
             ],
           ),
         ),
-      ),
       ),
     );
   }
