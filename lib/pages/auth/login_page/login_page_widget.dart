@@ -1528,18 +1528,21 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                       0) {
                                                                     context
                                                                         .pushNamedAuth(
-                                                                      DahsboardWidget
+                                                                      ProfDashboardWidget
                                                                           .routeName,
                                                                       context
                                                                           .mounted,
                                                                       queryParameters:
                                                                           {
-                                                                        'professorType':
+                                                                        'userType':
                                                                             serializeParam(
-                                                                          _model
-                                                                              .professorUserType,
-                                                                          ParamType
-                                                                              .int,
+                                                                          _model.professorUserType,
+                                                                          ParamType.int,
+                                                                        ),
+                                                                        'email':
+                                                                            serializeParam(
+                                                                          _model.emailField,
+                                                                          ParamType.String,
                                                                         ),
                                                                       }.withoutNulls,
                                                                     );

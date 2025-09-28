@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 
 class ChartWidget extends StatefulWidget {
@@ -35,6 +36,20 @@ class _ChartWidgetState extends State<ChartWidget> {
   // 사용할 데이터 가져오기
   List<int> get _chartData => widget.chartData ?? _defaultData;
 
+  double get _maxY {
+    if (_chartData.isEmpty) {
+      return 8;
+    }
+    final maxValue = _chartData.reduce(math.max).toDouble();
+    if (maxValue <= 0) {
+      return 8;
+    }
+    if (maxValue < 8) {
+      return 8;
+    }
+    return maxValue + 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,7 +61,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         child: BarChart(
           BarChartData(
             alignment: BarChartAlignment.center,
-            maxY: 8, // 최대값 8로 설정
+            maxY: _maxY,
             minY: 0,
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
