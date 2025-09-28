@@ -1034,6 +1034,10 @@ class _StudentSubjectPortpolioWidgetState
                                                                                     },
                                                                                   );
 
+                                                                                  await FFAppState().refreshCriticCounters(
+                                                                                    week: _model.weeks,
+                                                                                  );
+
                                                                                   safeSetState(() {});
                                                                                 },
                                                                                 text: FFLocalizations.of(context).getText(
@@ -1644,6 +1648,9 @@ class _StudentSubjectPortpolioWidgetState
                                                                                     FFAppState().studentPortporlioEditorClickedTest = false;
                                                                                     FFAppState().studentPortporlioAfterEditor = true;
                                                                                     safeSetState(() {});
+                                                                                    await FFAppState().refreshCriticCounters(
+                                                                                      week: _model.weeks,
+                                                                                    );
                                                                                   } else {
                                                                                     await showDialog(
                                                                                       context: context,
@@ -3182,6 +3189,10 @@ class _StudentSubjectPortpolioWidgetState
                                                                               },
                                                                             );
 
+                                                                            await FFAppState().refreshCriticCounters(
+                                                                              week: _model.weeks,
+                                                                            );
+
                                                                             safeSetState(() {});
                                                                           },
                                                                           text:
@@ -3817,27 +3828,30 @@ class _StudentSubjectPortpolioWidgetState
                                                                               .firstOrNull!);
                                                                           safeSetState(
                                                                               () {});
-                                                                          await showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (alertDialogContext) {
-                                                                              return WebViewAware(
-                                                                                child: AlertDialog(
-                                                                                  title: Text('제출 완료.'),
-                                                                                  content: Text('제출이 정상적으로 완료되었습니다.'),
-                                                                                  actions: [
-                                                                                    TextButton(
-                                                                                      onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                      child: Text('확인'),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                          );
-                                                                          context
-                                                                              .pop();
+                                                                            await showDialog(
+                                                                              context:
+                                                                                  context,
+                                                                              builder:
+                                                                                  (alertDialogContext) {
+                                                                                return WebViewAware(
+                                                                                  child: AlertDialog(
+                                                                                    title: Text('제출 완료.'),
+                                                                                    content: Text('제출이 정상적으로 완료되었습니다.'),
+                                                                                    actions: [
+                                                                                      TextButton(
+                                                                                        onPressed: () => Navigator.pop(alertDialogContext),
+                                                                                        child: Text('확인'),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                            context
+                                                                                .pop();
+                                                                            await FFAppState().refreshCriticCounters(
+                                                                              week: _model.weeks,
+                                                                            );
                                                                         } else {
                                                                           await showDialog(
                                                                             context:
