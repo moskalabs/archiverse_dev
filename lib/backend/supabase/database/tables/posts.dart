@@ -23,8 +23,8 @@ class PostsRow extends SupabaseDataRow {
   String? get position => getField<String>('position');
   set position(String? value) => setField<String>('position', value);
 
-  String? get email => getField<String>('email');
-  set email(String? value) => setField<String>('email', value);
+  String? get email => getField<String>('user_email');
+  set email(String? value) => setField<String>('user_email', value);
 
   String? get phone => getField<String>('phone');
   set phone(String? value) => setField<String>('phone', value);

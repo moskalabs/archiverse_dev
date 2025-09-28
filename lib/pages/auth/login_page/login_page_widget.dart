@@ -1493,17 +1493,24 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                       .buttonColorSelected ==
                                                                   Color(
                                                                       0xFF284E75)) {
+                                                                print('교수 로그인 시도: ${_model.emailTextFieldTextController.text}');
+                                                                
                                                                 _model.userTypeOutput =
                                                                     await PostsTable()
                                                                         .queryRows(
                                                                   queryFn: (q) =>
                                                                       q.eqOrNull(
-                                                                    'email',
+                                                                    'user_email',
                                                                     _model
                                                                         .emailTextFieldTextController
                                                                         .text,
                                                                   ),
                                                                 );
+                                                                
+                                                                print('PostsTable 조회 결과: ${_model.userTypeOutput?.length ?? 0}개');
+                                                                if (_model.userTypeOutput?.isNotEmpty == true) {
+                                                                  print('첫 번째 사용자: ${_model.userTypeOutput?.first.name}, permissionLevel: ${_model.userTypeOutput?.first.permissionLevel}');
+                                                                }
                                                                 if (_model
                                                                         .userTypeOutput
                                                                         ?.firstOrNull !=
@@ -1515,17 +1522,22 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         .userTypeOutput
                                                                         ?.firstOrNull
                                                                         ?.permissionLevel,
-                                                                    0,
+                                                                    1, // 기본값을 1로 변경
                                                                   );
+                                                                  
+                                                                  print('교수 권한 레벨: ${_model.professorUserType}');
                                                                   _model.emailField =
                                                                       _model
                                                                           .emailTextFieldTextController
                                                                           .text;
                                                                   safeSetState(
                                                                       () {});
+                                                                  print('대시보드 리다이렉트 시작, 권한: ${_model.professorUserType}');
+                                                                  
                                                                   if (_model
                                                                           .professorUserType ==
                                                                       0) {
+                                                                    print('관리자 대시보드로 이동');
                                                                     context
                                                                         .pushNamedAuth(
                                                                       DahsboardWidget
@@ -1547,6 +1559,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                     if (_model
                                                                             .professorUserType ==
                                                                         1) {
+                                                                      print('교수 대시보드로 이동 (permission: 1)');
                                                                       context
                                                                           .pushNamedAuth(
                                                                         ProfDashboardWidget
@@ -1571,6 +1584,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                       if (_model
                                                                               .professorUserType ==
                                                                           2) {
+                                                                        print('부교수 대시보드로 이동 (permission: 2)');
                                                                         context
                                                                             .pushNamedAuth(
                                                                           DahsboardViceWidget
@@ -1592,6 +1606,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                           }.withoutNulls,
                                                                         );
                                                                       } else {
+                                                                        print('일반 대시보드로 이동 (permission: ${_model.professorUserType})');
                                                                         context
                                                                             .pushNamedAuth(
                                                                           DahsboardGeneralWidget
@@ -1616,6 +1631,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                     }
                                                                   }
                                                                 } else {
+                                                                  print('PostsTable에서 교수 정보를 찾지 못함');
                                                                   await showDialog(
                                                                     context:
                                                                         context,
@@ -1625,9 +1641,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         child:
                                                                             AlertDialog(
                                                                           title:
-                                                                              Text('회원정보가 존재하지 않습니다.'),
+                                                                              Text('교수 계정 정보가 없습니다'),
                                                                           content:
-                                                                              Text('회원가입을 진행해주세요.'),
+                                                                              Text('관리자에게 계정 등록을 요청하세요.\n이메일: ${_model.emailTextFieldTextController.text}'),
                                                                           actions: [
                                                                             TextButton(
                                                                               onPressed: () => Navigator.pop(alertDialogContext),
@@ -1741,6 +1757,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                     );
                                                                   }
                                                                 } else {
+                                                                  print('PostsTable에서 교수 정보를 찾지 못함');
                                                                   await showDialog(
                                                                     context:
                                                                         context,
@@ -1750,9 +1767,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         child:
                                                                             AlertDialog(
                                                                           title:
-                                                                              Text('회원정보가 존재하지 않습니다.'),
+                                                                              Text('교수 계정 정보가 없습니다'),
                                                                           content:
-                                                                              Text('회원가입을 진행해주세요.'),
+                                                                              Text('관리자에게 계정 등록을 요청하세요.\n이메일: ${_model.emailTextFieldTextController.text}'),
                                                                           actions: [
                                                                             TextButton(
                                                                               onPressed: () => Navigator.pop(alertDialogContext),
