@@ -575,25 +575,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
     double _recordButtonHeight(BuildContext context) {
       final width = MediaQuery.sizeOf(context).width;
       if (width < kBreakpointSmall) {
-        return 20.0;
+        return 16.0;
       } else if (width < kBreakpointMedium) {
-        return 25.0;
+        return 18.0;
       } else if (width < kBreakpointLarge) {
-        return 30.0;
+        return 20.0;
       }
-      return 35.0;
+      return 24.0;
     }
 
     double _recordButtonFontSize(BuildContext context) {
       final width = MediaQuery.sizeOf(context).width;
       if (width < kBreakpointSmall) {
-        return 8.0;
+        return 6.0;
       } else if (width < kBreakpointMedium) {
-        return 10.0;
+        return 8.0;
       } else if (width < kBreakpointLarge) {
-        return 12.0;
+        return 10.0;
       }
-      return 16.0;
+      return 12.0;
     }
 
     Widget _buildSectionTitle(BuildContext context, String label) {
@@ -649,14 +649,14 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 text: addLabel,
                 icon: const Icon(
                   Icons.add_to_photos_outlined,
-                  size: 15.0,
+                  size: 12.0,
                 ),
                 options: FFButtonOptions(
                   height: _recordButtonHeight(context),
                   padding: const EdgeInsetsDirectional.fromSTEB(
-                    16.0,
+                    8.0,
                     0.0,
-                    16.0,
+                    8.0,
                     0.0,
                   ),
                   iconPadding: const EdgeInsetsDirectional.fromSTEB(
@@ -689,14 +689,14 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 text: removeLabel,
                 icon: const Icon(
                   Icons.delete_forever,
-                  size: 15.0,
+                  size: 12.0,
                 ),
                 options: FFButtonOptions(
                   height: _recordButtonHeight(context),
                   padding: const EdgeInsetsDirectional.fromSTEB(
-                    16.0,
+                    8.0,
                     0.0,
-                    16.0,
+                    8.0,
                     0.0,
                   ),
                   iconPadding: const EdgeInsetsDirectional.fromSTEB(
