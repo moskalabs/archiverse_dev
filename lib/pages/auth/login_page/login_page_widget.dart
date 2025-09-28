@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:postgrest/postgrest.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'login_page_model.dart';
@@ -1493,17 +1494,89 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                       .buttonColorSelected ==
                                                                   Color(
                                                                       0xFF284E75)) {
+                                                                List<PostsRow>?
+                                                                    professorRows;
+                                                                try {
+                                                                  professorRows =
+                                                                      await PostsTable()
+                                                                          .queryRows(
+                                                                    queryFn: (q) =>
+                                                                        q.eqOrNull(
+                                                                      'admin_id',
+                                                                      _model
+                                                                          .emailTextFieldTextController
+                                                                          .text,
+                                                                    ),
+                                                                  );
+                                                                } on PostgrestException catch (
+                                                                    error) {
+                                                                  if (error.code ==
+                                                                      '42703') {
+                                                                    professorRows =
+                                                                        await PostsTable()
+                                                                            .queryRows(
+                                                                      queryFn: (q) =>
+                                                                          q.eqOrNull(
+                                                                        'email',
+                                                                        _model
+                                                                            .emailTextFieldTextController
+                                                                            .text,
+                                                                      ),
+                                                                    );
+                                                                  } else {
+                                                                    await showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (alertDialogContext) {
+                                                                        return WebViewAware(
+                                                                          child:
+                                                                              AlertDialog(
+                                                                            title:
+                                                                                Text('로그인 오류'),
+                                                                            content:
+                                                                                Text('교수 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                onPressed: () =>
+                                                                                    Navigator.pop(alertDialogContext),
+                                                                                child: Text('확인'),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                    return;
+                                                                  }
+                                                                } catch (_) {
+                                                                  await showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (alertDialogContext) {
+                                                                      return WebViewAware(
+                                                                        child:
+                                                                            AlertDialog(
+                                                                          title:
+                                                                              Text('로그인 오류'),
+                                                                          content:
+                                                                              Text('교수 정보를 확인하는 중 문제가 발생했습니다.'),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () =>
+                                                                                  Navigator.pop(alertDialogContext),
+                                                                              child: Text('확인'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                  return;
+                                                                }
                                                                 _model.userTypeOutput =
-                                                                    await PostsTable()
-                                                                        .queryRows(
-                                                                  queryFn: (q) =>
-                                                                      q.eqOrNull(
-                                                                    'email',
-                                                                    _model
-                                                                        .emailTextFieldTextController
-                                                                        .text,
-                                                                  ),
-                                                                );
+                                                                    professorRows;
                                                                 if (_model
                                                                         .userTypeOutput
                                                                         ?.firstOrNull !=

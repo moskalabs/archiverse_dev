@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:postgrest/postgrest.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
 import 'register_page_model.dart';
@@ -3226,38 +3227,131 @@ class _RegisterPageWidgetState extends State<RegisterPageWidget>
                                                               if (_model
                                                                       .radioButtonValue ==
                                                                   '교수') {
+                                                                PostsRow?
+                                                                    insertedProfessor;
+                                                                try {
+                                                                  insertedProfessor =
+                                                                      await PostsTable()
+                                                                          .insert({
+                                                                    'name':
+                                                                        valueOrDefault<
+                                                                            String>(
+                                                                      _model
+                                                                          .fullNameTextFieldTextController
+                                                                          .text,
+                                                                      '교수님 이름',
+                                                                    ),
+                                                                    'position':
+                                                                        valueOrDefault<
+                                                                            String>(
+                                                                      _model
+                                                                          .validationquery
+                                                                          ?.userAlias,
+                                                                      '직급',
+                                                                    ),
+                                                                    'admin_id':
+                                                                        currentUserEmail,
+                                                                    'phone':
+                                                                        valueOrDefault<
+                                                                            String>(
+                                                                      _model
+                                                                          .studentIdTextFieldTextController2
+                                                                          .text,
+                                                                      '',
+                                                                    ),
+                                                                    'permission_level':
+                                                                        1,
+                                                                  });
+                                                                } on PostgrestException catch (
+                                                                    error) {
+                                                                  if (error.code ==
+                                                                      '42703') {
+                                                                    insertedProfessor =
+                                                                        await PostsTable()
+                                                                            .insert({
+                                                                      'name':
+                                                                          valueOrDefault<
+                                                                              String>(
+                                                                        _model
+                                                                            .fullNameTextFieldTextController
+                                                                            .text,
+                                                                        '교수님 이름',
+                                                                      ),
+                                                                      'position':
+                                                                          valueOrDefault<
+                                                                              String>(
+                                                                        _model
+                                                                            .validationquery
+                                                                            ?.userAlias,
+                                                                        '직급',
+                                                                      ),
+                                                                      'email':
+                                                                          currentUserEmail,
+                                                                      'phone':
+                                                                          valueOrDefault<
+                                                                              String>(
+                                                                        _model
+                                                                            .studentIdTextFieldTextController2
+                                                                            .text,
+                                                                        '',
+                                                                      ),
+                                                                      'permission_level':
+                                                                          1,
+                                                                    });
+                                                                  } else {
+                                                                    await showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (alertDialogContext) {
+                                                                        return WebViewAware(
+                                                                          child:
+                                                                              AlertDialog(
+                                                                            title:
+                                                                                Text('회원가입 오류'),
+                                                                            content:
+                                                                                Text('교수 계정 정보를 저장하지 못했습니다. 잠시 후 다시 시도해주세요.'),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                onPressed: () =>
+                                                                                    Navigator.pop(alertDialogContext),
+                                                                                child: Text('확인'),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                    return;
+                                                                  }
+                                                                } catch (_) {
+                                                                  await showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (alertDialogContext) {
+                                                                      return WebViewAware(
+                                                                        child:
+                                                                            AlertDialog(
+                                                                          title:
+                                                                              Text('회원가입 오류'),
+                                                                          content:
+                                                                              Text('교수 정보를 저장하는 중 문제가 발생했습니다.'),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () =>
+                                                                                  Navigator.pop(alertDialogContext),
+                                                                              child: Text('확인'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                  return;
+                                                                }
                                                                 _model.insertpfr =
-                                                                    await PostsTable()
-                                                                        .insert({
-                                                                  'name':
-                                                                      valueOrDefault<
-                                                                          String>(
-                                                                    _model
-                                                                        .fullNameTextFieldTextController
-                                                                        .text,
-                                                                    '교수님 이름',
-                                                                  ),
-                                                                  'position':
-                                                                      valueOrDefault<
-                                                                          String>(
-                                                                    _model
-                                                                        .validationquery
-                                                                        ?.userAlias,
-                                                                    '직급',
-                                                                  ),
-                                                                  'email':
-                                                                      currentUserEmail,
-                                                                  'phone':
-                                                                      valueOrDefault<
-                                                                          String>(
-                                                                    _model
-                                                                        .studentIdTextFieldTextController2
-                                                                        .text,
-                                                                    '',
-                                                                  ),
-                                                                  'permission_level':
-                                                                      1,
-                                                                });
+                                                                    insertedProfessor;
                                                                 _shouldSetState =
                                                                     true;
                                                                

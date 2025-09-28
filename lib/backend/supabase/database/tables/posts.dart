@@ -26,6 +26,9 @@ class PostsRow extends SupabaseDataRow {
   String? get email => getField<String>('email');
   set email(String? value) => setField<String>('email', value);
 
+  String? get adminId => getField<String>('admin_id');
+  set adminId(String? value) => setField<String>('admin_id', value);
+
   String? get phone => getField<String>('phone');
   set phone(String? value) => setField<String>('phone', value);
 
