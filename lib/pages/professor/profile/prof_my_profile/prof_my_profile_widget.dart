@@ -538,12 +538,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
 
     TextStyle _recordTextStyle(BuildContext context) {
       final theme = FlutterFlowTheme.of(context);
-      return theme.bodyMedium.override(
+      return theme.labelMedium.override(
         font: GoogleFonts.openSans(
-          fontWeight: theme.bodyMedium.fontWeight,
-          fontStyle: theme.bodyMedium.fontStyle,
+          fontWeight: FontWeight.w600,
+          fontStyle: theme.labelMedium.fontStyle,
         ),
+        color: theme.secondaryText,
+        fontSize: () {
+          final width = MediaQuery.sizeOf(context).width;
+          if (width < kBreakpointSmall) {
+            return 10.0;
+          } else if (width < kBreakpointMedium) {
+            return 12.0;
+          } else if (width < kBreakpointLarge) {
+            return 12.0;
+          }
+          return 12.0;
+        }(),
         letterSpacing: 0.0,
+        fontWeight: FontWeight.w600,
       );
     }
 
@@ -554,9 +567,9 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
       } else if (width < kBreakpointMedium) {
         return 12.0;
       } else if (width < kBreakpointLarge) {
-        return 18.0;
+        return 14.0;
       }
-      return 22.0;
+      return 14.0; // 오른쪽 위젯과 동일하게
     }
 
     double _recordButtonHeight(BuildContext context) {
@@ -728,6 +741,17 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         fontStyle: theme.labelMedium.fontStyle,
       ),
       color: theme.secondaryText,
+      fontSize: () {
+        final width = MediaQuery.sizeOf(context).width;
+        if (width < kBreakpointSmall) {
+          return 10.0;
+        } else if (width < kBreakpointMedium) {
+          return 12.0;
+        } else if (width < kBreakpointLarge) {
+          return 12.0;
+        }
+        return 12.0;
+      }(),
       letterSpacing: 0.0,
       fontWeight: FontWeight.w600,
       fontStyle: theme.labelMedium.fontStyle,
@@ -1366,9 +1390,14 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: 1400.0,
+          minHeight: 800.0,
+        ),
+        child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -1958,25 +1987,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                   FFLocalizations.of(context).getText(
                                                                                     'qau5753r' /* 성명 */,
                                                                                   ),
-                                                                                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                  style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                         font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                         ),
+                                                                                        color: FlutterFlowTheme.of(context).secondaryText,
                                                                                         fontSize: () {
                                                                                           if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 12.0;
+                                                                                            return 10.0;
                                                                                           } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                             return 12.0;
                                                                                           } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 14.0;
+                                                                                            return 12.0;
                                                                                           } else {
-                                                                                            return 18.0;
+                                                                                            return 12.0;
                                                                                           }
                                                                                         }(),
                                                                                         letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                        fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                 ),
                                                                               ),
@@ -2106,25 +2135,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                     FFLocalizations.of(context).getText(
                                                                                       '3rvsd60q' /* 연락처 */,
                                                                                     ),
-                                                                                    style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                    style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                           font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                           ),
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
                                                                                           fontSize: () {
                                                                                             if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 12.0;
+                                                                                              return 10.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                               return 12.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 14.0;
+                                                                                              return 12.0;
                                                                                             } else {
-                                                                                              return 18.0;
+                                                                                              return 12.0;
                                                                                             }
                                                                                           }(),
                                                                                           letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
                                                                                         ),
                                                                                   ),
                                                                                 ),
@@ -2289,25 +2318,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                   FFLocalizations.of(context).getText(
                                                                                     'qipqm2kr' /* 출생 */,
                                                                                   ),
-                                                                                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                  style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                         font: GoogleFonts.openSans(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                         ),
+                                                                                        color: FlutterFlowTheme.of(context).secondaryText,
                                                                                         fontSize: () {
                                                                                           if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                            return 12.0;
+                                                                                            return 10.0;
                                                                                           } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                             return 12.0;
                                                                                           } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                            return 14.0;
+                                                                                            return 12.0;
                                                                                           } else {
-                                                                                            return 18.0;
+                                                                                            return 12.0;
                                                                                           }
                                                                                         }(),
                                                                                         letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                        fontWeight: FontWeight.w600,
                                                                                       ),
                                                                                 ),
                                                                               ),
@@ -2434,25 +2463,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                     FFLocalizations.of(context).getText(
                                                                                       'y9f1cpiy' /* 이메일 */,
                                                                                     ),
-                                                                                    style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                    style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                           font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                           ),
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
                                                                                           fontSize: () {
                                                                                             if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 12.0;
+                                                                                              return 10.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                               return 12.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 14.0;
+                                                                                              return 12.0;
                                                                                             } else {
-                                                                                              return 18.0;
+                                                                                              return 12.0;
                                                                                             }
                                                                                           }(),
                                                                                           letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
                                                                                         ),
                                                                                   ),
                                                                                 ),
@@ -2605,25 +2634,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                     FFLocalizations.of(context).getText(
                                                                                       '1657gish' /* 소속기관 */,
                                                                                     ),
-                                                                                    style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                    style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                           font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                           ),
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
                                                                                           fontSize: () {
                                                                                             if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 12.0;
+                                                                                              return 10.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                               return 12.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 14.0;
+                                                                                              return 12.0;
                                                                                             } else {
-                                                                                              return 18.0;
+                                                                                              return 12.0;
                                                                                             }
                                                                                           }(),
                                                                                           letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
                                                                                         ),
                                                                                   ),
                                                                                 ),
@@ -2787,25 +2816,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                     FFLocalizations.of(context).getText(
                                                                                       'hwepwafm' /* 직책 */,
                                                                                     ),
-                                                                                    style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                    style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                           font: GoogleFonts.openSans(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                           ),
+                                                                                          color: FlutterFlowTheme.of(context).secondaryText,
                                                                                           fontSize: () {
                                                                                             if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                              return 12.0;
+                                                                                              return 10.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                               return 12.0;
                                                                                             } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                              return 14.0;
+                                                                                              return 12.0;
                                                                                             } else {
-                                                                                              return 18.0;
+                                                                                              return 12.0;
                                                                                             }
                                                                                           }(),
                                                                                           letterSpacing: 0.0,
-                                                                                          fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                          fontWeight: FontWeight.w600,
                                                                                         ),
                                                                                   ),
                                                                                 ),
@@ -2965,25 +2994,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                           FFLocalizations.of(context).getText(
                                                                                             'yfbo7xjg' /* 교수/직급 */,
                                                                                           ),
-                                                                                          style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                          style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                                 font: GoogleFonts.openSans(
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                  fontWeight: FontWeight.w600,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                                 ),
+                                                                                                color: FlutterFlowTheme.of(context).secondaryText,
                                                                                                 fontSize: () {
                                                                                                   if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                    return 12.0;
+                                                                                                    return 10.0;
                                                                                                   } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                                     return 12.0;
                                                                                                   } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                    return 14.0;
+                                                                                                    return 12.0;
                                                                                                   } else {
-                                                                                                    return 18.0;
+                                                                                                    return 12.0;
                                                                                                   }
                                                                                                 }(),
                                                                                                 letterSpacing: 0.0,
-                                                                                                fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                fontWeight: FontWeight.w600,
                                                                                               ),
                                                                                         ),
                                                                                       ),
@@ -3396,25 +3425,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                           FFLocalizations.of(context).getText(
                                                                                             'tshmti4o' /* 자격증여부 */,
                                                                                           ),
-                                                                                          style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                          style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                                 font: GoogleFonts.openSans(
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                  fontWeight: FontWeight.w600,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                                 ),
+                                                                                                color: FlutterFlowTheme.of(context).secondaryText,
                                                                                                 fontSize: () {
                                                                                                   if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                    return 12.0;
+                                                                                                    return 10.0;
                                                                                                   } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                                     return 12.0;
                                                                                                   } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                    return 14.0;
+                                                                                                    return 12.0;
                                                                                                   } else {
-                                                                                                    return 18.0;
+                                                                                                    return 12.0;
                                                                                                   }
                                                                                                 }(),
                                                                                                 letterSpacing: 0.0,
-                                                                                                fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                fontWeight: FontWeight.w600,
                                                                                               ),
                                                                                         ),
                                                                                       ),
@@ -4274,25 +4303,25 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'fhitymps' /* 전문분야 */,
                                                                                             ),
-                                                                                            style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                                                            style: FlutterFlowTheme.of(context).labelMedium.override(
                                                                                                   font: GoogleFonts.openSans(
-                                                                                                    fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                    fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                    fontWeight: FontWeight.w600,
+                                                                                                    fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
                                                                                                   ),
+                                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
                                                                                                   fontSize: () {
                                                                                                     if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                      return 12.0;
+                                                                                                      return 10.0;
                                                                                                     } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                                                                                                       return 12.0;
                                                                                                     } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                      return 14.0;
+                                                                                                      return 12.0;
                                                                                                     } else {
-                                                                                                      return 18.0;
+                                                                                                      return 12.0;
                                                                                                     }
                                                                                                   }(),
                                                                                                   letterSpacing: 0.0,
-                                                                                                  fontWeight: FlutterFlowTheme.of(context).titleLarge.fontWeight,
-                                                                                                  fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                                                                  fontWeight: FontWeight.w600,
                                                                                                 ),
                                                                                           ),
                                                                                         ),
@@ -5910,6 +5939,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
