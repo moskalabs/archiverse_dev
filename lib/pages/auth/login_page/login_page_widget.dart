@@ -1497,8 +1497,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                     await PostsTable()
                                                                         .queryRows(
                                                                   queryFn: (q) =>
-                                                                      q.eqOrNull(
-                                                                    'adminId',
+                                                                  q.eqOrNull(
+                                                                    'admin_id',
                                                                     _model
                                                                         .emailTextFieldTextController
                                                                         .text,
