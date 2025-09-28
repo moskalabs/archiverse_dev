@@ -16,59 +16,56 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final minHeight = 800.0;
     
-    // 항상 디버깅 정보 표시
-    debugPrint('🔍 ResponsiveLayoutWrapper 호출됨!');
-    debugPrint('   screenWidth: $screenWidth');
-    debugPrint('   minDesktopWidth: $minDesktopWidth');
-    debugPrint('   kBreakpointSmall: $kBreakpointSmall');
-    
-    // 모바일/태블릿은 기존 반응형 유지 (768px 이하)
+    // 모바일은 기존 반응형 유지 (768px 이하)
     if (screenWidth <= kBreakpointSmall) {
-      debugPrint('📱 모바일 모드: 기존 반응형 유지');
       return child;
     }
     
-    // 웹/데스크탑(768px 초과)에서 화면이 1400px보다 작으면 가로 스크롤
-    if (enableHorizontalScroll && screenWidth > kBreakpointSmall && screenWidth < minDesktopWidth) {
-      debugPrint('💻 데스크탑 스크롤 모드: 가로 스크롤 활성화');
-      
-      return Scrollbar(
-        thumbVisibility: true,
-        trackVisibility: false,
-        thickness: 8.0,
-        radius: Radius.circular(4.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: BouncingScrollPhysics(),
-          child: Scrollbar(
-            thumbVisibility: true,
-            trackVisibility: false, 
-            thickness: 8.0,
-            radius: Radius.circular(4.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                width: minDesktopWidth,
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.sizeOf(context).height,
-                ),
-                child: child,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    // 웹/데스크탑: 고정 레이아웃 (1400px x 800px 최소)
+    final needsHorizontalScroll = screenWidth < minDesktopWidth;
+    final needsVerticalScroll = screenHeight < minHeight;
     
-    // 충분한 화면 크기(1400px 이상)일 때는 최소 width만 보장
-    debugPrint('🖥️  데스크탑 일반 모드: 최소 width 보장');
-    return Container(
-      constraints: BoxConstraints(
-        minWidth: minDesktopWidth,
-      ),
+    debugPrint('💻 고정 레이아웃 적용:');
+    debugPrint('   화면: ${screenWidth}x${screenHeight}');
+    debugPrint('   최소: ${minDesktopWidth}x${minHeight}');
+    debugPrint('   가로 스크롤 필요: $needsHorizontalScroll');
+    debugPrint('   세로 스크롤 필요: $needsVerticalScroll');
+    
+    // 고정 크기 컨텐츠 만들기
+    Widget fixedContent = SizedBox(
+      width: minDesktopWidth,
+      height: minHeight,
       child: child,
     );
+    
+    // 스크롤 적용 전략
+    if (needsVerticalScroll && needsHorizontalScroll) {
+      debugPrint('가로 + 세로 스크롤 모두 적용');
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: fixedContent,
+        ),
+      );
+    } else if (needsHorizontalScroll) {
+      debugPrint('가로 스크롤만 적용');
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: fixedContent,
+      );
+    } else if (needsVerticalScroll) {
+      debugPrint('세로 스크롤만 적용');
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: fixedContent,
+      );
+    } else {
+      debugPrint('스크롤 필요 없음');
+      return fixedContent;
+    }
   }
 }
