@@ -1513,24 +1513,24 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                       Flexible(
                                                         flex: 1,
                                                         child: Container(
-                                                          height: 600.0,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16.0),
-                                                          ),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
+                                                          height: 680.0, // 원래 높이로 복구
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primaryBackground,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          16.0),
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              children: [
                                                               Flexible(
-                                                                flex: 1,
+                                                                flex: 2, // 1에서 2로 늘리면서 상단 공간 확보
                                                                 child: Padding(
                                                                   padding: EdgeInsetsDirectional
                                                                       .fromSTEB(
@@ -1543,7 +1543,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                     width: double
                                                                         .infinity,
                                                                     height:
-                                                                        40.0,
+                                                                        40.0, // 원래대로 복구
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: FlutterFlowTheme.of(
@@ -1553,7 +1553,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                     child: Align(
                                                                       alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                       child: Padding(
-                                                                        padding: const EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                                                                        padding: const EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0), // 원래대로 복구
                                                                         child:
                                                                           Text(
                                                                           FFLocalizations.of(context)
@@ -1579,7 +1579,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                 ),
                                                               ),
                                                               Flexible(
-                                                                flex: 4,
+                                                                flex: 2, // 3에서 2로 더 줄여서 사진 영역 최소화
                                                                 child: Align(
                                                                   alignment:
                                                                       AlignmentDirectional(
@@ -1882,7 +1882,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                 ),
                                                               ),
                                                               Expanded(
-                                                                flex: 12,
+                                                                flex: 10, // 13에서 10으로 줄여서 균형 맞춤
                                                                 child:
                                                                     Container(
                                                                   width: double
@@ -1949,12 +1949,12 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                                         .max,
                                                                 children: [
                                                                   Flexible(
-                                                                    flex: 2,
+                                                                    flex: 3, // 2에서 3으로 늘림
                                                                     child:
                                                                         Padding(
                                                                       padding: EdgeInsetsDirectional.fromSTEB(
                                                                           5.0,
-                                                                          0.0,
+                                                                          5.0, // 10.0에서 5.0으로 조정
                                                                           5.0,
                                                                           0.0),
                                                                       child:
