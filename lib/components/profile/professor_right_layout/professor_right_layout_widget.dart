@@ -251,57 +251,73 @@ class _ProfessorRightLayoutWidgetState extends State<ProfessorRightLayoutWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 70% 좌측 그룹
-          Expanded(
-            flex: 7,
-            child: Column(
-              children: [
-                // 학력설정 섹션
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: _buildSectionContainer(
-                      title: '학력 설정',
-                      content: _buildAcademicContent(),
-                      rowCount: widget.academicRecords.length,
-                    ),
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    
+    print('화면 크기: ${screenWidth}px x ${screenHeight}px');
+    
+    // 기본 콘텐츠 레이아웃
+    Widget content = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 70% 좌측 그룹
+        Expanded(
+          flex: 7,
+          child: Column(
+            children: [
+              // 학력설정 섹션
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: _buildSectionContainer(
+                    title: '학력 설정',
+                    content: _buildAcademicContent(),
+                    rowCount: widget.academicRecords.length,
                   ),
                 ),
-                // 강사경력 섹션
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: _buildSectionContainer(
-                      title: '강사 경력',
-                      content: _buildTeachingContent(),
-                      rowCount: widget.teachingRecords.length,
                     ),
+              // 강사경력 섹션
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: _buildSectionContainer(
+                    title: '강사 경력',
+                    content: _buildTeachingContent(),
+                    rowCount: widget.teachingRecords.length,
                   ),
                 ),
-              ],
-            ),
-          ),
-          // 30% 우측 그룹
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: _buildSectionContainer(
-                title: '전문 분야',
-                content: _buildSpecialtyContent(),
-                rowCount: (widget.specialtyFields.length / 3).ceil(), // 3개씩 한 줄로 가정
               ),
+            ],
+          ),
+        ),
+        // 30% 우측 그룹
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: _buildSectionContainer(
+              title: '전문 분야',
+              content: _buildSpecialtyContent(),
+              rowCount: (widget.specialtyFields.length / 3).ceil(),
             ),
           ),
-        ],
+      ),
+      ],
+    );
+    
+    // 전역 브레이크포인트 시스템 사용
+    print('화면 크기: ${screenWidth}px x ${screenHeight}px');
+    print('모바일: ${screenWidth < kBreakpointSmall}, 태블릿: ${screenWidth >= kBreakpointSmall && screenWidth < kCustomBreakpointTablet}, 데스크톱: ${screenWidth >= kCustomBreakpointTablet}');
+    
+    // 전역 반응형 래퍼를 사용하여 스크롤 처리
+    return buildResponsiveWrapper(
+      context: context,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: content,
       ),
     );
   }

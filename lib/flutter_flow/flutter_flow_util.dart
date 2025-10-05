@@ -368,10 +368,87 @@ bool get isiOS => !kIsWeb && Platform.isIOS;
 bool get isWeb => kIsWeb;
 
 const kBreakpointSmall = 767.0;
-const kBreakpointMedium = 991.0;
-const kBreakpointLarge = 1550.0;
-bool isMobileWidth(BuildContext context) =>
-    MediaQuery.sizeOf(context).width < kBreakpointSmall;
+const kBreakpointMedium = 1400.0;
+const kBreakpointLarge = 1400.0;
+const kMinHeightDesktop = 800.0;
+bool isMobileWidth(BuildContext context) {
+  final width = MediaQuery.sizeOf(context).width;
+  final height = MediaQuery.sizeOf(context).height;
+  
+  // 테스트용: 모바일 조건 비활성화
+  print('isMobileWidth: 🚀 모바일 비활성화 - 무조건 FALSE (가로:${width}px)');
+  return false; // 테스트용: 무조건 비모바일
+  
+  /*
+  // 강제로 데스크톱 모드: 가로 769px 이상이면 무조건 비모바일
+  if (kIsWeb && width > 768) {
+    print('isMobileWidth: 강제 비모바일 (가로:${width}px > 768px)');
+    return false;
+  }
+  
+  // 진짜 모바일: 가로 AND 세로 둘 다 768px 이하
+  final isMobile = !kIsWeb || (width <= 768 && height <= 768);
+  print('isMobileWidth: 모바일 체크 - 가로:${width}px, 세로:${height}px, isMobile:$isMobile');
+  
+  return isMobile;
+  */
+}
+// 전역 브레이크포인트 설정
+const kCustomBreakpointTablet = 1400.0;
+
+// 반응형 래퍼 위젯 - 스크롤 처리 포함
+Widget buildResponsiveWrapper({
+  required BuildContext context,
+  required Widget child,
+}) {
+  final screenWidth = MediaQuery.sizeOf(context).width;
+  final screenHeight = MediaQuery.sizeOf(context).height;
+  final isMobile = screenWidth < kBreakpointSmall;
+  final needsHScroll = screenWidth >= kBreakpointSmall && screenWidth < kCustomBreakpointTablet;
+  final needsVScroll = screenHeight < kMinHeightDesktop && !isMobile;
+  
+  Widget content = child;
+  
+  if (!isMobile) {
+    // 가로와 세로 둘 다 스크롤 필요
+    if (needsHScroll && needsVScroll) {
+      content = SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Container(
+            width: kCustomBreakpointTablet,
+            height: kMinHeightDesktop,
+            child: content,
+          ),
+        ),
+      );
+    }
+    // 가로 스크롤만 필요
+    else if (needsHScroll) {
+      content = SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: kCustomBreakpointTablet,
+          child: content,
+        ),
+      );
+    }
+    // 세로 스크롤만 필요
+    else if (needsVScroll) {
+      content = SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          height: kMinHeightDesktop,
+          child: content,
+        ),
+      );
+    }
+  }
+  
+  return content;
+}
+
 bool responsiveVisibility({
   required BuildContext context,
   bool phone = true,
@@ -380,16 +457,57 @@ bool responsiveVisibility({
   bool desktop = true,
 }) {
   final width = MediaQuery.sizeOf(context).width;
-  if (width < kBreakpointSmall) {
-    return phone;
-  } else if (width < kBreakpointMedium) {
-    return tablet;
-  } else if (width < kBreakpointLarge) {
-    return tabletLandscape;
-  } else {
-    return desktop;
+  final height = MediaQuery.sizeOf(context).height;
+  
+  // 호출 위치 추적
+  final stackTrace = StackTrace.current.toString();
+  final lineInfo = stackTrace.split('\n')[1]; // 호출한 위치 정보
+  
+  print('\n=== responsiveVisibility CALL ===');
+  print('크기: ${width}px x ${height}px');
+  print('조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
+  print('호출위치: $lineInfo');
+  
+  // 웹에서 가로 > 768px이면 데스크톱 레이아웃 강제
+  if (kIsWeb && width > 768) {
+    print('responsiveVisibility: 원래 조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
+    
+    // 순수 데스크톱 전용 컴포너트만 표시
+    if (!phone) {
+      print('responsiveVisibility: 🚀🚀 순수 데스크톱 (phone=false) -> TRUE');
+      print('   이것이 진짜 데스크톱 UI일 가능성!');
+      return true;
+    }
+    
+    // phone=true 가 포함된 모든 컴포너트 숨김 (모바일/태블릿 형태)
+    if (phone) {
+      print('responsiveVisibility: 🚀📱 모바일/태블릿 컴포너트 (phone=true) 강제 숨김 -> FALSE');
+      print('   이것이 현재 보이는 모바일 형태 UI일 가능성!');
+      return false;
+    }
+    
+    print('responsiveVisibility: 🚀 기본 -> TRUE');
+    return true;
   }
+  
+  // 진짜 모바일
+  final isTrueMobile = !kIsWeb || (width <= 768 && height <= 768);
+  if (isTrueMobile) {
+    print('responsiveVisibility: 진짜 모바일 -> returning $phone');
+    return phone;
+  }
+  
+  print('responsiveVisibility: 대체 경로 -> true');
+  return true;
 }
+
+// 반응형 레이아웃 헬퍼 함수들
+bool isDesktopWidth(BuildContext context) =>
+    MediaQuery.sizeOf(context).width >= kCustomBreakpointTablet;
+bool needsHorizontalScroll(BuildContext context) =>
+    MediaQuery.sizeOf(context).width >= kBreakpointSmall && MediaQuery.sizeOf(context).width < kCustomBreakpointTablet;
+bool needsVerticalScroll(BuildContext context) =>
+    MediaQuery.sizeOf(context).height < kMinHeightDesktop && MediaQuery.sizeOf(context).width >= kBreakpointSmall;
 
 const kTextValidatorUsernameRegex = r'^[a-zA-Z][a-zA-Z0-9_-]{2,16}$';
 // https://stackoverflow.com/a/201378

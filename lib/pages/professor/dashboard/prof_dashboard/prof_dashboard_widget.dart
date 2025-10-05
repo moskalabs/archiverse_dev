@@ -114,7 +114,8 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                 shape: BoxShape.rectangle,
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start, // 헤더 왼쪽 정렬
                 children: [
                   if (responsiveVisibility(
                     context: context,
