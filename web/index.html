@@ -43,6 +43,41 @@
 
   <title> archiverse </title>
   <meta name="description" content="archiverse Test Version_1.36" />
+  
+  <!-- 반응형 레이아웃 CSS -->
+  <style>
+    /* 전역 스크롤 설정 */
+    html, body {
+      overflow: auto !important;
+    }
+    
+    /* 데스크톱/태블릿에서 1400px 미만일 때 가로 스크롤 */
+    @media screen and (min-width: 769px) and (max-width: 1399px) {
+      body, html, flt-platform-view, .flt-scene-host {
+        min-width: 1400px !important;
+        overflow-x: scroll !important;
+        background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(255,0,0,0.3)) !important;
+      }
+      
+      /* 모든 컴포너트 강제 표시 */
+      .hidden, [style*="display: none"], [style*="display:none"] {
+        display: block !important;
+        visibility: visible !important;
+      }
+    }
+    
+    /* 세로 800px 미만일 때 세로 스크롤 */
+    @media screen and (max-height: 799px) and (min-width: 768px) {
+      flt-platform-view, .flt-scene-host {
+        min-height: 800px !important;
+        overflow-y: auto !important;
+      }
+      
+      body {
+        overflow-y: auto !important;
+      }
+    }
+  </style>
     
 
   <!-- Status Bar color in Safari browser (iOS) and PWA -->
