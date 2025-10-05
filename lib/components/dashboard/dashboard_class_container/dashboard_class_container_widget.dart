@@ -466,6 +466,12 @@ class _DashboardClassContainerWidgetState
 
                             await actions.mergeAndDownloadPdf(
                               FFAppState().mergepdfs.toList(),
+                              year: widget.year,
+                              semester: widget.semester,
+                              courseName: widget.courseName,
+                              professorName: widget.professor,
+                              grade: widget.grade,
+                              section: widget.section,
                             );
 
                             if (mounted) {

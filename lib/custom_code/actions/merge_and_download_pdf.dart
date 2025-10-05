@@ -15,8 +15,48 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import '/backend/simple_pdf_test.dart';
 
-Future<void> mergeAndDownloadPdf(List<String> pdfUrls) async {
+Future<void> mergeAndDownloadPdf(
+  List<String> pdfUrls, {
+  String? year,
+  String? semester,
+  String? courseName,
+  String? professorName,
+  int? grade,
+  String? section,
+}) async {
+  print('======= NEW PDF SYSTEM TEST =======');
+  
+  // 1_cover_page 템플릿 생성 및 다운로드
+  try {
+    final coverPdfBytes = await CoverPageTemplate.generateCoverPage(
+      year: year ?? '2025',
+      semester: semester ?? '1학기',
+      courseName: courseName ?? '과목명',
+      professorName: professorName ?? '교수님',
+      grade: grade != null ? '${grade}학년' : '학년',
+      section: section ?? '분반',
+    );
+    
+    if (kIsWeb && coverPdfBytes.isNotEmpty) {
+      final fileName = 'cover_page_template_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final blob = html.Blob([coverPdfBytes], 'application/pdf');
+      final dlUrl = html.Url.createObjectUrlFromBlob(blob);
+      final a = html.document.createElement('a') as html.AnchorElement
+        ..href = dlUrl
+        ..download = fileName;
+      a.click();
+      html.Url.revokeObjectUrl(dlUrl);
+      
+      print('======= COVER PAGE TEMPLATE SUCCESS =======');
+      return; // 새 템플릿 성공 시 기존 로직 건너뛰기
+    }
+  } catch (e) {
+    print('======= COVER PAGE ERROR: $e =======');
+  }
+  
+  print('======= FALLBACK TO EXISTING LOGIC =======');
   final Set<String> seen = <String>{};
   final List<String> sanitizedUrls = [];
 
