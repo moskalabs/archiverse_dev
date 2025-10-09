@@ -449,58 +449,6 @@ Widget buildResponsiveWrapper({
   return content;
 }
 
-bool responsiveVisibility({
-  required BuildContext context,
-  bool phone = true,
-  bool tablet = true,
-  bool tabletLandscape = true,
-  bool desktop = true,
-}) {
-  final width = MediaQuery.sizeOf(context).width;
-  final height = MediaQuery.sizeOf(context).height;
-  
-  // 호출 위치 추적
-  final stackTrace = StackTrace.current.toString();
-  final lineInfo = stackTrace.split('\n')[1]; // 호출한 위치 정보
-  
-  print('\n=== responsiveVisibility CALL ===');
-  print('크기: ${width}px x ${height}px');
-  print('조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
-  print('호출위치: $lineInfo');
-  
-  // 웹에서 가로 > 768px이면 데스크톱 레이아웃 강제
-  if (kIsWeb && width > 768) {
-    print('responsiveVisibility: 원래 조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
-    
-    // 순수 데스크톱 전용 컴포너트만 표시
-    if (!phone) {
-      print('responsiveVisibility: 🚀🚀 순수 데스크톱 (phone=false) -> TRUE');
-      print('   이것이 진짜 데스크톱 UI일 가능성!');
-      return true;
-    }
-    
-    // phone=true 가 포함된 모든 컴포너트 숨김 (모바일/태블릿 형태)
-    if (phone) {
-      print('responsiveVisibility: 🚀📱 모바일/태블릿 컴포너트 (phone=true) 강제 숨김 -> FALSE');
-      print('   이것이 현재 보이는 모바일 형태 UI일 가능성!');
-      return false;
-    }
-    
-    print('responsiveVisibility: 🚀 기본 -> TRUE');
-    return true;
-  }
-  
-  // 진짜 모바일
-  final isTrueMobile = !kIsWeb || (width <= 768 && height <= 768);
-  if (isTrueMobile) {
-    print('responsiveVisibility: 진짜 모바일 -> returning $phone');
-    return phone;
-  }
-  
-  print('responsiveVisibility: 대체 경로 -> true');
-  return true;
-}
-
 // 반응형 레이아웃 헬퍼 함수들
 bool isDesktopWidth(BuildContext context) =>
     MediaQuery.sizeOf(context).width >= kCustomBreakpointTablet;
@@ -875,3 +823,34 @@ String getCurrentRoute(BuildContext context) =>
     context.mounted ? MyApp.of(context).getRoute() : '';
 List<String> getCurrentRouteStack(BuildContext context) =>
     context.mounted ? MyApp.of(context).getRouteStack() : [];
+
+bool responsiveVisibility({
+  required BuildContext context,
+  bool phone = true,
+  bool tablet = true,
+  bool tabletLandscape = true,
+  bool desktop = true,
+}) {
+  final width = MediaQuery.sizeOf(context).width;
+  final height = MediaQuery.sizeOf(context).height;
+  
+  // 웹에서 가로 > 768px이면 데스크톱 전용 컴포넌트만 표시
+  if (kIsWeb && width > 768) {
+    // phone=false인 데스크톱 컴포넌트만 표시 (사이드바, 헤더 등)
+    return !phone;
+  }
+  
+  // 진짜 모바일: 가로 AND 세로 둘 다 768px 이하
+  final isTrueMobile = !kIsWeb || (width <= 768 && height <= 768);
+  if (isTrueMobile) {
+    return phone;
+  }
+  
+  return true;
+}
+
+// 강제 데스크톱 모드 헬퍼
+bool isForceDesktopMode(BuildContext context) {
+  final width = MediaQuery.sizeOf(context).width;
+  return kIsWeb && width > 768;
+}
