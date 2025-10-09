@@ -20,6 +20,31 @@ void main() async {
 
   await SupaFlow.initialize();
 
+  // 오버플로우 에러 처리
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    print('🚨 오버플로우 에러 발생: ${details.exception}');
+    
+    // RenderFlex overflow 에러 처리
+    if (details.exception.toString().contains('RenderFlex overflowed')) {
+      return Container(
+        color: Colors.red.withOpacity(0.1),
+        child: Center(
+          child: Text(
+            '텍스트 오버플로우',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+    
+    // 기본 에러 위젯
+    return ErrorWidget(details.exception);
+  };
+
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
 
@@ -115,6 +140,36 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: false,
+        // 전역 텍스트 오버플로우 처리
+        textTheme: ThemeData.light().textTheme.copyWith(
+          bodyLarge: ThemeData.light().textTheme.bodyLarge?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          bodyMedium: ThemeData.light().textTheme.bodyMedium?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          bodySmall: ThemeData.light().textTheme.bodySmall?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          titleLarge: ThemeData.light().textTheme.titleLarge?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          titleMedium: ThemeData.light().textTheme.titleMedium?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          titleSmall: ThemeData.light().textTheme.titleSmall?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          labelLarge: ThemeData.light().textTheme.labelLarge?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          labelMedium: ThemeData.light().textTheme.labelMedium?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+          labelSmall: ThemeData.light().textTheme.labelSmall?.copyWith(
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
       themeMode: _themeMode,
       routerConfig: _router,

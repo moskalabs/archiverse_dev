@@ -107,7 +107,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-              width: MediaQuery.sizeOf(context).width * 1.0,
+              width: double.infinity,
               height: 50.0,
               decoration: BoxDecoration(
                 color: Color(0xFFEEF1F6),

@@ -54,6 +54,10 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
             child: Container(
               width: 1400.0,
               height: double.infinity,
+              constraints: BoxConstraints(
+                minWidth: 1400.0, // 최소 1400px 보장
+                // maxWidth 제거 - 1400px 이상에서는 화면에 맞춰 커져야 함
+              ),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.red, width: 5),
                 color: Colors.red.withOpacity(0.1),
@@ -63,7 +67,13 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
                 data: MediaQuery.of(context).copyWith(
                   size: Size(1400.0, 1000.0), // 가짜 큰 크기
                 ),
-                child: child,
+                child: MediaQuery(
+                  // 내부 컴포너트들에게 가짜 데스크톱 크기를 알려주기
+                  data: MediaQuery.of(context).copyWith(
+                    size: Size(1400.0, 1000.0), // 가짜 큰 크기
+                  ),
+                  child: child,
+                ),
               ),
             ),
           ),
@@ -106,8 +116,17 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
       );
     }
     
-    print('-> RESPONSIVE MODE: 스크롤 없음');
+    print('-> RESPONSIVE MODE: 1400px 이상, 하지만 왼쪽 정렬 강제 적용');
     print('=== ResponsiveLayoutWrapper END ===\n');
-    return child;
+    
+    // 1400px 이상에서도 왼쪽 정렬 강제
+    return Container(
+      width: double.infinity,
+      alignment: Alignment.centerLeft, // 왼쪽 정렬 강제
+      child: Container(
+        width: double.infinity, // 전체 너비 사용
+        child: child,
+      ),
+    );
   }
 }
