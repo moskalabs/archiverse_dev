@@ -161,9 +161,20 @@ class _MyAppState extends State<MyApp> {
             scrollDirection: Axis.horizontal,
             child: SizedBox(
               width: 1400.0,
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
-                child: child,
+              child: Builder(
+                builder: (innerContext) {
+                  print('🚀 강력한 MediaQuery 오버라이드 적용');
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      size: Size(1500.0, 1000.0),
+                      devicePixelRatio: 1.0,
+                      textScaleFactor: 1.0, // 텍스트 스케일 고정
+                      padding: EdgeInsets.zero,
+                      viewInsets: EdgeInsets.zero,
+                    ),
+                    child: child,
+                  );
+                },
               ),
             ),
           );

@@ -5,6 +5,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'navi_sidebar_model.dart';
 export 'navi_sidebar_model.dart';
 
@@ -63,11 +64,11 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           curve: Curves.easeInOut,
-          width: FFAppState().navOpen == true ? 230.0 : 72.0,
+          width: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : (FFAppState().navOpen == true ? 230.0 : 72.0), // 웹에서 데스크톱일 때 230px 절대 고정
           height: double.infinity,
           constraints: BoxConstraints(
-            minWidth: 90.0,
-            maxWidth: 290.0,
+            minWidth: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : 90.0, // 웹 데스크톱에서 최소 너비 230px 고정
+            maxWidth: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : 290.0, // 웹 데스크톱에서 최대 너비도 230px 고정
           ),
           decoration: BoxDecoration(
             color: Color(0xFF284E75),

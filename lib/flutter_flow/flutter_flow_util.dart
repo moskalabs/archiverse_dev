@@ -854,3 +854,28 @@ bool isForceDesktopMode(BuildContext context) {
   final width = MediaQuery.sizeOf(context).width;
   return kIsWeb && width > 768;
 }
+
+// 동적 콘텐츠를 위한 강제 데스크톱 MediaQuery
+MediaQueryData forceDesktopMediaQuery(BuildContext context) {
+  final originalData = MediaQuery.of(context);
+  final screenWidth = originalData.size.width;
+  final screenHeight = originalData.size.height;
+  
+  // 웹에서 작은 화면일 때 가짜 큰 화면으로 속이기
+  if (kIsWeb && (screenWidth < 1400 || screenHeight < 800)) {
+    print('🚀 forceDesktopMediaQuery: ${screenWidth}x${screenHeight} -> 1500x1000으로 속이기');
+    return originalData.copyWith(
+      size: Size(1500.0, 1000.0),
+    );
+  }
+  
+  return originalData;
+}
+
+// 모든 동적 위젯을 위한 래퍼
+Widget wrapWithForceDesktop(BuildContext context, Widget child) {
+  return MediaQuery(
+    data: forceDesktopMediaQuery(context),
+    child: child,
+  );
+}
