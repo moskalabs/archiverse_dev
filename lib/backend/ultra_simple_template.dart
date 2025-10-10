@@ -55,82 +55,119 @@ class UltraSimpleTemplate {
       }
     }
 
-    // 최종 PDF 문서
+    // 최종 PDF 문서 (페이지 마진 설정)
     final finalDoc = syncfusion.PdfDocument();
+    finalDoc.pageSettings.margins.all = 0; // 모든 마진 제거
     
     try {
-      // 1. 기본 4페이지 템플릿 생성
-      final templateDoc = pw.Document();
       final font = await _loadMalgunGothicFont();
       
-      // 표지
-      templateDoc.addPage(pw.Page(
+      // 1페이지: 표지 - 간단한 방식으로 다시 시도
+      final coverDoc = pw.Document();
+      coverDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
+        margin: pw.EdgeInsets.zero, // 모든 마진 제거
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-        build: (context) => pw.Container(
-          decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-          child: pw.Padding(
-            padding: const pw.EdgeInsets.all(40),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Row(children: [
-                  pw.Container(
-                    width: 70, height: 70,
-                    decoration: pw.BoxDecoration(
-                      color: PdfColors.white,
-                      borderRadius: pw.BorderRadius.circular(15),
+        build: (context) => pw.FullPage( // FullPage 위젯 사용
+          ignoreMargins: true,
+          child: pw.Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
+            child: pw.Padding(
+              padding: const pw.EdgeInsets.all(40),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Row(children: [
+                    pw.Container(
+                      width: 70, height: 70,
+                      decoration: pw.BoxDecoration(
+                        color: PdfColors.white,
+                        borderRadius: pw.BorderRadius.circular(15),
+                      ),
+                      child: pw.Center(child: pw.Text('SA', style: pw.TextStyle(
+                        fontSize: 28, fontWeight: pw.FontWeight.bold,
+                        color: const PdfColor.fromInt(0xFF273F5F), font: font,
+                      ))),
                     ),
-                    child: pw.Center(child: pw.Text('SA', style: pw.TextStyle(
-                      fontSize: 28, fontWeight: pw.FontWeight.bold,
-                      color: const PdfColor.fromInt(0xFF273F5F), font: font,
-                    ))),
+                    pw.SizedBox(width: 20),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('순천향대학교 건축학과', style: pw.TextStyle(
+                          fontSize: 18, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                        )),
+                        pw.SizedBox(height: 8),
+                        pw.Text('Department of Architecture', style: pw.TextStyle(
+                          fontSize: 12, color: PdfColors.white, font: font,
+                        )),
+                      ],
+                    ),
+                  ]),
+                  pw.Spacer(flex: 2),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
+                      fontSize: 18, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                    )),
                   ),
-                  pw.SizedBox(width: 20),
+                  pw.Spacer(flex: 1),
+                  pw.Center(child: pw.Text(displayCourseName, style: pw.TextStyle(
+                    fontSize: 48, color: PdfColors.white, fontWeight: pw.FontWeight.bold, letterSpacing: 3, font: font,
+                  ))),
+                  pw.Spacer(flex: 2),
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text('순천향대학교 건축학과', style: pw.TextStyle(
-                        fontSize: 18, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                      pw.Text('교수: $displayProfessorName', style: pw.TextStyle(
+                        fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
                       )),
-                      pw.SizedBox(height: 8),
-                      pw.Text('Department of Architecture', style: pw.TextStyle(
-                        fontSize: 12, color: PdfColors.white, font: font,
+                      pw.SizedBox(height: 12),
+                      pw.Text('$displayGrade $displaySection', style: pw.TextStyle(
+                        fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
                       )),
                     ],
                   ),
-                ]),
-                pw.Spacer(flex: 2),
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                    fontSize: 18, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                  )),
-                ),
-                pw.Spacer(flex: 1),
-                pw.Center(child: pw.Text(displayCourseName, style: pw.TextStyle(
-                  fontSize: 48, color: PdfColors.white, fontWeight: pw.FontWeight.bold, letterSpacing: 3, font: font,
-                ))),
-                pw.Spacer(flex: 2),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('교수: $displayProfessorName', style: pw.TextStyle(
-                      fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                    )),
-                    pw.SizedBox(height: 12),
-                    pw.Text('$displayGrade $displaySection', style: pw.TextStyle(
-                      fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                    )),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ));
+      
+      // 표지를 finalDoc에 추가 (완전한 풀스크린)
+      final coverBytes = await coverDoc.save();
+      final coverSyncDoc = syncfusion.PdfDocument(inputBytes: coverBytes);
+      coverSyncDoc.pageSettings.margins.all = 0; // 소스 문서도 마진 제거
+      
+      final coverSourcePage = coverSyncDoc.pages[0];
+      
+      // 페이지 사이즈 설정을 먼저 적용
+      finalDoc.pageSettings.size = syncfusion.PdfPageSize.a4;
+      finalDoc.pageSettings.margins.all = 0; // 마진 다시 한번 확실히 제거
+      
+      final coverNewPage = finalDoc.pages.add();
+      final coverTemplate = coverSourcePage.createTemplate();
+      
+      // 완전한 풀스크린으로 그리기 (Syncfusion 방식)
+      final pageWidth = coverNewPage.getClientSize().width;
+      final pageHeight = coverNewPage.getClientSize().height;
+      
+      coverNewPage.graphics.drawPdfTemplate(
+        coverTemplate, 
+        ui.Offset.zero,
+        ui.Size(pageWidth, pageHeight)
+      );
+      
+      coverSyncDoc.dispose();
+      
+      print('표지 페이지 완전 풀스크린 추가 완료');
+      
+      // 2. 2-4페이지 템플릿 생성
+      final templateDoc = pw.Document();
 
-      // INDEX
+      // 2페이지: INDEX
       templateDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
@@ -197,12 +234,12 @@ class UltraSimpleTemplate {
         ),
       ));
 
-      // 수업계획서 템플릿
+      // 수업계획서 템플릿 (마진 조정)
       templateDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
         build: (context) => pw.Padding(
-          padding: const pw.EdgeInsets.all(30),
+          padding: const pw.EdgeInsets.fromLTRB(50, 50, 50, 50), // 마진 증가
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
@@ -231,15 +268,19 @@ class UltraSimpleTemplate {
               pw.Expanded(
                 child: pw.Container(
                   width: double.infinity,
-                  decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.grey400, width: 1)),
+                  height: 400, // 고정 높이 설정
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400, width: 1),
+                    color: PdfColors.grey50, // 배경색 추가
+                  ),
                   child: pw.Padding(
-                    padding: const pw.EdgeInsets.all(20),
+                    padding: const pw.EdgeInsets.all(15), // 내부 패딩 감소
                     child: pw.Center(
                       child: pw.Text(
                         coursePlanUrl != null 
                           ? '수업계획서 PDF 발견\n다음 페이지부터 실제 내용 표시 (마진 적용)\n\nURL: $coursePlanUrl'
                           : '수업계획서를 찾을 수 없습니다.',
-                        style: pw.TextStyle(fontSize: 12, color: PdfColors.blue, font: font),
+                        style: pw.TextStyle(fontSize: 11, color: PdfColors.blue, font: font), // 폰트 사이즈 감소
                         textAlign: pw.TextAlign.center,
                       ),
                     ),
@@ -251,7 +292,7 @@ class UltraSimpleTemplate {
         ),
       ));
 
-      // 2. 템플릿을 Syncfusion에 추가
+      // 2. 2-4페이지 템플릿을 Syncfusion에 추가 (마진 적용)
       final templateBytes = await templateDoc.save();
       final templateSyncDoc = syncfusion.PdfDocument(inputBytes: templateBytes);
       
@@ -259,8 +300,39 @@ class UltraSimpleTemplate {
         final sourcePage = templateSyncDoc.pages[i];
         final newPage = finalDoc.pages.add();
         final template = sourcePage.createTemplate();
-        newPage.graphics.drawPdfTemplate(template, ui.Offset.zero);
-        print('템플릿 페이지 ${i + 1} 추가');
+        
+        // 2-4페이지: 중앙 정렬을 위한 마진 조정
+        final horizontalMargin = 50.0;
+        final verticalMargin = 60.0; // 세로 마진을 더 크게
+        final scale = 0.75;
+        
+        final templateSize = template.size;
+        final pageWidth = newPage.getClientSize().width;
+        final pageHeight = newPage.getClientSize().height;
+        
+        final maxWidth = pageWidth - (horizontalMargin * 2);
+        final maxHeight = pageHeight - (verticalMargin * 2);
+        
+        final scaleX = maxWidth / templateSize.width;
+        final scaleY = maxHeight / templateSize.height;
+        final finalScale = (scaleX < scaleY ? scaleX : scaleY) * scale;
+        
+        final scaledWidth = templateSize.width * finalScale;
+        final scaledHeight = templateSize.height * finalScale;
+        
+        // 중앙 정렬을 위한 오프셋 계산
+        final centerX = (pageWidth - scaledWidth) / 2;
+        final centerY = (pageHeight - scaledHeight) / 2;
+        
+        newPage.graphics.save();
+        newPage.graphics.translateTransform(centerX, centerY);
+        
+        final scaledSize = ui.Size(scaledWidth, scaledHeight);
+        newPage.graphics.drawPdfTemplate(template, ui.Offset.zero, scaledSize);
+        newPage.graphics.restore();
+        
+        print('템플릿 페이지 ${i + 2} 추가 (중앙정렬: ${centerX.toStringAsFixed(1)}, ${centerY.toStringAsFixed(1)}, 스케일: ${(finalScale * 100).toStringAsFixed(1)}%)');
+        
       }
       templateSyncDoc.dispose();
       
@@ -281,11 +353,38 @@ class UltraSimpleTemplate {
               final newPage = finalDoc.pages.add();
               final template = sourcePage.createTemplate();
               
-              // 간단한 마진 적용 (잘림 방지)
-              final margin = 25.0;
-              newPage.graphics.drawPdfTemplate(template, ui.Offset(margin, margin));
+              // Syncfusion 마진 제거로 더 큰 마진 필요
+              final margin = 40.0; // 기존 20px에서 40px로 증가
+              final scale = 0.75; // 기존 0.85에서 0.75로 감소
               
-              print('수업계획서 페이지 ${i + 1} 병합 완료 (마진: ${margin}px)');
+              // 중앙 정렬을 위한 계산
+              final templateSize = template.size;
+              final pageWidth = newPage.getClientSize().width;
+              final pageHeight = newPage.getClientSize().height;
+              
+              final maxWidth = pageWidth - (margin * 2);
+              final maxHeight = pageHeight - (margin * 2);
+              
+              final scaleX = maxWidth / templateSize.width;
+              final scaleY = maxHeight / templateSize.height;
+              final finalScale = (scaleX < scaleY ? scaleX : scaleY) * scale;
+              
+              final scaledWidth = templateSize.width * finalScale;
+              final scaledHeight = templateSize.height * finalScale;
+              
+              // 중앙 정렬 오프셋 계산
+              final centerX = (pageWidth - scaledWidth) / 2;
+              final centerY = (pageHeight - scaledHeight) / 2;
+              
+              newPage.graphics.save();
+              newPage.graphics.translateTransform(centerX, centerY);
+              
+              final scaledSize = ui.Size(scaledWidth, scaledHeight);
+              newPage.graphics.drawPdfTemplate(template, ui.Offset.zero, scaledSize);
+              
+              newPage.graphics.restore();
+              
+              print('수업계획서 페이지 ${i + 1} 병합 완룼 (중앙정렬: ${centerX.toStringAsFixed(1)}, ${centerY.toStringAsFixed(1)}, 스케일: ${(finalScale * 100).toStringAsFixed(1)}%)');
             }
             
             courseDoc.dispose();

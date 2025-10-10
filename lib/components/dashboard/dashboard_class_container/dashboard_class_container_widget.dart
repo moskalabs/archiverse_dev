@@ -468,7 +468,7 @@ class _DashboardClassContainerWidgetState
                             );
 
                                                                                                                                             // 표지 + INDEX 페이지 병합 PDF 생성
-                                                        final combinedPdfBytes = await Final4PageTemplate.generateCombinedPdf(
+                                                        final combinedPdfBytes = await UltraSimpleTemplate.generateCombinedPdf(
                               year: widget.year ?? '2025',
                               semester: widget.semester ?? '1학기',
                               courseName: widget.courseName ?? '과목명',
