@@ -11,7 +11,6 @@ import 'auth/supabase_auth/auth_util.dart';
 import '/backend/supabase/supabase.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
-import '/core/responsive_wrapper.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
@@ -21,32 +20,7 @@ void main() async {
 
   await SupaFlow.initialize();
 
-  // 오버플로우 에러 처리
-  ErrorWidget.builder = (FlutterErrorDetails details) {
-    print('🚨 오버플로우 에러 발생: ${details.exception}');
-    
-    // RenderFlex overflow 에러 처리
-    if (details.exception.toString().contains('RenderFlex overflowed')) {
-      return Container(
-        color: Colors.red.withOpacity(0.1),
-        child: Center(
-          child: Text(
-            '텍스트 오버플로우',
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      );
-    }
-    
-    // 기본 에러 위젯
-    return ErrorWidget(details.exception);
-  };
-
-  final appState = FFAppState(); // Initialize FFAppState
+  final appState = FFAppState();
   await appState.initializePersistedState();
 
   runApp(ChangeNotifierProvider(
@@ -56,7 +30,6 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
@@ -74,11 +47,10 @@ class MyAppScrollBehavior extends MaterialScrollBehavior {
 
 class _MyAppState extends State<MyApp> {
   Locale? _locale;
-
   ThemeMode _themeMode = ThemeMode.system;
-
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
+  
   String getRoute([RouteMatch? routeMatch]) {
     final RouteMatch lastMatch =
         routeMatch ?? _router.routerDelegate.currentConfiguration.last;
@@ -141,36 +113,6 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: false,
-        // 전역 텍스트 오버플로우 처리
-        textTheme: ThemeData.light().textTheme.copyWith(
-          bodyLarge: ThemeData.light().textTheme.bodyLarge?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          bodyMedium: ThemeData.light().textTheme.bodyMedium?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          bodySmall: ThemeData.light().textTheme.bodySmall?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          titleLarge: ThemeData.light().textTheme.titleLarge?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          titleMedium: ThemeData.light().textTheme.titleMedium?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          titleSmall: ThemeData.light().textTheme.titleSmall?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          labelLarge: ThemeData.light().textTheme.labelLarge?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          labelMedium: ThemeData.light().textTheme.labelMedium?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-          labelSmall: ThemeData.light().textTheme.labelSmall?.copyWith(
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
       ),
       themeMode: _themeMode,
       routerConfig: _router,
@@ -180,53 +122,69 @@ class _MyAppState extends State<MyApp> {
         final screenWidth = MediaQuery.sizeOf(context).width;
         final screenHeight = MediaQuery.sizeOf(context).height;
         
-        print('🚀 MAIN BUILDER: ${screenWidth}px x ${screenHeight}px');
+        print('🚀 MAIN: ${screenWidth}px x ${screenHeight}px');
         
-        // 모바일 (가로 AND 세로 둘 다 768px 이하)
+        // 모바일
         if (!kIsWeb || (screenWidth <= 768 && screenHeight <= 768)) {
-          print('모바일: 기존');
           return child;
         }
         
-        // 고정 레이아웃 처리
+        // 스크롤 필요 여부 판단
         final needsHScroll = screenWidth < 1400;
         final needsVScroll = screenHeight < 800;
         
-        Widget result = child;
+        print('🚀 스크롤: 가로=$needsHScroll, 세로=$needsVScroll');
         
-        // 세로 스크롤 먼저 처리
-        if (needsVScroll) {
-          print('🚀 세로 800px 고정!');
-          result = SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              height: 800.0,
-              decoration: BoxDecoration(border: Border.all(color: Colors.green, width: 4)),
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
-                child: result,
-              ),
-            ),
-          );
-        }
-        
-        // 가로 스크롤 처리
-        if (needsHScroll) {
-          print('🚀 가로 1400px 고정!');
-          result = SingleChildScrollView(
+        // 가로 + 세로 둘 다 스크롤
+        if (needsHScroll && needsVScroll) {
+          print('🚀 보라: 가로+세로 1400x800 고정');
+          return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Container(
-              width: 1400.0,
-              decoration: BoxDecoration(border: Border.all(color: Colors.red, width: 4)),
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
-                child: result,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SizedBox(
+                width: 1400.0,
+                height: 800.0,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
+                  child: child,
+                ),
               ),
             ),
           );
         }
         
-        return result;
+        // 가로 스크롤만
+        if (needsHScroll) {
+          print('🚀 빨간: 가로 1400px 고정');
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: 1400.0,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
+                child: child,
+              ),
+            ),
+          );
+        }
+        
+        // 세로 스크롤만
+        if (needsVScroll) {
+          print('🚀 초록: 세로 800px 고정');
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SizedBox(
+              height: 800.0,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
+                child: child,
+              ),
+            ),
+          );
+        }
+        
+        return child;
       },
     );
   }
