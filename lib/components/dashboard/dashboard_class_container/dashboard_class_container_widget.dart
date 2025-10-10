@@ -3,6 +3,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/backend/ultra_simple_template.dart';
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -464,15 +467,29 @@ class _DashboardClassContainerWidgetState
                               'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
                             );
 
-                            await actions.mergeAndDownloadPdf(
-                              FFAppState().mergepdfs.toList(),
-                              year: widget.year,
-                              semester: widget.semester,
-                              courseName: widget.courseName,
-                              professorName: widget.professor,
-                              grade: widget.grade,
-                              section: widget.section,
+                                                                                                                                            // 표지 + INDEX 페이지 병합 PDF 생성
+                                                        final combinedPdfBytes = await Final4PageTemplate.generateCombinedPdf(
+                              year: widget.year ?? '2025',
+                              semester: widget.semester ?? '1학기',
+                              courseName: widget.courseName ?? '과목명',
+                              professorName: widget.professor ?? '교수님',
+                              grade: widget.grade != null ? '${widget.grade}학년' : '학년',
+                              section: widget.section ?? '분반',
+                              classId: widget.classID,
                             );
+                            
+                            if (kIsWeb && combinedPdfBytes.isNotEmpty) {
+                              final fileName = 'portfolio_cover_index_${DateTime.now().millisecondsSinceEpoch}.pdf';
+                              final blob = html.Blob([combinedPdfBytes], 'application/pdf');
+                              final dlUrl = html.Url.createObjectUrlFromBlob(blob);
+                              final a = html.document.createElement('a') as html.AnchorElement
+                                ..href = dlUrl
+                                ..download = fileName;
+                              a.click();
+                              html.Url.revokeObjectUrl(dlUrl);
+                              
+                              print('병합 PDF 다운로드 완료: $fileName');
+                            }
 
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
