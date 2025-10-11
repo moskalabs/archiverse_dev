@@ -13,6 +13,9 @@ import '/backend/student_weekly_content_template.dart';
 import '/backend/midterm_results_cover_template.dart';
 import '/backend/student_midterm_cover_template.dart';
 import '/backend/student_midterm_content_template.dart';
+import '/backend/final_results_cover_template.dart';
+import '/backend/student_final_cover_template.dart';
+import '/backend/student_final_content_template.dart';
 
 /// 간단한 PDF 템플릿 (문법 오류 수정됨)
 class UltraSimpleTemplate {
@@ -651,6 +654,70 @@ class UltraSimpleTemplate {
         }
         
         print('======= 모든 학생 중간결과물 처리 완료 =======');
+      }
+      
+      // 13. 기말결과물 표지 (학생 목록 포함)
+      final finalStudentNames = await FinalResultsCoverTemplate.addFinalResultsCover(
+        finalDoc: finalDoc,
+        classId: classId,
+        year: displayYear,
+        semester: displaySemester,
+        courseName: displayCourseName,
+        professorName: displayProfessorName,
+        grade: displayGrade,
+        section: displaySection,
+        updateProgress: updateProgress,
+        startProgress: 0.995,
+        endProgress: 0.997,
+      );
+      
+      // 14. 각 학생별 기말결과물 [표지] 추가 (콘텐츠는 다음 단계)
+      if (finalStudentNames.isNotEmpty && classId != null) {
+        print('======= 학생별 기말결과물 추가 시작 (${finalStudentNames.length}명) =======');
+        
+        for (int i = 0; i < finalStudentNames.length; i++) {
+          final studentName = finalStudentNames[i];
+          
+          updateProgress(0.997 + (i / finalStudentNames.length) * 0.003, '학생 ${i + 1}/${finalStudentNames.length}: $studentName 기말결과물 표지 생성 중');
+          
+          // 14-1. 학생 기말결과물 표지 추가
+          await StudentFinalCoverTemplate.addStudentCoverPage(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            studentGrade: null, // 성적 제거 (필요하면 final_results 테이블에서 조회)
+          );
+          
+          print('$studentName 기말결과물 표지 완료');
+          
+          final studentFinalMidProgress = 0.997 + (i / finalStudentNames.length) * 0.003 * 0.5;
+          updateProgress(studentFinalMidProgress, '학생 ${i + 1}/${finalStudentNames.length}: $studentName 기말결과물 콘텐츠 처리 중');
+          
+          // 14-2. 해당 학생의 기말결과물 콘텐츠 추가
+          await StudentFinalContentTemplate.addStudentFinalContent(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            classId: classId,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            updateProgress: updateProgress,
+            startProgress: studentFinalMidProgress,
+            endProgress: 0.997 + ((i + 1) / finalStudentNames.length) * 0.003,
+          );
+          
+          print('$studentName 기말결과물 콘텐츠 완료');
+        }
+        
+        print('======= 모든 학생 기말결과물 처리 완료 =======');
       }
       
       updateProgress(0.95, 'PDF 최종 생성 중');
