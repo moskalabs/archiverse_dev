@@ -40,14 +40,53 @@ class StudentWeeklyContentTemplate {
       final font = await _loadMalgunGothicFont();
       
       // subjectportpolio 테이블에서 해당 학생의 주차별 자료 조회
-      final portfolios = await SubjectportpolioTable().queryRows(
+      final portfoliosRaw = await SubjectportpolioTable().queryRows(
         queryFn: (q) => q
             .eq('class', classId)
-            .eq('student_name', studentName)
-            .order('week', ascending: true), // 주차별로 정렬
+            .eq('student_name', studentName),
       );
       
-      print('$studentName 포트폴리오 개수: ${portfolios.length}개');
+      print('$studentName 원본 포트폴리오 개수: ${portfoliosRaw.length}개');
+      
+      // 주차별로 숫자 정렬 (문자열 정렬 문제 해결)
+      final portfoliosList = portfoliosRaw.toList();
+      portfoliosList.sort((a, b) {
+        // week 필드에서 숫자만 추출 ("1주차" -> 1, "15주차" -> 15)
+        int weekA = 0;
+        int weekB = 0;
+        
+        try {
+          if (a.week != null) {
+            final weekStr = a.week.toString();
+            // "주차" 제거하고 숫자만 추출
+            final weekNumStr = weekStr.replaceAll('주차', '').replaceAll(RegExp(r'[^0-9]'), '');
+            weekA = int.tryParse(weekNumStr) ?? 0;
+          }
+        } catch (e) {
+          print('weekA 변환 오류: $e, value: ${a.week}');
+        }
+        
+        try {
+          if (b.week != null) {
+            final weekStr = b.week.toString();
+            // "주차" 제거하고 숫자만 추출
+            final weekNumStr = weekStr.replaceAll('주차', '').replaceAll(RegExp(r'[^0-9]'), '');
+            weekB = int.tryParse(weekNumStr) ?? 0;
+          }
+        } catch (e) {
+          print('weekB 변환 오류: $e, value: ${b.week}');
+        }
+        
+        return weekA.compareTo(weekB);
+      });
+      
+      final portfolios = portfoliosList;
+      
+      print('$studentName 정렬 후 포트폴리오 개수: ${portfolios.length}개');
+      if (portfolios.isNotEmpty) {
+        final sortedWeeks = portfolios.map((p) => p.week).toList();
+        print('$studentName 주차 순서: $sortedWeeks');
+      }
       
       // 1주차부터 15주차까지 처리
       for (int i = 0; i < portfolios.length; i++) {
@@ -126,7 +165,7 @@ class StudentWeeklyContentTemplate {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(
-                          '${week}주차 | 내용: 주별과제제출내용(1)\n학생: $studentName',
+                          '${week} | 내용: 주별과제제출내용(1)\n학생: $studentName',
                           style: pw.TextStyle(fontSize: 12, color: PdfColors.black, font: font),
                         ),
                         // 성적은 아직 미구현 - 제거
@@ -137,20 +176,60 @@ class StudentWeeklyContentTemplate {
                   
                   pw.SizedBox(height: 15),
                   
-                  // 콘텐츠 영역
+                  // 스케치 및 이미지 섹션 헤더
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.fromLTRB(40, 0, 40, 10),
+                    child: pw.Text(
+                      '스케치 및 이미지',
+                      style: pw.TextStyle(
+                        fontSize: 14,
+                        color: PdfColors.black,
+                        fontWeight: pw.FontWeight.bold,
+                        font: font,
+                      ),
+                    ),
+                  ),
+                  
+                  // 콘텐츠 영역 (PDF 삽입 영역)
                   pw.Expanded(
+                    flex: 3,
+                    child: pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 10),
+                      child: pw.Container(
+                        width: double.infinity,
+                        color: PdfColors.white,
+                      ),
+                    ),
+                  ),
+                  
+                  pw.SizedBox(height: 20),
+                  
+                  // 크리틱 내용 섹션 헤더
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.fromLTRB(40, 0, 40, 10),
+                    child: pw.Text(
+                      '크리틱 내용',
+                      style: pw.TextStyle(
+                        fontSize: 14,
+                        color: PdfColors.black,
+                        fontWeight: pw.FontWeight.bold,
+                        font: font,
+                      ),
+                    ),
+                  ),
+                  
+                  // 크리틱 내용 영역
+                  pw.Expanded(
+                    flex: 1,
                     child: pw.Padding(
                       padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
                       child: pw.Container(
                         width: double.infinity,
-                        decoration: pw.BoxDecoration(
-                          color: PdfColors.white,
-                        ),
-                        child: pw.Center(
-                          child: pw.Text(
-                            '$studentName ${week}주차 콘텐츠 영역',
-                            style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                          ),
+                        padding: const pw.EdgeInsets.all(5),
+                        color: PdfColors.white,
+                        child: pw.Text(
+                          portfolio.criticHtml ?? '',
+                          style: pw.TextStyle(fontSize: 9, color: PdfColors.black, font: font),
                         ),
                       ),
                     ),
@@ -179,11 +258,20 @@ class StudentWeeklyContentTemplate {
             // 템플릿 배경 그리기
             newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
             
-            // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
+            // 실제 PDF 콘텐츠를 "스케치 및 이미지" 영역에만 그리기
             final contentX = 50.0;
-            final contentY = 130.0; // 헤더가 더 커졌으므로 Y 위치 조정
-            final contentWidth = newPage.getClientSize().width - 100;
-            final contentHeight = newPage.getClientSize().height - 180;
+            final contentY = 175.0; // 헤더(80) + 학생정보(35) + 스케치헤더(25) + 여백(35)
+            
+            // 전체 페이지 크기
+            final pageHeight = newPage.getClientSize().height;
+            final pageWidth = newPage.getClientSize().width;
+            
+            // 스케치 및 이미지 영역 크기 계산
+            // 헤더(80) + 학생정보(35) + 스케치헤더(25) + 여백(35) = 175
+            // 푸터(50) + 크리틱헤더(25) + 크리틱영역(~150) + 여백(20) = 245
+            // 스케치 영역 = 전체 - 175(top) - 245(bottom)
+            final contentWidth = pageWidth - 100; // 좌우 여백 50씩
+            final contentHeight = pageHeight - 175 - 245; // 스케치 영역만 사용
             
             // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
             final sourceSize = sourceTemplate.size;

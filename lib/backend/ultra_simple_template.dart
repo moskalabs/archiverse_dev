@@ -234,13 +234,16 @@ class UltraSimpleTemplate {
         final coursePlans = await CourseplanTable().queryRows(
           queryFn: (q) => q.eq('class', classId),
         );
+        print('수업계획서 레코드 수: ${coursePlans.length}개');
         for (final plan in coursePlans) {
+          print('수업계획서 section: ${plan.section}, 찾는 section: $displaySection');
           if (plan.section == displaySection) {
             coursePlanUrl = plan.url;
+            print('매칭 성공! URL: $coursePlanUrl');
             break;
           }
         }
-        print('수업계획서 URL: $coursePlanUrl');
+        print('최종 수업계획서 URL: $coursePlanUrl');
         
         // 출석부 URL 조회
         final gradeSheetRecords = await GradesheetTable().queryRows(
