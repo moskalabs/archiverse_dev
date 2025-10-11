@@ -7,6 +7,10 @@ import 'package:syncfusion_flutter_pdf/pdf.dart' as syncfusion;
 import 'dart:ui' as ui;
 import '/backend/supabase/supabase.dart';
 import '/backend/lecture_material_template.dart';
+import '/backend/weekly_progress_cover_template.dart';
+import '/backend/student_weekly_progress_cover_template.dart';
+import '/backend/student_weekly_content_template.dart';
+import '/backend/weekly_progress_cover_template.dart';
 
 /// 간단한 PDF 템플릿 (문법 오류 수정됨)
 class UltraSimpleTemplate {
@@ -507,6 +511,55 @@ class UltraSimpleTemplate {
       } else {
         print('강의자료 URL이 없음: $lectureMaterialUrl');
         updateProgress(0.9, '강의자료 없음 - 스킵');
+      }
+      
+      // 9. 주차별 설계진행표 표지 (학생 목록 포함)
+      final studentNames = await WeeklyProgressCoverTemplate.addWeeklyProgressCover(
+        finalDoc: finalDoc,
+        classId: classId,
+        year: displayYear,
+        semester: displaySemester,
+        courseName: displayCourseName,
+        professorName: displayProfessorName,
+        grade: displayGrade,
+        section: displaySection,
+        updateProgress: updateProgress,
+        startProgress: 0.85,
+        endProgress: 0.87,
+      );
+      
+      // 10. 각 학생별 표지 + 1주차~15주차 자료 추가
+      if (studentNames.isNotEmpty && classId != null) {
+        // 10-1. 모든 학생 표지 먼저 추가
+        await StudentWeeklyProgressCoverTemplate.addAllStudentCovers(
+          finalDoc: finalDoc,
+          studentNames: studentNames,
+          year: displayYear,
+          semester: displaySemester,
+          courseName: displayCourseName,
+          professorName: displayProfessorName,
+          grade: displayGrade,
+          section: displaySection,
+          updateProgress: updateProgress,
+          startProgress: 0.87,
+          endProgress: 0.89,
+        );
+        
+        // 10-2. 각 학생의 1주차~15주차 자료 추가
+        await StudentWeeklyContentTemplate.addAllStudentsWeeklyContent(
+          finalDoc: finalDoc,
+          studentNames: studentNames,
+          classId: classId,
+          year: displayYear,
+          semester: displaySemester,
+          courseName: displayCourseName,
+          professorName: displayProfessorName,
+          grade: displayGrade,
+          section: displaySection,
+          updateProgress: updateProgress,
+          startProgress: 0.89,
+          endProgress: 0.98,
+        );
       }
       
       updateProgress(0.95, 'PDF 최종 생성 중');
