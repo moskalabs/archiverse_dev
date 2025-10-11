@@ -1510,11 +1510,7 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    if (responsiveVisibility(
-                                                      context: context,
-                                                      phone: false,
-                                                      tablet: false,
-                                                    ))
+                                                    if (true) // 데스크톱 부분 항상 표시
                                                       Flexible(
                                                         flex: 1,
                                                         child: Container(
