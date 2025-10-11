@@ -43,6 +43,10 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      print('🔍 학생작품평가표 로딩 시작');
+      print('🔍 classSelectedID: ${FFAppState().classSelectedID}');
+      print('🔍 sectionSelected: ${FFAppState().sectionSelected}');
+      
       _model.workevalrow = await WorkevalformTable().queryRows(
         queryFn: (q) => q
             .eqOrNull(
@@ -54,6 +58,12 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
               FFAppState().sectionSelected,
             ),
       );
+      
+      print('🔍 조회된 데이터 개수: ${_model.workevalrow?.length ?? 0}');
+      if (_model.workevalrow != null && _model.workevalrow!.isNotEmpty) {
+        print('🔍 첫 번째 데이터: ${_model.workevalrow!.first}');
+      }
+      
       _model.workEvalList = _model.workevalrow?.firstOrNull;
       safeSetState(() {});
     });
