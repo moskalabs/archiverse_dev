@@ -163,6 +163,7 @@ class UltraSimpleTemplate {
       coverSyncDoc.dispose();
       
       print('표지 페이지 완전 풀스크린 추가 완료');
+      print('현재 finalDoc 페이지 수 (표지 추가 후): ${finalDoc.pages.count}');
       
       // 2. 2-4페이지 템플릿 생성
       final templateDoc = pw.Document();
@@ -276,12 +277,31 @@ class UltraSimpleTemplate {
                   child: pw.Padding(
                     padding: const pw.EdgeInsets.all(15), // 내부 패딩 감소
                     child: pw.Center(
-                      child: pw.Text(
-                        coursePlanUrl != null 
-                          ? '수업계획서 PDF 발견\n다음 페이지부터 실제 내용 표시 (마진 적용)\n\nURL: $coursePlanUrl'
-                          : '수업계획서를 찾을 수 없습니다.',
-                        style: pw.TextStyle(fontSize: 11, color: PdfColors.blue, font: font), // 폰트 사이즈 감소
-                        textAlign: pw.TextAlign.center,
+                      child: pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        children: [
+                          pw.Text(
+                            '이 곳은 수업계획서 섹션입니다',
+                            style: pw.TextStyle(fontSize: 16, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                          pw.SizedBox(height: 20),
+                          pw.Text(
+                            coursePlanUrl != null 
+                              ? '✓ 수업계획서 PDF 발견\n다음 페이지부터 실제 내용이 표시됩니다.'
+                              : '✗ 수업계획서를 찾을 수 없습니다.',
+                            style: pw.TextStyle(fontSize: 12, color: coursePlanUrl != null ? PdfColors.blue : PdfColors.red, font: font),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                          pw.SizedBox(height: 15),
+                          pw.Text(
+                            coursePlanUrl != null 
+                              ? 'URL: ${coursePlanUrl!.length > 50 ? coursePlanUrl!.substring(0, 50) + "..." : coursePlanUrl!}'
+                              : '',
+                            style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600, font: font),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -335,6 +355,7 @@ class UltraSimpleTemplate {
         
       }
       templateSyncDoc.dispose();
+      print('템플릿 페이지 추가 완룼 - 현재 finalDoc 페이지 수: ${finalDoc.pages.count}');
       
       // 3. 수업계획서 PDF 병합 (마진 적용)
       if (coursePlanUrl != null && coursePlanUrl!.isNotEmpty) {
@@ -348,43 +369,127 @@ class UltraSimpleTemplate {
             
             print('수업계획서 페이지 수: ${courseDoc.pages.count}');
             
+            // 수업계획서의 각 페이지마다 템플릿 생성
             for (int i = 0; i < courseDoc.pages.count; i++) {
+              print('수업계획서 페이지 ${i + 1}/${courseDoc.pages.count} 템플릿 생성 시작');
               final sourcePage = courseDoc.pages[i];
+              final sourceTemplate = sourcePage.createTemplate();
+              
+              // 각 수업계획서 페이지마다 템플릿 생성
+              final pageDoc = pw.Document();
+              pageDoc.addPage(pw.Page(
+                pageFormat: PdfPageFormat.a4,
+                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
+                build: (context) => pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // 헤더 부분
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Row(children: [
+                            pw.Container(
+                              width: 40, height: 30,
+                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
+                              child: pw.Center(child: pw.Text('01', style: pw.TextStyle(
+                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                              ))),
+                            ),
+                            pw.SizedBox(width: 15),
+                            pw.Text('수업계획서', style: pw.TextStyle(
+                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
+                            )),
+                          ]),
+                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
+                            fontSize: 14, color: PdfColors.black, font: font,
+                          )),
+                        ],
+                      ),
+                    ),
+                    
+                    pw.SizedBox(height: 20),
+                    
+                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
+                    pw.Expanded(
+                      child: pw.Padding(
+                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                        child: pw.Container(
+                          width: double.infinity,
+                          decoration: pw.BoxDecoration(
+                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              '콘텐츠 영역 (${i + 1}/${courseDoc.pages.count})',
+                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    // 푸터 부분 (깔끔하게)
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                      child: pw.Text(
+                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
+                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+              
+              // 템플릿을 finalDoc에 추가
+              final pageBytes = await pageDoc.save();
+              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
+              final templateSourcePage = pageSyncDoc.pages[0];
               final newPage = finalDoc.pages.add();
-              final template = sourcePage.createTemplate();
+              final pageTemplate = templateSourcePage.createTemplate();
               
-              // Syncfusion 마진 제거로 더 큰 마진 필요
-              final margin = 40.0; // 기존 20px에서 40px로 증가
-              final scale = 0.75; // 기존 0.85에서 0.75로 감소
+              // 템플릿 배경 그리기
+              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
               
-              // 중앙 정렬을 위한 계산
-              final templateSize = template.size;
-              final pageWidth = newPage.getClientSize().width;
-              final pageHeight = newPage.getClientSize().height;
+              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
+              final contentX = 50.0;
+              final contentY = 80.0;
+              final contentWidth = newPage.getClientSize().width - 100;
+              final contentHeight = newPage.getClientSize().height - 150;
               
-              final maxWidth = pageWidth - (margin * 2);
-              final maxHeight = pageHeight - (margin * 2);
+              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
+              final sourceSize = sourceTemplate.size;
+              final contentScaleX = contentWidth / sourceSize.width;
+              final contentScaleY = contentHeight / sourceSize.height;
+              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
               
-              final scaleX = maxWidth / templateSize.width;
-              final scaleY = maxHeight / templateSize.height;
-              final finalScale = (scaleX < scaleY ? scaleX : scaleY) * scale;
+              final finalWidth = sourceSize.width * contentScale;
+              final finalHeight = sourceSize.height * contentScale;
               
-              final scaledWidth = templateSize.width * finalScale;
-              final scaledHeight = templateSize.height * finalScale;
-              
-              // 중앙 정렬 오프셋 계산
-              final centerX = (pageWidth - scaledWidth) / 2;
-              final centerY = (pageHeight - scaledHeight) / 2;
+              // 콘텐츠 영역 내에서 중앙 정렬
+              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
+              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
               
               newPage.graphics.save();
-              newPage.graphics.translateTransform(centerX, centerY);
+              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
               
-              final scaledSize = ui.Size(scaledWidth, scaledHeight);
-              newPage.graphics.drawPdfTemplate(template, ui.Offset.zero, scaledSize);
+              // 실제 PDF 콘텐츠 그리기
+              newPage.graphics.drawPdfTemplate(
+                sourceTemplate,
+                ui.Offset.zero,
+                ui.Size(finalWidth, finalHeight)
+              );
               
               newPage.graphics.restore();
               
-              print('수업계획서 페이지 ${i + 1} 병합 완룼 (중앙정렬: ${centerX.toStringAsFixed(1)}, ${centerY.toStringAsFixed(1)}, 스케일: ${(finalScale * 100).toStringAsFixed(1)}%)');
+              pageSyncDoc.dispose();
+
+              
+              print('수업계획서 페이지 ${i + 1}/${courseDoc.pages.count} 템플릿 기반 병합 완룼');
+              print('템플릿: 헤더(01 수업계획서) + 콘텐츠 영역 + 푸터(순천향대)');
+              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
             }
             
             courseDoc.dispose();
@@ -398,7 +503,23 @@ class UltraSimpleTemplate {
       final finalBytes = await finalDoc.save();
       finalDoc.dispose();
       
-      print('최종 PDF 생성 완료 - 총 페이지: ${finalDoc.pages.count}');
+      // 페이지 수 제대로 확인
+      var totalPages = 0;
+      try {
+        totalPages = finalDoc.pages.count;
+      } catch (e) {
+        print('페이지 카운트 오류: $e');
+        totalPages = -1;
+      }
+      
+      print('최종 PDF 생성 완룼 - 총 페이지: $totalPages');
+      print('=== PDF 페이지 구성 ===');
+      print('1페이지: 표지 (네이비 블루)');
+      print('2페이지: INDEX');
+      print('3페이지: 섹션 구분자');
+      print('4페이지: 수업계획서 템플릿 (01 수업계획서)');
+      print('5-7페이지: 실제 수업계획서 PDF 내용');
+      print('========================');
       return Uint8List.fromList(finalBytes);
       
     } catch (e) {
