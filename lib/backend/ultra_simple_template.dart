@@ -10,7 +10,9 @@ import '/backend/lecture_material_template.dart';
 import '/backend/weekly_progress_cover_template.dart';
 import '/backend/student_weekly_progress_cover_template.dart';
 import '/backend/student_weekly_content_template.dart';
-import '/backend/weekly_progress_cover_template.dart';
+import '/backend/midterm_results_cover_template.dart';
+import '/backend/student_midterm_cover_template.dart';
+import '/backend/student_midterm_content_template.dart';
 
 /// 간단한 PDF 템플릿 (문법 오류 수정됨)
 class UltraSimpleTemplate {
@@ -517,7 +519,7 @@ class UltraSimpleTemplate {
       }
       
       // 9. 주차별 설계진행표 표지 (학생 목록 포함)
-      final studentNames = await WeeklyProgressCoverTemplate.addWeeklyProgressCover(
+      final weeklyStudentNames = await WeeklyProgressCoverTemplate.addWeeklyProgressCover(
         finalDoc: finalDoc,
         classId: classId,
         year: displayYear,
@@ -532,18 +534,18 @@ class UltraSimpleTemplate {
       );
       
       // 10. 각 학생별로 [표지 + 1주차~15주차] 순서로 추가
-      if (studentNames.isNotEmpty && classId != null) {
-        print('======= 학생별 표지 + 주차별 자료 추가 시작 (${studentNames.length}명) =======');
+      if (weeklyStudentNames.isNotEmpty && classId != null) {
+        print('======= 학생별 표지 + 주차별 자료 추가 시작 (${weeklyStudentNames.length}명) =======');
         
-        for (int i = 0; i < studentNames.length; i++) {
-          final studentName = studentNames[i];
+        for (int i = 0; i < weeklyStudentNames.length; i++) {
+          final studentName = weeklyStudentNames[i];
           
           // 각 학생당 진행률 계산
-          final studentStartProgress = 0.87 + (i / studentNames.length) * 0.11;
-          final studentMidProgress = 0.87 + (i / studentNames.length) * 0.11 + 0.01;
-          final studentEndProgress = 0.87 + ((i + 1) / studentNames.length) * 0.11;
+          final studentStartProgress = 0.87 + (i / weeklyStudentNames.length) * 0.11;
+          final studentMidProgress = 0.87 + (i / weeklyStudentNames.length) * 0.11 + 0.01;
+          final studentEndProgress = 0.87 + ((i + 1) / weeklyStudentNames.length) * 0.11;
           
-          updateProgress(studentStartProgress, '학생 ${i + 1}/${studentNames.length}: $studentName 표지 생성 중');
+          updateProgress(studentStartProgress, '학생 ${i + 1}/${weeklyStudentNames.length}: $studentName 표지 생성 중');
           
           // 10-1. 학생 표지 추가
           await StudentWeeklyProgressCoverTemplate.addStudentCoverPage(
@@ -558,7 +560,7 @@ class UltraSimpleTemplate {
             studentGrade: null, // 성적 제거
           );
           
-          updateProgress(studentMidProgress, '학생 ${i + 1}/${studentNames.length}: $studentName 주차별 자료 처리 중');
+          updateProgress(studentMidProgress, '학생 ${i + 1}/${weeklyStudentNames.length}: $studentName 주차별 자료 처리 중');
           
           // 10-2. 해당 학생의 1주차~15주차 자료 추가
           await StudentWeeklyContentTemplate.addStudentWeeklyContent(
@@ -579,7 +581,76 @@ class UltraSimpleTemplate {
           print('$studentName 표지 + 주차별 자료 완료');
         }
         
-        print('======= 모든 학생 처리 완료 =======');
+        print('======= 모든 학생 주차별 자료 처리 완료 =======');
+      }
+      
+      // 11. 중간결과물 표지 (학생 목록 포함)
+      final midtermStudentNames = await MidtermResultsCoverTemplate.addMidtermResultsCover(
+        finalDoc: finalDoc,
+        classId: classId,
+        year: displayYear,
+        semester: displaySemester,
+        courseName: displayCourseName,
+        professorName: displayProfessorName,
+        grade: displayGrade,
+        section: displaySection,
+        updateProgress: updateProgress,
+        startProgress: 0.98,
+        endProgress: 0.985,
+      );
+      
+      // 12. 각 학생별 중간결과물 [표지 + 콘텐츠] 추가
+      if (midtermStudentNames.isNotEmpty && classId != null) {
+        print('======= 학생별 중간결과물 추가 시작 (${midtermStudentNames.length}명) =======');
+        
+        for (int i = 0; i < midtermStudentNames.length; i++) {
+          final studentName = midtermStudentNames[i];
+          
+          updateProgress(0.985 + (i / midtermStudentNames.length) * 0.01, '학생 ${i + 1}/${midtermStudentNames.length}: $studentName 중간결과물 표지 생성 중');
+          
+          final studentMidStartProgress = 0.985 + (i / midtermStudentNames.length) * 0.01;
+          final studentMidMidProgress = 0.985 + (i / midtermStudentNames.length) * 0.01 + 0.002;
+          final studentMidEndProgress = 0.985 + ((i + 1) / midtermStudentNames.length) * 0.01;
+          
+          updateProgress(studentMidStartProgress, '학생 ${i + 1}/${midtermStudentNames.length}: $studentName 중간결과물 표지 생성 중');
+          
+          // 12-1. 학생 중간결과물 표지 추가
+          await StudentMidtermCoverTemplate.addStudentCoverPage(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            studentGrade: null, // 성적 제거 (필요하면 midterm_results 테이블에서 조회)
+          );
+          
+          print('$studentName 중간결과물 표지 완료');
+          
+          updateProgress(studentMidMidProgress, '학생 ${i + 1}/${midtermStudentNames.length}: $studentName 중간결과물 콘텐츠 처리 중');
+          
+          // 12-2. 해당 학생의 중간결과물 콘텐츠 추가
+          await StudentMidtermContentTemplate.addStudentMidtermContent(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            classId: classId,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            updateProgress: updateProgress,
+            startProgress: studentMidMidProgress,
+            endProgress: studentMidEndProgress,
+          );
+          
+          print('$studentName 중간결과물 콘텐츠 완료');
+        }
+        
+        print('======= 모든 학생 중간결과물 처리 완료 =======');
       }
       
       updateProgress(0.95, 'PDF 최종 생성 중');
