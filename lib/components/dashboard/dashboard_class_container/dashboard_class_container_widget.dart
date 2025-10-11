@@ -467,29 +467,18 @@ class _DashboardClassContainerWidgetState
                               'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
                             );
 
-                                                                                                                                            // 표지 + INDEX 페이지 병합 PDF 생성
-                                                        final combinedPdfBytes = await UltraSimpleTemplate.generateCombinedPdf(
-                              year: widget.year ?? '2025',
-                              semester: widget.semester ?? '1학기',
-                              courseName: widget.courseName ?? '과목명',
-                              professorName: widget.professor ?? '교수님',
-                              grade: widget.grade != null ? '${widget.grade}학년' : '학년',
-                              section: widget.section ?? '분반',
+                                                                                                                                                                        // 기존 잘 작동하는 시스템 + 강의자료 rotation 추가
+                            await actions.generateCleanPdf(
+                              year: widget.year,
+                              semester: widget.semester,
+                              courseName: widget.courseName,
+                              professorName: widget.professor,
+                              grade: widget.grade,
+                              section: widget.section,
                               classId: widget.classID,
                             );
                             
-                            if (kIsWeb && combinedPdfBytes.isNotEmpty) {
-                              final fileName = 'portfolio_cover_index_${DateTime.now().millisecondsSinceEpoch}.pdf';
-                              final blob = html.Blob([combinedPdfBytes], 'application/pdf');
-                              final dlUrl = html.Url.createObjectUrlFromBlob(blob);
-                              final a = html.document.createElement('a') as html.AnchorElement
-                                ..href = dlUrl
-                                ..download = fileName;
-                              a.click();
-                              html.Url.revokeObjectUrl(dlUrl);
-                              
-                              print('병합 PDF 다운로드 완료: $fileName');
-                            }
+                            
 
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(

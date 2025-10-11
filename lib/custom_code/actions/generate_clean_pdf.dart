@@ -26,6 +26,21 @@ Future<void> generateCleanPdf({
   print('전달된 데이터: year=$year, semester=$semester, courseName=$courseName, professorName=$professorName, grade=$grade, section=$section, classId=$classId');
   
   try {
+    // 진행률 업데이트 함수 (FFAppState 업데이트)
+    void updateProgressState(double progress, String message) {
+      try {
+        FFAppState().update(() {
+          FFAppState().downloadProgress = progress.clamp(0.0, 1.0);
+          FFAppState().downloadProgressMessage = message;
+        });
+        print('진행률 UI 업데이트: ${(progress * 100).toStringAsFixed(1)}% - $message');
+      } catch (e) {
+        print('진행률 UI 업데이트 실패: $e');
+      }
+    }
+    
+    updateProgressState(0.0, 'PDF 생성 시작');
+    
     // 4페이지 PDF 생성 (표지 + INDEX + 섹션구분자 + 수업계획서)
     final combinedPdfBytes = await UltraSimpleTemplate.generateCombinedPdf(
       year: year,
@@ -35,6 +50,7 @@ Future<void> generateCleanPdf({
       grade: grade != null ? '${grade}학년' : '학년',
       section: section,
       classId: classId,
+      updateProgressCallback: updateProgressState, // 진행률 콜백 전달
     );
     
     print('4페이지 PDF 생성 완료: ${combinedPdfBytes.length} bytes');
@@ -43,10 +59,12 @@ Future<void> generateCleanPdf({
       throw Exception('PDF 생성 실패');
     }
     
+    updateProgressState(0.95, 'PDF 다운로드 준비 중');
+    
     if (kIsWeb && combinedPdfBytes.isNotEmpty) {
       print('======= 다운로드 시작 =======');
       
-      final fileName = 'portfolio_4pages_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final fileName = 'portfolio_complete_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final blob = html.Blob([combinedPdfBytes], 'application/pdf');
       final dlUrl = html.Url.createObjectUrlFromBlob(blob);
       final a = html.document.createElement('a') as html.AnchorElement
@@ -55,7 +73,9 @@ Future<void> generateCleanPdf({
       a.click();
       html.Url.revokeObjectUrl(dlUrl);
       
-      print('======= 4페이지 PDF SUCCESS =======');
+      updateProgressState(1.0, 'PDF 다운로드 완료');
+      
+      print('======= 전체 PDF SUCCESS =======');
       print('파일명: $fileName');
     } else {
       print('======= PDF GENERATION FAILED =======');

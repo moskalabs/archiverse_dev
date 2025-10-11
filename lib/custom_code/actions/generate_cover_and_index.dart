@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
-import '/backend/combined_pdf_template.dart';
+import '/backend/ultra_simple_template_fixed.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:http/http.dart' as http;
 import 'dart:typed_data';
@@ -49,14 +49,30 @@ Future<void> generateCoverAndIndex({
   print('전달된 데이터: year=$year, semester=$semester, courseName=$courseName, professorName=$professorName, grade=$grade, section=$section');
   
   try {
-    // 1-3페이지: 표지 + INDEX + 분반별 섹션 생성
-    final basePdfBytes = await CombinedPdfTemplate.generateCombinedPdf(
+    // 진행률 업데이트 함수
+    void updateProgressState(double progress, String message) {
+      try {
+        FFAppState().update(() {
+          FFAppState().downloadProgress = progress.clamp(0.0, 1.0);
+          FFAppState().downloadProgressMessage = message;
+        });
+        print('진행률: ${(progress * 100).toStringAsFixed(1)}% - $message');
+      } catch (e) {
+        print('진행률 업데이트 실패: $e');
+      }
+    }
+    
+    updateProgressState(0.0, 'PDF 생성 시작');
+    
+    // 전체 PDF 생성 (rotation 포함)
+    final basePdfBytes = await UltraSimpleTemplateFixed.generateCombinedPdf(
       year: year ?? '2025',
       semester: semester ?? '1학기',
       courseName: courseName ?? '과목명',
       professorName: professorName ?? '교수님',
       grade: grade != null ? '${grade}학년' : '학년',
       section: section ?? '분반',
+      classId: null, // 필요하면 classId 전달
     );
     
     print('1-3페이지 생성 완료: ${basePdfBytes.length} bytes');
@@ -108,7 +124,9 @@ Future<void> generateCoverAndIndex({
       print('추가 URL이 없어서 1-3페이지만 사용');
       
       // 다운로드
+      updateProgressState(1.0, 'PDF 다운로드 시작');
       await _downloadPdf(basePdfBytes, 'portfolio_base_${DateTime.now().millisecondsSinceEpoch}.pdf');
+      updateProgressState(1.0, 'PDF 다운로드 완료');
     }
     
 

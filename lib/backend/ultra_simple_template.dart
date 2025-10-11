@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as syncfusion;
 import 'dart:ui' as ui;
 import '/backend/supabase/supabase.dart';
+import '/backend/lecture_material_template.dart';
 
-/// 매우 간단한 4페이지 PDF 템플릿 (마진만 적용)
+/// 간단한 PDF 템플릿 (문법 오류 수정됨)
 class UltraSimpleTemplate {
   static Future<pw.Font?> _loadMalgunGothicFont() async {
     try {
@@ -18,6 +19,162 @@ class UltraSimpleTemplate {
     }
   }
   
+  /// 문서를 템플릿과 함께 병합하는 헬퍼 함수
+  static Future<void> _addDocumentWithTemplate(
+    syncfusion.PdfDocument finalDoc,
+    String documentUrl,
+    String sectionNumber,
+    String sectionTitle,
+    String year,
+    String semester,
+    pw.Font? font,
+    Function(double, String) updateProgress,
+    double startProgress,
+    double endProgress,
+  ) async {
+    try {
+      print('$sectionTitle PDF 병합 시작');
+      
+      final response = await http.get(Uri.parse(documentUrl));
+      if (response.statusCode == 200) {
+        final documentPdfBytes = response.bodyBytes;
+        final documentDoc = syncfusion.PdfDocument(inputBytes: documentPdfBytes);
+        
+        print('$sectionTitle 페이지 수: ${documentDoc.pages.count}');
+        
+        for (int i = 0; i < documentDoc.pages.count; i++) {
+          final progressValue = startProgress + (i / documentDoc.pages.count) * (endProgress - startProgress);
+          updateProgress(progressValue, '$sectionTitle 페이지 ${i + 1}/${documentDoc.pages.count} 처리 중');
+          
+          final sourcePage = documentDoc.pages[i];
+          final sourceTemplate = sourcePage.createTemplate();
+          
+          // 각 문서 페이지마다 템플릿 생성
+          final pageDoc = pw.Document();
+          pageDoc.addPage(pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            theme: font != null ? pw.ThemeData.withFont(base: font) : null,
+            build: (context) => pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // 헤더 부분
+                pw.Padding(
+                  padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Row(children: [
+                        pw.Container(
+                          width: 40, height: 30,
+                          decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
+                          child: pw.Center(child: pw.Text(sectionNumber, style: pw.TextStyle(
+                            fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                          ))),
+                        ),
+                        pw.SizedBox(width: 15),
+                        pw.Text(sectionTitle, style: pw.TextStyle(
+                          fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
+                        )),
+                      ]),
+                      pw.Text('${year}년도 $semester', style: pw.TextStyle(
+                        fontSize: 14, color: PdfColors.black, font: font,
+                      )),
+                    ],
+                  ),
+                ),
+                
+                pw.SizedBox(height: 20),
+                
+                // 콘텐츠 영역
+                pw.Expanded(
+                  child: pw.Padding(
+                    padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: pw.Container(
+                      width: double.infinity,
+                      decoration: pw.BoxDecoration(
+                        color: PdfColors.white,
+                      ),
+                      child: pw.Center(
+                        child: pw.Text(
+                          '$sectionTitle 콘텐츠 영역 (${i + 1}/${documentDoc.pages.count})',
+                          style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // 푸터 부분
+                pw.Padding(
+                  padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                  child: pw.Text(
+                    '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
+                    style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ));
+          
+          // 템플릿을 finalDoc에 추가
+          final pageBytes = await pageDoc.save();
+          final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
+          final templateSourcePage = pageSyncDoc.pages[0];
+          final newPage = finalDoc.pages.add();
+          final pageTemplate = templateSourcePage.createTemplate();
+          
+          // 템플릿 배경 그리기
+          newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
+          
+          // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
+          final contentX = 50.0;
+          final contentY = 80.0;
+          final contentWidth = newPage.getClientSize().width - 100;
+          final contentHeight = newPage.getClientSize().height - 150;
+          
+          // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
+          final sourceSize = sourceTemplate.size;
+          final contentScaleX = contentWidth / sourceSize.width;
+          final contentScaleY = contentHeight / sourceSize.height;
+          final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9;
+          
+          final finalWidth = sourceSize.width * contentScale;
+          final finalHeight = sourceSize.height * contentScale;
+          
+          // 콘텐츠 영역 내에서 중앙 정렬
+          final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
+          final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
+          
+          newPage.graphics.save();
+          newPage.graphics.translateTransform(contentCenterX, contentCenterY);
+          
+          // 실제 PDF 콘텐츠 그리기
+          newPage.graphics.drawPdfTemplate(
+            sourceTemplate,
+            ui.Offset.zero,
+            ui.Size(finalWidth, finalHeight)
+          );
+          
+          newPage.graphics.restore();
+          
+          pageSyncDoc.dispose();
+          
+          print('$sectionTitle 페이지 ${i + 1}/${documentDoc.pages.count} 템플릿 기반 병합 완료');
+        }
+        
+        documentDoc.dispose();
+        print('$sectionTitle PDF 병합 완룼');
+      } else {
+        print('$sectionTitle URL 접근 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('$sectionTitle 병합 실패: $e');
+    }
+  }
+      
+      // 강의자료 rotation 적용 (별도 처리)
+  
   static Future<Uint8List> generateCombinedPdf({
     String? year,
     String? semester,
@@ -26,8 +183,32 @@ class UltraSimpleTemplate {
     String? grade,
     String? section,
     int? classId,
+    Function(double, String)? updateProgressCallback, // 진행률 콜백 추가
   }) async {
     print('Ultra Simple PDF 생성 시작');
+    
+    // 진행률 업데이트 함수 (콜백 사용)
+    void updateProgress(double progress, String message) {
+      try {
+        if (updateProgressCallback != null) {
+          updateProgressCallback(progress, message);
+        }
+        print('진행률: ${(progress * 100).toStringAsFixed(1)}% - $message');
+      } catch (e) {
+        print('진행률 업데이트 실패: $e');
+      }
+    }
+    
+    updateProgress(0.0, 'PDF 생성 시작');
+    
+    updateProgress(0.1, '표지 페이지 생성 시작');
+    
+    // 진행률 업데이트 함수
+    // 기존 updateProgress 제거됨
+    
+          // 중복 updateProgress 제거
+    
+    updateProgress(0.1, '표지 페이지 생성 시작');
     
     final displayYear = year ?? '2025';
     final displaySemester = semester ?? '1학기';
@@ -36,12 +217,12 @@ class UltraSimpleTemplate {
     final displayGrade = grade ?? '학년';
     final displaySection = section ?? '분반';
     
-    // 수업계획서 URL 찾기
+    // 모든 문서 URL 찾기
     String? coursePlanUrl;
-    String? attendanceUrl; // 출석부 URL 추가
-    String? gradeRecordUrl; // 성적기록표 URL 추가
-    String? workEvalUrl; // 학생작품평가표 URL 추가
-    String? lectureMaterialUrl; // 강의자료 URL 추가
+    String? attendanceUrl;
+    String? gradeRecordUrl;
+    String? workEvalUrl;
+    String? lectureMaterialUrl;
     
     if (classId != null) {
       try {
@@ -57,36 +238,36 @@ class UltraSimpleTemplate {
         }
         print('수업계획서 URL: $coursePlanUrl');
         
-        // 출석부 URL 조회 (GradeSheet 테이블 사용)
+        // 출석부 URL 조회
         final gradeSheetRecords = await GradesheetTable().queryRows(
-          queryFn: (q) => q.eq('class', classId), // classId 자체가 분반 구분 (33=1분반, 51=3분반)
+          queryFn: (q) => q.eq('class', classId),
         );
         if (gradeSheetRecords.isNotEmpty) {
           attendanceUrl = gradeSheetRecords.first.url;
         }
         print('출석부 URL: $attendanceUrl');
         
-        // 성적기록표 URL 조회 (Attendance 테이블 사용)
+        // 성적기록표 URL 조회
         final gradeRecords = await AttendanceTable().queryRows(
-          queryFn: (q) => q.eq('class', classId), // classId 자체가 분반 구분
+          queryFn: (q) => q.eq('class', classId),
         );
         if (gradeRecords.isNotEmpty) {
           gradeRecordUrl = gradeRecords.first.url;
         }
         print('성적기록표 URL: $gradeRecordUrl');
         
-        // 학생작품평가표 URL 조회 (WorkEvalForm 테이블 사용)
+        // 학생작품평가표 URL 조회
         final workEvalRecords = await WorkevalformTable().queryRows(
-          queryFn: (q) => q.eq('class', classId), // classId 자체가 분반 구분
+          queryFn: (q) => q.eq('class', classId),
         );
         if (workEvalRecords.isNotEmpty) {
           workEvalUrl = workEvalRecords.first.url;
         }
         print('학생작품평가표 URL: $workEvalUrl');
         
-        // 강의자료 URL 조회 (LectureMaterial 테이블 사용)
+        // 강의자료 URL 조회
         final lectureMaterialRecords = await LecturematerialTable().queryRows(
-          queryFn: (q) => q.eq('class', classId), // classId 자체가 분반 구분
+          queryFn: (q) => q.eq('class', classId),
         );
         if (lectureMaterialRecords.isNotEmpty) {
           lectureMaterialUrl = lectureMaterialRecords.first.url;
@@ -97,20 +278,20 @@ class UltraSimpleTemplate {
       }
     }
 
-    // 최종 PDF 문서 (페이지 마진 설정)
+    // 최종 PDF 문서
     final finalDoc = syncfusion.PdfDocument();
-    finalDoc.pageSettings.margins.all = 0; // 모든 마진 제거
+    finalDoc.pageSettings.margins.all = 0;
     
     try {
       final font = await _loadMalgunGothicFont();
       
-      // 1페이지: 표지 - 간단한 방식으로 다시 시도
+      // 1페이지: 표지
       final coverDoc = pw.Document();
       coverDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
-        margin: pw.EdgeInsets.zero, // 모든 마진 제거
+        margin: pw.EdgeInsets.zero,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-        build: (context) => pw.FullPage( // FullPage 위젯 사용
+        build: (context) => pw.FullPage(
           ignoreMargins: true,
           child: pw.Container(
             width: double.infinity,
@@ -178,21 +359,14 @@ class UltraSimpleTemplate {
         ),
       ));
       
-      // 표지를 finalDoc에 추가 (완전한 풀스크린)
+      // 표지를 finalDoc에 추가
       final coverBytes = await coverDoc.save();
       final coverSyncDoc = syncfusion.PdfDocument(inputBytes: coverBytes);
-      coverSyncDoc.pageSettings.margins.all = 0; // 소스 문서도 마진 제거
       
       final coverSourcePage = coverSyncDoc.pages[0];
-      
-      // 페이지 사이즈 설정을 먼저 적용
-      finalDoc.pageSettings.size = syncfusion.PdfPageSize.a4;
-      finalDoc.pageSettings.margins.all = 0; // 마진 다시 한번 확실히 제거
-      
       final coverNewPage = finalDoc.pages.add();
       final coverTemplate = coverSourcePage.createTemplate();
       
-      // 완전한 풀스크린으로 그리기 (Syncfusion 방식)
       final pageWidth = coverNewPage.getClientSize().width;
       final pageHeight = coverNewPage.getClientSize().height;
       
@@ -203,15 +377,11 @@ class UltraSimpleTemplate {
       );
       
       coverSyncDoc.dispose();
-      
-      print('표지 페이지 완전 풀스크린 추가 완료');
-      print('현재 finalDoc 페이지 수 (표지 추가 후): ${finalDoc.pages.count}');
-      
-      // 2. 2-4페이지 템플릿 생성
-      final templateDoc = pw.Document();
+      updateProgress(0.2, '표지 페이지 완료');
 
       // 2페이지: INDEX
-      templateDoc.addPage(pw.Page(
+      final indexDoc = pw.Document();
+      indexDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
         build: (context) => pw.Padding(
@@ -255,8 +425,21 @@ class UltraSimpleTemplate {
         ),
       ));
 
-      // 섹션 구분자
-      templateDoc.addPage(pw.Page(
+      // INDEX를 finalDoc에 추가
+      final indexBytes = await indexDoc.save();
+      final indexSyncDoc = syncfusion.PdfDocument(inputBytes: indexBytes);
+      
+      final indexSourcePage = indexSyncDoc.pages[0];
+      final indexNewPage = finalDoc.pages.add();
+      final indexTemplate = indexSourcePage.createTemplate();
+      
+      indexNewPage.graphics.drawPdfTemplate(indexTemplate, ui.Offset.zero);
+      indexSyncDoc.dispose();
+      updateProgress(0.4, 'INDEX 페이지 완료');
+
+      // 3페이지: 섹션 구분자
+      final sectionDoc = pw.Document();
+      sectionDoc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
         build: (context) => pw.Padding(
@@ -276,884 +459,62 @@ class UltraSimpleTemplate {
           ),
         ),
       ));
-
-      // 수업계획서 템플릿 (마진 조정)
-      templateDoc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-        build: (context) => pw.Padding(
-          padding: const pw.EdgeInsets.fromLTRB(50, 50, 50, 50), // 마진 증가
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Row(children: [
-                    pw.Container(
-                      width: 40, height: 30,
-                      decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                      child: pw.Center(child: pw.Text('01', style: pw.TextStyle(
-                        fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                      ))),
-                    ),
-                    pw.SizedBox(width: 15),
-                    pw.Text('수업계획서', style: pw.TextStyle(
-                      fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                    )),
-                  ]),
-                  pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                    fontSize: 14, color: PdfColors.black, font: font,
-                  )),
-                ],
-              ),
-              pw.SizedBox(height: 30),
-              pw.Expanded(
-                child: pw.Container(
-                  width: double.infinity,
-                  height: 400, // 고정 높이 설정
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.grey400, width: 1),
-                    color: PdfColors.grey50, // 배경색 추가
-                  ),
-                  child: pw.Padding(
-                    padding: const pw.EdgeInsets.all(15), // 내부 패딩 감소
-                    child: pw.Center(
-                      child: pw.Column(
-                        mainAxisAlignment: pw.MainAxisAlignment.center,
-                        children: [
-                          pw.Text(
-                            '이 곳은 수업계획서 섹션입니다',
-                            style: pw.TextStyle(fontSize: 16, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font),
-                            textAlign: pw.TextAlign.center,
-                          ),
-                          pw.SizedBox(height: 20),
-                          pw.Text(
-                            coursePlanUrl != null 
-                              ? '✓ 수업계획서 PDF 발견\n다음 페이지부터 실제 내용이 표시됩니다.'
-                              : '✗ 수업계획서를 찾을 수 없습니다.',
-                            style: pw.TextStyle(fontSize: 12, color: coursePlanUrl != null ? PdfColors.blue : PdfColors.red, font: font),
-                            textAlign: pw.TextAlign.center,
-                          ),
-                          pw.SizedBox(height: 15),
-                          pw.Text(
-                            coursePlanUrl != null 
-                              ? 'URL: ${coursePlanUrl!.length > 50 ? coursePlanUrl!.substring(0, 50) + "..." : coursePlanUrl!}'
-                              : '',
-                            style: pw.TextStyle(fontSize: 8, color: PdfColors.grey600, font: font),
-                            textAlign: pw.TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ));
-
-      // 2. 2-4페이지 템플릿을 Syncfusion에 추가 (마진 적용)
-      final templateBytes = await templateDoc.save();
-      final templateSyncDoc = syncfusion.PdfDocument(inputBytes: templateBytes);
       
-      for (int i = 0; i < templateSyncDoc.pages.count; i++) {
-        final sourcePage = templateSyncDoc.pages[i];
-        final newPage = finalDoc.pages.add();
-        final template = sourcePage.createTemplate();
-        
-        // 2-4페이지: 중앙 정렬을 위한 마진 조정
-        final horizontalMargin = 50.0;
-        final verticalMargin = 60.0; // 세로 마진을 더 크게
-        final scale = 0.75;
-        
-        final templateSize = template.size;
-        final pageWidth = newPage.getClientSize().width;
-        final pageHeight = newPage.getClientSize().height;
-        
-        final maxWidth = pageWidth - (horizontalMargin * 2);
-        final maxHeight = pageHeight - (verticalMargin * 2);
-        
-        final scaleX = maxWidth / templateSize.width;
-        final scaleY = maxHeight / templateSize.height;
-        final finalScale = (scaleX < scaleY ? scaleX : scaleY) * scale;
-        
-        final scaledWidth = templateSize.width * finalScale;
-        final scaledHeight = templateSize.height * finalScale;
-        
-        // 중앙 정렬을 위한 오프셋 계산
-        final centerX = (pageWidth - scaledWidth) / 2;
-        final centerY = (pageHeight - scaledHeight) / 2;
-        
-        newPage.graphics.save();
-        newPage.graphics.translateTransform(centerX, centerY);
-        
-        final scaledSize = ui.Size(scaledWidth, scaledHeight);
-        newPage.graphics.drawPdfTemplate(template, ui.Offset.zero, scaledSize);
-        newPage.graphics.restore();
-        
-        print('템플릿 페이지 ${i + 2} 추가 (중앙정렬: ${centerX.toStringAsFixed(1)}, ${centerY.toStringAsFixed(1)}, 스케일: ${(finalScale * 100).toStringAsFixed(1)}%)');
-        
-      }
-      templateSyncDoc.dispose();
-      print('템플릿 페이지 추가 완룼 - 현재 finalDoc 페이지 수: ${finalDoc.pages.count}');
+      // 섹션을 finalDoc에 추가
+      final sectionBytes = await sectionDoc.save();
+      final sectionSyncDoc = syncfusion.PdfDocument(inputBytes: sectionBytes);
       
-      // 3. 수업계획서 PDF 병합 (마진 적용)
+      final sectionSourcePage = sectionSyncDoc.pages[0];
+      final sectionNewPage = finalDoc.pages.add();
+      final sectionTemplate = sectionSourcePage.createTemplate();
+      
+      sectionNewPage.graphics.drawPdfTemplate(sectionTemplate, ui.Offset.zero);
+      sectionSyncDoc.dispose();
+      updateProgress(0.5, '섹션 구분자 완료');
+      
+      // 4. 수업계획서 PDF 병합
       if (coursePlanUrl != null && coursePlanUrl!.isNotEmpty) {
-        try {
-          print('수업계획서 PDF 병합 시작');
-          
-          final response = await http.get(Uri.parse(coursePlanUrl!));
-          if (response.statusCode == 200) {
-            final coursePdfBytes = response.bodyBytes;
-            final courseDoc = syncfusion.PdfDocument(inputBytes: coursePdfBytes);
-            
-            print('수업계획서 페이지 수: ${courseDoc.pages.count}');
-            
-            // 수업계획서의 각 페이지마다 템플릿 생성
-            for (int i = 0; i < courseDoc.pages.count; i++) {
-              print('수업계획서 페이지 ${i + 1}/${courseDoc.pages.count} 템플릿 생성 시작');
-              final sourcePage = courseDoc.pages[i];
-              final sourceTemplate = sourcePage.createTemplate();
-              
-              // 각 수업계획서 페이지마다 템플릿 생성
-              final pageDoc = pw.Document();
-              pageDoc.addPage(pw.Page(
-                pageFormat: PdfPageFormat.a4,
-                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-                build: (context) => pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // 헤더 부분
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Row(children: [
-                            pw.Container(
-                              width: 40, height: 30,
-                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                              child: pw.Center(child: pw.Text('01', style: pw.TextStyle(
-                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                              ))),
-                            ),
-                            pw.SizedBox(width: 15),
-                            pw.Text('수업계획서', style: pw.TextStyle(
-                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                            )),
-                          ]),
-                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                            fontSize: 14, color: PdfColors.black, font: font,
-                          )),
-                        ],
-                      ),
-                    ),
-                    
-                    pw.SizedBox(height: 20),
-                    
-                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
-                    pw.Expanded(
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        child: pw.Container(
-                          width: double.infinity,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              '콘텐츠 영역 (${i + 1}/${courseDoc.pages.count})',
-                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // 푸터 부분 (깔끔하게)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
-                      child: pw.Text(
-                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-              
-              // 템플릿을 finalDoc에 추가
-              final pageBytes = await pageDoc.save();
-              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
-              final templateSourcePage = pageSyncDoc.pages[0];
-              final newPage = finalDoc.pages.add();
-              final pageTemplate = templateSourcePage.createTemplate();
-              
-              // 템플릿 배경 그리기
-              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-              final contentX = 50.0;
-              final contentY = 80.0;
-              final contentWidth = newPage.getClientSize().width - 100;
-              final contentHeight = newPage.getClientSize().height - 150;
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
-              final sourceSize = sourceTemplate.size;
-              final contentScaleX = contentWidth / sourceSize.width;
-              final contentScaleY = contentHeight / sourceSize.height;
-              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
-              
-              final finalWidth = sourceSize.width * contentScale;
-              final finalHeight = sourceSize.height * contentScale;
-              
-              // 콘텐츠 영역 내에서 중앙 정렬
-              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-              
-              newPage.graphics.save();
-              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-              
-              // 실제 PDF 콘텐츠 그리기
-              newPage.graphics.drawPdfTemplate(
-                sourceTemplate,
-                ui.Offset.zero,
-                ui.Size(finalWidth, finalHeight)
-              );
-              
-              newPage.graphics.restore();
-              
-              pageSyncDoc.dispose();
-
-              
-              print('수업계획서 페이지 ${i + 1}/${courseDoc.pages.count} 템플릿 기반 병합 완룼');
-              print('템플릿: 헤더(01 수업계획서) + 콘텐츠 영역 + 푸터(순천향대)');
-              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
-            }
-            
-            courseDoc.dispose();
-            print('수업계획서 PDF 병합 완료');
-          }
-        } catch (e) {
-          print('수업계획서 병합 실패: $e');
-        }
-      } else {
-        print('수업계획서 URL이 없음: $coursePlanUrl');
+        await _addDocumentWithTemplate(finalDoc, coursePlanUrl!, '01', '수업계획서', displayYear, displaySemester, font, updateProgress, 0.5, 0.6);
       }
       
-      // 4. 출석부 PDF 템플릿 기반 병합
+      // 5. 출석부 PDF 병합
       if (attendanceUrl != null && attendanceUrl!.isNotEmpty) {
-        try {
-          print('출석부 PDF 템플릿 기반 병합 시작');
-          
-          final response = await http.get(Uri.parse(attendanceUrl!));
-          if (response.statusCode == 200) {
-            final attendancePdfBytes = response.bodyBytes;
-            final attendanceDoc = syncfusion.PdfDocument(inputBytes: attendancePdfBytes);
-            
-            print('출석부 페이지 수: ${attendanceDoc.pages.count}');
-            
-            // 출석부의 각 페이지마다 템플릿 생성
-            for (int i = 0; i < attendanceDoc.pages.count; i++) {
-              print('출석부 페이지 ${i + 1}/${attendanceDoc.pages.count} 템플릿 생성 시작');
-              
-              final sourcePage = attendanceDoc.pages[i];
-              final sourceTemplate = sourcePage.createTemplate();
-              
-              // 각 출석부 페이지마다 템플릿 생성
-              final pageDoc = pw.Document();
-              pageDoc.addPage(pw.Page(
-                pageFormat: PdfPageFormat.a4,
-                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-                build: (context) => pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // 헤더 부분 (출석부용)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Row(children: [
-                            pw.Container(
-                              width: 40, height: 30,
-                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                              child: pw.Center(child: pw.Text('02', style: pw.TextStyle(
-                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                              ))),
-                            ),
-                            pw.SizedBox(width: 15),
-                            pw.Text('출석부 ($displayProfessorName 교수)', style: pw.TextStyle(
-                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                            )),
-                          ]),
-                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                            fontSize: 14, color: PdfColors.black, font: font,
-                          )),
-                        ],
-                      ),
-                    ),
-                    
-                    pw.SizedBox(height: 20),
-                    
-                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
-                    pw.Expanded(
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        child: pw.Container(
-                          width: double.infinity,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              '출석부 콘텐츠 영역 (${i + 1}/${attendanceDoc.pages.count})',
-                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // 푸터 부분
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
-                      child: pw.Text(
-                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-              
-              // 템플릿을 finalDoc에 추가
-              final pageBytes = await pageDoc.save();
-              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
-              final templateSourcePage = pageSyncDoc.pages[0];
-              final newPage = finalDoc.pages.add();
-              final pageTemplate = templateSourcePage.createTemplate();
-              
-              // 템플릿 배경 그리기
-              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-              final contentX = 50.0;
-              final contentY = 80.0;
-              final contentWidth = newPage.getClientSize().width - 100;
-              final contentHeight = newPage.getClientSize().height - 150;
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
-              final sourceSize = sourceTemplate.size;
-              final contentScaleX = contentWidth / sourceSize.width;
-              final contentScaleY = contentHeight / sourceSize.height;
-              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
-              
-              final finalWidth = sourceSize.width * contentScale;
-              final finalHeight = sourceSize.height * contentScale;
-              
-              // 콘텐츠 영역 내에서 중앙 정렬
-              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-              
-              newPage.graphics.save();
-              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-              
-              // 실제 PDF 콘텐츠 그리기
-              newPage.graphics.drawPdfTemplate(
-                sourceTemplate,
-                ui.Offset.zero,
-                ui.Size(finalWidth, finalHeight)
-              );
-              
-              newPage.graphics.restore();
-              
-              pageSyncDoc.dispose();
-              
-              print('출석부 페이지 ${i + 1}/${attendanceDoc.pages.count} 템플릿 기반 병합 완룼');
-              print('템플릿: 헤더(02 출석부) + 콘텐츠 영역 + 푸터(순천향대)');
-              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
-            }
-            
-            attendanceDoc.dispose();
-            print('출석부 PDF 병합 완룼');
-          } else {
-            print('출석부 URL 접근 실패: ${response.statusCode}');
-          }
-        } catch (e) {
-          print('출석부 병합 실패: $e');
-        }
-      } else {
-        print('출석부 URL이 없음: $attendanceUrl');
+        await _addDocumentWithTemplate(finalDoc, attendanceUrl!, '02', '출석부 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.6, 0.65);
       }
       
-      // 5. 성적기록표 PDF 템플릿 기반 병합
+      // 6. 성적기록표 PDF 병합
       if (gradeRecordUrl != null && gradeRecordUrl!.isNotEmpty) {
-        try {
-          print('성적기록표 PDF 템플릿 기반 병합 시작');
-          
-          final response = await http.get(Uri.parse(gradeRecordUrl!));
-          if (response.statusCode == 200) {
-            final gradeRecordPdfBytes = response.bodyBytes;
-            final gradeRecordDoc = syncfusion.PdfDocument(inputBytes: gradeRecordPdfBytes);
-            
-            print('성적기록표 페이지 수: ${gradeRecordDoc.pages.count}');
-            
-            // 성적기록표의 각 페이지마다 템플릿 생성
-            for (int i = 0; i < gradeRecordDoc.pages.count; i++) {
-              print('성적기록표 페이지 ${i + 1}/${gradeRecordDoc.pages.count} 템플릿 생성 시작');
-              
-              final sourcePage = gradeRecordDoc.pages[i];
-              final sourceTemplate = sourcePage.createTemplate();
-              
-              // 각 성적기록표 페이지마다 템플릿 생성
-              final pageDoc = pw.Document();
-              pageDoc.addPage(pw.Page(
-                pageFormat: PdfPageFormat.a4,
-                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-                build: (context) => pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // 헤더 부분 (성적기록표용)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Row(children: [
-                            pw.Container(
-                              width: 40, height: 30,
-                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                              child: pw.Center(child: pw.Text('03', style: pw.TextStyle(
-                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                              ))),
-                            ),
-                            pw.SizedBox(width: 15),
-                            pw.Text('성적기록표 ($displayProfessorName 교수)', style: pw.TextStyle(
-                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                            )),
-                          ]),
-                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                            fontSize: 14, color: PdfColors.black, font: font,
-                          )),
-                        ],
-                      ),
-                    ),
-                    
-                    pw.SizedBox(height: 20),
-                    
-                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
-                    pw.Expanded(
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        child: pw.Container(
-                          width: double.infinity,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              '성적기록표 콘텐츠 영역 (${i + 1}/${gradeRecordDoc.pages.count})',
-                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // 푸터 부분
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
-                      child: pw.Text(
-                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-              
-              // 템플릿을 finalDoc에 추가
-              final pageBytes = await pageDoc.save();
-              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
-              final templateSourcePage = pageSyncDoc.pages[0];
-              final newPage = finalDoc.pages.add();
-              final pageTemplate = templateSourcePage.createTemplate();
-              
-              // 템플릿 배경 그리기
-              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-              final contentX = 50.0;
-              final contentY = 80.0;
-              final contentWidth = newPage.getClientSize().width - 100;
-              final contentHeight = newPage.getClientSize().height - 150;
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
-              final sourceSize = sourceTemplate.size;
-              final contentScaleX = contentWidth / sourceSize.width;
-              final contentScaleY = contentHeight / sourceSize.height;
-              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
-              
-              final finalWidth = sourceSize.width * contentScale;
-              final finalHeight = sourceSize.height * contentScale;
-              
-              // 콘텐츠 영역 내에서 중앙 정렬
-              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-              
-              newPage.graphics.save();
-              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-              
-              // 실제 PDF 콘텐츠 그리기
-              newPage.graphics.drawPdfTemplate(
-                sourceTemplate,
-                ui.Offset.zero,
-                ui.Size(finalWidth, finalHeight)
-              );
-              
-              newPage.graphics.restore();
-              
-              pageSyncDoc.dispose();
-              
-              print('성적기록표 페이지 ${i + 1}/${gradeRecordDoc.pages.count} 템플릿 기반 병합 완룼');
-              print('템플릿: 헤더(03 성적기록표) + 콘텐츠 영역 + 푸터(순천향대)');
-              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
-            }
-            
-            gradeRecordDoc.dispose();
-            print('성적기록표 PDF 병합 완룼');
-          } else {
-            print('성적기록표 URL 접근 실패: ${response.statusCode}');
-          }
-        } catch (e) {
-          print('성적기록표 병합 실패: $e');
-        }
-      } else {
-        print('성적기록표 URL이 없음: $gradeRecordUrl');
+        await _addDocumentWithTemplate(finalDoc, gradeRecordUrl!, '03', '성적기록표 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.65, 0.7);
       }
       
-      // 6. 학생작품평가표 PDF 템플릿 기반 병합
+      // 7. 학생작품평가표 PDF 병합
       if (workEvalUrl != null && workEvalUrl!.isNotEmpty) {
-        try {
-          print('학생작품평가표 PDF 템플릿 기반 병합 시작');
-          
-          final response = await http.get(Uri.parse(workEvalUrl!));
-          if (response.statusCode == 200) {
-            final workEvalPdfBytes = response.bodyBytes;
-            final workEvalDoc = syncfusion.PdfDocument(inputBytes: workEvalPdfBytes);
-            
-            print('학생작품평가표 페이지 수: ${workEvalDoc.pages.count}');
-            
-            // 학생작품평가표의 각 페이지마다 템플릿 생성
-            for (int i = 0; i < workEvalDoc.pages.count; i++) {
-              print('학생작품평가표 페이지 ${i + 1}/${workEvalDoc.pages.count} 템플릿 생성 시작');
-              
-              final sourcePage = workEvalDoc.pages[i];
-              final sourceTemplate = sourcePage.createTemplate();
-              
-              // 각 학생작품평가표 페이지마다 템플릿 생성
-              final pageDoc = pw.Document();
-              pageDoc.addPage(pw.Page(
-                pageFormat: PdfPageFormat.a4,
-                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-                build: (context) => pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // 헤더 부분 (학생작품평가표용)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Row(children: [
-                            pw.Container(
-                              width: 40, height: 30,
-                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                              child: pw.Center(child: pw.Text('04', style: pw.TextStyle(
-                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                              ))),
-                            ),
-                            pw.SizedBox(width: 15),
-                            pw.Text('학생작품평가표 ($displayProfessorName 교수)', style: pw.TextStyle(
-                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                            )),
-                          ]),
-                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                            fontSize: 14, color: PdfColors.black, font: font,
-                          )),
-                        ],
-                      ),
-                    ),
-                    
-                    pw.SizedBox(height: 20),
-                    
-                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
-                    pw.Expanded(
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        child: pw.Container(
-                          width: double.infinity,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              '학생작품평가표 콘텐츠 영역 (${i + 1}/${workEvalDoc.pages.count})',
-                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // 푸터 부분
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
-                      child: pw.Text(
-                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-              
-              // 템플릿을 finalDoc에 추가
-              final pageBytes = await pageDoc.save();
-              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
-              final templateSourcePage = pageSyncDoc.pages[0];
-              final newPage = finalDoc.pages.add();
-              final pageTemplate = templateSourcePage.createTemplate();
-              
-              // 템플릿 배경 그리기
-              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-              final contentX = 50.0;
-              final contentY = 80.0;
-              final contentWidth = newPage.getClientSize().width - 100;
-              final contentHeight = newPage.getClientSize().height - 150;
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
-              final sourceSize = sourceTemplate.size;
-              final contentScaleX = contentWidth / sourceSize.width;
-              final contentScaleY = contentHeight / sourceSize.height;
-              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
-              
-              final finalWidth = sourceSize.width * contentScale;
-              final finalHeight = sourceSize.height * contentScale;
-              
-              // 콘텐츠 영역 내에서 중앙 정렬
-              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-              
-              newPage.graphics.save();
-              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-              
-              // 실제 PDF 콘텐츠 그리기
-              newPage.graphics.drawPdfTemplate(
-                sourceTemplate,
-                ui.Offset.zero,
-                ui.Size(finalWidth, finalHeight)
-              );
-              
-              newPage.graphics.restore();
-              
-              pageSyncDoc.dispose();
-              
-              print('학생작품평가표 페이지 ${i + 1}/${workEvalDoc.pages.count} 템플릿 기반 병합 완룼');
-              print('템플릿: 헤더(04 학생작품평가표) + 콘텐츠 영역 + 푸터(순천향대)');
-              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
-            }
-            
-            workEvalDoc.dispose();
-            print('학생작품평가표 PDF 병합 완룼');
-          } else {
-            print('학생작품평가표 URL 접근 실패: ${response.statusCode}');
-          }
-        } catch (e) {
-          print('학생작품평가표 병합 실패: $e');
-        }
-      } else {
-        print('학생작품평가표 URL이 없음: $workEvalUrl');
+        await _addDocumentWithTemplate(finalDoc, workEvalUrl!, '04', '학생작품평가표 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.7, 0.8);
       }
       
-      // 7. 강의자료 PDF 기본 템플릿 병합 (회전 없이)
+      // 8. 강의자료 rotation 적용 (별도 처리)
       if (lectureMaterialUrl != null && lectureMaterialUrl!.isNotEmpty) {
-        try {
-          print('강의자료 PDF 기본 병합 시작');
-          
-          final response = await http.get(Uri.parse(lectureMaterialUrl!));
-          if (response.statusCode == 200) {
-            final lecturePdfBytes = response.bodyBytes;
-            final lectureDoc = syncfusion.PdfDocument(inputBytes: lecturePdfBytes);
-            
-            print('강의자료 페이지 수: ${lectureDoc.pages.count}');
-            
-            // 강의자료의 각 페이지마다 템플릿 생성
-            for (int i = 0; i < lectureDoc.pages.count; i++) {
-              print('강의자료 페이지 ${i + 1}/${lectureDoc.pages.count} 템플릿 생성 시작');
-              
-              final sourcePage = lectureDoc.pages[i];
-              final sourceTemplate = sourcePage.createTemplate();
-              
-              // 각 강의자료 페이지마다 템플릿 생성
-              final pageDoc = pw.Document();
-              pageDoc.addPage(pw.Page(
-                pageFormat: PdfPageFormat.a4,
-                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
-                build: (context) => pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // 헤더 부분 (강의자료용)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
-                      child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Row(children: [
-                            pw.Container(
-                              width: 40, height: 30,
-                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
-                              child: pw.Center(child: pw.Text('05', style: pw.TextStyle(
-                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
-                              ))),
-                            ),
-                            pw.SizedBox(width: 15),
-                            pw.Text('강의자료', style: pw.TextStyle(
-                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
-                            )),
-                          ]),
-                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
-                            fontSize: 14, color: PdfColors.black, font: font,
-                          )),
-                        ],
-                      ),
-                    ),
-                    
-                    pw.SizedBox(height: 20),
-                    
-                    // 콘텐츠 영역 (네모 테두리와 함께)
-                    pw.Expanded(
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        child: pw.Container(
-                          width: double.infinity,
-                          decoration: pw.BoxDecoration(
-                            border: pw.Border.all(color: PdfColors.black, width: 2), // 검은 테두리 추가
-                            color: PdfColors.white,
-                          ),
-                          child: pw.Padding(
-                            padding: const pw.EdgeInsets.all(10), // 내부 여백
-                            child: pw.Center(
-                              child: pw.Text(
-                                '강의자료 콘텐츠 영역',
-                                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    // 푸터 부분
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
-                      child: pw.Text(
-                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
-                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ));
-              
-              // 템플릿을 finalDoc에 추가
-              final pageBytes = await pageDoc.save();
-              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
-              final templateSourcePage = pageSyncDoc.pages[0];
-              final newPage = finalDoc.pages.add();
-              final pageTemplate = templateSourcePage.createTemplate();
-              
-              // 템플릿 배경 그리기
-              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-              final contentX = 50.0;
-              final contentY = 80.0;
-              final contentWidth = newPage.getClientSize().width - 100;
-              final contentHeight = newPage.getClientSize().height - 150;
-              
-              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
-              final sourceSize = sourceTemplate.size;
-              final contentScaleX = contentWidth / sourceSize.width;
-              final contentScaleY = contentHeight / sourceSize.height;
-              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
-              
-              final finalWidth = sourceSize.width * contentScale;
-              final finalHeight = sourceSize.height * contentScale;
-              
-              // 콘텐츠 영역 내에서 중앙 정렬
-              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-              
-              newPage.graphics.save();
-              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-              
-              // 실제 PDF 콘텐츠 그리기
-              newPage.graphics.drawPdfTemplate(
-                sourceTemplate,
-                ui.Offset.zero,
-                ui.Size(finalWidth, finalHeight)
-              );
-              
-              newPage.graphics.restore();
-              
-              pageSyncDoc.dispose();
-              
-              print('강의자료 페이지 ${i + 1}/${lectureDoc.pages.count} 템플릿 기반 병합 완룼');
-              print('템플릿: 헤더(05 강의자료) + 콘텐츠 영역 + 푸터(순천향대)');
-              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
-            }
-            
-            lectureDoc.dispose();
-            print('강의자료 PDF 기본 병합 완룼');
-          }
-        } catch (e) {
-          print('강의자료 병합 실패: $e');
-        }
+        await LectureMaterialTemplate.addLectureMaterialPages(
+          finalDoc: finalDoc,
+          lectureMaterialUrl: lectureMaterialUrl!,
+          year: displayYear,
+          semester: displaySemester,
+          professorName: displayProfessorName,
+          updateProgress: updateProgress,
+          startProgress: 0.7,
+          endProgress: 0.9,
+        );
       } else {
         print('강의자료 URL이 없음: $lectureMaterialUrl');
+        updateProgress(0.9, '강의자료 없음 - 스킵');
       }
       
+      updateProgress(0.95, 'PDF 최종 생성 중');
       final finalBytes = await finalDoc.save();
       finalDoc.dispose();
+      updateProgress(1.0, 'PDF 생성 완료');
       
-      // 페이지 수 제대로 확인
-      var totalPages = 0;
-      try {
-        totalPages = finalDoc.pages.count;
-      } catch (e) {
-        print('페이지 카운트 오류: $e');
-        totalPages = -1;
-      }
-      
-      print('최종 PDF 생성 완룼 - 총 페이지: $totalPages');
-      print('=== PDF 페이지 구성 ===');
-      print('1페이지: 표지 (네이비 블루)');
-      print('2페이지: INDEX');
-      print('3페이지: 섹션 구분자');
-      print('4페이지: 수업계획서 템플릿 (01 수업계획서)');
-      print('5-7페이지: 실제 수업계획서 PDF 내용');
-      print('========================');
+      print('최종 PDF 생성 완료 - 총 페이지: ${finalDoc.pages.count}');
       return Uint8List.fromList(finalBytes);
       
     } catch (e) {
