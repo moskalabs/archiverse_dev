@@ -129,25 +129,8 @@ class StudentWeeklyContentTemplate {
                           '${week}주차 | 내용: 주별과제제출내용(1)\n학생: $studentName',
                           style: pw.TextStyle(fontSize: 12, color: PdfColors.black, font: font),
                         ),
-                        // 성적은 나중에 추가 가능
-                        pw.Container(
-                          width: 50,
-                          height: 50,
-                          decoration: pw.BoxDecoration(
-                            border: pw.Border.all(color: PdfColors.red, width: 2),
-                          ),
-                          child: pw.Center(
-                            child: pw.Text(
-                              'A+',
-                              style: pw.TextStyle(
-                                fontSize: 20,
-                                color: PdfColors.red,
-                                fontWeight: pw.FontWeight.bold,
-                                font: font,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // 성적은 아직 미구현 - 제거
+                        // pw.Container(...),
                       ],
                     ),
                   ),

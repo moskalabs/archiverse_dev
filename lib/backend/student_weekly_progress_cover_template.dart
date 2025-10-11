@@ -100,27 +100,9 @@ class StudentWeeklyProgressCoverTemplate {
                   
                   pw.Spacer(),
                   
-                  // 성적 (오른쪽, 박스 안에)
-                  if (studentGrade != null)
-                    pw.Container(
-                      width: 60,
-                      height: 60,
-                      decoration: pw.BoxDecoration(
-                        border: pw.Border.all(color: PdfColors.red, width: 3),
-                        borderRadius: pw.BorderRadius.circular(5),
-                      ),
-                      child: pw.Center(
-                        child: pw.Text(
-                          studentGrade,
-                          style: pw.TextStyle(
-                            fontSize: 24,
-                            color: PdfColors.red,
-                            fontWeight: pw.FontWeight.bold,
-                            font: font,
-                          ),
-                        ),
-                      ),
-                    ),
+                  // 성적은 아직 미구현 - 제거
+                  // if (studentGrade != null)
+                  //   pw.Container(...),
                 ],
               ),
               

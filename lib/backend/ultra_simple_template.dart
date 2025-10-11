@@ -528,38 +528,55 @@ class UltraSimpleTemplate {
         endProgress: 0.87,
       );
       
-      // 10. 각 학생별 표지 + 1주차~15주차 자료 추가
+      // 10. 각 학생별로 [표지 + 1주차~15주차] 순서로 추가
       if (studentNames.isNotEmpty && classId != null) {
-        // 10-1. 모든 학생 표지 먼저 추가
-        await StudentWeeklyProgressCoverTemplate.addAllStudentCovers(
-          finalDoc: finalDoc,
-          studentNames: studentNames,
-          year: displayYear,
-          semester: displaySemester,
-          courseName: displayCourseName,
-          professorName: displayProfessorName,
-          grade: displayGrade,
-          section: displaySection,
-          updateProgress: updateProgress,
-          startProgress: 0.87,
-          endProgress: 0.89,
-        );
+        print('======= 학생별 표지 + 주차별 자료 추가 시작 (${studentNames.length}명) =======');
         
-        // 10-2. 각 학생의 1주차~15주차 자료 추가
-        await StudentWeeklyContentTemplate.addAllStudentsWeeklyContent(
-          finalDoc: finalDoc,
-          studentNames: studentNames,
-          classId: classId,
-          year: displayYear,
-          semester: displaySemester,
-          courseName: displayCourseName,
-          professorName: displayProfessorName,
-          grade: displayGrade,
-          section: displaySection,
-          updateProgress: updateProgress,
-          startProgress: 0.89,
-          endProgress: 0.98,
-        );
+        for (int i = 0; i < studentNames.length; i++) {
+          final studentName = studentNames[i];
+          
+          // 각 학생당 진행률 계산
+          final studentStartProgress = 0.87 + (i / studentNames.length) * 0.11;
+          final studentMidProgress = 0.87 + (i / studentNames.length) * 0.11 + 0.01;
+          final studentEndProgress = 0.87 + ((i + 1) / studentNames.length) * 0.11;
+          
+          updateProgress(studentStartProgress, '학생 ${i + 1}/${studentNames.length}: $studentName 표지 생성 중');
+          
+          // 10-1. 학생 표지 추가
+          await StudentWeeklyProgressCoverTemplate.addStudentCoverPage(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            studentGrade: null, // 성적 제거
+          );
+          
+          updateProgress(studentMidProgress, '학생 ${i + 1}/${studentNames.length}: $studentName 주차별 자료 처리 중');
+          
+          // 10-2. 해당 학생의 1주차~15주차 자료 추가
+          await StudentWeeklyContentTemplate.addStudentWeeklyContent(
+            finalDoc: finalDoc,
+            studentName: studentName,
+            classId: classId,
+            year: displayYear,
+            semester: displaySemester,
+            courseName: displayCourseName,
+            professorName: displayProfessorName,
+            grade: displayGrade,
+            section: displaySection,
+            updateProgress: updateProgress,
+            startProgress: studentMidProgress,
+            endProgress: studentEndProgress,
+          );
+          
+          print('$studentName 표지 + 주차별 자료 완료');
+        }
+        
+        print('======= 모든 학생 처리 완료 =======');
       }
       
       updateProgress(0.95, 'PDF 최종 생성 중');
