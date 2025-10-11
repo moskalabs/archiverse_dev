@@ -38,8 +38,11 @@ class UltraSimpleTemplate {
     
     // 수업계획서 URL 찾기
     String? coursePlanUrl;
+    String? attendanceUrl; // 출석부 URL 추가
+    
     if (classId != null) {
       try {
+        // 수업계획서 URL 조회
         final coursePlans = await CourseplanTable().queryRows(
           queryFn: (q) => q.eq('class', classId),
         );
@@ -50,8 +53,17 @@ class UltraSimpleTemplate {
           }
         }
         print('수업계획서 URL: $coursePlanUrl');
+        
+        // 출석부 URL 조회 (GradeSheet 테이블 사용)
+        final gradeSheetRecords = await GradesheetTable().queryRows(
+          queryFn: (q) => q.eq('class', classId), // classId 자체가 분반 구분 (33=1분반, 51=3분반)
+        );
+        if (gradeSheetRecords.isNotEmpty) {
+          attendanceUrl = gradeSheetRecords.first.url;
+        }
+        print('출석부 URL: $attendanceUrl');
       } catch (e) {
-        print('수업계획서 URL 조회 실패: $e');
+        print('문서 URL 조회 실패: $e');
       }
     }
 
@@ -498,6 +510,155 @@ class UltraSimpleTemplate {
         } catch (e) {
           print('수업계획서 병합 실패: $e');
         }
+      } else {
+        print('수업계획서 URL이 없음: $coursePlanUrl');
+      }
+      
+      // 4. 출석부 PDF 템플릿 기반 병합
+      if (attendanceUrl != null && attendanceUrl!.isNotEmpty) {
+        try {
+          print('출석부 PDF 템플릿 기반 병합 시작');
+          
+          final response = await http.get(Uri.parse(attendanceUrl!));
+          if (response.statusCode == 200) {
+            final attendancePdfBytes = response.bodyBytes;
+            final attendanceDoc = syncfusion.PdfDocument(inputBytes: attendancePdfBytes);
+            
+            print('출석부 페이지 수: ${attendanceDoc.pages.count}');
+            
+            // 출석부의 각 페이지마다 템플릿 생성
+            for (int i = 0; i < attendanceDoc.pages.count; i++) {
+              print('출석부 페이지 ${i + 1}/${attendanceDoc.pages.count} 템플릿 생성 시작');
+              
+              final sourcePage = attendanceDoc.pages[i];
+              final sourceTemplate = sourcePage.createTemplate();
+              
+              // 각 출석부 페이지마다 템플릿 생성
+              final pageDoc = pw.Document();
+              pageDoc.addPage(pw.Page(
+                pageFormat: PdfPageFormat.a4,
+                theme: font != null ? pw.ThemeData.withFont(base: font) : null,
+                build: (context) => pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // 헤더 부분 (출석부용)
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Row(children: [
+                            pw.Container(
+                              width: 40, height: 30,
+                              decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF273F5F)),
+                              child: pw.Center(child: pw.Text('02', style: pw.TextStyle(
+                                fontSize: 16, color: PdfColors.white, fontWeight: pw.FontWeight.bold, font: font,
+                              ))),
+                            ),
+                            pw.SizedBox(width: 15),
+                            pw.Text('출석부 ($displayProfessorName 교수)', style: pw.TextStyle(
+                              fontSize: 20, color: PdfColors.black, fontWeight: pw.FontWeight.bold, font: font,
+                            )),
+                          ]),
+                          pw.Text('$displayYear년도 $displaySemester', style: pw.TextStyle(
+                            fontSize: 14, color: PdfColors.black, font: font,
+                          )),
+                        ],
+                      ),
+                    ),
+                    
+                    pw.SizedBox(height: 20),
+                    
+                    // 콘텐츠 영역 (빈 상자 - 나중에 실제 PDF가 오버레이됨)
+                    pw.Expanded(
+                      child: pw.Padding(
+                        padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                        child: pw.Container(
+                          width: double.infinity,
+                          decoration: pw.BoxDecoration(
+                            color: PdfColors.white, // 테두리 제거, 배경색만 유지
+                          ),
+                          child: pw.Center(
+                            child: pw.Text(
+                              '출석부 콘텐츠 영역 (${i + 1}/${attendanceDoc.pages.count})',
+                              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey400, font: font),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    // 푸터 부분
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                      child: pw.Text(
+                        '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
+                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+              
+              // 템플릿을 finalDoc에 추가
+              final pageBytes = await pageDoc.save();
+              final pageSyncDoc = syncfusion.PdfDocument(inputBytes: pageBytes);
+              final templateSourcePage = pageSyncDoc.pages[0];
+              final newPage = finalDoc.pages.add();
+              final pageTemplate = templateSourcePage.createTemplate();
+              
+              // 템플릿 배경 그리기
+              newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
+              
+              // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
+              final contentX = 50.0;
+              final contentY = 80.0;
+              final contentWidth = newPage.getClientSize().width - 100;
+              final contentHeight = newPage.getClientSize().height - 150;
+              
+              // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
+              final sourceSize = sourceTemplate.size;
+              final contentScaleX = contentWidth / sourceSize.width;
+              final contentScaleY = contentHeight / sourceSize.height;
+              final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9; // 90% 스케일링
+              
+              final finalWidth = sourceSize.width * contentScale;
+              final finalHeight = sourceSize.height * contentScale;
+              
+              // 콘텐츠 영역 내에서 중앙 정렬
+              final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
+              final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
+              
+              newPage.graphics.save();
+              newPage.graphics.translateTransform(contentCenterX, contentCenterY);
+              
+              // 실제 PDF 콘텐츠 그리기
+              newPage.graphics.drawPdfTemplate(
+                sourceTemplate,
+                ui.Offset.zero,
+                ui.Size(finalWidth, finalHeight)
+              );
+              
+              newPage.graphics.restore();
+              
+              pageSyncDoc.dispose();
+              
+              print('출석부 페이지 ${i + 1}/${attendanceDoc.pages.count} 템플릿 기반 병합 완룼');
+              print('템플릿: 헤더(02 출석부) + 콘텐츠 영역 + 푸터(순천향대)');
+              print('콘텐츠 위치: (${contentCenterX.toStringAsFixed(1)}, ${contentCenterY.toStringAsFixed(1)}) 크기: ${finalWidth.toStringAsFixed(1)}x${finalHeight.toStringAsFixed(1)}');
+            }
+            
+            attendanceDoc.dispose();
+            print('출석부 PDF 병합 완룼');
+          } else {
+            print('출석부 URL 접근 실패: ${response.statusCode}');
+          }
+        } catch (e) {
+          print('출석부 병합 실패: $e');
+        }
+      } else {
+        print('출석부 URL이 없음: $attendanceUrl');
       }
       
       final finalBytes = await finalDoc.save();
