@@ -48,15 +48,10 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
       print('🔍 sectionSelected: ${FFAppState().sectionSelected}');
       
       _model.workevalrow = await WorkevalformTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'class',
-              FFAppState().classSelectedID,
-            )
-            .eqOrNull(
-              'section',
-              FFAppState().sectionSelected,
-            ),
+        queryFn: (q) => q.eqOrNull(
+          'class',
+          FFAppState().classSelectedID,
+        ),
       );
       
       print('🔍 조회된 데이터 개수: ${_model.workevalrow?.length ?? 0}');

@@ -64,15 +64,16 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           curve: Curves.easeInOut,
-          width: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : (FFAppState().navOpen == true ? 230.0 : 72.0), // 웹에서 데스크톱일 때 230px 절대 고정
+          width: FFAppState().navOpen == true ? 230.0 : 90.0,
           height: double.infinity,
           constraints: BoxConstraints(
-            minWidth: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : 90.0, // 웹 데스크톱에서 최소 너비 230px 고정
-            maxWidth: kIsWeb && MediaQuery.sizeOf(context).width > 768 ? 230.0 : 290.0, // 웹 데스크톱에서 최대 너비도 230px 고정
+            minWidth: 90.0,
+            maxWidth: 230.0,
           ),
           decoration: BoxDecoration(
             color: Color(0xFF284E75),
           ),
+          clipBehavior: Clip.hardEdge,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
             child: Column(
