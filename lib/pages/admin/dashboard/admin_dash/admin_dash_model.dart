@@ -460,14 +460,37 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
     progressContainerDetailModel4.dispose();
   }
 
+  /// Helper function to extract section number from section string
+  int _extractSectionNumber(String? section) {
+    if (section == null || section.isEmpty) return 999; // null이나 빈 문자열은 마지막으로
+    
+    // "숫자분반" 형식에서 숫자 추출 (ex: "1분반" -> 1)
+    final regex = RegExp(r'(\d+)');
+    final match = regex.firstMatch(section);
+    
+    if (match != null) {
+      return int.tryParse(match.group(1)!) ?? 999;
+    }
+    
+    return 999; // 숫자를 찾을 수 없으마 마지막으로
+  }
+
   /// Action blocks.
-  Future filterDataByGrade(BuildContext context) async {
-    // filter_class_by_grade
+    Future filterDataByGrade(BuildContext context) async {
+    // filter_class_by_grade with section sorting
     filteredClass = classSelectedOnLoad!
         .where((e) => e.grade == selectedGrade)
         .toList()
         .toList()
         .cast<ClassRow>();
+    
+    // 분반 순서대로 정렬 (1분반, 2분반, 3분반 순서)
+    filteredClass.sort((a, b) {
+      // section 문자열에서 숫자 추출
+      final aSection = _extractSectionNumber(a.section);
+      final bSection = _extractSectionNumber(b.section);
+      return aSection.compareTo(bSection);
+    });
     studentsByGrade = allStudents
         .where((e) => e.grade == selectedGrade)
         .toList()

@@ -47,14 +47,129 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
   DateTime? _lastTapTime;
   DateTime? _lastTappedDate;
   String? _lastTappedEventName;
+  
+  // 실시간 일정 데이터
+  List<Meeting> _calendarEvents = [];
+  bool _isLoadingEvents = true;
 
-  @override
+    @override
   void initState() {
     super.initState();
     final today = DateTime.now();
     _calendarController.displayDate = today; // 현재 날짜로 디스플레이 설정
     _calendarController.selectedDate = today; // 현재 날짜 선택
     _calendarController.view = _currentView; // 초기 뷰 설정
+    
+    // 실제 일정 데이터 로드
+    _loadCalendarEvents();
+  }
+  
+  // 실제 DB에서 일정 가져오기
+  Future<void> _loadCalendarEvents() async {
+    try {
+      setState(() {
+        _isLoadingEvents = true;
+      });
+      
+      // 현재 로그인한 교수님 이름 가져오기
+      final professorName = FFAppState().professorNameSelected;
+      
+      if (professorName == null || professorName.isEmpty || professorName == '교수님') {
+        print('교수님 정보 없음 - 기본 일정 사용');
+        setState(() {
+          _calendarEvents = _getDefaultDataSource();
+          _isLoadingEvents = false;
+        });
+        return;
+      }
+      
+      // calendar_events 테이블에서 해당 교수님이 생성한 일정 가져오기
+      final eventsData = await SupaFlow.client
+          .from('calendar_events')
+          .select()
+          .eq('created_by_name', professorName);
+      
+      final events = eventsData as List;
+      print('DB에서 가져온 일정: ${events.length}개');
+      
+      // Meeting 객체로 변환
+      final List<Meeting> meetings = events.map((event) {
+        final startDateStr = event['start_date'] as String?;
+        final startTimeStr = event['start_time'] as String?;
+        final endDateStr = event['end_date'] as String?;
+        final endTimeStr = event['end_time'] as String?;
+        final isAllDay = event['is_all_day'] as bool? ?? false;
+        
+        // 날짜 파싱
+        DateTime startDateTime;
+        DateTime endDateTime;
+        
+        if (isAllDay) {
+          startDateTime = DateTime.parse(startDateStr!);
+          endDateTime = DateTime.parse(endDateStr!);
+        } else {
+          startDateTime = DateTime.parse('$startDateStr $startTimeStr');
+          endDateTime = DateTime.parse('$endDateStr $endTimeStr');
+        }
+        
+                        // 과목명으로 색상 할당
+        final courseName = event['course_name'] as String? ?? '과목명';
+        final eventId = event['id'] as int?;
+        
+        return Meeting(
+          eventName: event['title'] as String? ?? '일정',
+          from: startDateTime,
+          to: endDateTime,
+          background: _getColorByCourse(courseName),
+          isAllDay: isAllDay,
+          eventId: eventId, // 일정 ID 포함
+        );
+      }).toList();
+      
+      setState(() {
+        _calendarEvents = meetings;
+        _isLoadingEvents = false;
+      });
+      
+      print('캘린더 일정 로드 성공: ${meetings.length}개');
+    } catch (e) {
+      print('캘린더 일정 로드 오류: $e');
+      setState(() {
+        _calendarEvents = _getDefaultDataSource();
+        _isLoadingEvents = false;
+      });
+    }
+  }
+  
+    // 과목별 고유 색상 매핑
+  final Map<String, Color> _courseColorMap = {};
+  
+  // 과목별 색상 가져오기 (없으면 새로 할당)
+  Color _getColorByCourse(String courseName) {
+    // 이미 할당된 색상이 있으면 반환
+    if (_courseColorMap.containsKey(courseName)) {
+      return _courseColorMap[courseName]!;
+    }
+    
+    // 새로운 과목이면 색상 할당
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
+      Colors.pink,
+      Colors.indigo,
+      Colors.cyan,
+      Colors.amber,
+    ];
+    
+    // 현재 사용된 색상 수를 기준으로 다음 색상 선택
+    final assignedColor = colors[_courseColorMap.length % colors.length];
+    _courseColorMap[courseName] = assignedColor;
+    
+    return assignedColor;
   }
 
   @override
@@ -151,7 +266,7 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
               ),
               child: SfCalendar(
                 controller: _calendarController,
-                dataSource: MeetingDataSource(_getDataSource()),
+                dataSource: MeetingDataSource(_calendarEvents),
                 headerStyle: const CalendarHeaderStyle(
                   backgroundColor: Colors.white,
                   textAlign: TextAlign.center,
@@ -201,85 +316,58 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
                   print('View changed to: ${_calendarController.view}');
                   print('Display date: ${_calendarController.displayDate}');
                 },
-                onTap: (details) {
-                  // 날짜 선택 로직만 유지하고 나머지는 주석 처리
-                  if (details.targetElement == CalendarElement.calendarCell) {
-                    final tappedDate = details.date!;
-                    setState(() {
-                      _selectedDate = tappedDate;
-                    });
-                  } else if (details.targetElement ==
-                      CalendarElement.appointment) {
-                    // 이벤트 선택 시 별도 처리 없이 그냥 선택만 가능하도록 함
-                    // 특별한 처리 없음
-                  }
-
-                  // 아래는 나중에 개발 예정인 더블 탭 및 상세 페이지 이동 기능 (주석 처리됨)
-                  /*
+                                onTap: (details) {
                   final now = DateTime.now();
+                  
                   if (details.targetElement == CalendarElement.calendarCell) {
                     final tappedDate = details.date!;
-                    final formattedDate =
-                        DateFormat('yyyy-MM-dd').format(tappedDate);
+                    final formattedDate = DateFormat('yyyy-MM-dd').format(tappedDate);
+                    
                     setState(() {
                       _selectedDate = tappedDate;
                     });
 
+                    // 더블클릭 감지
                     final isDoubleTap = _lastTapTime != null &&
                         now.difference(_lastTapTime!).inMilliseconds < 500 &&
                         _lastTappedDate != null &&
-                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) ==
-                            formattedDate;
+                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) == formattedDate;
 
                     if (isDoubleTap) {
+                      // 더블클릭 시 calendar_detail로 이동
                       _navigateToCalendarDetail(context, tappedDate);
                       _lastTapTime = null;
                       _lastTappedDate = null;
                     } else {
+                      // 첫 번째 클릭
                       _lastTapTime = now;
                       _lastTappedDate = tappedDate;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '$formattedDate 선택됨. 한 번 더 탭하면 상세 페이지로 이동합니다.',
-                          ),
-                          duration: Duration(milliseconds: 500),
-                        ),
-                      );
                     }
-                  } else if (details.targetElement ==
-                      CalendarElement.appointment) {
+                  } else if (details.targetElement == CalendarElement.appointment) {
                     final appointment = details.appointments![0] as Meeting;
-                    final formattedDate =
-                        DateFormat('yyyy-MM-dd').format(appointment.from);
+                    final formattedDate = DateFormat('yyyy-MM-dd').format(appointment.from);
 
+                    // 이벤트 더블클릭 감지
                     final isDoubleTap = _lastTapTime != null &&
                         now.difference(_lastTapTime!).inMilliseconds < 500 &&
                         _lastTappedEventName == appointment.eventName &&
                         _lastTappedDate != null &&
-                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) ==
-                            formattedDate;
+                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) == formattedDate;
 
-                    if (isDoubleTap) {
+                                        if (isDoubleTap) {
+                      // 더블클릭 시 이벤트 정보와 함께 이동
+                      print('일정 더블클릭: ${appointment.eventName}, eventId: ${appointment.eventId}');
                       _navigateToCalendarDetailWithEvent(context, appointment);
                       _lastTapTime = null;
                       _lastTappedDate = null;
                       _lastTappedEventName = null;
                     } else {
+                      // 첫 번째 클릭
                       _lastTapTime = now;
                       _lastTappedDate = appointment.from;
                       _lastTappedEventName = appointment.eventName;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '일정 \'${appointment.eventName}\' 선택됨. 한 번 더 탭하면 상세 페이지로 이동합니다.',
-                          ),
-                          duration: Duration(milliseconds: 500),
-                        ),
-                      );
                     }
                   }
-                  */
                 },
               ),
             ),
@@ -439,9 +527,9 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
     return '';
   }
 
-  // 특정 날짜의 일정 가져오기
+    // 특정 날짜의 일정 가져오기
   List<Meeting> _getEventsForDate(DateTime date) {
-    final events = _getDataSource();
+    final events = _calendarEvents;
     final target = DateFormat('yyyy-MM-dd').format(date);
     return events.where((event) {
       final eventDate = DateFormat('yyyy-MM-dd').format(event.from);
@@ -450,35 +538,54 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
   }
 
   // 라우팅 함수들은 주석 처리하지 않고 유지 (호출되지는 않지만 코드는 보존)
-  void _navigateToCalendarDetail(BuildContext context, DateTime date) {
+    void _navigateToCalendarDetail(BuildContext context, DateTime date) async {
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
     try {
-      context.pushNamed(
+      final result = await context.pushNamed(
         'CalendarDetail',
         queryParameters: {
           'date': formattedDate,
         },
       );
+      
+      // 돌아왔을 때 result가 true면 새로고침
+      if (result == true) {
+        print('일정 등록 후 돌아옴 - 캘린더 새로고침');
+        await _loadCalendarEvents();
+      }
+      
       print('pushNamed 성공');
     } catch (e) {
       print('첫 번째 라우팅 방법 실패: $e');
       try {
-        context.pushNamed(
+        final result = await context.pushNamed(
           'calendarDetail',
           queryParameters: {
             'date': formattedDate,
           },
         );
+        
+        if (result == true) {
+          print('일정 등록 후 돌아옴 - 캘린더 새로고침');
+          await _loadCalendarEvents();
+        }
+        
         print('소문자 라우트로 성공');
       } catch (e2) {
         print('두 번째 라우팅 방법도 실패: $e2');
         try {
-          Navigator.of(context).pushNamed(
+          final result = await Navigator.of(context).pushNamed(
             '/CalendarDetail',
             arguments: {
               'date': formattedDate,
             },
           );
+          
+          if (result == true) {
+            print('일정 등록 후 돌아옴 - 캘린더 새로고침');
+            await _loadCalendarEvents();
+          }
+          
           print('Navigator API 성공');
         } catch (e3) {
           print('모든 라우팅 방법 실패: $e3');
@@ -493,27 +600,53 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
     }
   }
 
-  void _navigateToCalendarDetailWithEvent(BuildContext context, Meeting event) {
+        void _navigateToCalendarDetailWithEvent(BuildContext context, Meeting event) async {
     final formattedDate = DateFormat('yyyy-MM-dd').format(event.from);
+    print('이벤트로 이동 - eventId: ${event.eventId}, date: $formattedDate');
+    
     try {
-      context.pushNamed(
+      // eventId가 있을 때만 전달
+      final queryParams = <String, String>{
+        'date': formattedDate,
+      };
+      
+      if (event.eventId != null) {
+        queryParams['eventId'] = event.eventId.toString();
+      }
+      
+      final result = await context.pushNamed(
         'CalendarDetail',
-        queryParameters: {
-          'date': formattedDate,
-          'eventName': event.eventName,
-        },
+        queryParameters: queryParams,
       );
+      
+      if (result == true) {
+        print('일정 수정 후 돌아옴 - 캘린더 새로고침');
+        await _loadCalendarEvents();
+      }
+      
       print('일정 관련 페이지 이동 성공');
     } catch (e) {
       print('일정 탭 페이지 이동 오류: $e');
       try {
-        context.pushNamed(
+                        // eventId가 있을 때만 전달
+        final queryParams2 = <String, String>{
+          'date': formattedDate,
+        };
+        
+        if (event.eventId != null) {
+          queryParams2['eventId'] = event.eventId.toString();
+        }
+        
+        final result = await context.pushNamed(
           'calendarDetail',
-          queryParameters: {
-            'date': formattedDate,
-            'eventName': event.eventName,
-          },
+          queryParameters: queryParams2,
         );
+        
+        if (result == true) {
+          print('일정 수정 후 돌아옴 - 캘린더 새로고침');
+          await _loadCalendarEvents();
+        }
+        
         print('소문자 라우트로 성공');
       } catch (e2) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -526,8 +659,8 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
     }
   }
 
-  // 가짜 일정들
-  List<Meeting> _getDataSource() {
+    // 기본 일정들 (로드 실패 시 사용)
+  List<Meeting> _getDefaultDataSource() {
     final List<Meeting> meetings = [];
     final now = DateTime.now();
 
@@ -589,6 +722,7 @@ class Meeting {
     required this.to,
     this.background = Colors.grey,
     this.isAllDay = false,
+    this.eventId,
   });
 
   String eventName;
@@ -596,6 +730,7 @@ class Meeting {
   DateTime to;
   Color background;
   bool isAllDay;
+  int? eventId; // DB에 저장된 일정 ID
 }
 
 // Syncfusion용 DataSource

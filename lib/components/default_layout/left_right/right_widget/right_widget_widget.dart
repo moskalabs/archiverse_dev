@@ -718,18 +718,19 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                             section: FFAppState().sectionSelected,
                           );
 
-                          FFAppState().update(() {
-                            FFAppState().downloadProgressMessage = 'PDF 병합 준비 중';
+                                                    FFAppState().update(() {
+                            FFAppState().downloadProgressMessage = 'PDF 생성 준비 중';
                           });
 
-                          await actions.mergePdfs(
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/PDF_COVER.pdf',
-                            documentUrls,
-                            'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
-                          );
-
-                          await actions.mergeAndDownloadPdf(
-                            FFAppState().mergepdfs.toList(),
+                          // 관리자 대시보드와 동일한 완전한 PDF 생성
+                          await actions.generateCleanPdf(
+                            year: FFAppState().yearSelected,
+                            semester: FFAppState().semesterSelected,
+                            courseName: FFAppState().courseNameSelected,
+                            professorName: FFAppState().professorNameSelected,
+                            grade: FFAppState().gradeSelected,
+                            section: FFAppState().sectionSelected,
+                            classId: selectedClassId,
                           );
 
                           if (mounted) {

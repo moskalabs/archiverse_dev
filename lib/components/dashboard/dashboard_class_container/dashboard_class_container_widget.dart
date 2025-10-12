@@ -3,6 +3,9 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/backend/ultra_simple_template.dart';
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -464,15 +467,18 @@ class _DashboardClassContainerWidgetState
                               'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/fileupload/setting/20.PDF_COVER_LAST.pdf',
                             );
 
-                            await actions.mergeAndDownloadPdf(
-                              FFAppState().mergepdfs.toList(),
+                                                                                                                                                                        // 기존 잘 작동하는 시스템 + 강의자료 rotation 추가
+                            await actions.generateCleanPdf(
                               year: widget.year,
                               semester: widget.semester,
                               courseName: widget.courseName,
                               professorName: widget.professor,
                               grade: widget.grade,
                               section: widget.section,
+                              classId: widget.classID,
                             );
+                            
+                            
 
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
