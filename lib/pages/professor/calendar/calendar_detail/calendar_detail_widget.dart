@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
+import 'calendar_detail_simple.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -306,22 +307,9 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                                                                     context)
                                                                 .alternate,
                                                       ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          width:
-                                                              double.infinity,
-                                                          height: 100.0,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                          ),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
+                                                                                                                                                                                                                        Expanded(
+                                                        child: CalendarDetailSimple(),
+                                                      ),
                                                               Flexible(
                                                                 flex: 1,
                                                                 child: Padding(
@@ -459,50 +447,7 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          5.0,
-                                                                          0.0,
-                                                                          5.0,
-                                                                          0.0),
-                                                                  child: Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Flexible(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              MediaQuery.sizeOf(context).width * 0.6,
-                                                                          height:
-                                                                              double.infinity,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                FlutterFlowTheme.of(context).primaryBackground,
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0.0,
-                                                                                5.0,
-                                                                                0.0,
-                                                                                0.0),
-                                                                            child:
-                                                                                Container(
-                                                                              width: double.infinity,
-                                                                              child: TextFormField(
-                                                                                controller: _model.fullNameTextFieldTextController2,
+                                                              
                                                                                 focusNode: _model.fullNameTextFieldFocusNode2,
                                                                                 onChanged: (_) => EasyDebounce.debounce(
                                                                                   '_model.fullNameTextFieldTextController2',
