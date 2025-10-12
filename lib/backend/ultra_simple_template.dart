@@ -16,6 +16,7 @@ import '/backend/student_midterm_content_template.dart';
 import '/backend/final_results_cover_template.dart';
 import '/backend/student_final_cover_template.dart';
 import '/backend/student_final_content_template.dart';
+import '/backend/back_cover_template.dart';
 
 /// 간단한 PDF 템플릿 (문법 오류 수정됨)
 class UltraSimpleTemplate {
@@ -719,6 +720,14 @@ class UltraSimpleTemplate {
         
         print('======= 모든 학생 기말결과물 처리 완료 =======');
       }
+      
+      // 15. 뒤표지 추가
+      await BackCoverTemplate.addBackCover(
+        finalDoc: finalDoc,
+        updateProgress: updateProgress,
+        startProgress: 0.99,
+        endProgress: 1.0,
+      );
       
       updateProgress(0.95, 'PDF 최종 생성 중');
       final finalBytes = await finalDoc.save();
