@@ -201,85 +201,57 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
                   print('View changed to: ${_calendarController.view}');
                   print('Display date: ${_calendarController.displayDate}');
                 },
-                onTap: (details) {
-                  // 날짜 선택 로직만 유지하고 나머지는 주석 처리
-                  if (details.targetElement == CalendarElement.calendarCell) {
-                    final tappedDate = details.date!;
-                    setState(() {
-                      _selectedDate = tappedDate;
-                    });
-                  } else if (details.targetElement ==
-                      CalendarElement.appointment) {
-                    // 이벤트 선택 시 별도 처리 없이 그냥 선택만 가능하도록 함
-                    // 특별한 처리 없음
-                  }
-
-                  // 아래는 나중에 개발 예정인 더블 탭 및 상세 페이지 이동 기능 (주석 처리됨)
-                  /*
+                                onTap: (details) {
                   final now = DateTime.now();
+                  
                   if (details.targetElement == CalendarElement.calendarCell) {
                     final tappedDate = details.date!;
-                    final formattedDate =
-                        DateFormat('yyyy-MM-dd').format(tappedDate);
+                    final formattedDate = DateFormat('yyyy-MM-dd').format(tappedDate);
+                    
                     setState(() {
                       _selectedDate = tappedDate;
                     });
 
+                    // 더블클릭 감지
                     final isDoubleTap = _lastTapTime != null &&
                         now.difference(_lastTapTime!).inMilliseconds < 500 &&
                         _lastTappedDate != null &&
-                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) ==
-                            formattedDate;
+                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) == formattedDate;
 
                     if (isDoubleTap) {
+                      // 더블클릭 시 calendar_detail로 이동
                       _navigateToCalendarDetail(context, tappedDate);
                       _lastTapTime = null;
                       _lastTappedDate = null;
                     } else {
+                      // 첫 번째 클릭
                       _lastTapTime = now;
                       _lastTappedDate = tappedDate;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '$formattedDate 선택됨. 한 번 더 탭하면 상세 페이지로 이동합니다.',
-                          ),
-                          duration: Duration(milliseconds: 500),
-                        ),
-                      );
                     }
-                  } else if (details.targetElement ==
-                      CalendarElement.appointment) {
+                  } else if (details.targetElement == CalendarElement.appointment) {
                     final appointment = details.appointments![0] as Meeting;
-                    final formattedDate =
-                        DateFormat('yyyy-MM-dd').format(appointment.from);
+                    final formattedDate = DateFormat('yyyy-MM-dd').format(appointment.from);
 
+                    // 이벤트 더블클릭 감지
                     final isDoubleTap = _lastTapTime != null &&
                         now.difference(_lastTapTime!).inMilliseconds < 500 &&
                         _lastTappedEventName == appointment.eventName &&
                         _lastTappedDate != null &&
-                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) ==
-                            formattedDate;
+                        DateFormat('yyyy-MM-dd').format(_lastTappedDate!) == formattedDate;
 
                     if (isDoubleTap) {
+                      // 더블클릭 시 이벤트 정보와 함께 이돐
                       _navigateToCalendarDetailWithEvent(context, appointment);
                       _lastTapTime = null;
                       _lastTappedDate = null;
                       _lastTappedEventName = null;
                     } else {
+                      // 첫 번째 클릭
                       _lastTapTime = now;
                       _lastTappedDate = appointment.from;
                       _lastTappedEventName = appointment.eventName;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '일정 \'${appointment.eventName}\' 선택됨. 한 번 더 탭하면 상세 페이지로 이동합니다.',
-                          ),
-                          duration: Duration(milliseconds: 500),
-                        ),
-                      );
                     }
                   }
-                  */
                 },
               ),
             ),

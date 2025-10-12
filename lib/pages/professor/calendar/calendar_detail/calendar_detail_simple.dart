@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/backend/supabase/supabase.dart';
+import 'package:provider/provider.dart';
 
 /// 간단한 일정 등록 폼
 class CalendarDetailSimple extends StatefulWidget {
-  const CalendarDetailSimple({super.key});
+  const CalendarDetailSimple({
+    super.key,
+    this.selectedDate,
+  });
+  
+  final DateTime? selectedDate;
 
   @override
   State<CalendarDetailSimple> createState() => _CalendarDetailSimpleState();
@@ -12,8 +20,6 @@ class CalendarDetailSimple extends StatefulWidget {
 
 class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
   final _titleController = TextEditingController();
-  final _shareTargetController = TextEditingController();
-  final _locationController = TextEditingController();
   final _contentController = TextEditingController();
   
   DateTime _startDate = DateTime.now();
@@ -21,12 +27,56 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
   DateTime _endDate = DateTime.now();
   TimeOfDay _endTime = TimeOfDay.now();
   bool _isAllDay = false;
+  
+  // 선택된 수업 정보
+  ClassRow? _selectedClass;
+  List<ClassRow> _professorClasses = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // 더블클릭한 날짜가 있으면 해당 날짜로 초기화
+    if (widget.selectedDate != null) {
+      _startDate = widget.selectedDate!;
+      _endDate = widget.selectedDate!;
+    }
+    
+    _loadProfessorClasses();
+  }
+
+  Future<void> _loadProfessorClasses() async {
+    try {
+      // 현재 로그인한 교수님 이름 가져오기
+      final professorName = FFAppState().professorNameSelected;
+      
+      if (professorName == null || professorName.isEmpty || professorName == '교수님') {
+        print('교수님 정보 없음');
+        setState(() => _isLoading = false);
+        return;
+      }
+      
+      // 교수님이 담당하는 모든 수업 가져오기 (professor 필드로 검색)
+      final classes = await ClassTable().queryRows(
+        queryFn: (q) => q.eq('professor', professorName),
+      );
+      
+      setState(() {
+        _professorClasses = classes;
+        _isLoading = false;
+      });
+      
+      print('교수님 수업 목록: ${classes.length}개');
+    } catch (e) {
+      print('수업 목록 로드 오류: $e');
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
-    _shareTargetController.dispose();
-    _locationController.dispose();
     _contentController.dispose();
     super.dispose();
   }
@@ -44,23 +94,41 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 헤더
-            Row(
-              children: [
-                Icon(Icons.add_task, color: Color(0xFFA9B4CD), size: 36.0),
-                SizedBox(width: 15.0),
-                Text(
-                  '일정 등록',
-                  style: GoogleFonts.openSans(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF284E75),
+            // 0. 공유 대상 (수업 선택)
+            _buildLabel('공유 대상'),
+            SizedBox(height: 10.0),
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<ClassRow>(
+                        isExpanded: true,
+                        hint: Text('수업을 선택하세요'),
+                        value: _selectedClass,
+                        items: _professorClasses.map((classItem) {
+                          return DropdownMenuItem<ClassRow>(
+                            value: classItem,
+                            child: Text(
+                              '${classItem.year} ${classItem.semester} - ${classItem.course} (${classItem.grade}학년 ${classItem.section ?? ''})',
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (ClassRow? newValue) {
+                          setState(() {
+                            _selectedClass = newValue;
+                          });
+                          print('선택된 수업: ${newValue?.course}');
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            
-            Divider(height: 40.0, thickness: 2.0),
+            SizedBox(height: 20.0),
             
             // 1. 제목
             _buildLabel('제목'),
@@ -188,33 +256,7 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
             ),
             SizedBox(height: 20.0),
             
-            // 3. 공유 대상
-            _buildLabel('공유 대상'),
-            SizedBox(height: 10.0),
-            TextFormField(
-              controller: _shareTargetController,
-              decoration: InputDecoration(
-                hintText: '공유 대상을 입력하세요',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            
-            // 4. 장소
-            _buildLabel('장소'),
-            SizedBox(height: 10.0),
-            TextFormField(
-              controller: _locationController,
-              decoration: InputDecoration(
-                hintText: '장소를 입력하세요',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            
-            // 5. 내용
+            // 3. 내용
             _buildLabel('내용'),
             SizedBox(height: 10.0),
             TextFormField(
@@ -256,17 +298,110 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    // TODO: 저장 로직 (Supabase에 저장)
-                    print('제목: ${_titleController.text}');
-                    print('시작: $_startDate ${_startTime.format(context)}');
-                    print('종료: $_endDate ${_endTime.format(context)}');
-                    print('종일: $_isAllDay');
-                    print('공유 대상: ${_shareTargetController.text}');
-                    print('장소: ${_locationController.text}');
-                    print('내용: ${_contentController.text}');
+                  onPressed: () async {
+                    // 유효성 검사
+                    if (_titleController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('제목을 입력해주세요')),
+                      );
+                      return;
+                    }
                     
-                    Navigator.of(context).pop();
+                    if (_selectedClass == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('공유할 수업을 선택해주세요')),
+                      );
+                      return;
+                    }
+                    
+                    try {
+                      // 0. posts 테이블에서 교수 이메일 가져오기
+                      final professorName = FFAppState().professorNameSelected;
+                      final professorData = await PostsTable().queryRows(
+                        queryFn: (q) => q.eq('name', professorName).eq('user_type', 1), // user_type 1 = professor
+      );
+                      
+                      if (professorData.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('교수 정보를 찾을 수 없습니다')),
+                        );
+                        return;
+                      }
+                      
+                      final professorEmail = professorData.first.email ?? '';
+                      
+                      // 1. calendar_events 테이블에 일정 저장
+                      final startTimeStr = _isAllDay ? null : '${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}:00';
+                      final endTimeStr = _isAllDay ? null : '${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}:00';
+                      
+                      final eventData = {
+                        'title': _titleController.text.trim(),
+                        'content': _contentController.text.trim(),
+                        'start_date': '${_startDate.year}-${_startDate.month.toString().padLeft(2, '0')}-${_startDate.day.toString().padLeft(2, '0')}',
+                        'start_time': startTimeStr,
+                        'end_date': '${_endDate.year}-${_endDate.month.toString().padLeft(2, '0')}-${_endDate.day.toString().padLeft(2, '0')}',
+                        'end_time': endTimeStr,
+                        'is_all_day': _isAllDay,
+                        'created_by_email': professorEmail,
+                        'created_by_name': professorName,
+                        'class_id': _selectedClass!.id,
+                        'year': _selectedClass!.year,
+                        'semester': _selectedClass!.semester,
+                        'grade': _selectedClass!.grade,
+                        'course_name': _selectedClass!.course,
+                        'section': _selectedClass!.section,
+                        'professor_name': _selectedClass!.professor,
+                      };
+                      
+                      final response = await SupaFlow.client
+                          .from('calendar_events')
+                          .insert(eventData)
+                          .select()
+                          .single();
+                      
+                      final eventId = response['id'] as int;
+                      
+                      print('일정 저장 성공: Event ID = $eventId');
+                      
+                      // 2. 해당 수업의 학생들에게 자동 공유
+                      // student_myprofile에서 courseMajor와 section이 일치하는 학생들 찾기
+                      final studentsData = await SupaFlow.client
+                          .from('student_myprofile')
+                          .select('stu_email, name')
+                          .eq('courseMajor', _selectedClass!.course ?? '')
+                          .eq('section', _selectedClass!.section ?? '')
+                          .eq('years', _selectedClass!.year ?? '')
+                          .eq('semester', _selectedClass!.semester ?? '');
+                      
+                      final students = studentsData as List;
+                      print('공유 대상 학생: ${students.length}명');
+                      
+                      // 각 학생에게 공유
+                      for (final student in students) {
+                        await SupaFlow.client
+                            .from('calendar_event_shares')
+                            .insert({
+                          'event_id': eventId,
+                          'shared_with_email': student['stu_email'] ?? '',
+                          'shared_with_name': student['name'] ?? '',
+                          'user_type': 2, // student
+                          'class_id': _selectedClass!.id,
+                        });
+                      }
+                      
+                      print('학생들에게 공유 완료');
+                      
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('일정이 등록되었습니다')),
+                      );
+                      
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      print('일정 저장 오류: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('일정 등록 실패: $e')),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF284E75),
