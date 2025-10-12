@@ -13,9 +13,11 @@ class CalendarDetailWidget extends StatefulWidget {
   const CalendarDetailWidget({
     super.key,
     this.date,
+    this.eventId,
   });
   
   final String? date;
+  final String? eventId;
 
   static String routeName = 'CalendarDetail';
   static String routePath = '/CalendarDetail';
@@ -110,7 +112,7 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                                     ),
                                     SizedBox(width: 15.0),
                                     Text(
-                                      '일정 등록',
+                                      widget.eventId != null ? '일정 수정' : '일정 등록',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -136,6 +138,7 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                                   selectedDate: widget.date != null 
                                       ? DateTime.tryParse(widget.date!) 
                                       : null,
+                                  eventId: widget.eventId,
                                 ),
                               ),
                             ],

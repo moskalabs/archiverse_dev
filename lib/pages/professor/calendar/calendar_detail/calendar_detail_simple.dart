@@ -10,9 +10,11 @@ class CalendarDetailSimple extends StatefulWidget {
   const CalendarDetailSimple({
     super.key,
     this.selectedDate,
+    this.eventId,
   });
   
   final DateTime? selectedDate;
+  final String? eventId; // String으로 받아서 내부에서 파싱
 
   @override
   State<CalendarDetailSimple> createState() => _CalendarDetailSimpleState();
@@ -37,13 +39,107 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
   void initState() {
     super.initState();
     
+    print('===== CalendarDetailSimple initState =====');
+    print('selectedDate: ${widget.selectedDate}');
+    print('eventId: ${widget.eventId}');
+    
     // 더블클릭한 날짜가 있으면 해당 날짜로 초기화
     if (widget.selectedDate != null) {
       _startDate = widget.selectedDate!;
       _endDate = widget.selectedDate!;
+      
+      // 시간도 해당 날짜의 현재 시간으로 설정
+      final now = DateTime.now();
+      _startTime = TimeOfDay(hour: now.hour, minute: 0);
+      _endTime = TimeOfDay(hour: now.hour + 1, minute: 0);
+      
+      print('더블클릭한 날짜로 초기화: ${widget.selectedDate}');
     }
     
-    _loadProfessorClasses();
+    _loadInitialData();
+  }
+  
+  // 초기 데이터 로드
+  Future<void> _loadInitialData() async {
+    await _loadProfessorClasses();
+    
+    // eventId가 있으면 기존 일정 데이터 로드
+    if (widget.eventId != null && widget.eventId!.isNotEmpty) {
+      await _loadExistingEvent();
+    }
+  }
+  
+  // 기존 일정 데이터 로드
+  Future<void> _loadExistingEvent() async {
+    try {
+      final eventIdInt = int.tryParse(widget.eventId!);
+      if (eventIdInt == null) {
+        print('잘못된 eventId: ${widget.eventId}');
+        return;
+      }
+      
+      print('기존 일정 로드 시작: ID $eventIdInt');
+      
+      final eventData = await SupaFlow.client
+          .from('calendar_events')
+          .select()
+          .eq('id', eventIdInt)
+          .single();
+      
+      // 폼 필드에 기존 데이터 채우기
+      _titleController.text = eventData['title'] as String? ?? '';
+      _contentController.text = eventData['content'] as String? ?? '';
+      
+      // 날짜 및 시간 파싱
+      final startDateStr = eventData['start_date'] as String?;
+      final startTimeStr = eventData['start_time'] as String?;
+      final endDateStr = eventData['end_date'] as String?;
+      final endTimeStr = eventData['end_time'] as String?;
+      final isAllDay = eventData['is_all_day'] as bool? ?? false;
+      
+      if (startDateStr != null) {
+        _startDate = DateTime.parse(startDateStr);
+      }
+      if (endDateStr != null) {
+        _endDate = DateTime.parse(endDateStr);
+      }
+      
+      if (!isAllDay && startTimeStr != null) {
+        final startTimeParts = startTimeStr.split(':');
+        _startTime = TimeOfDay(
+          hour: int.parse(startTimeParts[0]),
+          minute: int.parse(startTimeParts[1]),
+        );
+      }
+      
+      if (!isAllDay && endTimeStr != null) {
+        final endTimeParts = endTimeStr.split(':');
+        _endTime = TimeOfDay(
+          hour: int.parse(endTimeParts[0]),
+          minute: int.parse(endTimeParts[1]),
+        );
+      }
+      
+      _isAllDay = isAllDay;
+      
+      // 선택된 수업 찾기 (이미 _loadProfessorClasses()가 호출되었음)
+      final classId = eventData['class_id'] as int?;
+      if (classId != null && _professorClasses.isNotEmpty) {
+        try {
+          _selectedClass = _professorClasses.firstWhere(
+            (c) => c.id == classId,
+          );
+          print('선택된 수업: ${_selectedClass?.course}');
+        } catch (e) {
+          print('수업을 찾을 수 없음: $e');
+        }
+      }
+      
+      setState(() {});
+      print('기존 일정 로드 완료');
+    } catch (e) {
+      print('기존 일정 로드 오류: $e');
+    }
   }
 
   Future<void> _loadProfessorClasses() async {
@@ -57,9 +153,20 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
         return;
       }
       
-      // 교수님이 담당하는 모든 수업 가져오기 (professor 필드로 검색)
+      // 현재 년도와 학기 가져오기
+      final currentYear = DateTime.now().year.toString();
+      // 현재 달을 기준으로 학기 결정 (1-6월: 1학기, 7-12월: 2학기)
+      final currentMonth = DateTime.now().month;
+      final currentSemester = currentMonth <= 6 ? '1학기' : '2학기';
+      
+      print('현재 학기 정보: $currentYear년 $currentSemester');
+      
+      // 교수님이 담당하는 현재 학기의 수업만 가져오기
       final classes = await ClassTable().queryRows(
-        queryFn: (q) => q.eq('professor', professorName),
+        queryFn: (q) => q
+            .eq('professor', professorName)
+            .eq('year', currentYear)
+            .eq('semester', currentSemester),
       );
       
       setState(() {
@@ -67,7 +174,7 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
         _isLoading = false;
       });
       
-      print('교수님 수업 목록: ${classes.length}개');
+      print('현재 학기 수업 목록: ${classes.length}개');
     } catch (e) {
       print('수업 목록 로드 오류: $e');
       setState(() => _isLoading = false);
@@ -157,7 +264,15 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                         firstDate: DateTime(2020),
                         lastDate: DateTime(2030),
                       );
-                      if (date != null) setState(() => _startDate = date);
+                      if (date != null) {
+                        setState(() {
+                          _startDate = date;
+                          // 시작날짜가 종료날짜보다 늦으면 종료날짜도 조정
+                          if (_endDate.isBefore(date)) {
+                            _endDate = date;
+                          }
+                        });
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.all(12.0),
@@ -203,10 +318,12 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                       final date = await showDatePicker(
                         context: context,
                         initialDate: _endDate,
-                        firstDate: DateTime(2020),
+                        firstDate: _startDate, // 시작날짜 이후로만 선택 가능
                         lastDate: DateTime(2030),
                       );
-                      if (date != null) setState(() => _endDate = date);
+                      if (date != null) {
+                        setState(() => _endDate = date);
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.all(12.0),
@@ -297,6 +414,82 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // 삭제 버튼 (UPDATE 모드일 때만 표시)
+                if (widget.eventId != null && widget.eventId!.isNotEmpty)
+                  ElevatedButton(
+                    onPressed: () async {
+                      // 삭제 확인 다이얼로그
+                      final confirmDelete = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('일정 삭제'),
+                          content: Text('이 일정을 삭제하시겠습니까?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text('취소'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text('삭제', style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
+                      );
+                      
+                      if (confirmDelete != true) return;
+                      
+                      try {
+                        final eventIdInt = int.tryParse(widget.eventId!);
+                        if (eventIdInt == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('잘못된 일정 ID입니다')),
+                          );
+                          return;
+                        }
+                        
+                        // 공유 먼저 삭제
+                        await SupaFlow.client
+                            .from('calendar_event_shares')
+                            .delete()
+                            .eq('event_id', eventIdInt);
+                        
+                        // 일정 삭제
+                        await SupaFlow.client
+                            .from('calendar_events')
+                            .delete()
+                            .eq('id', eventIdInt);
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('일정이 삭제되었습니다')),
+                        );
+                        
+                        Navigator.of(context).pop(true); // 새로고침 플래그
+                      } catch (e) {
+                        print('일정 삭제 오류: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('삭제 실패: $e')),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: Text(
+                      '삭제',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                if (widget.eventId != null && widget.eventId!.isNotEmpty)
+                  SizedBox(width: 20.0),
                 ElevatedButton(
                   onPressed: () async {
                     // 유효성 검사
@@ -310,6 +503,29 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                     if (_selectedClass == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('공유할 수업을 선택해주세요')),
+                      );
+                      return;
+                    }
+                    
+                    // 날짜 및 시간 유효성 검사
+                    final startDateTime = DateTime(
+                      _startDate.year,
+                      _startDate.month,
+                      _startDate.day,
+                      _startTime.hour,
+                      _startTime.minute,
+                    );
+                    final endDateTime = DateTime(
+                      _endDate.year,
+                      _endDate.month,
+                      _endDate.day,
+                      _endTime.hour,
+                      _endTime.minute,
+                    );
+                    
+                    if (endDateTime.isBefore(startDateTime) || endDateTime.isAtSameMomentAs(startDateTime)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('종료 일시는 시작 일시보다 늦어야 합니다')),
                       );
                       return;
                     }
@@ -330,7 +546,7 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                       
                       final professorEmail = professorData.first.email ?? '';
                       
-                      // 1. calendar_events 테이블에 일정 저장
+                      // 1. calendar_events 테이블에 일정 저장 (INSERT or UPDATE)
                       final startTimeStr = _isAllDay ? null : '${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}:00';
                       final endTimeStr = _isAllDay ? null : '${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}:00';
                       
@@ -353,15 +569,48 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                         'professor_name': _selectedClass!.professor,
                       };
                       
-                      final response = await SupaFlow.client
-                          .from('calendar_events')
-                          .insert(eventData)
-                          .select()
-                          .single();
+                      int eventId;
                       
-                      final eventId = response['id'] as int;
-                      
-                      print('일정 저장 성공: Event ID = $eventId');
+                      if (widget.eventId != null && widget.eventId!.isNotEmpty) {
+                        // UPDATE 모드: 기존 일정 수정
+                        final eventIdInt = int.tryParse(widget.eventId!);
+                        if (eventIdInt == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('잘못된 일정 ID입니다')),
+                          );
+                          return;
+                        }
+                        
+                        print('UPDATE 모드: Event ID $eventIdInt');
+                        
+                        final response = await SupaFlow.client
+                            .from('calendar_events')
+                            .update(eventData)
+                            .eq('id', eventIdInt)
+                            .select()
+                            .single();
+                        
+                        eventId = response['id'] as int;
+                        print('일정 수정 성공: Event ID = $eventId');
+                        
+                        // 기존 공유 삭제 (다시 공유하기 위해)
+                        await SupaFlow.client
+                            .from('calendar_event_shares')
+                            .delete()
+                            .eq('event_id', eventId);
+                      } else {
+                        // INSERT 모드: 새 일정 등록
+                        print('INSERT 모드: 새 일정 등록');
+                        
+                        final response = await SupaFlow.client
+                            .from('calendar_events')
+                            .insert(eventData)
+                            .select()
+                            .single();
+                        
+                        eventId = response['id'] as int;
+                        print('일정 저장 성공: Event ID = $eventId');
+                      }
                       
                       // 2. 해당 수업의 학생들에게 자동 공유
                       // student_myprofile에서 courseMajor와 section이 일치하는 학생들 찾기
@@ -392,10 +641,11 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                       print('학생들에게 공유 완료');
                       
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('일정이 등록되었습니다')),
+                        SnackBar(content: Text(widget.eventId != null ? '일정이 수정되었습니다' : '일정이 등록되었습니다')),
                       );
                       
-                      Navigator.of(context).pop();
+                      // 캘린더 페이지로 돌아가며 새로고침 플래그 전달
+                      Navigator.of(context).pop(true); // true를 전달하여 새로고침 필요 알림
                     } catch (e) {
                       print('일정 저장 오류: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
