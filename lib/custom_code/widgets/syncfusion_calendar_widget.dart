@@ -116,7 +116,7 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
         final courseName = event['course_name'] as String? ?? '과목명';
         final eventId = event['id'] as int?;
         
-        return Meeting(
+        final meeting = Meeting(
           eventName: event['title'] as String? ?? '일정',
           from: startDateTime,
           to: endDateTime,
@@ -124,6 +124,9 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
           isAllDay: isAllDay,
           eventId: eventId, // 일정 ID 포함
         );
+
+        print('Meeting 생성: ${meeting.eventName}, eventId: ${meeting.eventId}');
+        return meeting;
       }).toList();
       
       setState(() {
@@ -530,11 +533,40 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
     // 특정 날짜의 일정 가져오기
   List<Meeting> _getEventsForDate(DateTime date) {
     final events = _calendarEvents;
-    final target = DateFormat('yyyy-MM-dd').format(date);
-    return events.where((event) {
-      final eventDate = DateFormat('yyyy-MM-dd').format(event.from);
-      return eventDate == target;
+
+    // 선택된 날짜의 시작(00:00)과 끝(23:59)
+    final targetStart = DateTime(date.year, date.month, date.day);
+    final targetEnd = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    print('========================================');
+    print('_getEventsForDate 호출: ${DateFormat('yyyy-MM-dd').format(date)}');
+    print('targetStart: $targetStart');
+    print('targetEnd: $targetEnd');
+    print('전체 일정 수: ${events.length}');
+
+    final filteredEvents = events.where((event) {
+      // 일정의 시작과 끝
+      final eventStart = event.from;
+      final eventEnd = event.to;
+
+      // 일정이 해당 날짜에 걸쳐있는지 확인
+      // 조건: 일정 시작이 target 이전이거나 같고, 일정 끝이 target 이후이거나 같음
+      final startsBeforeOrOnTarget = eventStart.isBefore(targetEnd.add(Duration(seconds: 1)));
+      final endsAfterOrOnTarget = eventEnd.isAfter(targetStart.subtract(Duration(seconds: 1)));
+
+      final isInRange = startsBeforeOrOnTarget && endsAfterOrOnTarget;
+
+      if (isInRange) {
+        print('✅ 포함: ${event.eventName} (${DateFormat('yyyy-MM-dd').format(eventStart)} ~ ${DateFormat('yyyy-MM-dd').format(eventEnd)})');
+      }
+
+      return isInRange;
     }).toList();
+
+    print('필터링된 일정 수: ${filteredEvents.length}');
+    print('========================================');
+
+    return filteredEvents;
   }
 
   // 라우팅 함수들은 주석 처리하지 않고 유지 (호출되지는 않지만 코드는 보존)
@@ -602,18 +634,26 @@ class _SyncfusionCalendarWidgetState extends State<SyncfusionCalendarWidget> {
 
         void _navigateToCalendarDetailWithEvent(BuildContext context, Meeting event) async {
     final formattedDate = DateFormat('yyyy-MM-dd').format(event.from);
+    print('========================================');
     print('이벤트로 이동 - eventId: ${event.eventId}, date: $formattedDate');
-    
+    print('event.eventId == null? ${event.eventId == null}');
+    print('========================================');
+
     try {
       // eventId가 있을 때만 전달
       final queryParams = <String, String>{
         'date': formattedDate,
       };
-      
+
       if (event.eventId != null) {
         queryParams['eventId'] = event.eventId.toString();
+        print('✅ eventId 추가됨: ${queryParams['eventId']}');
+      } else {
+        print('❌ eventId가 null입니다!');
       }
-      
+
+      print('최종 queryParams: $queryParams');
+
       final result = await context.pushNamed(
         'CalendarDetail',
         queryParameters: queryParams,

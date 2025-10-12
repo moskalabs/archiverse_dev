@@ -29,19 +29,26 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
   DateTime _endDate = DateTime.now();
   TimeOfDay _endTime = TimeOfDay.now();
   bool _isAllDay = false;
-  
+
   // 선택된 수업 정보
   ClassRow? _selectedClass;
   List<ClassRow> _professorClasses = [];
   bool _isLoading = true;
 
+  // 알람 리스트
+  List<NotificationItem> _notifications = [];
+
   @override
   void initState() {
     super.initState();
-    
+
+    print('========================================');
     print('===== CalendarDetailSimple initState =====');
     print('selectedDate: ${widget.selectedDate}');
     print('eventId: ${widget.eventId}');
+    print('eventId가 null인가? ${widget.eventId == null}');
+    print('eventId가 비어있는가? ${widget.eventId?.isEmpty}');
+    print('========================================');
     
     // 더블클릭한 날짜가 있으면 해당 날짜로 초기화
     if (widget.selectedDate != null) {
@@ -121,7 +128,7 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
       }
       
       _isAllDay = isAllDay;
-      
+
       // 선택된 수업 찾기 (이미 _loadProfessorClasses()가 호출되었음)
       final classId = eventData['class_id'] as int?;
       if (classId != null && _professorClasses.isNotEmpty) {
@@ -134,11 +141,110 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
           print('수업을 찾을 수 없음: $e');
         }
       }
-      
+
+      // 기존 알람 데이터 로드
+      await _loadExistingNotifications(eventIdInt);
+
       setState(() {});
       print('기존 일정 로드 완료');
     } catch (e) {
       print('기존 일정 로드 오류: $e');
+    }
+  }
+
+  // 기존 알람 데이터 로드
+  Future<void> _loadExistingNotifications(int eventId) async {
+    try {
+      print('========================================');
+      print('기존 알람 로드 시작: eventId=$eventId');
+
+      // 해당 이벤트의 알람 가져오기 (한 명의 수신자 기준으로, 날짜별로 그룹화)
+      final notifications = await NotificationsTable().queryRows(
+        queryFn: (q) => q
+            .eq('event_id', eventId)
+            .order('notification_date', ascending: true),
+      );
+
+      print('DB에서 가져온 알람 개수: ${notifications.length}');
+
+      if (notifications.isEmpty) {
+        print('등록된 알람 없음');
+        print('========================================');
+        return;
+      }
+
+      // 알람을 NotificationItem으로 변환
+      // 같은 날짜는 한 번만 추가 (여러 수신자에게 같은 알람이 있을 수 있음)
+      final Map<String, NotificationItem> uniqueNotifications = {};
+
+      for (final notif in notifications) {
+        print('알람 데이터: date=${notif.notificationDate}, time=${notif.notificationTime}');
+
+        final notifDate = notif.notificationDate;
+        final notifTimeStr = notif.notificationTime;
+
+        if (notifDate != null && notifTimeStr != null && notifTimeStr.isNotEmpty) {
+          // TIME 문자열 파싱 (예: "15:30:00")
+          final timeParts = notifTimeStr.split(':');
+          if (timeParts.length < 2) {
+            print('잘못된 시간 형식: $notifTimeStr');
+            continue;
+          }
+
+          final hour = int.tryParse(timeParts[0]);
+          final minute = int.tryParse(timeParts[1]);
+
+          if (hour == null || minute == null) {
+            print('시간 파싱 실패: $notifTimeStr');
+            continue;
+          }
+
+          // 알람 날짜/시간과 일정 시작 날짜/시간의 차이 계산
+          final eventStartDateTime = DateTime(
+            _startDate.year,
+            _startDate.month,
+            _startDate.day,
+            _startTime.hour,
+            _startTime.minute,
+          );
+
+          final notificationDateTime = DateTime(
+            notifDate.year,
+            notifDate.month,
+            notifDate.day,
+            hour,
+            minute,
+          );
+
+          print('일정 시작: $eventStartDateTime');
+          print('알람 시간: $notificationDateTime');
+
+          final difference = eventStartDateTime.difference(notificationDateTime);
+          final daysBefore = difference.inDays;
+
+          print('며칠 전: $daysBefore');
+
+          final key = '${notifDate}_$hour:$minute';
+
+          if (!uniqueNotifications.containsKey(key)) {
+            uniqueNotifications[key] = NotificationItem(
+              daysBefore: daysBefore,
+              time: TimeOfDay(hour: hour, minute: minute),
+            );
+            print('알람 추가됨: $daysBefore일 전, $hour:$minute');
+          }
+        } else {
+          print('알람 날짜 또는 시간이 null: date=$notifDate, time=$notifTimeStr');
+        }
+      }
+
+      _notifications = uniqueNotifications.values.toList();
+      print('최종 알람 개수: ${_notifications.length}');
+      print('========================================');
+
+    } catch (e) {
+      print('알람 로드 오류: $e');
+      print('========================================');
     }
   }
 
@@ -153,13 +259,11 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
         return;
       }
       
-      // 현재 년도와 학기 가져오기
-      final currentYear = DateTime.now().year.toString();
-      // 현재 달을 기준으로 학기 결정 (1-6월: 1학기, 7-12월: 2학기)
-      final currentMonth = DateTime.now().month;
-      final currentSemester = currentMonth <= 6 ? '1학기' : '2학기';
-      
-      print('현재 학기 정보: $currentYear년 $currentSemester');
+      // FFAppState에서 선택된 년도와 학기 가져오기
+      final currentYear = FFAppState().yearSelected;
+      final currentSemester = FFAppState().semesterSelected;
+
+      print('선택된 학기 정보: $currentYear년 $currentSemester');
       
       // 교수님이 담당하는 현재 학기의 수업만 가져오기
       final classes = await ClassTable().queryRows(
@@ -390,10 +494,48 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
             // 6. 알림
             _buildLabel('알림'),
             SizedBox(height: 10.0),
+            // 알림 목록 표시
+            if (_notifications.isNotEmpty)
+              Container(
+                padding: EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Column(
+                  children: _notifications.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final notification = entry.value;
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.notifications, color: Color(0xFF284E75), size: 20),
+                          SizedBox(width: 10.0),
+                          Expanded(
+                            child: Text(
+                              '${notification.daysBeforeText} - ${notification.timeText}',
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, size: 20, color: Colors.red),
+                            onPressed: () {
+                              setState(() {
+                                _notifications.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            if (_notifications.isNotEmpty)
+              SizedBox(height: 10.0),
             InkWell(
-              onTap: () {
-                // TODO: 알림 추가 기능
-              },
+              onTap: () => _showAddNotificationDialog(),
               child: Row(
                 children: [
                   Icon(Icons.add_circle_outline, color: Color(0xFF284E75)),
@@ -639,11 +781,69 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
                       }
                       
                       print('학생들에게 공유 완료');
-                      
+
+                      // 3. 알람 생성 (교수 + 학생들)
+                      if (_notifications.isNotEmpty) {
+                        print('알람 생성 시작: ${_notifications.length}개');
+
+                        // 알람을 받을 사람 목록 (교수 + 학생들)
+                        final recipients = <Map<String, dynamic>>[];
+
+                        // 교수 추가
+                        recipients.add({
+                          'email': professorEmail,
+                          'name': professorName,
+                          'user_type': 1, // professor
+                        });
+
+                        // 학생들 추가
+                        for (final student in students) {
+                          recipients.add({
+                            'email': student['stu_email'] ?? '',
+                            'name': student['name'] ?? '',
+                            'user_type': 2, // student
+                          });
+                        }
+
+                        // 각 알람 설정에 대해
+                        for (final notification in _notifications) {
+                          // 알람 날짜 계산
+                          final notificationDateTime = DateTime(
+                            _startDate.year,
+                            _startDate.month,
+                            _startDate.day,
+                            notification.time.hour,
+                            notification.time.minute,
+                          ).subtract(Duration(days: notification.daysBefore));
+
+                          final notificationDate = '${notificationDateTime.year}-${notificationDateTime.month.toString().padLeft(2, '0')}-${notificationDateTime.day.toString().padLeft(2, '0')}';
+                          final notificationTime = '${notification.time.hour.toString().padLeft(2, '0')}:${notification.time.minute.toString().padLeft(2, '0')}:00';
+
+                          // 각 수신자에게 알람 생성
+                          for (final recipient in recipients) {
+                            await SupaFlow.client.from('notifications').insert({
+                              'event_id': eventId,
+                              'recipient_email': recipient['email'],
+                              'recipient_name': recipient['name'],
+                              'user_type': recipient['user_type'],
+                              'notification_title': _titleController.text.trim(),
+                              'notification_content': _contentController.text.trim(),
+                              'notification_date': notificationDate,
+                              'notification_time': notificationTime,
+                              'is_read': false,
+                              'event_title': _titleController.text.trim(),
+                              'course_name': _selectedClass!.course,
+                            });
+                          }
+                        }
+
+                        print('알람 생성 완료');
+                      }
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(widget.eventId != null ? '일정이 수정되었습니다' : '일정이 등록되었습니다')),
                       );
-                      
+
                       // 캘린더 페이지로 돌아가며 새로고침 플래그 전달
                       Navigator.of(context).pop(true); // true를 전달하여 새로고침 필요 알림
                     } catch (e) {
@@ -707,5 +907,125 @@ class _CalendarDetailSimpleState extends State<CalendarDetailSimple> {
         color: Color(0xFF284E75),
       ),
     );
+  }
+
+  // 알림 추가 다이얼로그
+  void _showAddNotificationDialog() {
+    int selectedDaysBefore = 0; // 당일
+    TimeOfDay selectedTime = TimeOfDay(hour: 9, minute: 0);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text('알림 추가'),
+              content: Container(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('알림 시점', style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<int>(
+                      value: selectedDaysBefore,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: 0, child: Text('당일')),
+                        DropdownMenuItem(value: 1, child: Text('1일 전')),
+                        DropdownMenuItem(value: 2, child: Text('2일 전')),
+                        DropdownMenuItem(value: 3, child: Text('3일 전')),
+                        DropdownMenuItem(value: 7, child: Text('7일 전')),
+                      ],
+                      onChanged: (value) {
+                        setDialogState(() {
+                          selectedDaysBefore = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    Text('알림 시간', style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 10),
+                    InkWell(
+                      onTap: () async {
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: selectedTime,
+                        );
+                        if (time != null) {
+                          setDialogState(() {
+                            selectedTime = time;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time, size: 20.0),
+                            SizedBox(width: 10.0),
+                            Text('${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _notifications.add(NotificationItem(
+                        daysBefore: selectedDaysBefore,
+                        time: selectedTime,
+                      ));
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF284E75),
+                  ),
+                  child: Text('추가', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+// 알림 아이템 클래스
+class NotificationItem {
+  final int daysBefore; // 0: 당일, 1: 1일 전, 2: 2일 전, ...
+  final TimeOfDay time;
+
+  NotificationItem({
+    required this.daysBefore,
+    required this.time,
+  });
+
+  String get daysBeforeText {
+    if (daysBefore == 0) return '당일';
+    return '$daysBefore일 전';
+  }
+
+  String get timeText {
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 }

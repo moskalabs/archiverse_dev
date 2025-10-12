@@ -1,12 +1,16 @@
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/supabase/supabase.dart';
 import '/components/not_used_comps/notifications/notifications_widget.dart';
 import '/components/not_used_comps/user_menu/user_menu_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import 'dart:async';
 import 'package:badges/badges.dart' as badges;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:webviewx_plus/webviewx_plus.dart';
@@ -30,6 +34,7 @@ class StudentHeaderWidget extends StatefulWidget {
 
 class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
   late StudentHeaderModel _model;
+  Timer? _notificationTimer;
 
   @override
   void setState(VoidCallback callback) {
@@ -42,6 +47,20 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
     super.initState();
     _model = createModel(context, () => StudentHeaderModel());
 
+    // On component load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await _loadUnreadNotifications();
+      safeSetState(() {});
+    });
+
+    // 1분마다 알람을 자동으로 체크하는 타이머 시작
+    _notificationTimer = Timer.periodic(Duration(minutes: 1), (timer) async {
+      await _loadUnreadNotifications();
+      if (mounted) {
+        safeSetState(() {});
+      }
+    });
+
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
 
@@ -51,9 +70,44 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
+  // 읽지 않은 알람 개수 로드
+  Future<void> _loadUnreadNotifications() async {
+    try {
+      final userEmail = currentUserEmail;
+      if (userEmail == null || userEmail.isEmpty) {
+        print('[학생] 사용자 이메일 없음');
+        return;
+      }
+
+      // 오늘 날짜와 현재 시간
+      final now = DateTime.now();
+      final todayStr = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final currentTimeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+
+      print('[학생] 알람 로드 시작: email=$userEmail, date=$todayStr, time=$currentTimeStr');
+
+      // 오늘 날짜의 읽지 않은 알람 중 현재 시간이 지난 것만 가져오기
+      final notifications = await SupaFlow.client
+          .from('notifications')
+          .select()
+          .eq('recipient_email', userEmail)
+          .eq('notification_date', todayStr)
+          .eq('is_read', false)
+          .lte('notification_time', currentTimeStr);  // 현재 시간보다 이전 알람만
+
+      _model.unreadNotificationCount = (notifications as List).length;
+      print('[학생] 읽지 않은 알람: ${_model.unreadNotificationCount}개');
+
+    } catch (e) {
+      print('[학생] 알람 로드 오류: $e');
+      _model.unreadNotificationCount = 0;
+    }
+  }
+
   @override
   void dispose() {
     _model.maybeDispose();
+    _notificationTimer?.cancel();
 
     super.dispose();
   }
@@ -421,7 +475,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                             ),
                           ),
                         ),
-                      if (false)
+                      if (true)
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -453,9 +507,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                                 },
                                 child: badges.Badge(
                                   badgeContent: Text(
-                                    FFLocalizations.of(context).getText(
-                                      '4pmni21u' /* 3 */,
-                                    ),
+                                    '${_model.unreadNotificationCount}',
                                     textAlign: TextAlign.center,
                                     style: FlutterFlowTheme.of(context)
                                         .titleSmall
@@ -483,7 +535,7 @@ class _StudentHeaderWidgetState extends State<StudentHeaderWidget> {
                                                   .fontStyle,
                                         ),
                                   ),
-                                  showBadge: true,
+                                  showBadge: _model.unreadNotificationCount > 0,
                                   shape: badges.BadgeShape.circle,
                                   badgeColor:
                                       FlutterFlowTheme.of(context).tertiary,
