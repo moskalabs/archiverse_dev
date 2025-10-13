@@ -661,8 +661,8 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                 ),
               Flexible(
                 child: Container(
-                  width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: MediaQuery.sizeOf(context).height * 0.87,
+                  width: double.infinity,
+                  height: double.infinity,
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                     shape: BoxShape.rectangle,
@@ -682,12 +682,11 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                               tablet: false,
                             ))
                               Flexible(
+                                flex: 2,
                                 child: SafeArea(
                                   child: Container(
-                                    width:
-                                        MediaQuery.sizeOf(context).width * 0.38,
-                                    height: MediaQuery.sizeOf(context).height *
-                                        0.86,
+                                    width: double.infinity,
+                                    height: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
@@ -3361,16 +3360,18 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              SafeArea(
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width * 0.6,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.9,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                  ),
-                                  child: Stack(
+                              Flexible(
+                                flex: 5,
+                                child: SafeArea(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    alignment: AlignmentDirectional(-1.0, -1.0),
+                                    child: Stack(
                                     children: [
                                       Align(
                                         alignment:
@@ -7714,6 +7715,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   ),
                                 ),
                               ),
+                            ),
                             if ((((_model.courseBySelectOutputV.isNotEmpty) ==
                                         true) &&
                                     (_model.courseSelected2 == true)) &&
@@ -7721,16 +7723,18 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              SafeArea(
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width * 0.6,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.9,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                  ),
-                                  child: Stack(
+                              Flexible(
+                                flex: 5,
+                                child: SafeArea(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    alignment: AlignmentDirectional(-1.0, -1.0),
+                                    child: Stack(
                                     children: [
                                       Align(
                                         alignment:
@@ -9501,6 +9505,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   ),
                                 ),
                               ),
+                            ),
                             if ((((_model.courseSectionOutputV.isNotEmpty) ==
                                         true) &&
                                     (_model.courseSelected3 == true)) &&
@@ -9508,16 +9513,18 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              SafeArea(
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width * 0.6,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.9,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                  ),
-                                  child: Stack(
+                              Flexible(
+                                flex: 5,
+                                child: SafeArea(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    alignment: AlignmentDirectional(-1.0, -1.0),
+                                    child: Stack(
                                     children: [
                                       Align(
                                         alignment:
@@ -11288,6 +11295,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   ),
                                 ),
                               ),
+                            ),
                             if ((((_model.courseSectionOutputV.isNotEmpty) ==
                                         true) &&
                                     (_model.courseSelected4 == true)) &&
@@ -11295,16 +11303,18 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              SafeArea(
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width * 0.6,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.9,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                  ),
-                                  child: Stack(
+                              Flexible(
+                                flex: 5,
+                                child: SafeArea(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    alignment: AlignmentDirectional(-1.0, -1.0),
+                                    child: Stack(
                                     children: [
                                       Align(
                                         alignment:
@@ -13075,6 +13085,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   ),
                                 ),
                               ),
+                            ),
                           ],
                         ),
                       ),
