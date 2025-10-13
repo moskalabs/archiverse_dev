@@ -449,58 +449,6 @@ Widget buildResponsiveWrapper({
   return content;
 }
 
-bool responsiveVisibility({
-  required BuildContext context,
-  bool phone = true,
-  bool tablet = true,
-  bool tabletLandscape = true,
-  bool desktop = true,
-}) {
-  final width = MediaQuery.sizeOf(context).width;
-  final height = MediaQuery.sizeOf(context).height;
-  
-  // 호출 위치 추적
-  final stackTrace = StackTrace.current.toString();
-  final lineInfo = stackTrace.split('\n')[1]; // 호출한 위치 정보
-  
-  print('\n=== responsiveVisibility CALL ===');
-  print('크기: ${width}px x ${height}px');
-  print('조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
-  print('호출위치: $lineInfo');
-  
-  // 웹에서 가로 > 768px이면 데스크톱 레이아웃 강제
-  if (kIsWeb && width > 768) {
-    print('responsiveVisibility: 원래 조건: phone=$phone, tablet=$tablet, tabletLandscape=$tabletLandscape, desktop=$desktop');
-    
-    // 순수 데스크톱 전용 컴포너트만 표시
-    if (!phone) {
-      print('responsiveVisibility: 🚀🚀 순수 데스크톱 (phone=false) -> TRUE');
-      print('   이것이 진짜 데스크톱 UI일 가능성!');
-      return true;
-    }
-    
-    // phone=true 가 포함된 모든 컴포너트 숨김 (모바일/태블릿 형태)
-    if (phone) {
-      print('responsiveVisibility: 🚀📱 모바일/태블릿 컴포너트 (phone=true) 강제 숨김 -> FALSE');
-      print('   이것이 현재 보이는 모바일 형태 UI일 가능성!');
-      return false;
-    }
-    
-    print('responsiveVisibility: 🚀 기본 -> TRUE');
-    return true;
-  }
-  
-  // 진짜 모바일
-  final isTrueMobile = !kIsWeb || (width <= 768 && height <= 768);
-  if (isTrueMobile) {
-    print('responsiveVisibility: 진짜 모바일 -> returning $phone');
-    return phone;
-  }
-  
-  print('responsiveVisibility: 대체 경로 -> true');
-  return true;
-}
-
 // 반응형 레이아웃 헬퍼 함수들
 bool isDesktopWidth(BuildContext context) =>
     MediaQuery.sizeOf(context).width >= kCustomBreakpointTablet;
@@ -595,6 +543,100 @@ extension FFStringExt on String {
   }
 }
 
+// 텍스트 오버플로우 헬퍼 함수들
+TextStyle safeTextStyle(BuildContext context, TextStyle? style) {
+  final screenWidth = MediaQuery.sizeOf(context).width;
+  final baseFontSize = style?.fontSize ?? 14.0;
+  
+  // 화면 크기에 따른 더 적극적인 폰트 크기 조정
+  double adjustedFontSize;
+  if (screenWidth < 800) {
+    adjustedFontSize = baseFontSize * 0.6; // 40% 줄임
+  } else if (screenWidth < 1000) {
+    adjustedFontSize = baseFontSize * 0.7; // 30% 줄임
+  } else if (screenWidth < 1200) {
+    adjustedFontSize = baseFontSize * 0.8; // 20% 줄임
+  } else if (screenWidth < 1400) {
+    adjustedFontSize = baseFontSize * 0.9; // 10% 줄임
+  } else {
+    adjustedFontSize = baseFontSize; // 원본 크기
+  }
+  
+  return (style ?? TextStyle()).copyWith(
+    fontSize: adjustedFontSize,
+    overflow: TextOverflow.ellipsis,
+  );
+}
+
+// 안전한 텍스트 위젯
+Widget safeText(
+  String text, {
+  TextStyle? style,
+  int? maxLines,
+  TextAlign? textAlign,
+}) {
+  return Builder(
+    builder: (context) => Text(
+      text,
+      style: safeTextStyle(context, style),
+      maxLines: maxLines ?? 1,
+      overflow: TextOverflow.ellipsis,
+      textAlign: textAlign,
+    ),
+  );
+}
+
+// 안전한 Flexible 텍스트
+Widget safeFlexibleText(
+  String text, {
+  TextStyle? style,
+  int? maxLines,
+  TextAlign? textAlign,
+  int flex = 1,
+}) {
+  return Flexible(
+    flex: flex,
+    child: safeText(
+      text,
+      style: style,
+      maxLines: maxLines,
+      textAlign: textAlign,
+    ),
+  );
+}
+
+// 전역 오버플로우 방지 헬퍼
+Widget wrapSingleOverflowSafe(Widget widget) {
+  if (widget is Text) {
+    return Builder(
+      builder: (context) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        double fontSizeFactor = 1.0;
+        
+        // 가로 스크롤 상황에서 폰트 크기 적극 축소
+        if (screenWidth < 1400) {
+          fontSizeFactor = 0.7; // 30% 작게
+        }
+        
+        return Text(
+          widget.data ?? '',
+          style: (widget.style ?? TextStyle()).copyWith(
+            fontSize: (widget.style?.fontSize ?? 14.0) * fontSizeFactor,
+            overflow: TextOverflow.ellipsis,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: widget.textAlign,
+          textDirection: widget.textDirection,
+          softWrap: false,
+        );
+      },
+    );
+  }
+  
+  return widget;
+}
+
 extension ListFilterExt<T> on Iterable<T?> {
   List<T> get withoutNulls => where((s) => s != null).map((e) => e!).toList();
 }
@@ -635,6 +677,9 @@ extension ListDivideExt<T extends Widget> on Iterable<T> {
   List<Padding> paddingTopEach(double val) =>
       map((w) => Padding(padding: EdgeInsets.only(top: val), child: w))
           .toList();
+
+  // 오버플로우 방지 헬퍼
+  List<Widget> wrapOverflowSafe() => map((widget) => wrapSingleOverflowSafe(widget)).toList();
 }
 
 extension StatefulWidgetExtensions on State<StatefulWidget> {
@@ -668,6 +713,60 @@ void fixStatusBarOniOS16AndBelow(BuildContext context) {
 
 extension ColorOpacityExt on Color {
   Color applyAlpha(double val) => withValues(alpha: val);
+}
+
+// Row/Column 오버플로우 방지 확장
+extension SafeRowColumnExt on Widget {
+  Widget wrapSafeRow() {
+    if (this is Row) {
+      final row = this as Row;
+      return Builder(
+        builder: (context) {
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicWidth(
+              child: Row(
+                mainAxisSize: row.mainAxisSize,
+                mainAxisAlignment: row.mainAxisAlignment,
+                crossAxisAlignment: row.crossAxisAlignment,
+                textDirection: row.textDirection,
+                verticalDirection: row.verticalDirection,
+                textBaseline: row.textBaseline,
+                children: row.children.map(wrapSingleOverflowSafe).toList(),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    return this;
+  }
+  
+  Widget wrapSafeColumn() {
+    if (this is Column) {
+      final column = this as Column;
+      return Builder(
+        builder: (context) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisSize: column.mainAxisSize,
+                mainAxisAlignment: column.mainAxisAlignment,
+                crossAxisAlignment: column.crossAxisAlignment,
+                textDirection: column.textDirection,
+                verticalDirection: column.verticalDirection,
+                textBaseline: column.textBaseline,
+                children: column.children.map(wrapSingleOverflowSafe).toList(),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    return this;
+  }
 }
 
 String roundTo(double value, int decimalPoints) {
@@ -724,3 +823,59 @@ String getCurrentRoute(BuildContext context) =>
     context.mounted ? MyApp.of(context).getRoute() : '';
 List<String> getCurrentRouteStack(BuildContext context) =>
     context.mounted ? MyApp.of(context).getRouteStack() : [];
+
+bool responsiveVisibility({
+  required BuildContext context,
+  bool phone = true,
+  bool tablet = true,
+  bool tabletLandscape = true,
+  bool desktop = true,
+}) {
+  final width = MediaQuery.sizeOf(context).width;
+  final height = MediaQuery.sizeOf(context).height;
+  
+  // 웹에서 가로 > 768px이면 데스크톱 전용 컴포넌트만 표시
+  if (kIsWeb && width > 768) {
+    // phone=false인 데스크톱 컴포넌트만 표시 (사이드바, 헤더 등)
+    return !phone;
+  }
+  
+  // 진짜 모바일: 가로 AND 세로 둘 다 768px 이하
+  final isTrueMobile = !kIsWeb || (width <= 768 && height <= 768);
+  if (isTrueMobile) {
+    return phone;
+  }
+  
+  return true;
+}
+
+// 강제 데스크톱 모드 헬퍼
+bool isForceDesktopMode(BuildContext context) {
+  final width = MediaQuery.sizeOf(context).width;
+  return kIsWeb && width > 768;
+}
+
+// 동적 콘텐츠를 위한 강제 데스크톱 MediaQuery
+MediaQueryData forceDesktopMediaQuery(BuildContext context) {
+  final originalData = MediaQuery.of(context);
+  final screenWidth = originalData.size.width;
+  final screenHeight = originalData.size.height;
+  
+  // 웹에서 작은 화면일 때 가짜 큰 화면으로 속이기
+  if (kIsWeb && (screenWidth < 1400 || screenHeight < 800)) {
+    print('🚀 forceDesktopMediaQuery: ${screenWidth}x${screenHeight} -> 1500x1000으로 속이기');
+    return originalData.copyWith(
+      size: Size(1500.0, 1000.0),
+    );
+  }
+  
+  return originalData;
+}
+
+// 모든 동적 위젯을 위한 래퍼
+Widget wrapWithForceDesktop(BuildContext context, Widget child) {
+  return MediaQuery(
+    data: forceDesktopMediaQuery(context),
+    child: child,
+  );
+}

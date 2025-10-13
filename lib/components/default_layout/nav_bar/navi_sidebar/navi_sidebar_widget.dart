@@ -5,6 +5,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'navi_sidebar_model.dart';
 export 'navi_sidebar_model.dart';
 
@@ -63,15 +64,16 @@ class _NaviSidebarWidgetState extends State<NaviSidebarWidget> {
         child: AnimatedContainer(
           duration: Duration(milliseconds: 150),
           curve: Curves.easeInOut,
-          width: FFAppState().navOpen == true ? 230.0 : 72.0,
+          width: FFAppState().navOpen == true ? 230.0 : 90.0,
           height: double.infinity,
           constraints: BoxConstraints(
             minWidth: 90.0,
-            maxWidth: 290.0,
+            maxWidth: 230.0,
           ),
           decoration: BoxDecoration(
             color: Color(0xFF284E75),
           ),
+          clipBehavior: Clip.hardEdge,
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
             child: Column(

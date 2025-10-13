@@ -46,7 +46,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         child: BarChart(
           BarChartData(
             alignment: BarChartAlignment.center,
-            maxY: 8, // 최대값 8로 설정
+            maxY: 100, // 최대값 100% (15주 = 100%)
             minY: 0,
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
@@ -100,7 +100,7 @@ class _ChartWidgetState extends State<ChartWidget> {
               show: true,
               drawVerticalLine: true,
               drawHorizontalLine: true,
-              horizontalInterval: 1,
+              horizontalInterval: 20, // 20% 간격으로 그리드 표시
               getDrawingHorizontalLine: (value) {
                 return FlLine(
                   color: Colors.grey.withOpacity(0.2),

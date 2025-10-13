@@ -1,5 +1,4 @@
 import '/backend/supabase/supabase.dart';
-import '/components/layout/responsive_layout_wrapper/responsive_layout_wrapper_widget.dart';
 import '/components/submit_searched/submit_searched_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -102,20 +101,18 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        body: ResponsiveLayoutWrapperWidget(
-          child: Column(
+        body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-              width: double.infinity,
+              width: MediaQuery.sizeOf(context).width * 1.0,
               height: 50.0,
               decoration: BoxDecoration(
                 color: Color(0xFFEEF1F6),
                 shape: BoxShape.rectangle,
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start, // 헤더 왼쪽 정렬
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (responsiveVisibility(
                     context: context,
@@ -2374,17 +2371,8 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 ),
                                                                                           );
                                                                                           _model.progressSubject = _model.progressoutput1!.length;
+                                                                                          safeSetState(() {});
 
-                                                                                          // Calculate chart data: percentage per student (15 weeks = 100%)
-                                                                                          final students = _model.progressoutput1!.map((e) => e.studentName).whereType<String>().toSet().toList();
-                                                                                          _model.chartDataParam = List.filled(15, 0);
-                                                                                          for (int i = 0; i < students.length && i < 15; i++) {
-                                                                                            final studentName = students[i];
-                                                                                            final submittedCount = _model.progressoutput1!
-                                                                                                .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
-                                                                                                .length;
-                                                                                            _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
-                                                                                          }
                                                                                           safeSetState(() {});
                                                                                         },
                                                                                         child: AnimatedDefaultTextStyle(
@@ -3292,17 +3280,8 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   ),
                                                                                             );
                                                                                             _model.progressSubject = _model.progressoutput2!.length;
+                                                                                            safeSetState(() {});
 
-                                                                                            // Calculate chart data: percentage per student (15 weeks = 100%)
-                                                                                            final students2 = _model.progressoutput2!.map((e) => e.studentName).whereType<String>().toSet().toList();
-                                                                                            _model.chartDataParam = List.filled(15, 0);
-                                                                                            for (int i = 0; i < students2.length && i < 15; i++) {
-                                                                                              final studentName = students2[i];
-                                                                                              final submittedCount = _model.progressoutput2!
-                                                                                                  .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
-                                                                                                  .length;
-                                                                                              _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
-                                                                                            }
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
@@ -3864,17 +3843,8 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   ),
                                                                                             );
                                                                                             _model.progressSubject = _model.progressoutput3!.length;
+                                                                                            safeSetState(() {});
 
-                                                                                            // Calculate chart data: percentage per student (15 weeks = 100%)
-                                                                                            final students3 = _model.progressoutput3!.map((e) => e.studentName).whereType<String>().toSet().toList();
-                                                                                            _model.chartDataParam = List.filled(15, 0);
-                                                                                            for (int i = 0; i < students3.length && i < 15; i++) {
-                                                                                              final studentName = students3[i];
-                                                                                              final submittedCount = _model.progressoutput3!
-                                                                                                  .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
-                                                                                                  .length;
-                                                                                              _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
-                                                                                            }
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
@@ -4402,34 +4372,28 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                               context: context,
                               phone: false,
                             ))
-                          Expanded(
-                            child: SafeArea(
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return Container(
-                                    width: double.infinity,
-                                    height: MediaQuery.sizeOf(context).height * 0.93,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                    ),
-                                  child: Stack(
+                          SafeArea(
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width * 0.76,
+                              height: MediaQuery.sizeOf(context).height * 0.93,
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                              ),
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 10.0, 0.0, 0.0),
-                                              child: SafeArea(
-                                                child: Container(
-                                                  width: constraints.maxWidth,
-                                                  height: MediaQuery.sizeOf(context)
-                                                      .height *
-                                                  0.18,
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 10.0, 0.0, 0.0),
+                                        child: SafeArea(
+                                          child: Container(
+                                            width: 450.0,
+                                            height: 200.0,
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -4620,8 +4584,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                         3))),
                                                             0.0,
                                                           ),
-                                                          width:
-                                                              constraints.maxWidth * 0.95,
+                                                          width: 400.0,
                                                           lineHeight: 25.0,
                                                           animation: true,
                                                           animateFromLastPercent:
@@ -4778,21 +4741,15 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                           ),
                                         ),
                                       ),
-                                            Padding(
-                                              padding: EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 5.0, 0.0, 0.0),
-                                              child: Container(
-                                                width: constraints.maxWidth,
-                                                height: MediaQuery.sizeOf(context)
-                                                    .height *
-                                                0.72,
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 5.0, 0.0, 0.0),
+                                        child: Container(
+                                          width: 450.0,
+                                          height: 200.0,                                                  .height *
+                                              400.0 / MediaQuery.sizeOf(context).width,
                                           decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
+                                            color: FlutterFlowTheme.of(context)                                            crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               if ((_model.classAfterCourse
@@ -4801,7 +4758,10 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                   (_model.courseSelected! >= 0))
                                                 Flexible(
                                                   child: Container(
-                                                    width: double.infinity,
+                                                    width: MediaQuery.sizeOf(
+                                                                context)
+                                                            .width *
+                                                        0.25,
                                                     height: MediaQuery.sizeOf(
                                                                 context)
                                                             .height *
@@ -5398,7 +5358,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5534,7 +5494,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5680,7 +5640,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5816,7 +5776,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -5962,7 +5922,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -6097,7 +6057,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7223,7 +7183,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7358,7 +7318,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7503,7 +7463,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7638,7 +7598,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7783,7 +7743,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -7918,7 +7878,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9046,7 +9006,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9181,7 +9141,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9326,7 +9286,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9461,7 +9421,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9606,7 +9566,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -9741,7 +9701,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                               ),
                                                                                               color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                              fontSize: 12.0,
+                                                                                              fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -10246,14 +10206,11 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                         ),
                                       ),
                                     ],
-                                  )),
+                                  ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                            ),
+                          ),
                       ],
                     ),
                     Stack(
@@ -15667,7 +15624,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -15789,7 +15746,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -15918,7 +15875,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -16039,7 +15996,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -16168,7 +16125,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -16288,7 +16245,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17211,7 +17168,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17333,7 +17290,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17462,7 +17419,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17584,7 +17541,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17714,7 +17671,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -17836,7 +17793,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -18761,7 +18718,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -18883,7 +18840,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -19013,7 +18970,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -19135,7 +19092,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -19265,7 +19222,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -19387,7 +19344,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                                   ),
                                                                                                                   color: FlutterFlowTheme.of(context).secondaryText,
-                                                                                                                  fontSize: 12.0,
+                                                                                                                  fontSize: 10.0,
                                                                                                                   letterSpacing: 0.0,
                                                                                                                   fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -20102,7 +20059,6 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
           ],
         ),
       ),
-        ),
     );
   }
 }

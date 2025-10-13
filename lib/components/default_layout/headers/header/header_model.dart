@@ -10,6 +10,9 @@ class HeaderModel extends FlutterFlowModel<HeaderWidget> {
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
 
+  // 알람 개수
+  int unreadNotificationCount = 0;
+
   @override
   void initState(BuildContext context) {}
 

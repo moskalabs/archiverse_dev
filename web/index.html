@@ -51,18 +51,35 @@
       overflow: auto !important;
     }
     
-    /* 데스크톱/태블릿에서 1400px 미만일 때 가로 스크롤 */
+    /* 데스크톱/태블릿에서 1400px 미만일 때 강제 1400px 고정 */
     @media screen and (min-width: 769px) and (max-width: 1399px) {
-      body, html, flt-platform-view, .flt-scene-host {
+      /* 강제 1400px 고정 */
+      body, html {
+        width: 1400px !important;
         min-width: 1400px !important;
+        max-width: 1400px !important;
         overflow-x: scroll !important;
-        background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(255,0,0,0.3)) !important;
+        background: rgba(255,0,0,0.2) !important;
       }
       
-      /* 모든 컴포너트 강제 표시 */
-      .hidden, [style*="display: none"], [style*="display:none"] {
-        display: block !important;
-        visibility: visible !important;
+      /* Flutter 컨테이너 강제 1400px */
+      flt-platform-view, .flt-scene-host {
+        width: 1400px !important;
+        min-width: 1400px !important;
+        max-width: 1400px !important;
+      }
+      
+      /* 모든 컴포너트를 1400px 너비로 제한 */
+      * {
+        max-width: 1400px !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* 텍스트 오버플로우 방지 */
+      flt-semantics {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
       }
     }
     
@@ -75,6 +92,15 @@
       
       body {
         overflow-y: auto !important;
+      }
+    }
+    
+    /* 동적 콘텐츠도 왼쪽 정렬 강제 */
+    @media screen and (min-width: 769px) and (max-width: 1399px) {
+      flt-semantics {
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        text-align: left !important;
       }
     }
   </style>

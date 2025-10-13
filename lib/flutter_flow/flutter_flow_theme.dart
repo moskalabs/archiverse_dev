@@ -315,13 +315,13 @@ class ThemeTypography extends Typography {
 
   String get displayLargeFamily => 'Open Sans';
   bool get displayLargeIsCustom => false;
-  TextStyle get displayLarge => GoogleFonts.openSans();
+  TextStyle get displayLarge => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get displayMediumFamily => 'Open Sans';
   bool get displayMediumIsCustom => false;
-  TextStyle get displayMedium => GoogleFonts.openSans();
+  TextStyle get displayMedium => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get displaySmallFamily => 'Open Sans';
   bool get displaySmallIsCustom => false;
-  TextStyle get displaySmall => GoogleFonts.openSans();
+  TextStyle get displaySmall => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get headlineLargeFamily => 'Open Sans';
   bool get headlineLargeIsCustom => false;
   TextStyle get headlineLarge => GoogleFonts.openSans();
@@ -333,31 +333,31 @@ class ThemeTypography extends Typography {
   TextStyle get headlineSmall => GoogleFonts.openSans();
   String get titleLargeFamily => 'Open Sans';
   bool get titleLargeIsCustom => false;
-  TextStyle get titleLarge => GoogleFonts.openSans();
+  TextStyle get titleLarge => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get titleMediumFamily => 'Open Sans';
   bool get titleMediumIsCustom => false;
-  TextStyle get titleMedium => GoogleFonts.openSans();
+  TextStyle get titleMedium => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get titleSmallFamily => 'Open Sans';
   bool get titleSmallIsCustom => false;
-  TextStyle get titleSmall => GoogleFonts.openSans();
+  TextStyle get titleSmall => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get labelLargeFamily => 'Open Sans';
   bool get labelLargeIsCustom => false;
-  TextStyle get labelLarge => GoogleFonts.openSans();
+  TextStyle get labelLarge => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get labelMediumFamily => 'Open Sans';
   bool get labelMediumIsCustom => false;
-  TextStyle get labelMedium => GoogleFonts.openSans();
+  TextStyle get labelMedium => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get labelSmallFamily => 'Open Sans';
   bool get labelSmallIsCustom => false;
-  TextStyle get labelSmall => GoogleFonts.openSans();
+  TextStyle get labelSmall => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get bodyLargeFamily => 'Open Sans';
   bool get bodyLargeIsCustom => false;
-  TextStyle get bodyLarge => GoogleFonts.openSans();
+  TextStyle get bodyLarge => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get bodyMediumFamily => 'Open Sans';
   bool get bodyMediumIsCustom => false;
-  TextStyle get bodyMedium => GoogleFonts.openSans();
+  TextStyle get bodyMedium => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
   String get bodySmallFamily => 'Open Sans';
   bool get bodySmallIsCustom => false;
-  TextStyle get bodySmall => GoogleFonts.openSans();
+  TextStyle get bodySmall => GoogleFonts.openSans().copyWith(overflow: TextOverflow.ellipsis);
 }
 
 extension TextStyleHelper on TextStyle {
@@ -381,7 +381,7 @@ extension TextStyleHelper on TextStyle {
           fontStyle: fontStyle ?? this.fontStyle);
     }
 
-    return font != null
+    final result = font != null
         ? font.copyWith(
             color: color ?? this.color,
             fontSize: fontSize ?? this.fontSize,
@@ -391,6 +391,7 @@ extension TextStyleHelper on TextStyle {
             decoration: decoration,
             height: lineHeight,
             shadows: shadows,
+            overflow: TextOverflow.ellipsis, // 오버플로우 처리 추가
           )
         : copyWith(
             fontFamily: fontFamily,
@@ -403,6 +404,9 @@ extension TextStyleHelper on TextStyle {
             decoration: decoration,
             height: lineHeight,
             shadows: shadows,
+            overflow: TextOverflow.ellipsis, // 오버플로우 처리 추가
           );
+    
+    return result;
   }
 }

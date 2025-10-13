@@ -36,6 +36,12 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
     super.initState();
     _model = createModel(context, () => CalendarDetailModel());
 
+    print('========================================');
+    print('===== CalendarDetailWidget initState =====');
+    print('widget.date: ${widget.date}');
+    print('widget.eventId: ${widget.eventId}');
+    print('========================================');
+
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
@@ -48,6 +54,20 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+
+    // GoRouter의 queryParameters 가져오기
+    final uri = GoRouterState.of(context).uri;
+    final date = uri.queryParameters['date'] ?? widget.date;
+    final eventId = uri.queryParameters['eventId'] ?? widget.eventId;
+
+    print('========================================');
+    print('===== CalendarDetailWidget build =====');
+    print('URI queryParameters: ${uri.queryParameters}');
+    print('date from query: ${uri.queryParameters['date']}');
+    print('eventId from query: ${uri.queryParameters['eventId']}');
+    print('final date: $date');
+    print('final eventId: $eventId');
+    print('========================================');
 
     return GestureDetector(
       onTap: () {
@@ -112,7 +132,7 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                                     ),
                                     SizedBox(width: 15.0),
                                     Text(
-                                      widget.eventId != null ? '일정 수정' : '일정 등록',
+                                      eventId != null && eventId.isNotEmpty ? '일정 수정' : '일정 등록',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -135,10 +155,10 @@ class _CalendarDetailWidgetState extends State<CalendarDetailWidget> {
                               // 캘린더 디테일 컨텐츠
                               Expanded(
                                 child: CalendarDetailSimple(
-                                  selectedDate: widget.date != null 
-                                      ? DateTime.tryParse(widget.date!) 
+                                  selectedDate: date != null
+                                      ? DateTime.tryParse(date)
                                       : null,
-                                  eventId: widget.eventId,
+                                  eventId: eventId,
                                 ),
                               ),
                             ],

@@ -20,7 +20,7 @@ void main() async {
 
   await SupaFlow.initialize();
 
-  final appState = FFAppState(); // Initialize FFAppState
+  final appState = FFAppState();
   await appState.initializePersistedState();
 
   runApp(ChangeNotifierProvider(
@@ -30,7 +30,6 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
@@ -48,11 +47,10 @@ class MyAppScrollBehavior extends MaterialScrollBehavior {
 
 class _MyAppState extends State<MyApp> {
   Locale? _locale;
-
   ThemeMode _themeMode = ThemeMode.system;
-
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
+  
   String getRoute([RouteMatch? routeMatch]) {
     final RouteMatch lastMatch =
         routeMatch ?? _router.routerDelegate.currentConfiguration.last;
@@ -124,89 +122,31 @@ class _MyAppState extends State<MyApp> {
         final screenWidth = MediaQuery.sizeOf(context).width;
         final screenHeight = MediaQuery.sizeOf(context).height;
         
-        print('\n\n🚀 === MAIN APP BUILDER CALLED ===');
-        print('🚀 화면: ${screenWidth}px x ${screenHeight}px');
-        print('🚀 kIsWeb: $kIsWeb');
+        print('🚀 MAIN: ${screenWidth}px x ${screenHeight}px');
         
-        // 모바일 기준: 가로 AND 세로 둘 다 768px 이하
-        final isMobile = !kIsWeb || (screenWidth <= 768 && screenHeight <= 768);
-        print('🚀 MAIN: 모바일 체크 - 가로:${screenWidth}px <= 768? ${screenWidth <= 768}, 세로:${screenHeight}px <= 768? ${screenHeight <= 768}');
-        print('🚀 MAIN: 최종 모바일 판단: $isMobile');
-        
-        if (isMobile) {
-          print('🚀 MAIN: 모바일 모드 - 그대로 전달');
+        // 모바일
+        if (!kIsWeb || (screenWidth <= 768 && screenHeight <= 768)) {
           return child;
         }
         
-        // 데스크톱/태블릿 모드: 고정 레이아웃 처리
+        // 스크롤 필요 여부 판단
         final needsHScroll = screenWidth < 1400;
         final needsVScroll = screenHeight < 800;
-        print('MAIN: 스크롤 필요 - 가로:$needsHScroll, 세로:$needsVScroll');
         
-        // 가로와 세로 둘 다 스크롤 필요
+        print('🚀 스크롤: 가로=$needsHScroll, 세로=$needsVScroll');
+        
+        // 가로 + 세로 둘 다 스크롤
         if (needsHScroll && needsVScroll) {
-          print('MAIN: 가로+세로 스크롤 모두 적용! (${screenWidth}x${screenHeight} -> 1400x800)');
-          return Material(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: AlwaysScrollableScrollPhysics(),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  width: 1400.0,
-                  height: 800.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.purple, width: 3), // 보라색 = 둘 다 스크롤
-                  ),
-                  child: child,
-                ),
-              ),
-            ),
-          );
-        }
-        // 가로 스크롤만 필요
-        else if (needsHScroll) {
-          print('🚀 MAIN: 가로 스크롤만 적용! (${screenWidth}px < 1400px)');
-          return Material(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Container(
-                width: 1400.0,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red, width: 4),
-                  color: Colors.red.withOpacity(0.1),
-                ),
-                child: MediaQuery(
-                  // 내부 모든 컴포너트들에게 가짜 데스크톱 크기 알려주기
-                  data: MediaQuery.of(context).copyWith(
-                    size: Size(1500.0, 1000.0), // 가짜 큰 크기
-                  ),
-                  child: child,
-                ),
-              ),
-            ),
-          );
-        }
-        // 세로 스크롤만 필요
-        else if (needsVScroll) {
-          print('🚀 MAIN: 세로 스크롤만 적용! (${screenHeight}px < 800px)');
-          return Material(
+          print('🚀 보라: 가로+세로 1400x800 고정');
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Container(
+              child: SizedBox(
+                width: 1400.0,
                 height: 800.0,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green, width: 4),
-                  color: Colors.green.withOpacity(0.1),
-                ),
                 child: MediaQuery(
-                  // 내부 모든 컴포너트들에게 가짜 데스크톱 크기 알려주기
-                  data: MediaQuery.of(context).copyWith(
-                    size: Size(1500.0, 1000.0), // 가짜 큰 크기
-                  ),
+                  data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
                   child: child,
                 ),
               ),
@@ -214,7 +154,47 @@ class _MyAppState extends State<MyApp> {
           );
         }
         
-        print('MAIN: 반응형 모드');
+        // 가로 스크롤만
+        if (needsHScroll) {
+          print('🚀 빨간: 가로 1400px 고정');
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: 1400.0,
+              child: Builder(
+                builder: (innerContext) {
+                  print('🚀 강력한 MediaQuery 오버라이드 적용');
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      size: Size(1500.0, 1000.0),
+                      devicePixelRatio: 1.0,
+                      textScaleFactor: 1.0, // 텍스트 스케일 고정
+                      padding: EdgeInsets.zero,
+                      viewInsets: EdgeInsets.zero,
+                    ),
+                    child: child,
+                  );
+                },
+              ),
+            ),
+          );
+        }
+        
+        // 세로 스크롤만
+        if (needsVScroll) {
+          print('🚀 초록: 세로 800px 고정');
+          return SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SizedBox(
+              height: 800.0,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(size: Size(1500.0, 1000.0)),
+                child: child,
+              ),
+            ),
+          );
+        }
+        
         return child;
       },
     );
