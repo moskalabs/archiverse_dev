@@ -35,6 +35,48 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Get unique student names from subject submit list
+  List<String> _getUniqueStudentNames() {
+    return _model.subjectSubmitList
+        .map((e) => e.studentName)
+        .withoutNulls
+        .toSet()
+        .toList();
+  }
+
+  // Helper functions for midterm/final results
+  String _getMidtermSubmitStatus(String studentName) {
+    final result = _model.midtermResults?.firstWhere(
+      (r) => r.studentName == studentName,
+      orElse: () => MidtermResultsRow({}),
+    );
+    return (result?.url != null && result!.url!.isNotEmpty) ? '제출' : '-';
+  }
+
+  String _getMidtermGrade(String studentName) {
+    final result = _model.midtermResults?.firstWhere(
+      (r) => r.studentName == studentName,
+      orElse: () => MidtermResultsRow({}),
+    );
+    return result?.portpolioresult ?? '-';
+  }
+
+  String _getFinalSubmitStatus(String studentName) {
+    final result = _model.finalResults?.firstWhere(
+      (r) => r.studentName == studentName,
+      orElse: () => FinalResultsRow({}),
+    );
+    return (result?.url != null && result!.url!.isNotEmpty) ? '제출' : '-';
+  }
+
+  String _getFinalGrade(String studentName) {
+    final result = _model.finalResults?.firstWhere(
+      (r) => r.studentName == studentName,
+      orElse: () => FinalResultsRow({}),
+    );
+    return result?.portpolioresult ?? '-';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -116,6 +158,31 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
       FFAppState().mypageImageUrl = valueOrDefault<String>(
         _model.professorForImage?.firstOrNull?.pfrImageurl,
         'https://ygagwsshehmtfqlkjwmv.supabase.co/storage/v1/object/public/profileimage/myprofile/1739097345656000.jpg',
+      );
+      safeSetState(() {});
+
+      // Load midterm and final results
+      _model.midtermResults = await MidtermResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull(
+              'professor_name',
+              FFAppState().professorNameSelected,
+            )
+            .eqOrNull(
+              'class',
+              FFAppState().classSelectedID,
+            ),
+      );
+      _model.finalResults = await FinalResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull(
+              'professor_name',
+              FFAppState().professorNameSelected,
+            )
+            .eqOrNull(
+              'class',
+              FFAppState().classSelectedID,
+            ),
       );
       safeSetState(() {});
     });
@@ -394,7 +461,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                             child:
                                                                                 Builder(
                                                                               builder: (context) {
-                                                                                final subjecSubmittByStudent = _model.subjectSubmitList.map((e) => e.studentName).withoutNulls.toList();
+                                                                                final subjecSubmittByStudent = _model.subjectSubmitList.map((e) => e.studentName).withoutNulls.toSet().toList();
 
                                                                                 return FlutterFlowDataTable<String>(
                                                                                   controller: _model.paginatedDataTableController1,
@@ -468,10 +535,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '1';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'd2r3igbv' /* 2주차 */,
@@ -508,10 +572,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '2';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               '9qhprh1m' /* 3주차 */,
@@ -548,10 +609,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '3';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               's95pto9w' /* 4주차 */,
@@ -588,10 +646,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '4';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               '7e768w40' /* 5주차 */,
@@ -628,10 +683,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '5';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'b2fsewy9' /* 6주차 */,
@@ -668,10 +720,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '6';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               '3ktsjz0s' /* 7주차 */,
@@ -708,10 +757,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '7';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'm3hqwbcc' /* 8주차 */,
@@ -748,10 +794,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '8';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'sbq33gts' /* 9주차 */,
@@ -788,10 +831,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '9';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               '5dzproh2' /* 10주차 */,
@@ -829,10 +869,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '10';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'ewxery0r' /* 11주차 */,
@@ -870,10 +907,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '11';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'u391u86o' /* 12주차 */,
@@ -911,10 +945,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '12';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'zxrhyb05' /* 13주차 */,
@@ -952,10 +983,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '13';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'u730ae3j' /* 14주차 */,
@@ -993,10 +1021,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                           focusColor: Colors.transparent,
                                                                                           hoverColor: Colors.transparent,
                                                                                           highlightColor: Colors.transparent,
-                                                                                          onTap: () async {
-                                                                                            _model.imageLoadByWeeks = '14';
-                                                                                            safeSetState(() {});
-                                                                                          },
+                                                                                          onTap: null, // Disabled
                                                                                           child: Text(
                                                                                             FFLocalizations.of(context).getText(
                                                                                               'xuuy45r6' /* 15주차 */,
@@ -1796,7 +1821,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 ),
                                                                                                 child: Text(
                                                                                                   valueOrDefault<String>(
-                                                                                                    _model.subjectSubmitList.elementAtOrNull(0)?.studentName,
+                                                                                                    _getUniqueStudentNames().elementAtOrNull(0),
                                                                                                     '학생',
                                                                                                   ),
                                                                                                   textAlign: TextAlign.center,
@@ -1845,7 +1870,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               ),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
-                                                                                                  _model.subjectSubmitList.elementAtOrNull(1)?.studentName,
+                                                                                                  _getUniqueStudentNames().elementAtOrNull(1),
                                                                                                   '학생',
                                                                                                 ),
                                                                                                 textAlign: TextAlign.center,
@@ -1893,7 +1918,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               ),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
-                                                                                                  _model.subjectSubmitList.elementAtOrNull(2)?.studentName,
+                                                                                                  _getUniqueStudentNames().elementAtOrNull(2),
                                                                                                   '학생',
                                                                                                 ),
                                                                                                 textAlign: TextAlign.center,
@@ -1941,7 +1966,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               ),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
-                                                                                                  _model.subjectSubmitList.elementAtOrNull(3)?.studentName,
+                                                                                                  _getUniqueStudentNames().elementAtOrNull(3),
                                                                                                   '학생',
                                                                                                 ),
                                                                                                 textAlign: TextAlign.center,
@@ -1995,7 +2020,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               ),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
-                                                                                                  _model.subjectSubmitList.elementAtOrNull(4)?.studentName,
+                                                                                                  _getUniqueStudentNames().elementAtOrNull(4),
                                                                                                   '학생',
                                                                                                 ),
                                                                                                 textAlign: TextAlign.center,
@@ -2045,7 +2070,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Text(
                                                                                                   valueOrDefault<String>(
-                                                                                                    _model.subjectSubmitList.elementAtOrNull(5)?.studentName,
+                                                                                                    _getUniqueStudentNames().elementAtOrNull(5),
                                                                                                     '학생',
                                                                                                   ),
                                                                                                   textAlign: TextAlign.center,
@@ -2096,7 +2121,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Text(
                                                                                                   valueOrDefault<String>(
-                                                                                                    _model.subjectSubmitList.elementAtOrNull(6)?.studentName,
+                                                                                                    _getUniqueStudentNames().elementAtOrNull(0),
                                                                                                     '학생',
                                                                                                   ),
                                                                                                   textAlign: TextAlign.center,
@@ -2149,9 +2174,9 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Text(
                                                                                                     valueOrDefault<String>(
-                                                                                                      _model.subjectSubmitList.elementAtOrNull(7)?.studentName,
-                                                                                                      '학생',
-                                                                                                    ),
+                                                                                                    _getUniqueStudentNames().elementAtOrNull(1),
+                                                                                                    '학생',
+                                                                                                  ),
                                                                                                     textAlign: TextAlign.center,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                           font: GoogleFonts.openSans(
@@ -2366,8 +2391,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'wikm77g6' /* - */,
+                                                                                                        _getMidtermSubmitStatus(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2405,8 +2430,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '9gy10g5p' /* - */,
+                                                                                                        _getMidtermGrade(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3303,8 +3328,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'l1v5j8fz' /* - */,
+                                                                                                        _getFinalSubmitStatus(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3342,8 +3367,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'gzo56451' /* - */,
+                                                                                                        _getFinalGrade(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5819,7 +5844,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                         ),
                                                                                         child: Builder(
                                                                                           builder: (context) {
-                                                                                            final subjecSubmittByStudent = _model.subjectSubmitList.map((e) => e.studentName).withoutNulls.toList();
+                                                                                            final subjecSubmittByStudent = _model.subjectSubmitList.map((e) => e.studentName).withoutNulls.toSet().toList();
 
                                                                                             return FlutterFlowDataTable<String>(
                                                                                               controller: _model.paginatedDataTableController2,
@@ -6093,11 +6118,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '6';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'pb0nc64x' /* 7주차 */,
                                                                                                         ),
@@ -6133,11 +6155,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '7';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'e5s3qu03' /* 8주차 */,
                                                                                                         ),
@@ -6173,11 +6192,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '8';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'jccz0hvd' /* 9주차 */,
                                                                                                         ),
@@ -6213,11 +6229,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '9';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           '4geys6t2' /* 10주차 */,
                                                                                                         ),
@@ -6254,11 +6267,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '10';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'sekec2y8' /* 11주차 */,
                                                                                                         ),
@@ -6295,11 +6305,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '11';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'ba4gsnay' /* 12주차 */,
                                                                                                         ),
@@ -6336,11 +6343,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '12';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'c4j3dkt6' /* 13주차 */,
                                                                                                         ),
@@ -6377,11 +6381,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '13';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           'ynt3cb95' /* 14주차 */,
                                                                                                         ),
@@ -6418,11 +6419,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                       focusColor: Colors.transparent,
                                                                                                       hoverColor: Colors.transparent,
                                                                                                       highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        _model.imageLoadByWeeks = '14';
-                                                                                                        safeSetState(() {});
-                                                                                                      },
-                                                                                                      child: Text(
+                                                                                                      onTap: null, // Disabled
+                                                                                          child: Text(
                                                                                                         FFLocalizations.of(context).getText(
                                                                                                           '0tg9xhdf' /* 15주차 */,
                                                                                                         ),
@@ -7208,7 +7206,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                 child: Text(
                                                                                                                   valueOrDefault<String>(
-                                                                                                                    _model.subjectSubmitList.elementAtOrNull(0)?.studentName,
+                                                                                                                    _getUniqueStudentNames().elementAtOrNull(0),
                                                                                                                     '학생',
                                                                                                                   ),
                                                                                                                   textAlign: TextAlign.center,
@@ -7260,7 +7258,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(1)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(1),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7311,7 +7309,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(2)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(2),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7362,7 +7360,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(3)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(3),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7419,7 +7417,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(4)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(4),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7470,7 +7468,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(5)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(5),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7521,7 +7519,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
                                                                                                                 valueOrDefault<String>(
-                                                                                                                  _model.subjectSubmitList.elementAtOrNull(6)?.studentName,
+                                                                                                                  _getUniqueStudentNames().elementAtOrNull(6),
                                                                                                                   '학생',
                                                                                                                 ),
                                                                                                                 textAlign: TextAlign.center,
@@ -7574,9 +7572,9 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                 child: Text(
                                                                                                                   valueOrDefault<String>(
-                                                                                                                    _model.subjectSubmitList.elementAtOrNull(7)?.studentName,
-                                                                                                                    '학생',
-                                                                                                                  ),
+                                                                                                    _getUniqueStudentNames().elementAtOrNull(1),
+                                                                                                    '학생',
+                                                                                                  ),
                                                                                                                   textAlign: TextAlign.center,
                                                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                         font: GoogleFonts.openSans(

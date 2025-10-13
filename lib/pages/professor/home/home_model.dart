@@ -67,6 +67,10 @@ class HomeModel extends FlutterFlowModel<HomeWidget> {
   List<SubjectportpolioRow>? subjectOutput;
   // Stores action output result for [Backend Call - Query Rows] action in Home widget.
   List<ProfessorMyprofileRow>? professorForImage;
+  // Stores action output result for [Backend Call - Query Rows] action in Home widget.
+  List<MidtermResultsRow>? midtermResults;
+  // Stores action output result for [Backend Call - Query Rows] action in Home widget.
+  List<FinalResultsRow>? finalResults;
   // Model for NaviSidebar component.
   late NaviSidebarModel naviSidebarModel;
   // Model for Header component.
