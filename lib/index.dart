@@ -81,3 +81,5 @@ export '/pages/admin/submissions/admin_portfolio/admin_portfolio_widget.dart'
 export '/pages/admin/account_management/admin_account_manage/admin_account_manage_widget.dart'
     show AdminAccountManageWidget;
 export '/test_drawers/test_drawers_widget.dart' show TestDrawersWidget;
+export '/pages/demo/model_viewer/model_viewer_widget.dart'
+    show ModelViewerWidget;

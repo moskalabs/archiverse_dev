@@ -439,6 +439,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: TestDrawersWidget.routeName,
           path: TestDrawersWidget.routePath,
           builder: (context, params) => TestDrawersWidget(),
+        ),
+        FFRoute(
+          name: ModelViewerWidget.routeName,
+          path: ModelViewerWidget.routePath,
+          builder: (context, params) => ModelViewerWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
