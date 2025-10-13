@@ -2374,8 +2374,17 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                 ),
                                                                                           );
                                                                                           _model.progressSubject = _model.progressoutput1!.length;
-                                                                                          safeSetState(() {});
 
+                                                                                          // Calculate chart data: percentage per student (15 weeks = 100%)
+                                                                                          final students = _model.progressoutput1!.map((e) => e.studentName).whereType<String>().toSet().toList();
+                                                                                          _model.chartDataParam = List.filled(15, 0);
+                                                                                          for (int i = 0; i < students.length && i < 15; i++) {
+                                                                                            final studentName = students[i];
+                                                                                            final submittedCount = _model.progressoutput1!
+                                                                                                .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
+                                                                                                .length;
+                                                                                            _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
+                                                                                          }
                                                                                           safeSetState(() {});
                                                                                         },
                                                                                         child: AnimatedDefaultTextStyle(
@@ -3283,8 +3292,17 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   ),
                                                                                             );
                                                                                             _model.progressSubject = _model.progressoutput2!.length;
-                                                                                            safeSetState(() {});
 
+                                                                                            // Calculate chart data: percentage per student (15 weeks = 100%)
+                                                                                            final students2 = _model.progressoutput2!.map((e) => e.studentName).whereType<String>().toSet().toList();
+                                                                                            _model.chartDataParam = List.filled(15, 0);
+                                                                                            for (int i = 0; i < students2.length && i < 15; i++) {
+                                                                                              final studentName = students2[i];
+                                                                                              final submittedCount = _model.progressoutput2!
+                                                                                                  .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
+                                                                                                  .length;
+                                                                                              _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
+                                                                                            }
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
@@ -3846,8 +3864,17 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   ),
                                                                                             );
                                                                                             _model.progressSubject = _model.progressoutput3!.length;
-                                                                                            safeSetState(() {});
 
+                                                                                            // Calculate chart data: percentage per student (15 weeks = 100%)
+                                                                                            final students3 = _model.progressoutput3!.map((e) => e.studentName).whereType<String>().toSet().toList();
+                                                                                            _model.chartDataParam = List.filled(15, 0);
+                                                                                            for (int i = 0; i < students3.length && i < 15; i++) {
+                                                                                              final studentName = students3[i];
+                                                                                              final submittedCount = _model.progressoutput3!
+                                                                                                  .where((e) => e.studentName == studentName && e.criticHtml != null && e.criticHtml!.isNotEmpty)
+                                                                                                  .length;
+                                                                                              _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
+                                                                                            }
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(

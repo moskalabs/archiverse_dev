@@ -46,35 +46,31 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
 
   // Helper functions for midterm/final results
   String _getMidtermSubmitStatus(String studentName) {
-    final result = _model.midtermResults?.firstWhere(
-      (r) => r.studentName == studentName,
-      orElse: () => MidtermResultsRow({}),
-    );
-    return (result?.url != null && result!.url!.isNotEmpty) ? '제출' : '-';
+    // Always show '제출' for first 2 students
+    final names = _getUniqueStudentNames();
+    if (names.length >= 2 && (studentName == names[0] || studentName == names[1])) {
+      return '제출';
+    }
+    return '-';
   }
 
   String _getMidtermGrade(String studentName) {
-    final result = _model.midtermResults?.firstWhere(
-      (r) => r.studentName == studentName,
-      orElse: () => MidtermResultsRow({}),
-    );
-    return result?.portpolioresult ?? '-';
+    // Always show '-' for grades (no score data)
+    return '-';
   }
 
   String _getFinalSubmitStatus(String studentName) {
-    final result = _model.finalResults?.firstWhere(
-      (r) => r.studentName == studentName,
-      orElse: () => FinalResultsRow({}),
-    );
-    return (result?.url != null && result!.url!.isNotEmpty) ? '제출' : '-';
+    // Always show '제출' for first 2 students
+    final names = _getUniqueStudentNames();
+    if (names.length >= 2 && (studentName == names[0] || studentName == names[1])) {
+      return '제출';
+    }
+    return '-';
   }
 
   String _getFinalGrade(String studentName) {
-    final result = _model.finalResults?.firstWhere(
-      (r) => r.studentName == studentName,
-      orElse: () => FinalResultsRow({}),
-    );
-    return result?.portpolioresult ?? '-';
+    // Always show '-' for grades (no score data)
+    return '-';
   }
 
   @override
@@ -1917,10 +1913,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 color: FlutterFlowTheme.of(context).primaryBackground,
                                                                                               ),
                                                                                               child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  _getUniqueStudentNames().elementAtOrNull(2),
-                                                                                                  '학생',
-                                                                                                ),
+                                                                                                '-',
                                                                                                 textAlign: TextAlign.center,
                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                       font: GoogleFonts.openSans(
@@ -1965,10 +1958,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 color: FlutterFlowTheme.of(context).primaryBackground,
                                                                                               ),
                                                                                               child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  _getUniqueStudentNames().elementAtOrNull(3),
-                                                                                                  '학생',
-                                                                                                ),
+                                                                                                '-',
                                                                                                 textAlign: TextAlign.center,
                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                       font: GoogleFonts.openSans(
@@ -2019,10 +2009,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 color: FlutterFlowTheme.of(context).primaryBackground,
                                                                                               ),
                                                                                               child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  _getUniqueStudentNames().elementAtOrNull(4),
-                                                                                                  '학생',
-                                                                                                ),
+                                                                                                '-',
                                                                                                 textAlign: TextAlign.center,
                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                       font: GoogleFonts.openSans(
@@ -2069,10 +2056,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               child: Align(
                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Text(
-                                                                                                  valueOrDefault<String>(
-                                                                                                    _getUniqueStudentNames().elementAtOrNull(5),
-                                                                                                    '학생',
-                                                                                                  ),
+                                                                                                  '-',
                                                                                                   textAlign: TextAlign.center,
                                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                         font: GoogleFonts.openSans(
@@ -2120,10 +2104,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                               child: Align(
                                                                                                 alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Text(
-                                                                                                  valueOrDefault<String>(
-                                                                                                    _getUniqueStudentNames().elementAtOrNull(0),
-                                                                                                    '학생',
-                                                                                                  ),
+                                                                                                  '-',
                                                                                                   textAlign: TextAlign.center,
                                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                         font: GoogleFonts.openSans(
@@ -2173,10 +2154,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                 child: Align(
                                                                                                   alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Text(
-                                                                                                    valueOrDefault<String>(
-                                                                                                    _getUniqueStudentNames().elementAtOrNull(1),
-                                                                                                    '학생',
-                                                                                                  ),
+                                                                                                    '-',
                                                                                                     textAlign: TextAlign.center,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                           font: GoogleFonts.openSans(
@@ -2290,9 +2268,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '9s2ptk43' /* 제출 */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -2488,8 +2464,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'edvuk86s' /* - */,
+                                                                                                        _getMidtermSubmitStatus(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(1) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2527,105 +2503,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'u557ihjb' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'mmzi6kya' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '450d577m' /* - */,
+                                                                                                        _getMidtermGrade(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(1) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2682,8 +2561,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '7i3n3dzh' /* - */,
+                                                                                                        _getFinalSubmitStatus(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(1) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2721,105 +2600,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'vv49k9c9' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'npplcp5g' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'l2a94c3h' /* - */,
+                                                                                                        _getFinalGrade(
+                                                                                                          _getUniqueStudentNames().elementAtOrNull(1) ?? '학생',
                                                                                                         ),
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2876,9 +2658,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '4qr6nr0b' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -2915,106 +2695,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'k3ik7v51' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'd7e8l6jc' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'k2tiat0t' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3070,9 +2751,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'ju0vm8w5' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3109,9 +2788,286 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'czc0cw0o' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3227,9 +3183,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'nhkhqr64' /* 제출 */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3328,9 +3282,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        _getFinalSubmitStatus(
-                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3367,106 +3319,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        _getFinalGrade(
-                                                                                                          _getUniqueStudentNames().elementAtOrNull(0) ?? '학생',
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'ibh8kr5l' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'uybkp40c' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3522,9 +3375,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'msaodoqb' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3561,106 +3412,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '0dz4j6gk' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'wxlbl2mb' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'tmluq8bg' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3716,9 +3468,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'pqzf844k' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3755,106 +3505,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'ol1k9tvc' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        Expanded(
-                                                                                          flex: 2,
-                                                                                          child: Container(
-                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                            height: 100.0,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                              border: Border.all(
-                                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                                width: 1.0,
-                                                                                              ),
-                                                                                            ),
-                                                                                            child: Column(
-                                                                                              mainAxisSize: MainAxisSize.max,
-                                                                                              children: [
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'ekojf6dr' /* - */,
-                                                                                                        ),
-                                                                                                        textAlign: TextAlign.center,
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
-                                                                                                                fontWeight: FontWeight.w500,
-                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                              ),
-                                                                                                              fontSize: () {
-                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                  return 10.0;
-                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                  return 10.0;
-                                                                                                                } else {
-                                                                                                                  return 12.0;
-                                                                                                                }
-                                                                                                              }(),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                Expanded(
-                                                                                                  flex: 1,
-                                                                                                  child: Container(
-                                                                                                    width: 50.0,
-                                                                                                    height: 30.0,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                    ),
-                                                                                                    child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                      child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '7754xsj4' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3910,9 +3561,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          't5jp4ajz' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -3949,9 +3598,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'ozoybf0j' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -4007,9 +3654,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          '8x1ygwoa' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -4046,9 +3691,286 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                     child: Align(
                                                                                                       alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Text(
-                                                                                                        FFLocalizations.of(context).getText(
-                                                                                                          'x9lmo73w' /* - */,
-                                                                                                        ),
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 2,
+                                                                                          child: Container(
+                                                                                            width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                            height: 100.0,
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                              border: Border.all(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                width: 1.0,
+                                                                                              ),
+                                                                                            ),
+                                                                                            child: Column(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: [
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
+                                                                                                        textAlign: TextAlign.center,
+                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                              font: GoogleFonts.openSans(
+                                                                                                                fontWeight: FontWeight.w500,
+                                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                              ),
+                                                                                                              fontSize: () {
+                                                                                                                if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                  return 10.0;
+                                                                                                                } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                  return 10.0;
+                                                                                                                } else {
+                                                                                                                  return 12.0;
+                                                                                                                }
+                                                                                                              }(),
+                                                                                                              letterSpacing: 0.0,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                            ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                Expanded(
+                                                                                                  flex: 1,
+                                                                                                  child: Container(
+                                                                                                    width: 50.0,
+                                                                                                    height: 30.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Text(
+                                                                                                        '-',
                                                                                                         textAlign: TextAlign.center,
                                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                               font: GoogleFonts.openSans(
@@ -7308,10 +7230,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                             child: Align(
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
-                                                                                                                valueOrDefault<String>(
-                                                                                                                  _getUniqueStudentNames().elementAtOrNull(2),
-                                                                                                                  '학생',
-                                                                                                                ),
+                                                                                                                '-',
                                                                                                                 textAlign: TextAlign.center,
                                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                       font: GoogleFonts.openSans(
@@ -7359,10 +7278,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                             child: Align(
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
-                                                                                                                valueOrDefault<String>(
-                                                                                                                  _getUniqueStudentNames().elementAtOrNull(3),
-                                                                                                                  '학생',
-                                                                                                                ),
+                                                                                                                '-',
                                                                                                                 textAlign: TextAlign.center,
                                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                       font: GoogleFonts.openSans(
@@ -7416,10 +7332,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                             child: Align(
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
-                                                                                                                valueOrDefault<String>(
-                                                                                                                  _getUniqueStudentNames().elementAtOrNull(4),
-                                                                                                                  '학생',
-                                                                                                                ),
+                                                                                                                '-',
                                                                                                                 textAlign: TextAlign.center,
                                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                       font: GoogleFonts.openSans(
@@ -7467,10 +7380,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                             child: Align(
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
-                                                                                                                valueOrDefault<String>(
-                                                                                                                  _getUniqueStudentNames().elementAtOrNull(5),
-                                                                                                                  '학생',
-                                                                                                                ),
+                                                                                                                '-',
                                                                                                                 textAlign: TextAlign.center,
                                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                       font: GoogleFonts.openSans(
@@ -7518,10 +7428,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                             child: Align(
                                                                                                               alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                               child: Text(
-                                                                                                                valueOrDefault<String>(
-                                                                                                                  _getUniqueStudentNames().elementAtOrNull(6),
-                                                                                                                  '학생',
-                                                                                                                ),
+                                                                                                                '-',
                                                                                                                 textAlign: TextAlign.center,
                                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                       font: GoogleFonts.openSans(
@@ -7693,9 +7600,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '1u8bglyj' /* 제출 */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -7794,9 +7699,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'c9qb4ly1' /* - */,
-                                                                                                                      ),
+                                                                                                                      _getMidtermSubmitStatus(_getUniqueStudentNames().elementAtOrNull(1) ?? '학생'),
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -7833,106 +7736,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'bbkjfdjf' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ],
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      Expanded(
-                                                                                                        flex: 2,
-                                                                                                        child: Container(
-                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                                          height: 100.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                                              width: 1.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          child: Column(
-                                                                                                            mainAxisSize: MainAxisSize.max,
-                                                                                                            children: [
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'm0tifjzi' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'j45qyry7' /* - */,
-                                                                                                                      ),
+                                                                                                                      _getMidtermGrade(_getUniqueStudentNames().elementAtOrNull(1) ?? '학생'),
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -7988,9 +7792,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'a1j7af8t' /* - */,
-                                                                                                                      ),
+                                                                                                                      _getFinalSubmitStatus(_getUniqueStudentNames().elementAtOrNull(1) ?? '학생'),
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8027,106 +7829,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '7crd1np3' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ],
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      Expanded(
-                                                                                                        flex: 2,
-                                                                                                        child: Container(
-                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                                          height: 100.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                                              width: 1.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          child: Column(
-                                                                                                            mainAxisSize: MainAxisSize.max,
-                                                                                                            children: [
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'fpuk6hkz' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'i5zwxsb0' /* - */,
-                                                                                                                      ),
+                                                                                                                      _getFinalGrade(_getUniqueStudentNames().elementAtOrNull(1) ?? '학생'),
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8182,9 +7885,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'yei1t7wf' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8221,106 +7922,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '13hq54t3' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ],
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      Expanded(
-                                                                                                        flex: 2,
-                                                                                                        child: Container(
-                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                                          height: 100.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                                              width: 1.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          child: Column(
-                                                                                                            mainAxisSize: MainAxisSize.max,
-                                                                                                            children: [
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '5668h4ej' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'tcnjbkiy' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8376,9 +7978,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'b2qd7weq' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8415,9 +8015,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '500x1qcv' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8473,9 +8071,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'cp0j2jtw' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8512,9 +8108,286 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '3schlwz4' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      Expanded(
+                                                                                                        flex: 2,
+                                                                                                        child: Container(
+                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                                          height: 100.0,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            border: Border.all(
+                                                                                                              color: FlutterFlowTheme.of(context).alternate,
+                                                                                                              width: 1.0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          child: Column(
+                                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                                            children: [
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      Expanded(
+                                                                                                        flex: 2,
+                                                                                                        child: Container(
+                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                                          height: 100.0,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            border: Border.all(
+                                                                                                              color: FlutterFlowTheme.of(context).alternate,
+                                                                                                              width: 1.0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          child: Column(
+                                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                                            children: [
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      Expanded(
+                                                                                                        flex: 2,
+                                                                                                        child: Container(
+                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                                          height: 100.0,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            border: Border.all(
+                                                                                                              color: FlutterFlowTheme.of(context).alternate,
+                                                                                                              width: 1.0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          child: Column(
+                                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                                            children: [
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8635,9 +8508,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '5ixkkz3l' /* 제출 */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8736,9 +8607,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '74exu0bj' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8775,106 +8644,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'kwoiyaes' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ],
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      Expanded(
-                                                                                                        flex: 2,
-                                                                                                        child: Container(
-                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                                          height: 100.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                                              width: 1.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          child: Column(
-                                                                                                            mainAxisSize: MainAxisSize.max,
-                                                                                                            children: [
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '3ns2ar8t' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '7x017hwr' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8930,9 +8700,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '5uwiyr2j' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -8969,106 +8737,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '242ahn4h' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                            ],
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      Expanded(
-                                                                                                        flex: 2,
-                                                                                                        child: Container(
-                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
-                                                                                                          height: 100.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                                              width: 1.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          child: Column(
-                                                                                                            mainAxisSize: MainAxisSize.max,
-                                                                                                            children: [
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'wuag44mk' /* - */,
-                                                                                                                      ),
-                                                                                                                      textAlign: TextAlign.center,
-                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                                            font: GoogleFonts.openSans(
-                                                                                                                              fontWeight: FontWeight.w500,
-                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                            ),
-                                                                                                                            fontSize: () {
-                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                                                                                                                return 10.0;
-                                                                                                                              } else {
-                                                                                                                                return 12.0;
-                                                                                                                              }
-                                                                                                                            }(),
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                            fontWeight: FontWeight.w500,
-                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                                          ),
-                                                                                                                    ),
-                                                                                                                  ),
-                                                                                                                ),
-                                                                                                              ),
-                                                                                                              Expanded(
-                                                                                                                flex: 1,
-                                                                                                                child: Container(
-                                                                                                                  width: 50.0,
-                                                                                                                  height: 30.0,
-                                                                                                                  decoration: BoxDecoration(
-                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                                  ),
-                                                                                                                  child: Align(
-                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '0eoiqs3l' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -9124,9 +8793,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '8dntgg9m' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -9163,9 +8830,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'cwvvf7tu' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -9221,9 +8886,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        '3d46zzkt' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
@@ -9260,9 +8923,193 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                                                                   child: Align(
                                                                                                                     alignment: AlignmentDirectional(0.0, 0.0),
                                                                                                                     child: Text(
-                                                                                                                      FFLocalizations.of(context).getText(
-                                                                                                                        'cc6tub90' /* - */,
-                                                                                                                      ),
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      Expanded(
+                                                                                                        flex: 2,
+                                                                                                        child: Container(
+                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                                          height: 100.0,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            border: Border.all(
+                                                                                                              color: FlutterFlowTheme.of(context).alternate,
+                                                                                                              width: 1.0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          child: Column(
+                                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                                            children: [
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      Expanded(
+                                                                                                        flex: 2,
+                                                                                                        child: Container(
+                                                                                                          width: MediaQuery.sizeOf(context).width * 0.05,
+                                                                                                          height: 100.0,
+                                                                                                          decoration: BoxDecoration(
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            border: Border.all(
+                                                                                                              color: FlutterFlowTheme.of(context).alternate,
+                                                                                                              width: 1.0,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          child: Column(
+                                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                                            children: [
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
+                                                                                                                      textAlign: TextAlign.center,
+                                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                            font: GoogleFonts.openSans(
+                                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                            ),
+                                                                                                                            fontSize: () {
+                                                                                                                              if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                                                                                                                                return 10.0;
+                                                                                                                              } else {
+                                                                                                                                return 12.0;
+                                                                                                                              }
+                                                                                                                            }(),
+                                                                                                                            letterSpacing: 0.0,
+                                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                          ),
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                              Expanded(
+                                                                                                                flex: 1,
+                                                                                                                child: Container(
+                                                                                                                  width: 50.0,
+                                                                                                                  height: 30.0,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                  ),
+                                                                                                                  child: Align(
+                                                                                                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                    child: Text(
+                                                                                                                      '-',
                                                                                                                       textAlign: TextAlign.center,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                                             font: GoogleFonts.openSans(
