@@ -1,0 +1,29 @@
+# Flutter/Dart/Pub
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Build
+build/
+
+# iOS
+ios/Pods/
+ios/.generated/
+
+# Android
+android/.gradle/
+android/app/build/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Mac
+.DS_Store
+
+# FVM Version Cache
+.fvm/

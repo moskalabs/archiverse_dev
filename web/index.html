@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    Alternatively, build your application passing the --base-href parameter
+    specifying the new root path of your web app.
+
+    Fore more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Real Estate Dashboard UI Kit">
+
+  
+
+  
+
+  <!-- Favicon -->
+  <link rel="icon" href="archiverse_vertical.png" sizes="any"/>
+  
+
+  <!-- Open Graph & SEO tags -->
+  <meta property="og:title" content="archiverse" />
+  <meta property="og:description" content="archiverse Test Version_1.36" />
+  <meta property="og:image" content="/assets/assets/images/archiverse_vertical.png" /> 
+  <meta name="twitter:title" content="archiverse" />
+  <meta name="twitter:description" content="archiverse Test Version_1.36" />
+  <meta name="twitter:image" content="/assets/assets/images/archiverse_vertical.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <title> archiverse </title>
+  <meta name="description" content="archiverse Test Version_1.36" />
+  
+  <!-- 반응형 레이아웃 CSS -->
+  <style>
+    /* 전역 스크롤 설정 */
+    html, body {
+      overflow: auto !important;
+    }
+    
+    /* 데스크톱/태블릿에서 1400px 미만일 때 가로 스크롤 */
+    @media screen and (min-width: 769px) and (max-width: 1399px) {
+      body, html, flt-platform-view, .flt-scene-host {
+        min-width: 1400px !important;
+        overflow-x: scroll !important;
+        background: linear-gradient(45deg, rgba(255,0,0,0.1), rgba(255,0,0,0.3)) !important;
+      }
+      
+      /* 모든 컴포너트 강제 표시 */
+      .hidden, [style*="display: none"], [style*="display:none"] {
+        display: block !important;
+        visibility: visible !important;
+      }
+    }
+    
+    /* 세로 800px 미만일 때 세로 스크롤 */
+    @media screen and (max-height: 799px) and (min-width: 768px) {
+      flt-platform-view, .flt-scene-host {
+        min-height: 800px !important;
+        overflow-y: auto !important;
+      }
+      
+      body {
+        overflow-y: auto !important;
+      }
+    }
+  </style>
+    
+
+  <!-- Status Bar color in Safari browser (iOS) and PWA -->
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#ffffff">
+
+  <link rel="manifest" href="manifest.json">
+  
+</head>
+<body>
+  
+  
+    <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'></script>
+  <script type='module'>
+  var { pdfjsLib } = globalThis;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs';
+
+  var pdfRenderOptions = {
+    cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/cmaps/',
+    cMapPacked: true,
+  }
+  </script>
+        
+  
+  
+  <script>
+    {{flutter_bootstrap_js}}
+  </script>
+</body>
+</html>
