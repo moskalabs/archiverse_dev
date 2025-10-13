@@ -147,7 +147,7 @@ class FFAppState extends ChangeNotifier {
               .getStringList('ff_degreeTextField')
               ?.map((x) {
                 try {
-                  return DegreeTextFieldStruct.fromSerializablrp(
+                  return DegreeTextFieldStruct.fromSerializableMap(
                       jsonDecode(x));
                 } catch (e) {
                   print("Can't decode persisted data type. Error: $e.");

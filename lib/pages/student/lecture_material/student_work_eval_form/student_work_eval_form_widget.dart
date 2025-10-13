@@ -43,30 +43,13 @@ class _StudentWorkEvalFormWidgetState extends State<StudentWorkEvalFormWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      // 디버깅: 쿼리 조건 확인
-      print('StudentWorkEvalForm - Query conditions:');
-      print('  classSelectedID: ${FFAppState().classSelectedID}');
-      print('  sectionSelected: "${FFAppState().sectionSelected}"');
-
+      // class 번호로만 조회 (분반은 class ID 자체에 구분되어 있음)
       _model.workevalrow = await WorkevalformTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'class',
-              FFAppState().classSelectedID,
-            )
-            .eqOrNull(
-              'section',
-              FFAppState().sectionSelected,
-            ),
+        queryFn: (q) => q.eqOrNull(
+          'class',
+          FFAppState().classSelectedID,
+        ),
       );
-
-      // 디버깅: 쿼리 결과 확인
-      print('StudentWorkEvalForm - Query results:');
-      print('  Found ${_model.workevalrow?.length ?? 0} rows');
-      if (_model.workevalrow != null && _model.workevalrow!.isNotEmpty) {
-        print('  First row section: "${_model.workevalrow!.first.section}"');
-        print('  First row class: ${_model.workevalrow!.first.classField}');
-      }
 
       _model.workEvalList = _model.workevalrow?.firstOrNull;
       safeSetState(() {});

@@ -35,16 +35,65 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
     
     // 웹에서만 작동
     print('-> WEB MODE: 고정 레이아웃 적용');
-    
-    // 1400px 미만: 가로 스크롤 강제
-    if (screenWidth < 1400) {
-      print('-> 🚀 빨간색 가로 스크롤 강제 적용! (${screenWidth}px < 1400px)');
+
+    // 가로/세로 스크롤 필요 여부를 독립적으로 판단
+    final bool needHorizontalScroll = screenWidth < 1400;
+    final bool needVerticalScroll = screenHeight < 800;
+
+    print('가로 스크롤 필요: $needHorizontalScroll (${screenWidth}px < 1400px)');
+    print('세로 스크롤 필요: $needVerticalScroll (${screenHeight}px < 800px)');
+
+    // 둘 다 스크롤 필요
+    if (needHorizontalScroll && needVerticalScroll) {
+      print('-> 🚀 가로+세로 양방향 스크롤 적용!');
       print('=== ResponsiveLayoutWrapper END ===\n');
-      
+
       return Container(
         width: double.infinity,
         height: double.infinity,
-        color: Colors.orange.withOpacity(0.3), // 주황색 배경으로 감싸서 확인
+        color: Colors.purple.withOpacity(0.3),
+        child: Scrollbar(
+          thumbVisibility: true,
+          trackVisibility: true,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Scrollbar(
+              thumbVisibility: true,
+              trackVisibility: true,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  width: 1400.0,
+                  height: 800.0,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.purple, width: 5),
+                    color: Colors.purple.withOpacity(0.1),
+                  ),
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      size: Size(1400.0, 800.0),
+                    ),
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 가로만 스크롤 필요
+    if (needHorizontalScroll) {
+      print('-> 🚀 가로 스크롤만 적용! (${screenWidth}px < 1400px)');
+      print('=== ResponsiveLayoutWrapper END ===\n');
+
+      return Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.orange.withOpacity(0.3),
         child: Scrollbar(
           thumbVisibility: true,
           trackVisibility: true,
@@ -59,9 +108,8 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
                 color: Colors.red.withOpacity(0.1),
               ),
               child: MediaQuery(
-                // 내부 컴포너트들에게 가짜 데스크톱 크기를 알려주기
                 data: MediaQuery.of(context).copyWith(
-                  size: Size(1400.0, 1000.0), // 가짜 큰 크기
+                  size: Size(1400.0, screenHeight),
                 ),
                 child: child,
               ),
@@ -70,16 +118,16 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
         ),
       );
     }
-    
-    // 800px 미만: 세로 스크롤 강제
-    if (screenHeight < 800) {
-      print('-> 🚀 초록색 세로 스크롤 강제 적용! (${screenHeight}px < 800px)');
+
+    // 세로만 스크롤 필요
+    if (needVerticalScroll) {
+      print('-> 🚀 세로 스크롤만 적용! (${screenHeight}px < 800px)');
       print('=== ResponsiveLayoutWrapper END ===\n');
-      
+
       return Container(
         width: double.infinity,
         height: double.infinity,
-        color: Colors.yellow.withOpacity(0.3), // 노란색 배경으로 감싸서 확인
+        color: Colors.yellow.withOpacity(0.3),
         child: Scrollbar(
           thumbVisibility: true,
           trackVisibility: true,
@@ -94,9 +142,8 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
                 color: Colors.green.withOpacity(0.1),
               ),
               child: MediaQuery(
-                // 내부 컴포너트들에게 가짜 데스크톱 크기를 알려주기
                 data: MediaQuery.of(context).copyWith(
-                  size: Size(1500.0, 1000.0), // 가짜 큰 크기
+                  size: Size(screenWidth, 800.0),
                 ),
                 child: child,
               ),
@@ -105,8 +152,8 @@ class ResponsiveLayoutWrapperWidget extends StatelessWidget {
         ),
       );
     }
-    
-    print('-> RESPONSIVE MODE: 스크롤 없음');
+
+    print('-> RESPONSIVE MODE: 스크롤 없음 (${screenWidth}px x ${screenHeight}px)');
     print('=== ResponsiveLayoutWrapper END ===\n');
     return child;
   }

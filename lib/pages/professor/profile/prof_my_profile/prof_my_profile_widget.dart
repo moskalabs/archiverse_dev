@@ -1483,9 +1483,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
               Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEEF1F6),
-                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1525,9 +1522,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                             child: Container(
                               width: double.infinity,
                               height: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEEF1F6),
-                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -5920,9 +5914,6 @@ class _ProfMyProfileWidgetState extends State<ProfMyProfileWidget> {
                 Container(
                   width: MediaQuery.sizeOf(context).width * 1.0,
                   height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFEEF1F6),
-                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [

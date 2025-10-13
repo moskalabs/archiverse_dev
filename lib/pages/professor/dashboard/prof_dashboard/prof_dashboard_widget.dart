@@ -4377,29 +4377,32 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                             ))
                           Expanded(
                             child: SafeArea(
-                              child: Container(
-                                width: double.infinity,
-                                height: MediaQuery.sizeOf(context).height * 0.93,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                ),
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Container(
+                                    width: double.infinity,
+                                    height: MediaQuery.sizeOf(context).height * 0.93,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                  child: Stack(
                                     children: [
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 10.0, 0.0, 0.0),
-                                        child: SafeArea(
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: MediaQuery.sizeOf(context)
-                                                    .height *
-                                                0.18,
+                                      SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 10.0, 0.0, 0.0),
+                                              child: SafeArea(
+                                                child: Container(
+                                                  width: constraints.maxWidth,
+                                                  height: MediaQuery.sizeOf(context)
+                                                      .height *
+                                                  0.18,
                                             decoration: BoxDecoration(
                                               color:
                                                   FlutterFlowTheme.of(context)
@@ -4591,7 +4594,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                             0.0,
                                                           ),
                                                           width:
-                                                              double.infinity,
+                                                              constraints.maxWidth * 0.95,
                                                           lineHeight: 25.0,
                                                           animation: true,
                                                           animateFromLastPercent:
@@ -4748,16 +4751,14 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                           ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
-                                        child: Container(
-                                          width:
-                                              MediaQuery.sizeOf(context).width *
-                                                  0.75,
-                                          height: MediaQuery.sizeOf(context)
-                                                  .height *
-                                              0.72,
+                                            Padding(
+                                              padding: EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 5.0, 0.0, 0.0),
+                                              child: Container(
+                                                width: constraints.maxWidth,
+                                                height: MediaQuery.sizeOf(context)
+                                                    .height *
+                                                0.72,
                                           decoration: BoxDecoration(
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
@@ -4773,10 +4774,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                   (_model.courseSelected! >= 0))
                                                 Flexible(
                                                   child: Container(
-                                                    width: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
-                                                        0.25,
+                                                    width: double.infinity,
                                                     height: MediaQuery.sizeOf(
                                                                 context)
                                                             .height *
@@ -10221,11 +10219,14 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  )),
                                 ],
                               ),
-                            ),
-                          ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                       ],
                     ),
                     Stack(

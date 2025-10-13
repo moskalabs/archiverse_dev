@@ -164,10 +164,6 @@ class _WorkEvalUploadPopUpWidgetState extends State<WorkEvalUploadPopUpWidget> {
                                     'class',
                                     FFAppState().classSelectedID,
                                   )
-                                  .eqOrNull(
-                                    'section',
-                                    FFAppState().sectionSelected,
-                                  )
                                   .order('id', ascending: true),
                             );
                             if (_model.workevalcheck?.firstOrNull == null) {
@@ -689,7 +685,6 @@ class _WorkEvalUploadPopUpWidgetState extends State<WorkEvalUploadPopUpWidget> {
                               _model.emptyinsert =
                                   await WorkevalformTable().insert({
                                 'class': FFAppState().classSelectedID,
-                                'section': FFAppState().sectionSelected,
                                 'title': _model.richtext,
                                 'url': FFAppState().workEvalUploadFileURL,
                               });
