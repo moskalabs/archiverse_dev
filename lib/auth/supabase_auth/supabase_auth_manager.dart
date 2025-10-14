@@ -18,6 +18,7 @@ class SupabaseAuthManager extends AuthManager with EmailSignInManager {
     final appState = FFAppState();
     await appState.clearUserScopedState();
     appState.lastLoggedInUserId = '';
+    appState.loginTimestamp = ''; // 로그인 시간 초기화
   }
 
   @override
@@ -149,6 +150,8 @@ class SupabaseAuthManager extends AuthManager with EmailSignInManager {
           await appState.clearUserScopedState();
         }
         appState.lastLoggedInUserId = newUserId;
+        // 로그인 시간 저장 (30분 후 자동 로그아웃 체크용)
+        appState.loginTimestamp = DateTime.now().toIso8601String();
         currentUser = authUser;
         AppStateNotifier.instance.update(authUser);
       }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,8 @@ class _MyAppState extends State<MyApp> {
           .map((e) => getRoute(e))
           .toList();
   late Stream<BaseAuthUser> userStream;
+  Timer? _sessionTimer;
+  DateTime? _lastActivityTime;
 
   @override
   void initState() {
@@ -75,12 +78,88 @@ class _MyAppState extends State<MyApp> {
     userStream = realEstateDashboardUIKitSupabaseUserStream()
       ..listen((user) {
         _appStateNotifier.update(user);
+
+        // 로그인 시 30분 idle 타이머 시작
+        if (user.loggedIn) {
+          _startSessionTimer();
+        } else {
+          _cancelSessionTimer();
+        }
       });
     jwtTokenStream.listen((_) {});
     Future.delayed(
       Duration(milliseconds: 1000),
       () => _appStateNotifier.stopShowingSplashImage(),
     );
+  }
+
+  void _resetActivityTimer() {
+    final appState = FFAppState();
+    _lastActivityTime = DateTime.now();
+    appState.loginTimestamp = _lastActivityTime!.toIso8601String();
+
+    // 타이머 재시작
+    _cancelSessionTimer();
+    _sessionTimer = Timer(Duration(minutes: 30), () async {
+      print('🔒 30분 비활성 - 자동 로그아웃');
+      await authManager.signOut();
+      _router.go('/loginPage');
+    });
+  }
+
+  void _startSessionTimer() {
+    _cancelSessionTimer(); // 기존 타이머 취소
+
+    final appState = FFAppState();
+    final lastActivityStr = appState.loginTimestamp;
+
+    // 저장된 마지막 활동 시간 체크
+    if (lastActivityStr.isNotEmpty) {
+      try {
+        final lastActivity = DateTime.parse(lastActivityStr);
+        final now = DateTime.now();
+        final elapsed = now.difference(lastActivity);
+
+        // 이미 30분이 지났으면 즉시 로그아웃
+        if (elapsed.inMinutes >= 30) {
+          print('🔒 30분 비활성 (새로고침 시) - 자동 로그아웃');
+          Future.delayed(Duration.zero, () async {
+            await authManager.signOut();
+            _router.go('/loginPage');
+          });
+          return;
+        }
+
+        // 남은 시간만큼 타이머 설정
+        final remainingTime = Duration(minutes: 30) - elapsed;
+        _lastActivityTime = lastActivity;
+        _sessionTimer = Timer(remainingTime, () async {
+          print('🔒 30분 비활성 - 자동 로그아웃');
+          await authManager.signOut();
+          _router.go('/loginPage');
+        });
+
+        print('✅ 세션 타이머 재개: 마지막 활동 ${_lastActivityTime}, 남은 시간: ${remainingTime.inMinutes}분 ${remainingTime.inSeconds % 60}초');
+        return;
+      } catch (e) {
+        print('⚠️ 마지막 활동 시간 파싱 오류: $e');
+      }
+    }
+
+    // 새로운 로그인 - 30분 idle 타이머 시작
+    _resetActivityTimer();
+    print('✅ 세션 타이머 시작: ${_lastActivityTime} (30분 비활성 후 로그아웃)');
+  }
+
+  void _cancelSessionTimer() {
+    _sessionTimer?.cancel();
+    _sessionTimer = null;
+  }
+
+  @override
+  void dispose() {
+    _cancelSessionTimer();
+    super.dispose();
   }
 
   void setLocale(String language) {
@@ -118,12 +197,23 @@ class _MyAppState extends State<MyApp> {
       routerConfig: _router,
       builder: (context, child) {
         if (child == null) return Container();
-        
+
+        // 사용자 활동 감지 (클릭, 스크롤, 키보드 입력 등)
+        child = Listener(
+          onPointerDown: (_) {
+            // 로그인된 상태에서만 타이머 리셋
+            if (_appStateNotifier.loggedIn) {
+              _resetActivityTimer();
+            }
+          },
+          child: child,
+        );
+
         final screenWidth = MediaQuery.sizeOf(context).width;
         final screenHeight = MediaQuery.sizeOf(context).height;
-        
+
         print('🚀 MAIN: ${screenWidth}px x ${screenHeight}px');
-        
+
         // 모바일
         if (!kIsWeb || (screenWidth <= 768 && screenHeight <= 768)) {
           return child;

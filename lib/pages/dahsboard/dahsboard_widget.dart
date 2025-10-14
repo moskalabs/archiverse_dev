@@ -672,7 +672,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                     children: [
                       Expanded(
                         child: Row(
-                          mainAxisSize: MainAxisSize.max,
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -681,12 +681,10 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                               phone: false,
                               tablet: false,
                             ))
-                              Flexible(
-                                flex: 2,
-                                child: SafeArea(
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
+                              SafeArea(
+                                child: Container(
+                                  width: 350.0,
+                                  height: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
@@ -3326,7 +3324,6 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                     ),
                                   ),
                                 ),
-                              ),
                             if ((_model.buttonGrades != null) &&
                                 responsiveVisibility(
                                   context: context,
@@ -3360,8 +3357,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              Flexible(
-                                flex: 5,
+                              Expanded(
                                 child: SafeArea(
                                   child: Container(
                                     width: double.infinity,
@@ -3372,7 +3368,8 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                     ),
                                     alignment: AlignmentDirectional(-1.0, -1.0),
                                     child: Stack(
-                                    children: [
+                                      alignment: AlignmentDirectional(-1.0, -1.0),
+                                      children: [
                                       Align(
                                         alignment:
                                             AlignmentDirectional(0.0, 0.0),
@@ -3411,11 +3408,13 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                           Flexible(
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
@@ -3423,10 +3422,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                       0.0, 10.0, 0.0, 0.0),
                                               child: SafeArea(
                                                 child: Container(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.595,
+                                                  width: double.infinity,
                                                   height:
                                                       MediaQuery.sizeOf(context)
                                                               .height *
@@ -3448,11 +3444,11 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                   ),
                                                   alignment:
                                                       AlignmentDirectional(
-                                                          0.0, 0.0),
+                                                          -1.0, 0.0),
                                                   child: Align(
                                                     alignment:
                                                         AlignmentDirectional(
-                                                            0.0, 0.0),
+                                                            -1.0, -1.0),
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.all(10.0),
@@ -7711,6 +7707,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ],
                                       ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -7723,8 +7720,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              Flexible(
-                                flex: 5,
+                              Expanded(
                                 child: SafeArea(
                                   child: Container(
                                     width: double.infinity,
@@ -7735,7 +7731,8 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                     ),
                                     alignment: AlignmentDirectional(-1.0, -1.0),
                                     child: Stack(
-                                    children: [
+                                      alignment: AlignmentDirectional(-1.0, -1.0),
+                                      children: [
                                       Align(
                                         alignment:
                                             AlignmentDirectional(0.0, 0.0),
@@ -7774,11 +7771,13 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                           Flexible(
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
@@ -7786,10 +7785,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                       0.0, 10.0, 0.0, 0.0),
                                               child: SafeArea(
                                                 child: Container(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.595,
+                                                  width: double.infinity,
                                                   height:
                                                       MediaQuery.sizeOf(context)
                                                               .height *
@@ -7811,11 +7807,11 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                   ),
                                                   alignment:
                                                       AlignmentDirectional(
-                                                          0.0, 0.0),
+                                                          -1.0, 0.0),
                                                   child: Align(
                                                     alignment:
                                                         AlignmentDirectional(
-                                                            0.0, 0.0),
+                                                            -1.0, -1.0),
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.all(10.0),
@@ -9501,6 +9497,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ],
                                       ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -9513,8 +9510,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              Flexible(
-                                flex: 5,
+                              Expanded(
                                 child: SafeArea(
                                   child: Container(
                                     width: double.infinity,
@@ -9525,7 +9521,8 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                     ),
                                     alignment: AlignmentDirectional(-1.0, -1.0),
                                     child: Stack(
-                                    children: [
+                                      alignment: AlignmentDirectional(-1.0, -1.0),
+                                      children: [
                                       Align(
                                         alignment:
                                             AlignmentDirectional(0.0, 0.0),
@@ -9564,11 +9561,13 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                           Flexible(
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
@@ -9576,10 +9575,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                       0.0, 10.0, 0.0, 0.0),
                                               child: SafeArea(
                                                 child: Container(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.595,
+                                                  width: double.infinity,
                                                   height:
                                                       MediaQuery.sizeOf(context)
                                                               .height *
@@ -9601,11 +9597,11 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                   ),
                                                   alignment:
                                                       AlignmentDirectional(
-                                                          0.0, 0.0),
+                                                          -1.0, 0.0),
                                                   child: Align(
                                                     alignment:
                                                         AlignmentDirectional(
-                                                            0.0, 0.0),
+                                                            -1.0, -1.0),
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.all(10.0),
@@ -11291,6 +11287,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ],
                                       ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -11303,8 +11300,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                   context: context,
                                   phone: false,
                                 ))
-                              Flexible(
-                                flex: 5,
+                              Expanded(
                                 child: SafeArea(
                                   child: Container(
                                     width: double.infinity,
@@ -11315,7 +11311,8 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                     ),
                                     alignment: AlignmentDirectional(-1.0, -1.0),
                                     child: Stack(
-                                    children: [
+                                      alignment: AlignmentDirectional(-1.0, -1.0),
+                                      children: [
                                       Align(
                                         alignment:
                                             AlignmentDirectional(0.0, 0.0),
@@ -11354,11 +11351,13 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                           ),
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                           Flexible(
                                             child: Padding(
                                               padding: EdgeInsetsDirectional
@@ -11366,10 +11365,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                       0.0, 10.0, 0.0, 0.0),
                                               child: SafeArea(
                                                 child: Container(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.595,
+                                                  width: double.infinity,
                                                   height:
                                                       MediaQuery.sizeOf(context)
                                                               .height *
@@ -11391,11 +11387,11 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                                   ),
                                                   alignment:
                                                       AlignmentDirectional(
-                                                          0.0, 0.0),
+                                                          -1.0, 0.0),
                                                   child: Align(
                                                     alignment:
                                                         AlignmentDirectional(
-                                                            0.0, 0.0),
+                                                            -1.0, -1.0),
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.all(10.0),
@@ -13080,6 +13076,7 @@ class _DahsboardWidgetState extends State<DahsboardWidget> {
                                             ),
                                           ),
                                         ],
+                                      ),
                                       ),
                                     ],
                                   ),

@@ -23,8 +23,11 @@ class SupaFlow {
         },
         anonKey: _kSupabaseAnonKey,
         debug: false,
-        authOptions:
-            FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
+        authOptions: FlutterAuthClientOptions(
+          authFlowType: AuthFlowType.implicit,
+          autoRefreshToken: false, // 자동 갱신 비활성화
+          persistSession: true, // 세션 저장은 유지
+        ),
       );
 }
 

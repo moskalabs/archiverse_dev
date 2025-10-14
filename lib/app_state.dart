@@ -27,6 +27,10 @@ class FFAppState extends ChangeNotifier {
           prefs.getString('ff_lastLoggedInUserId') ?? _lastLoggedInUserId;
     });
     _safeInit(() {
+      _loginTimestamp =
+          prefs.getString('ff_loginTimestamp') ?? _loginTimestamp;
+    });
+    _safeInit(() {
       _navOpen = prefs.getBool('ff_navOpen') ?? _navOpen;
     });
     _safeInit(() {
@@ -321,6 +325,13 @@ class FFAppState extends ChangeNotifier {
   set lastLoggedInUserId(String value) {
     _lastLoggedInUserId = value;
     prefs.setString('ff_lastLoggedInUserId', value);
+  }
+
+  String _loginTimestamp = '';
+  String get loginTimestamp => _loginTimestamp;
+  set loginTimestamp(String value) {
+    _loginTimestamp = value;
+    prefs.setString('ff_loginTimestamp', value);
   }
 
   bool _navOpen = false;
