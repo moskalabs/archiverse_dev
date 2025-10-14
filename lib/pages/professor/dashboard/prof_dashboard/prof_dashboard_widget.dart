@@ -897,14 +897,13 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                           phone: false,
                           tablet: false,
                         ))
-                          Flexible(
-                            flex: 2,
+                          Container(
+                            width: 360.0,
                             child: Align(
                               alignment: AlignmentDirectional(-1.0, -1.0),
                               child: SafeArea(
                                 child: Container(
-                                  width:
-                                      MediaQuery.sizeOf(context).width * 0.23,
+                                  width: double.infinity,
                                   height: double.infinity,
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context)
@@ -2202,7 +2201,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                           ),
                                         ),
                                       Flexible(
-                                        flex: 6,
+                                        flex: 3,
                                         child: Padding(
                                           padding: EdgeInsets.all(10.0),
                                           child: Container(
@@ -4375,26 +4374,10 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                         if (MediaQuery.sizeOf(context).width >= 850.0
                             ? true
                             : false)
-                          SizedBox(
-                            height: () {
-                              if (MediaQuery.sizeOf(context).width <
-                                  kBreakpointSmall) {
-                                return 400.0;
-                              } else if (MediaQuery.sizeOf(context).width <
-                                  kBreakpointMedium) {
-                                return 650.0;
-                              } else if (MediaQuery.sizeOf(context).width <
-                                  kBreakpointLarge) {
-                                return 700.0;
-                              } else {
-                                return 750.0;
-                              }
-                            }(),
-                            child: VerticalDivider(
-                              thickness: 3.0,
-                              indent: 0.0,
-                              color: FlutterFlowTheme.of(context).alternate,
-                            ),
+                          VerticalDivider(
+                            thickness: 3.0,
+                            indent: 0.0,
+                            color: FlutterFlowTheme.of(context).alternate,
                           ),
                         if ((((_model.classAfterCourse.isNotEmpty) == true) &&
                                 (_model.courseSelected! >= 0)) &&

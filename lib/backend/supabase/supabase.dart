@@ -25,8 +25,7 @@ class SupaFlow {
         debug: false,
         authOptions: FlutterAuthClientOptions(
           authFlowType: AuthFlowType.implicit,
-          autoRefreshToken: false, // 자동 갱신 비활성화
-          persistSession: true, // 세션 저장은 유지
+          autoRefreshToken: false, // 자동 갱신 비활성화 - 30분 idle 타이머로 관리
         ),
       );
 }

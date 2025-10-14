@@ -262,7 +262,7 @@ class _MyAppState extends State<MyApp> {
                       padding: EdgeInsets.zero,
                       viewInsets: EdgeInsets.zero,
                     ),
-                    child: child,
+                    child: child!,
                   );
                 },
               ),
