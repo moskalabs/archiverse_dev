@@ -234,17 +234,27 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
         if (adminName != null && adminName.isNotEmpty) {
           cloned.name = adminName;
         }
-        final adminRole = admin.role;
-        if (adminRole.isNotEmpty) {
-          cloned.permissionLevel = _permissionLevelFromRole(adminRole);
+        // permission_type을 permissionLevel로 변환
+        final adminPermissionType = admin.permissionType;
+        if (adminPermissionType != null && adminPermissionType.isNotEmpty) {
+          cloned.permissionLevel = adminPermissionType == '마스터' ? 2 : 1;
         }
         final adminUserType = admin.userType;
         if (adminUserType != null) {
           cloned.userType = adminUserType;
         }
+        // 새로 추가된 admin_post 컬럼들 매핑
+        final adminPhone = admin.phone;
+        if (adminPhone != null && adminPhone.isNotEmpty) {
+          cloned.phone = adminPhone;
+        }
+        final adminPosition = admin.position;
+        if (adminPosition != null && adminPosition.isNotEmpty) {
+          cloned.position = adminPosition;
+        }
       }
       cloned.userType = cloned.userType ?? 3;
-      cloned.position = _userTypeLabel(cloned.userType);
+      cloned.position = cloned.position ?? _userTypeLabel(cloned.userType);
       return cloned;
     }).toList();
   }
@@ -467,30 +477,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
     _model = createModel(context, () => AdminAccountManageModel());
 
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      try {
-        _model.prfoutput = await PostsTable().queryRows(
-          queryFn: (q) => q.order('name', ascending: true),
-        );
-
-        _model.profeesorName =
-            _model.prfoutput?.firstOrNull?.name ?? '교수 이름';
-
-        _model.classSelectedOnload = await ClassTable().queryRows(
-          queryFn: (q) => q,
-        );
-
-        _model.classOnload = _model.classSelectedOnload!
-            .where((e) => (e.year == _model.years) && (e.semester == _model.semester))
-            .toList()
-            .cast<ClassRow>();
-      } catch (e) {
-        print('초기화 에러: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('데이터 로드 실패: $e')),
-        );
-        _model.prfoutput = [];
-        _model.classOnload = [];
-      }
+      await _initializeData();
 
       FFAppState().usertype = 0;
       safeSetState(() {});

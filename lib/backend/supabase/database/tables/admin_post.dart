@@ -34,4 +34,25 @@ class AdminPostRow extends SupabaseDataRow {
 
   String get role => getField<String>('role')!;
   set role(String value) => setField<String>('role', value);
+
+  String? get permissionType => getField<String>('permission_type');
+  set permissionType(String? value) => setField<String>('permission_type', value);
+
+  String? get phone => getField<String>('phone');
+  set phone(String? value) => setField<String>('phone', value);
+
+  String? get position => getField<String>('position');
+  set position(String? value) => setField<String>('position', value);
+
+  String? get editStatus => getField<String>('edit_status');
+  set editStatus(String? value) => setField<String>('edit_status', value);
+
+  String? get userEmail => getField<String>('user_email');
+  set userEmail(String? value) => setField<String>('user_email', value);
+
+  bool? get isActive => getField<bool>('is_active');
+  set isActive(bool? value) => setField<bool>('is_active', value);
+
+  DateTime? get updatedAt => getField<DateTime>('updated_at');
+  set updatedAt(DateTime? value) => setField<DateTime>('updated_at', value);
 }
