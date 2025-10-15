@@ -1,0 +1,90 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run -d chrome --hot
+
+## exception
+
+FormatException: FormatException: Unexpected extension byte (at offset 0)
+
+```
+#0      _Utf8Decoder.convertChunked (dart:convert-patch/convert_patch.dart:1963:7)
+#1      _Utf8ConversionSink.addSlice (dart:convert/string_conversion.dart:310:28)
+#2      _Utf8ConversionSink.add (dart:convert/string_conversion.dart:306:5)
+#3      _ConverterStreamEventSink.add (dart:convert/chunked_conversion.dart:70:18)
+#4      _SinkTransformerStreamSubscription._handleData (dart:async/stream_transformers.dart:115:24)
+#5      _rootRunUnary (dart:async/zone.dart:1538:47)
+#6      _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#7      _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#8      _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#9      _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#10     _SyncStreamControllerDispatch._sendData (dart:async/stream_controller.dart:798:19)
+#11     _StreamController._add (dart:async/stream_controller.dart:663:7)
+#12     _StreamController.add (dart:async/stream_controller.dart:618:5)
+#13     _Socket._onData (dart:io-patch/socket_patch.dart:2912:41)
+#14     _rootRunUnary (dart:async/zone.dart:1546:13)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#17     _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#18     _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#19     _SyncStreamControllerDispatch._sendData (dart:async/stream_controller.dart:798:19)
+#20     _StreamController._add (dart:async/stream_controller.dart:663:7)
+#21     _StreamController.add (dart:async/stream_controller.dart:618:5)
+#22     new _RawSocket.<anonymous closure> (dart:io-patch/socket_patch.dart:2331:31)
+#23     _NativeSocket.issueReadEvent.issue (dart:io-patch/socket_patch.dart:1655:14)
+#24     _microtaskLoop (dart:async/schedule_microtask.dart:40:35)
+#25     _startMicrotaskLoop (dart:async/schedule_microtask.dart:49:5)
+#26     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:127:13)
+#27     _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:194:5)
+```
+
+## flutter doctor
+
+```
+[✓] Flutter (Channel stable, 3.35.4, on Ubuntu 24.04.3 LTS 6.6.87.2-microsoft-standard-WSL2, locale C.UTF-8) [136ms]
+    • Flutter version 3.35.4 on channel stable at /home/nsdac/fvm/versions/3.35.4
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision d693b4b9db (4 weeks ago), 2025-09-16 14:27:41 +0000
+    • Engine revision c298091351
+    • Dart version 3.9.2
+    • DevTools version 2.48.0
+    • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-lldb-debugging
+
+[✗] Android toolchain - develop for Android devices [235ms]
+    ✗ Unable to locate Android SDK.
+      Install Android Studio from: https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android SDK components.
+      (or visit https://flutter.dev/to/linux-android-setup for detailed instructions).
+      If the Android SDK has been installed to a custom location, please use
+      `flutter config --android-sdk` to update to that location.
+
+
+[✓] Chrome - develop for the web [113ms]
+    • CHROME_EXECUTABLE = /mnt/c/Program Files/Google/Chrome/Application/chrome.exe
+
+[✗] Linux toolchain - develop for Linux desktop [489ms]
+    ✗ clang++ is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install clang), or can be downloaded from https://releases.llvm.org/
+    ✗ CMake is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install cmake), or can be downloaded from https://cmake.org/download/
+    ✗ ninja is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install ninja-build), or can be downloaded from https://github.com/ninja-build/ninja/releases
+    ✗ pkg-config is required for Linux development.
+      It is likely available from your distribution (e.g.: apt install pkg-config), or can be downloaded from https://www.freedesktop.org/wiki/Software/pkg-config/
+
+[!] Android Studio (not installed) [105ms]
+    • Android Studio not found; download from https://developer.android.com/studio/index.html
+      (or visit https://flutter.dev/to/linux-android-setup for detailed instructions).
+
+[☠] Connected device (the doctor check crashed)
+    ✗ Due to an error, the doctor check did not complete. If the error message below is not helpful, please let us know about this issue at https://github.com/flutter/flutter/issues.
+    ✗ Exception: Connected device exceeded maximum allowed duration of 0:04:30.000000
+    • 
+
+[✓] Network resources [741ms]
+    • All expected network resources are available.
+
+! Doctor found issues in 4 categories.
+```

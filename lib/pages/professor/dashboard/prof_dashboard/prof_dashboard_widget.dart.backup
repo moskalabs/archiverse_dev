@@ -2399,9 +2399,6 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                           );
                                                                                           _model.progressSubjectPortfolio = subjectPortfolioData.length;
 
-                                                                                          // Calculate student count from portfolio data
-                                                                                          _model.studentCount = subjectPortfolioData.map((e) => e.studentName).whereType<String>().toSet().length;
-
                                                                                           // Fetch midterm results data
                                                                                           final midtermData = await MidtermResultsTable().queryRows(
                                                                                             queryFn: (q) => q
@@ -3348,52 +3345,6 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   .length;
                                                                                               _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
                                                                                             }
-
-                                                                                            // Fetch subject portfolio data for the section cards
-                                                                                            final subjectPortfolioData2 = await SubjectportpolioTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(1)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressSubjectPortfolio = subjectPortfolioData2.length;
-
-                                                                                            // Calculate student count from portfolio data
-                                                                                            _model.studentCount = subjectPortfolioData2.map((e) => e.studentName).whereType<String>().toSet().length;
-
-                                                                                            // Fetch midterm results data
-                                                                                            final midtermData2 = await MidtermResultsTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(1)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressMidterm = midtermData2.length;
-
-                                                                                            // Fetch final results data
-                                                                                            final finalData2 = await FinalResultsTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(1)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressFinal = finalData2.length;
-
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
@@ -3966,52 +3917,6 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                   .length;
                                                                                               _model.chartDataParam[i] = ((submittedCount / 15) * 100).round();
                                                                                             }
-
-                                                                                            // Fetch subject portfolio data for the section cards
-                                                                                            final subjectPortfolioData3 = await SubjectportpolioTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(2)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressSubjectPortfolio = subjectPortfolioData3.length;
-
-                                                                                            // Calculate student count from portfolio data
-                                                                                            _model.studentCount = subjectPortfolioData3.map((e) => e.studentName).whereType<String>().toSet().length;
-
-                                                                                            // Fetch midterm results data
-                                                                                            final midtermData3 = await MidtermResultsTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(2)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressMidterm = midtermData3.length;
-
-                                                                                            // Fetch final results data
-                                                                                            final finalData3 = await FinalResultsTable().queryRows(
-                                                                                              queryFn: (q) => q
-                                                                                                  .eqOrNull(
-                                                                                                    'professor_name',
-                                                                                                    _model.profeesorName,
-                                                                                                  )
-                                                                                                  .eqOrNull(
-                                                                                                    'class',
-                                                                                                    _model.classAfterGradeByCourseForSection.elementAtOrNull(2)?.id,
-                                                                                                  ),
-                                                                                            );
-                                                                                            _model.progressFinal = finalData3.length;
-
                                                                                             safeSetState(() {});
                                                                                           },
                                                                                           child: AnimatedDefaultTextStyle(
@@ -4514,8 +4419,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                             : false)
                           VerticalDivider(
                             thickness: 3.0,
-                            indent: 50.0,
-                            endIndent: 50.0,
+                            indent: 0.0,
                             color: FlutterFlowTheme.of(context).alternate,
                           ),
                         if ((((_model.classAfterCourse.isNotEmpty) == true) &&
@@ -6425,7 +6329,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -6623,7 +6527,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressMidterm + _model.progressFinal) / (_model.studentCount * 2)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressMidterm + _model.progressFinal) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -8246,7 +8150,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -8444,7 +8348,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressMidterm + _model.progressFinal) / (_model.studentCount * 2)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressMidterm + _model.progressFinal) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -10071,7 +9975,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -10269,7 +10173,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                   padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                   child: LinearPercentIndicator(
                                                                                     percent: valueOrDefault<double>(
-                                                                                      math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressMidterm + _model.progressFinal) / (_model.studentCount * 2)) : 0.0)),
+                                                                                      math.min(1.0, math.max(0.0, ((_model.progressMidterm + _model.progressFinal) / (8 * 2)))),
                                                                                       0.0,
                                                                                     ),
                                                                                     width: MediaQuery.sizeOf(context).width * 0.1,
@@ -16544,7 +16448,15 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch subject portfolio data
+                                                                                                                  final subjectPortfolioData = await SubjectportpolioTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterCourse.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressSubjectPortfolio = subjectPortfolioData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterCourse.firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -16582,7 +16494,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -16738,7 +16650,23 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch midterm results data
+                                                                                                                  final midtermData = await MidtermResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterCourse.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressMidterm = midtermData.length;
+
+                                                                                                                  // Fetch final results data
+                                                                                                                  final finalData = await FinalResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterCourse.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressFinal = finalData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterCourse.firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -16776,7 +16704,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? (((_model.progressMidterm + _model.progressFinal)) / (_model.studentCount * 2)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, (((_model.progressMidterm + _model.progressFinal)) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -18094,7 +18022,15 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch subject portfolio data
+                                                                                                                  final subjectPortfolioData = await SubjectportpolioTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressSubjectPortfolio = subjectPortfolioData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterGradeByCourseForSection.where((e) => e.section == '2반').toList().firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -18133,7 +18069,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -18289,7 +18225,23 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch midterm results data
+                                                                                                                  final midtermData = await MidtermResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressMidterm = midtermData.length;
+
+                                                                                                                  // Fetch final results data
+                                                                                                                  final finalData = await FinalResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressFinal = finalData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterGradeByCourseForSection.where((e) => e.section == '2반').toList().firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -18328,7 +18280,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? (((_model.progressMidterm + _model.progressFinal)) / (_model.studentCount * 2)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, (((_model.progressMidterm + _model.progressFinal)) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -19647,7 +19599,15 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch subject portfolio data
+                                                                                                                  final subjectPortfolioData = await SubjectportpolioTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressSubjectPortfolio = subjectPortfolioData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterGradeByCourseForSection.where((e) => e.section == '3반').toList().firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -19686,7 +19646,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? ((_model.progressSubjectPortfolio) / (_model.studentCount * 15)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, ((_model.progressSubjectPortfolio) / (8 * 15)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
@@ -19842,7 +19802,23 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                                 hoverColor: Colors.transparent,
                                                                                                                 highlightColor: Colors.transparent,
                                                                                                                 onTap: () async {
+                                                                                                                  // Fetch midterm results data
+                                                                                                                  final midtermData = await MidtermResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressMidterm = midtermData.length;
+
+                                                                                                                  // Fetch final results data
+                                                                                                                  final finalData = await FinalResultsTable().queryRows(
+                                                                                                                    queryFn: (q) => q
+                                                                                                                        .eqOrNull('professor_name', _model.profeesorName,)
+                                                                                                                        .eqOrNull('class', _model.classAfterGradeByCourseForSection.firstOrNull?.id,),
+                                                                                                                  );
+                                                                                                                  _model.progressFinal = finalData.length;
                                                                                                                   safeSetState(() {});
+
                                                                                                                   FFAppState().professorNameSelected = valueOrDefault<String>(
                                                                                                                     _model.classAfterGradeByCourseForSection.where((e) => e.section == '3반').toList().firstOrNull?.professor,
                                                                                                                     '교수님',
@@ -19881,7 +19857,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                                       child: LinearPercentIndicator(
                                                                                                         percent: valueOrDefault<double>(
-                                                                                                          math.min(1.0, math.max(0.0, _model.studentCount > 0 ? (((_model.progressMidterm + _model.progressFinal)) / (_model.studentCount * 2)) : 0.0)),
+                                                                                                          math.min(1.0, math.max(0.0, (((_model.progressMidterm + _model.progressFinal)) / (8 * 2)))),
                                                                                                           0.0,
                                                                                                         ),
                                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,

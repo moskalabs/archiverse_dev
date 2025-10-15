@@ -174,6 +174,18 @@ class ProfDashboardModel extends FlutterFlowModel<ProfDashboardWidget> {
   void updateChartDataParamAtIndex(int index, Function(int) updateFn) =>
       chartDataParam[index] = updateFn(chartDataParam[index]);
 
+  /// 과목 포트폴리오 제출 수
+  int progressSubjectPortfolio = 0;
+
+  /// 1차 성과물 (중간) 제출 수
+  int progressMidterm = 0;
+
+  /// 2차 성과물 (기말) 제출 수
+  int progressFinal = 0;
+
+  /// 분반별 학생 수
+  int studentCount = 0;
+
   bool channelTalk = false;
 
   ///  State fields for stateful widgets in this page.
