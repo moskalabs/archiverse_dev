@@ -191,6 +191,8 @@ class AdminClassChangeModel extends FlutterFlowModel<AdminClassChangeWidget> {
   List<PostsRow>? prfoutput;
   // Stores action output result for [Backend Call - Query Rows] action in AdminClassChange widget.
   List<ClassRow>? classSelectedOnload;
+  // 학생 전공/분반 변경 요청 목록
+  List<StudentMajorChangeRequestsRow>? changeRequests;
   // Model for AdminNaviSidebar component.
   late AdminNaviSidebarModel adminNaviSidebarModel;
   // State field(s) for DropDown1 widget.

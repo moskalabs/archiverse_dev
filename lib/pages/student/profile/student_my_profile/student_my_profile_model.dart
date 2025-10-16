@@ -27,6 +27,8 @@ class StudentMyProfileModel extends FlutterFlowModel<StudentMyProfileWidget> {
 
   StudentMyprofileRow? studentMyprofileList;
 
+  StudentMajorChangeRequestsRow? pendingChangeRequest;
+
   int? nextInMobile = -1;
 
   ///  State fields for stateful widgets in this page.

@@ -143,64 +143,25 @@ class _ClassChangeRowWidgetState extends State<ClassChangeRowWidget> {
               flex: 3,
               child: Align(
                 alignment: AlignmentDirectional(0.0, 0.0),
-                child: RichText(
-                  textScaler: MediaQuery.of(context).textScaler,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: FFLocalizations.of(context).getText(
-                          '746w2qiz' /* [분반변경] */,
-                        ),
-                        style: TextStyle(),
-                      ),
-                      TextSpan(
-                        text: FFLocalizations.of(context).getText(
-                          'mrui4dhx' /* from */,
-                        ),
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              font: GoogleFonts.inter(
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .fontStyle,
-                              ),
-                              color: Color(0xFF4E4E4E),
-                              fontSize: 20.0,
-                              letterSpacing: 0.0,
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
-                      ),
-                      TextSpan(
-                        text: FFLocalizations.of(context).getText(
-                          '5dw7cwue' /*  ->  */,
-                        ),
-                        style: TextStyle(),
-                      ),
-                      TextSpan(
-                        text: FFLocalizations.of(context).getText(
-                          'yrll0odg' /* to */,
-                        ),
-                        style: TextStyle(),
-                      )
-                    ],
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          color: Color(0xFF4E4E4E),
-                          fontSize: 20.0,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
+                child: Text(
+                  valueOrDefault<String>(
+                    widget.studentRequest,
+                    '[과목변경] 내용 없음',
                   ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        font: GoogleFonts.inter(
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontStyle,
+                        ),
+                        color: Color(0xFF4E4E4E),
+                        fontSize: 20.0,
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w500,
+                        fontStyle:
+                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                      ),
                 ),
               ),
             ),

@@ -66,6 +66,16 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
       );
       _model.studentPostList = _model.stuName?.firstOrNull;
       _model.studentMyprofileList = _model.myProfileList?.firstOrNull;
+
+      // Load pending change request
+      final pendingRequests = await StudentMajorChangeRequestsTable().queryRows(
+        queryFn: (q) => q
+            .eq('student_email', currentUserEmail)
+            .eq('status', 'pending')
+            .order('created_at', ascending: false),
+      );
+      _model.pendingChangeRequest = pendingRequests.isNotEmpty ? pendingRequests.first : null;
+
       safeSetState(() {});
       if (_model.studentMyprofileList != null) {
         safeSetState(() {
@@ -2135,15 +2145,15 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                           _model.gradeSelectedString = _model.dropDownValue1;
                                                                                           _model.courseSelectedByGrade = () {
                                                                                             if (_model.gradeSelectedString == '1학년') {
-                                                                                              return '건축설계I ';
+                                                                                              return '건축설계I';
                                                                                             } else if (_model.gradeSelectedString == '2학년') {
-                                                                                              return '건축설계III ';
+                                                                                              return '건축설계III';
                                                                                             } else if (_model.gradeSelectedString == '3학년') {
-                                                                                              return '건축설계V ';
+                                                                                              return '건축설계V';
                                                                                             } else if (_model.gradeSelectedString == '4학년') {
-                                                                                              return '건축설계VII ';
+                                                                                              return '건축설계VII';
                                                                                             } else {
-                                                                                              return '건축설계IX ';
+                                                                                              return '건축설계IX';
                                                                                             }
                                                                                           }();
                                                                                           safeSetState(() {});
@@ -2429,10 +2439,15 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                     width: double.infinity,
                                                                                     height: double.infinity,
                                                                                     decoration: BoxDecoration(
-                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                      color: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedCourseMajor != null
+                                                                                          ? Color(0xFFFFF9E6)
+                                                                                          : FlutterFlowTheme.of(context).primaryBackground,
                                                                                       borderRadius: BorderRadius.circular(8.0),
                                                                                       border: Border.all(
-                                                                                        color: Color(0xFFE0E3E7),
+                                                                                        color: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedCourseMajor != null
+                                                                                            ? Color(0xFFFFD700)
+                                                                                            : Color(0xFFE0E3E7),
+                                                                                        width: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedCourseMajor != null ? 2.0 : 1.0,
                                                                                       ),
                                                                                     ),
                                                                                     child: FlutterFlowDropDown<String>(
@@ -2575,10 +2590,15 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                               width: double.infinity,
                                                                               height: double.infinity,
                                                                               decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                color: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedSection != null
+                                                                                    ? Color(0xFFFFF9E6)
+                                                                                    : FlutterFlowTheme.of(context).primaryBackground,
                                                                                 borderRadius: BorderRadius.circular(8.0),
                                                                                 border: Border.all(
-                                                                                  color: Color(0xFFE0E3E7),
+                                                                                  color: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedSection != null
+                                                                                      ? Color(0xFFFFD700)
+                                                                                      : Color(0xFFE0E3E7),
+                                                                                  width: _model.pendingChangeRequest != null && _model.pendingChangeRequest!.requestedSection != null ? 2.0 : 1.0,
                                                                                 ),
                                                                               ),
                                                                               child: Row(
@@ -4255,34 +4275,150 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                               ? null
                                                                                               : () async {
                                                                                                   if (_model.studentMyprofileList != null) {
-                                                                                                    await StudentMyprofileTable().update(
-                                                                                                      data: {
-                                                                                                        'name': _model.studentPostList?.name,
-                                                                                                        'birth': _model.birthtextFieldTextController.text,
-                                                                                                        'stu_email': currentUserEmail,
-                                                                                                        'gender': _model.radioButtonValue1,
-                                                                                                        'admission_type': _model.radioButtonValue2,
-                                                                                                        'enrollment_status': _model.radioButtonValue3,
-                                                                                                        'grade': _model.dropDownValue1,
-                                                                                                        'years': _model.dropDownValue2,
-                                                                                                        'semester': _model.dropDownValue3,
-                                                                                                        'courseMajor': _model.dropDownValue4,
-                                                                                                        'section': _model.radioButtonValue4,
-                                                                                                        'employment_status': _model.radioButtonValue5,
-                                                                                                        'employment_details': _model.textController5.text,
-                                                                                                        'interest_areas': _model.choiceChipsValues,
-                                                                                                        'interest_detail': _model.textController6.text,
-                                                                                                        'certifications': _model.certiTextFieldTextController.text,
-                                                                                                        'competitions_awards': _model.compTextFieldTextController.text,
-                                                                                                        'networking_activities': _model.networkTextFieldTextController.text,
-                                                                                                        'software_skills': _model.sWTextFieldTextController.text,
-                                                                                                        'phoneNum': _model.phonetextFieldTextController.text,
-                                                                                                      },
-                                                                                                      matchingRows: (rows) => rows.eqOrNull(
-                                                                                                        'stu_email',
-                                                                                                        currentUserEmail,
-                                                                                                      ),
-                                                                                                    );
+                                                                                                    // Check if courseMajor or section has changed
+                                                                                                    final courseMajorChanged = _model.studentMyprofileList!.courseMajor != _model.dropDownValue4;
+                                                                                                    final sectionChanged = _model.studentMyprofileList!.section != _model.radioButtonValue4;
+
+                                                                                                    if (courseMajorChanged || sectionChanged) {
+                                                                                                      // Create change request instead of direct update
+                                                                                                      String changeType = courseMajorChanged && sectionChanged
+                                                                                                        ? '전공변경'
+                                                                                                        : courseMajorChanged
+                                                                                                          ? '과목변경'
+                                                                                                          : '분반변경';
+
+                                                                                                      String description = '';
+                                                                                                      if (courseMajorChanged && sectionChanged) {
+                                                                                                        description = '[전공변경] ${_model.studentMyprofileList!.courseMajor} → ${_model.dropDownValue4}, [분반변경] ${_model.studentMyprofileList!.section} → ${_model.radioButtonValue4}';
+                                                                                                      } else if (courseMajorChanged) {
+                                                                                                        description = '[과목변경] ${_model.studentMyprofileList!.courseMajor} → ${_model.dropDownValue4}';
+                                                                                                      } else {
+                                                                                                        description = '[분반변경] ${_model.studentMyprofileList!.section} → ${_model.radioButtonValue4}';
+                                                                                                      }
+
+                                                                                                      final requestData = <String, dynamic>{
+                                                                                                        'student_email': currentUserEmail,
+                                                                                                        'student_name': _model.studentPostList?.name ?? '',
+                                                                                                        'student_code': _model.studentPostList?.studentCode ?? '',
+                                                                                                        'change_type': changeType,
+                                                                                                        'request_description': description,
+                                                                                                        'status': 'pending',
+                                                                                                      };
+
+                                                                                                      // Only include changed fields
+                                                                                                      if (sectionChanged) {
+                                                                                                        requestData['current_section'] = _model.studentMyprofileList!.section;
+                                                                                                        requestData['requested_section'] = _model.radioButtonValue4;
+                                                                                                      }
+
+                                                                                                      if (courseMajorChanged) {
+                                                                                                        requestData['current_course_major'] = _model.studentMyprofileList!.courseMajor;
+                                                                                                        requestData['requested_course_major'] = _model.dropDownValue4;
+                                                                                                      }
+
+                                                                                                      await StudentMajorChangeRequestsTable().insert(requestData);
+
+                                                                                                      // Update other fields (not courseMajor/section)
+                                                                                                      await StudentMyprofileTable().update(
+                                                                                                        data: {
+                                                                                                          'name': _model.studentPostList?.name,
+                                                                                                          'birth': _model.birthtextFieldTextController.text,
+                                                                                                          'stu_email': currentUserEmail,
+                                                                                                          'gender': _model.radioButtonValue1,
+                                                                                                          'admission_type': _model.radioButtonValue2,
+                                                                                                          'enrollment_status': _model.radioButtonValue3,
+                                                                                                          'grade': _model.dropDownValue1,
+                                                                                                          'years': _model.dropDownValue2,
+                                                                                                          'semester': _model.dropDownValue3,
+                                                                                                          'employment_status': _model.radioButtonValue5,
+                                                                                                          'employment_details': _model.textController5.text,
+                                                                                                          'interest_areas': _model.choiceChipsValues,
+                                                                                                          'interest_detail': _model.textController6.text,
+                                                                                                          'certifications': _model.certiTextFieldTextController.text,
+                                                                                                          'competitions_awards': _model.compTextFieldTextController.text,
+                                                                                                          'networking_activities': _model.networkTextFieldTextController.text,
+                                                                                                          'software_skills': _model.sWTextFieldTextController.text,
+                                                                                                          'phoneNum': _model.phonetextFieldTextController.text,
+                                                                                                        },
+                                                                                                        matchingRows: (rows) => rows.eqOrNull(
+                                                                                                          'stu_email',
+                                                                                                          currentUserEmail,
+                                                                                                        ),
+                                                                                                      );
+
+                                                                                                      await showDialog<bool>(
+                                                                                                            context: context,
+                                                                                                            builder: (alertDialogContext) {
+                                                                                                              return WebViewAware(
+                                                                                                                child: AlertDialog(
+                                                                                                                  title: Text('변경 요청 완료'),
+                                                                                                                  content: Text('과목/분반 변경 요청이 제출되었습니다.\n관리자 승인 후 적용됩니다.'),
+                                                                                                                  actions: [
+                                                                                                                    TextButton(
+                                                                                                                      onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                                                                      child: Text('확인'),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              );
+                                                                                                            },
+                                                                                                          ) ??
+                                                                                                          false;
+                                                                                                    } else {
+                                                                                                      // No courseMajor/section change - direct update
+                                                                                                      await StudentMyprofileTable().update(
+                                                                                                        data: {
+                                                                                                          'name': _model.studentPostList?.name,
+                                                                                                          'birth': _model.birthtextFieldTextController.text,
+                                                                                                          'stu_email': currentUserEmail,
+                                                                                                          'gender': _model.radioButtonValue1,
+                                                                                                          'admission_type': _model.radioButtonValue2,
+                                                                                                          'enrollment_status': _model.radioButtonValue3,
+                                                                                                          'grade': _model.dropDownValue1,
+                                                                                                          'years': _model.dropDownValue2,
+                                                                                                          'semester': _model.dropDownValue3,
+                                                                                                          'courseMajor': _model.dropDownValue4,
+                                                                                                          'section': _model.radioButtonValue4,
+                                                                                                          'employment_status': _model.radioButtonValue5,
+                                                                                                          'employment_details': _model.textController5.text,
+                                                                                                          'interest_areas': _model.choiceChipsValues,
+                                                                                                          'interest_detail': _model.textController6.text,
+                                                                                                          'certifications': _model.certiTextFieldTextController.text,
+                                                                                                          'competitions_awards': _model.compTextFieldTextController.text,
+                                                                                                          'networking_activities': _model.networkTextFieldTextController.text,
+                                                                                                          'software_skills': _model.sWTextFieldTextController.text,
+                                                                                                          'phoneNum': _model.phonetextFieldTextController.text,
+                                                                                                        },
+                                                                                                        matchingRows: (rows) => rows.eqOrNull(
+                                                                                                          'stu_email',
+                                                                                                          currentUserEmail,
+                                                                                                        ),
+                                                                                                      );
+
+                                                                                                      await showDialog<bool>(
+                                                                                                            context: context,
+                                                                                                            builder: (alertDialogContext) {
+                                                                                                              return WebViewAware(
+                                                                                                                child: AlertDialog(
+                                                                                                                  title: Text('적용 완료'),
+                                                                                                                  content: Text('적용이 완료되었습니다.'),
+                                                                                                                  actions: [
+                                                                                                                    TextButton(
+                                                                                                                      onPressed: () => Navigator.pop(alertDialogContext, false),
+                                                                                                                      child: Text('Cancel'),
+                                                                                                                    ),
+                                                                                                                    TextButton(
+                                                                                                                      onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                                                                      child: Text('Confirm'),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              );
+                                                                                                            },
+                                                                                                          ) ??
+                                                                                                          false;
+                                                                                                    }
+
                                                                                                     FFAppState().gradeSelected = valueOrDefault<int>(
                                                                                                       () {
                                                                                                         if (_model.dropDownValue1 == '1학년') {
@@ -4302,28 +4438,6 @@ class _StudentMyProfileWidgetState extends State<StudentMyProfileWidget> {
                                                                                                     FFAppState().courseNameSelected = _model.dropDownValue4!;
                                                                                                     FFAppState().sectionSelected = _model.radioButtonValue4!;
                                                                                                     safeSetState(() {});
-                                                                                                    await showDialog<bool>(
-                                                                                                          context: context,
-                                                                                                          builder: (alertDialogContext) {
-                                                                                                            return WebViewAware(
-                                                                                                              child: AlertDialog(
-                                                                                                                title: Text('적용 완료'),
-                                                                                                                content: Text('적용이 완료되었습니다.'),
-                                                                                                                actions: [
-                                                                                                                  TextButton(
-                                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                                    child: Text('Cancel'),
-                                                                                                                  ),
-                                                                                                                  TextButton(
-                                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                                    child: Text('Confirm'),
-                                                                                                                  ),
-                                                                                                                ],
-                                                                                                              ),
-                                                                                                            );
-                                                                                                          },
-                                                                                                        ) ??
-                                                                                                        false;
 
                                                                                                     context.pushNamed(StudentHomeWidget.routeName);
                                                                                                   } else {

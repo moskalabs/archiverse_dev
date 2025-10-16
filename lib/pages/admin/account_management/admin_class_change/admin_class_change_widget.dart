@@ -39,6 +39,65 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _handleApproveRequest(StudentMajorChangeRequestsRow request) async {
+    try {
+      // 1. student_major_change_requests 테이블의 status를 'approved'로 변경
+      await StudentMajorChangeRequestsTable().update(
+        data: {
+          'status': 'approved',
+          'approved_by': widget.email,
+          'approved_at': DateTime.now().toIso8601String(),
+        },
+        matchingRows: (rows) => rows.eq('id', request.id),
+      );
+
+      // 2. student_myprofile 테이블 업데이트
+      if (request.requestedCourseMajor != null || request.requestedSection != null) {
+        final updateData = <String, dynamic>{};
+
+        if (request.requestedCourseMajor != null) {
+          updateData['courseMajor'] = request.requestedCourseMajor;
+        }
+
+        if (request.requestedSection != null) {
+          updateData['section'] = request.requestedSection;
+        }
+
+        await StudentMyprofileTable().update(
+          data: updateData,
+          matchingRows: (rows) => rows.eq('stu_email', request.studentEmail),
+        );
+      }
+
+      // 3. UI 갱신 - 목록 다시 불러오기
+      final updatedRequests = await StudentMajorChangeRequestsTable().queryRows(
+        queryFn: (q) => q
+            .eq('status', 'pending')
+            .order('created_at', ascending: false),
+      );
+
+      setState(() {
+        _model.changeRequests = updatedRequests;
+      });
+
+      // 성공 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${request.studentName} 학생의 변경 요청이 승인되었습니다.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // 에러 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('승인 처리 중 오류가 발생했습니다: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,23 +105,12 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.prfoutput = await PostsTable().queryRows(
-        queryFn: (q) => q,
+      // 학생 전공/분반 변경 요청 목록 조회 (승인 대기 중인 것만)
+      _model.changeRequests = await StudentMajorChangeRequestsTable().queryRows(
+        queryFn: (q) => q
+            .eq('status', 'pending')
+            .order('created_at', ascending: false),
       );
-      _model.profeesorName = valueOrDefault<String>(
-        _model.prfoutput?.firstOrNull?.name,
-        '교수 이름',
-      );
-      safeSetState(() {});
-      _model.classSelectedOnload = await ClassTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.classOnload = _model.classSelectedOnload!
-          .where((e) =>
-              (e.year == _model.years) && (e.semester == _model.semester))
-          .toList()
-          .toList()
-          .cast<ClassRow>();
       safeSetState(() {});
       FFAppState().usertype = 0;
       safeSetState(() {});
@@ -1584,18 +1632,25 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                                               padding: EdgeInsets.zero,
                                               shrinkWrap: true,
                                               scrollDirection: Axis.vertical,
-                                              children: [
-                                                wrapWithModel(
-                                                  model: _model
-                                                      .classChangeRowModel,
-                                                  updateCallback: () =>
-                                                      safeSetState(() {}),
-                                                  child: ClassChangeRowWidget(
-                                                    acceptRequest:
-                                                        (accept) async {},
-                                                  ),
-                                                ),
-                                              ].divide(SizedBox(height: 10.0)),
+                                              children: (_model.changeRequests ?? [])
+                                                  .map(
+                                                    (request) => Padding(
+                                                      padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 10.0),
+                                                      child: ClassChangeRowWidget(
+                                                        key: ValueKey('request_${request.id}'),
+                                                        studentName: request.studentName,
+                                                        studentNumber: int.tryParse(request.studentCode ?? '0') ?? 0,
+                                                        studentSection: request.currentSection ?? '',
+                                                        studentRequest: request.requestDescription ?? '',
+                                                        acceptRequest: (accept) async {
+                                                          if (accept) {
+                                                            await _handleApproveRequest(request);
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
                                             ),
                                           ],
                                         ),

@@ -39,3 +39,4 @@ export 'tables/courses.dart';
 export 'tables/calendar_events.dart';
 export 'tables/calendar_events_shares.dart';
 export 'tables/notifications.dart';
+export 'tables/student_major_change_requests.dart';
