@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/backend/schema/structs/index.dart';
 
 import '/auth/base_auth_user_provider.dart';
+import '/auth/supabase_auth/auth_util.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -82,8 +83,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) =>
-              appStateNotifier.loggedIn ? HomeWidget() : LoginPageWidget(),
+          builder: (context, _) {
+            // 루트 경로로 직접 접근 시 무조건 로그아웃 후 로그인 페이지로
+            if (appStateNotifier.loggedIn) {
+              Future.microtask(() async {
+                await authManager.signOut();
+                // 로그아웃 후 현재 경로가 여전히 '/'인지 확인하고 loginPage로 이동
+                if (GoRouter.of(context).getCurrentLocation() == '/') {
+                  GoRouter.of(context).go('/loginPage');
+                }
+              });
+            }
+            return LoginPageWidget();
+          },
         ),
         FFRoute(
           name: LoginPageWidget.routeName,
