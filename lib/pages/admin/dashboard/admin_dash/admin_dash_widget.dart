@@ -1884,13 +1884,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                 flex: 2,
                                                 child: ClipRRect(
                                                   child: Container(
-                                                    constraints: BoxConstraints(
-                                                      maxHeight:
-                                                          MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .height *
-                                                              0.65,
-                                                    ),
+                                                    height: MediaQuery.sizeOf(context).height * 0.65,
                                                     decoration: BoxDecoration(),
                                                     child: Padding(
                                                       padding:
@@ -2064,18 +2058,11 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                Flexible(
+                                                                Container(
+                                                                  height: 580.0,
+                                                                  decoration:
+                                                                      BoxDecoration(),
                                                                   child:
-                                                                      Container(
-                                                                    constraints:
-                                                                        BoxConstraints(
-                                                                      maxHeight:
-                                                                          MediaQuery.sizeOf(context).height *
-                                                                              0.7,
-                                                                    ),
-                                                                    decoration:
-                                                                        BoxDecoration(),
-                                                                    child:
                                                                         Builder(
                                                                       builder:
                                                                           (context) {
@@ -2144,7 +2131,6 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                       },
                                                                     ),
                                                                   ),
-                                                                ),
                                                               ],
                                                             ),
                                                           if (_model

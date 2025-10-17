@@ -169,7 +169,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
-                        activePageName: 'AdminRecent',
+                        activePageName: 'AdminPortfolio',
                         pageIsInSubMenu: false,
                       ),
                     ),
@@ -2040,14 +2040,10 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            Flexible(
-                                                              child: Container(
-                                                                height:
-                                                                    MediaQuery.sizeOf(context)
-                                                                            .height *
-                                                                        0.7,
-                                                                decoration:
-                                                                    BoxDecoration(),
+                                                            Container(
+                                                              height: 580.0,
+                                                              decoration:
+                                                                  BoxDecoration(),
                                                                 child: Padding(
                                                                   padding: EdgeInsetsDirectional
                                                                       .fromSTEB(
@@ -2123,7 +2119,6 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
                                                       if (_model.isSearching)
