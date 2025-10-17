@@ -55,71 +55,77 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.prfOutput = await PostsTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.professorName = valueOrDefault<String>(
-        _model.prfOutput?.firstOrNull?.name,
-        '교수 이름',
-      );
-      safeSetState(() {});
-      _model.classSelectedOnLoad = await ClassTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'year',
-              valueOrDefault<String>(
+      try {
+        _model.prfOutput = await PostsTable().queryRows(
+          queryFn: (q) => q,
+        );
+        _model.professorName = valueOrDefault<String>(
+          _model.prfOutput?.firstOrNull?.name,
+          '교수 이름',
+        );
+        safeSetState(() {});
+      } catch (e) {
+        print('Error loading posts: $e');
+        _model.professorName = '교수 이름';
+        safeSetState(() {});
+      }
+
+      try {
+        _model.classSelectedOnLoad = await ClassTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull(
+                'year',
+                valueOrDefault<String>(
+                  _model.dropDownYearValue1,
+                  '2025',
+                ),
+              )
+              .eqOrNull(
+                'semester',
+                valueOrDefault<String>(
+                  _model.dropDownSemesterValue1,
+                  '1학기',
+                ),
+              ),
+        );
+        _model.isDesignClass = true;
+        _model.filteredClass = (_model.classSelectedOnLoad ?? [])
+            .where((e) => e.grade == 1)
+            .toList()
+            .toList()
+            .cast<ClassRow>();
+        safeSetState(() {});
+        _model.allStudentsByYearSem = await CourseStudentTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull(
+                'year',
                 _model.dropDownYearValue1,
-                '2025',
-              ),
-            )
-            .eqOrNull(
-              'semester',
-              valueOrDefault<String>(
+              )
+              .eqOrNull(
+                'semester',
                 _model.dropDownSemesterValue1,
-                '1학기',
               ),
-            ),
-      );
-      _model.isDesignClass = true;
-      _model.filteredClass = _model.classSelectedOnLoad!
-          .where((e) => e.grade == 1)
-          .toList()
-          .toList()
-          .cast<ClassRow>();
-      safeSetState(() {});
-      _model.allStudentsByYearSem = await CourseStudentTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'year',
-              _model.dropDownYearValue1,
-            )
-            .eqOrNull(
-              'semester',
-              _model.dropDownSemesterValue1,
-            ),
-      );
-      _model.allStudents =
-          _model.allStudentsByYearSem!.toList().cast<CourseStudentRow>();
-      safeSetState(() {});
-      FFAppState().usertype = 0;
-      safeSetState(() {});
+        );
+        _model.allStudents =
+            (_model.allStudentsByYearSem ?? []).toList().cast<CourseStudentRow>();
+        safeSetState(() {});
+        FFAppState().usertype = 0;
+        safeSetState(() {});
+      } catch (e) {
+        print('Error loading class data: $e');
+        safeSetState(() {});
+      }
     });
 
     _model.searchTextFieldTextController ??= TextEditingController();
     _model.searchTextFieldFocusNode ??= FocusNode();
 
     _model.textController2 ??= TextEditingController(
-        text: _model.selectedPortfolio.firstOrNull?.criticHtml != null &&
-                _model.selectedPortfolio.firstOrNull?.criticHtml != ''
-            ? _model.selectedPortfolio.firstOrNull?.criticHtml
-            : '- 크리틱 내용을 입력해주세요');
+        text: '- 크리틱 내용을 입력해주세요');
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController3 ??= TextEditingController(
-        text: _model.selectedPortfolio.firstOrNull?.criticHtml != null &&
-                _model.selectedPortfolio.firstOrNull?.criticHtml != ''
-            ? _model.selectedPortfolio.firstOrNull?.criticHtml
-            : '- 크리틱 내용을 입력해주세요');
+        text: '- 크리틱 내용을 입력해주세요');
     _model.textFieldFocusNode2 ??= FocusNode();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
@@ -247,7 +253,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           }
                                                           List<YearsRow>
                                                               dropDownYearYearsRowList =
-                                                              snapshot.data!;
+                                                              snapshot.data ?? [];
 
                                                           return FlutterFlowDropDown<
                                                               String>(
@@ -296,8 +302,8 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                   [];
                                                               _model.courseSectionOutputVar =
                                                                   [];
-                                                              _model.classOnLoad = _model
-                                                                  .classSelectedOnLoad!
+                                                              _model.classOnLoad = (_model
+                                                                  .classSelectedOnLoad ?? [])
                                                                   .where((e) =>
                                                                       (e.year ==
                                                                           _model
@@ -468,7 +474,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                           }
                                                           List<SemestersRow>
                                                               dropDownSemesterSemestersRowList =
-                                                              snapshot.data!;
+                                                              snapshot.data ?? [];
 
                                                           return FlutterFlowDropDown<
                                                               String>(
@@ -512,8 +518,8 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                   [];
                                                               _model.courseSectionOutputVar =
                                                                   [];
-                                                              _model.classOnLoad = _model
-                                                                  .classSelectedOnLoad!
+                                                              _model.classOnLoad = (_model
+                                                                  .classSelectedOnLoad ?? [])
                                                                   .where((e) =>
                                                                       (e.year ==
                                                                           _model
@@ -2036,13 +2042,10 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                             ),
                                                             Flexible(
                                                               child: Container(
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                  maxHeight:
-                                                                      MediaQuery.sizeOf(context)
-                                                                              .height *
-                                                                          0.7,
-                                                                ),
+                                                                height:
+                                                                    MediaQuery.sizeOf(context)
+                                                                            .height *
+                                                                        0.7,
                                                                 decoration:
                                                                     BoxDecoration(),
                                                                 child: Padding(
@@ -2068,7 +2071,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                         padding:
                                                                             EdgeInsets.zero,
                                                                         shrinkWrap:
-                                                                            true,
+                                                                            false,
                                                                         scrollDirection:
                                                                             Axis.vertical,
                                                                         itemCount:
@@ -2107,7 +2110,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                 ),
                                                                               );
                                                                               _model.attendingStudents = _model.allStudents.where((e) => e.classid == FFAppState().classSelectedID).toList().cast<CourseStudentRow>();
-                                                                              _model.allPortfolio = _model.queryPortfolio!.toList().cast<SubjectportpolioRow>();
+                                                                              _model.allPortfolio = (_model.queryPortfolio ?? []).toList().cast<SubjectportpolioRow>();
                                                                               _model.selectedClassDetail = _model.filteredClass.where((e) => e.id == displayClassDetailID).toList().cast<ClassRow>();
                                                                               safeSetState(() {});
 
@@ -2860,7 +2863,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                         child:
                                                                             Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                              MainAxisSize.min,
                                                                           mainAxisAlignment:
                                                                               MainAxisAlignment.center,
                                                                           children:
@@ -2905,8 +2908,8 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                 ],
                                                                               ),
                                                                             if (_model.selectedPortfolio.isNotEmpty)
-                                                                              Flexible(
-                                                                                flex: 3,
+                                                                              Container(
+                                                                                height: 500.0,
                                                                                 child: FlutterFlowPdfViewer(
                                                                                   networkPath: valueOrDefault<String>(
                                                                                     _model.selectedPortfolio.firstOrNull?.url,
@@ -2917,11 +2920,10 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                   horizontalScroll: false,
                                                                                 ),
                                                                               ),
-                                                                            Expanded(
-                                                                              child: Container(
-                                                                                height: 100.0,
-                                                                                decoration: BoxDecoration(),
-                                                                                child: Visibility(
+                                                                            Container(
+                                                                              height: 500.0,
+                                                                              decoration: BoxDecoration(),
+                                                                              child: Visibility(
                                                                                   visible: _model.selectedPortfolio.isNotEmpty,
                                                                                   child: Column(
                                                                                     mainAxisSize: MainAxisSize.max,
@@ -2969,22 +2971,23 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                                   child: Row(
                                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                                     children: [
-                                                                                                      Text(
-                                                                                                        dateTimeFormat(
-                                                                                                          "yyyy.MM.dd HH:mm",
-                                                                                                          _model.selectedPortfolio.firstOrNull!.createdDate!,
-                                                                                                          locale: FFLocalizations.of(context).languageCode,
-                                                                                                        ),
-                                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                              font: GoogleFonts.openSans(
+                                                                                                      if (_model.selectedPortfolio.firstOrNull?.createdDate != null)
+                                                                                                        Text(
+                                                                                                          dateTimeFormat(
+                                                                                                            "yyyy.MM.dd HH:mm",
+                                                                                                            _model.selectedPortfolio.firstOrNull!.createdDate!,
+                                                                                                            locale: FFLocalizations.of(context).languageCode,
+                                                                                                          ),
+                                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                font: GoogleFonts.openSans(
+                                                                                                                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                                ),
+                                                                                                                letterSpacing: 0.0,
                                                                                                                 fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                               ),
-                                                                                                              letterSpacing: 0.0,
-                                                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                                            ),
-                                                                                                      ),
+                                                                                                        ),
                                                                                                       FFButtonWidget(
                                                                                                         onPressed: () {
                                                                                                           print('Button pressed ...');
@@ -3125,7 +3128,6 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ),
                                                                             if (!(_model.selectedPortfolio.isNotEmpty))
                                                                               Text(
                                                                                 FFLocalizations.of(context).getText(
@@ -3240,7 +3242,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                           }
                                           List<YearsRow>
                                               dropDownYearYearsRowList =
-                                              snapshot.data!;
+                                              snapshot.data ?? [];
 
                                           return FlutterFlowDropDown<String>(
                                             controller: _model
@@ -3412,7 +3414,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                           }
                                           List<SemestersRow>
                                               dropDownSemesterSemestersRowList =
-                                              snapshot.data!;
+                                              snapshot.data ?? [];
 
                                           return FlutterFlowDropDown<String>(
                                             controller: _model
@@ -4280,6 +4282,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                         return ListView.separated(
                                           padding: EdgeInsets.zero,
                                           shrinkWrap: true,
+                                          physics: NeverScrollableScrollPhysics(),
                                           scrollDirection: Axis.vertical,
                                           itemCount: filteredClass2.length,
                                           separatorBuilder: (_, __) =>
@@ -4851,6 +4854,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                       return ListView.separated(
                                         padding: EdgeInsets.zero,
                                         shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
                                         scrollDirection: Axis.vertical,
                                         itemCount: mobileStudents.length,
                                         separatorBuilder: (_, __) =>
@@ -5144,32 +5148,33 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                         mainAxisSize:
                                                             MainAxisSize.max,
                                                         children: [
-                                                          Text(
-                                                            dateTimeFormat(
-                                                              "yyyy.MM.dd HH:mm",
-                                                              _model
-                                                                  .selectedPortfolio
-                                                                  .firstOrNull!
-                                                                  .createdDate!,
-                                                              locale: FFLocalizations
+                                                          if (_model.selectedPortfolio.firstOrNull?.createdDate != null)
+                                                            Text(
+                                                              dateTimeFormat(
+                                                                "yyyy.MM.dd HH:mm",
+                                                                _model
+                                                                    .selectedPortfolio
+                                                                    .firstOrNull!
+                                                                    .createdDate!,
+                                                                locale: FFLocalizations
+                                                                        .of(context)
+                                                                    .languageCode,
+                                                              ),
+                                                              style: FlutterFlowTheme
                                                                       .of(context)
-                                                                  .languageCode,
-                                                            ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .openSans(
-                                                                    fontWeight: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .fontWeight,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .fontStyle,
-                                                                  ),
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    font: GoogleFonts
+                                                                        .openSans(
+                                                                      fontWeight: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontWeight,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight: FlutterFlowTheme.of(
@@ -5851,6 +5856,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                             ListView(
                                               padding: EdgeInsets.zero,
                                               shrinkWrap: true,
+                                              physics: NeverScrollableScrollPhysics(),
                                               scrollDirection: Axis.vertical,
                                               children: [
                                                 Padding(

@@ -535,7 +535,7 @@ class _AdminAccountManageWidgetState extends State<AdminAccountManageWidget> {
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
-                        activePageName: 'AdminStudentId',
+                        activePageName: 'AdminManager',
                         pageIsInSubMenu: false,
                       ),
                     ),

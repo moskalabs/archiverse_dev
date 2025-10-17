@@ -160,7 +160,7 @@ class _AdminClassChangeWidgetState extends State<AdminClassChangeWidget> {
                       model: _model.adminNaviSidebarModel,
                       updateCallback: () => safeSetState(() {}),
                       child: AdminNaviSidebarWidget(
-                        activePageName: 'AdminStudentId',
+                        activePageName: 'AdminClassChange',
                         pageIsInSubMenu: false,
                       ),
                     ),

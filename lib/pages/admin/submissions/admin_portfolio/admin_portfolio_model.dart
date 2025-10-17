@@ -489,7 +489,7 @@ class AdminPortfolioModel extends FlutterFlowModel<AdminPortfolioWidget> {
   /// Action blocks.
   Future filterDataByGrade(BuildContext context) async {
     // filter_class_by_grade
-    filteredClass = classSelectedOnLoad!
+    filteredClass = (classSelectedOnLoad ?? [])
         .where((e) => e.grade == selectedGrade)
         .toList()
         .toList()
