@@ -23,7 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:text_search/text_search.dart';
 import 'admin_dash_model.dart';
 export 'admin_dash_model.dart';
 
@@ -1518,12 +1517,22 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                 ),
                                                                 onFieldSubmitted:
                                                                     (_) async {
-                                                                  _model.searchQuery =
-                                                                      _model
-                                                                          .searchTextFieldTextController
-                                                                          .text;
-                                                                  safeSetState(
-                                                                      () {});
+                                                                  safeSetState(() {
+                                                                    final searchText = _model
+                                                                        .searchTextFieldTextController
+                                                                        .text
+                                                                        .toLowerCase();
+                                                                    _model.simpleSearchResults = _model
+                                                                        .classSelectedOnLoad!
+                                                                        .map((e) => e.course)
+                                                                        .withoutNulls
+                                                                        .where((course) =>
+                                                                            course.toLowerCase().contains(searchText))
+                                                                        .toList();
+                                                                  });
+                                                                  _model.isSearching =
+                                                                      true;
+                                                                  safeSetState(() {});
                                                                 },
                                                                 autofocus:
                                                                     false,
@@ -1701,28 +1710,17 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       FFButtonWidget(
                                                         onPressed: () async {
                                                           safeSetState(() {
-                                                            _model.simpleSearchResults = TextSearch((_model
-                                                                            .filteredClass
-                                                                            .map((e) => e
-                                                                                .course)
-                                                                            .withoutNulls
-                                                                            .toList()
-                                                                        as List)
-                                                                    .cast<
-                                                                        String>()
-                                                                    .map((str) =>
-                                                                        TextSearchItem.fromTerms(
-                                                                            str,
-                                                                            [
-                                                                              str
-                                                                            ]))
-                                                                    .toList())
-                                                                .search(_model
-                                                                    .searchTextFieldTextController
-                                                                    .text)
-                                                                .map((r) => r.object)
+                                                            final searchText = _model
+                                                                .searchTextFieldTextController
+                                                                .text
+                                                                .toLowerCase();
+                                                            _model.simpleSearchResults = _model
+                                                                .classSelectedOnLoad!
+                                                                .map((e) => e.course)
+                                                                .withoutNulls
+                                                                .where((course) =>
+                                                                    course.toLowerCase().contains(searchText))
                                                                 .toList();
-                                                            ;
                                                           });
                                                           _model.isSearching =
                                                               true;
@@ -2212,7 +2210,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                             buttonSize:
                                                                                 40.0,
                                                                             fillColor:
-                                                                                FlutterFlowTheme.of(context).primary,
+                                                                                FlutterFlowTheme.of(context).mainColor1,
                                                                             icon:
                                                                                 Icon(
                                                                               Icons.close_rounded,
@@ -2229,22 +2227,24 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  Builder(
-                                                                    builder:
-                                                                        (context) {
-                                                                      final searchedResults = _model
-                                                                          .filteredClass
-                                                                          .where((e) => _model
-                                                                              .simpleSearchResults
-                                                                              .contains(e.course))
-                                                                          .toList();
+                                                                  Container(
+                                                                    height: 580.0,
+                                                                    child: Builder(
+                                                                      builder:
+                                                                          (context) {
+                                                                        final searchedResults = _model
+                                                                            .classSelectedOnLoad!
+                                                                            .where((e) => _model
+                                                                                .simpleSearchResults
+                                                                                .contains(e.course))
+                                                                            .toList();
 
-                                                                      return ListView
-                                                                          .separated(
+                                                                        return ListView
+                                                                            .separated(
                                                                         padding:
                                                                             EdgeInsets.zero,
                                                                         shrinkWrap:
-                                                                            true,
+                                                                            false,
                                                                         scrollDirection:
                                                                             Axis.vertical,
                                                                         itemCount:
@@ -2293,6 +2293,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                         },
                                                                       );
                                                                     },
+                                                                    ),
                                                                   ),
                                                                 ].divide(SizedBox(
                                                                     height:

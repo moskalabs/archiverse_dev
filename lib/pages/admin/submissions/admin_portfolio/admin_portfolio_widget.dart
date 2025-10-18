@@ -2107,7 +2107,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                               );
                                                                               _model.attendingStudents = _model.allStudents.where((e) => e.classid == FFAppState().classSelectedID).toList().cast<CourseStudentRow>();
                                                                               _model.allPortfolio = (_model.queryPortfolio ?? []).toList().cast<SubjectportpolioRow>();
-                                                                              _model.selectedClassDetail = _model.filteredClass.where((e) => e.id == displayClassDetailID).toList().cast<ClassRow>();
+                                                                              _model.selectedClassDetail = [visibleClassItem];
                                                                               safeSetState(() {});
 
                                                                               safeSetState(() {});
@@ -2339,10 +2339,11 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                   0.0,
                                                                   10.0,
                                                                   0.0),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
+                                                      child: SingleChildScrollView(
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
                                                           Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -2455,7 +2456,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                     child:
                                                                         Column(
                                                                       mainAxisSize:
-                                                                          MainAxisSize.max,
+                                                                          MainAxisSize.min,
                                                                       children:
                                                                           [
                                                                         Container(
@@ -2751,8 +2752,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                               Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
                                                                             child: Text(
-                                                                              FFLocalizations.of(context).getText(
-                                                                                'aqrqtdr6' /* 수업명 */,
+                                                                              valueOrDefault<String>(
+                                                                                _model.selectedClassDetail.firstOrNull?.course,
+                                                                                '수업명',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                     font: GoogleFonts.notoSansKr(
@@ -2778,7 +2780,8 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                           child:
                                                                               Builder(
                                                                             builder: (context) {
-                                                                              final students = _model.attendingStudents.sortedList(keyOf: (e) => e.studentName!, desc: false).toList();
+                                                                              final uniqueStudents = _model.allPortfolio.map((e) => e.studentName).where((name) => name != null && name.isNotEmpty).toSet().toList()..sort();
+                                                                              final students = uniqueStudents.map((name) => {'studentName': name, 'id': _model.allPortfolio.firstWhere((p) => p.studentName == name).id}).toList();
 
                                                                               return GridView.builder(
                                                                                 padding: EdgeInsets.zero,
@@ -2795,9 +2798,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                   final studentsItem = students[studentsIndex];
                                                                                   return NameChipWidget(
                                                                                     key: Key('Key97l_${studentsIndex}_of_${students.length}'),
-                                                                                    studentId: studentsItem.id,
+                                                                                    studentId: studentsItem['id'] as int,
                                                                                     selectedStudentId: _model.selectedStudentId,
-                                                                                    studentName: studentsItem.studentName!,
+                                                                                    studentName: studentsItem['studentName'] as String,
                                                                                     callbackStudentId: (callbackStudentId) async {
                                                                                       _model.selectedStudentId = callbackStudentId;
                                                                                       safeSetState(() {});
@@ -2806,6 +2809,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                       _model.selectedStudentName = callbackStudentName;
                                                                                       safeSetState(() {});
                                                                                       await _model.filterPortfolio(context);
+                                                                                      if (_model.selectedPortfolio.isNotEmpty) {
+                                                                                        _model.textController2?.text = _model.selectedPortfolio.firstOrNull?.criticHtml ?? '- 크리틱 내용을 입력해주세요';
+                                                                                      }
                                                                                       safeSetState(() {});
                                                                                     },
                                                                                   );
@@ -2921,12 +2927,10 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                               child: Visibility(
                                                                                   visible: _model.selectedPortfolio.isNotEmpty,
                                                                                   child: Column(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
                                                                                     children: [
-                                                                                      Flexible(
-                                                                                        flex: 1,
-                                                                                        child: Container(
+                                                                                      Container(
                                                                                           decoration: BoxDecoration(
                                                                                             color: Color(0xFFF6F6F6),
                                                                                             borderRadius: BorderRadius.only(
@@ -3022,12 +3026,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                             ),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                      Flexible(
-                                                                                        flex: 3,
-                                                                                        child: Container(
+                                                                                      Container(
                                                                                           width: double.infinity,
-                                                                                          height: 100.0,
+                                                                                          height: 150.0,
                                                                                           decoration: BoxDecoration(
                                                                                             color: FlutterFlowTheme.of(context).secondaryBackground,
                                                                                             borderRadius: BorderRadius.only(
@@ -3118,7 +3119,6 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                             ),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
                                                                                     ],
                                                                                   ),
                                                                                 ),
@@ -3148,6 +3148,7 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                             ],
                                                           ),
                                                         ],
+                                                      ),
                                                       ),
                                                     ),
                                                   ),
