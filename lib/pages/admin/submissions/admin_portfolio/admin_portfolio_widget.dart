@@ -1850,22 +1850,16 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                               Flexible(
                                                 flex: 2,
                                                 child: Container(
-                                                  height: double.infinity,
                                                   constraints: BoxConstraints(
                                                     maxWidth: MediaQuery.sizeOf(
                                                                 context)
                                                             .width *
                                                         0.25,
-                                                    maxHeight:
-                                                        MediaQuery.sizeOf(
-                                                                    context)
-                                                                .height *
-                                                            0.65,
                                                   ),
                                                   decoration: BoxDecoration(),
                                                   child: Column(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                        MainAxisSize.min,
                                                     children: [
                                                       if (!_model.isSearching)
                                                         Column(
@@ -2041,7 +2035,6 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                               ),
                                                             ),
                                                             Container(
-                                                              height: 580.0,
                                                               decoration:
                                                                   BoxDecoration(),
                                                                 child: Padding(
@@ -2067,7 +2060,9 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                         padding:
                                                                             EdgeInsets.zero,
                                                                         shrinkWrap:
-                                                                            false,
+                                                                            true,
+                                                                        physics:
+                                                                            NeverScrollableScrollPhysics(),
                                                                         scrollDirection:
                                                                             Axis.vertical,
                                                                         itemCount:
@@ -2305,27 +2300,16 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                height: 600.0,
-                                                child: VerticalDivider(
-                                                  thickness: 2.0,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate,
-                                                ),
+                                              VerticalDivider(
+                                                thickness: 2.0,
+                                                color: FlutterFlowTheme.of(
+                                                        context)
+                                                    .alternate,
                                               ),
                                               Flexible(
                                                 flex: 5,
                                                 child: ClipRRect(
                                                   child: Container(
-                                                    height: MediaQuery.sizeOf(
-                                                                context)
-                                                            .height *
-                                                        0.8,
-                                                    constraints:
-                                                        BoxConstraints(
-                                                      maxHeight: 700.0,
-                                                    ),
                                                     decoration:
                                                         BoxDecoration(),
                                                     alignment:
@@ -2875,8 +2859,21 @@ class _AdminPortfolioWidgetState extends State<AdminPortfolioWidget> {
                                                                                 mainAxisAlignment: MainAxisAlignment.end,
                                                                                 children: [
                                                                                   FFButtonWidget(
-                                                                                    onPressed: () {
-                                                                                      print('Button pressed ...');
+                                                                                    onPressed: () async {
+                                                                                      if (_model.selectedPortfolio.isNotEmpty) {
+                                                                                        for (var portfolio in _model.selectedPortfolio) {
+                                                                                          if (portfolio.url != null && portfolio.url!.isNotEmpty) {
+                                                                                            await launchURL(portfolio.url!);
+                                                                                          }
+                                                                                        }
+                                                                                      } else {
+                                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                                          SnackBar(
+                                                                                            content: Text('다운로드할 파일이 없습니다.'),
+                                                                                            backgroundColor: FlutterFlowTheme.of(context).error,
+                                                                                          ),
+                                                                                        );
+                                                                                      }
                                                                                     },
                                                                                     text: FFLocalizations.of(context).getText(
                                                                                       '53ze6m9i' /* 파일 다운로드[받기] */,
