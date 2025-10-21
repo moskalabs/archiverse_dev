@@ -4,7 +4,7 @@ import 'package:archiverse/flutter_flow/flutter_flow_util.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 
-export 'package:data_table_2/data_table_2.dart' show DataColumn2;
+export 'package:data_table_2/data_table_2.dart' show DataColumn2, DataTable2, DataRow2, ColumnSize;
 
 const _kDataTableHorizontalMargin = 48.0;
 const kDefaultColumnSpacing = 56.0;
