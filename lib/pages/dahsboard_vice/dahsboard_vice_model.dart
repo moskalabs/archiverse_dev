@@ -135,6 +135,15 @@ class DahsboardViceModel extends FlutterFlowModel<DahsboardViceWidget> {
   /// 진행바 비율 계산시 사용_클래스에서 분반 별 8명 기준, 낸 횟수 여기에 저장.
   int? progressSubject = 0;
 
+  /// 과목 포트폴리오 진도율 (0.0 ~ 1.0)
+  double progressPortfolio = 0.0;
+
+  /// 1차-2차 성과물 진도율 (0.0 ~ 1.0)
+  double progressResults = 0.0;
+
+  /// 총 진행사항 (과목 포트폴리오와 성과물의 평균)
+  double progressTotal = 0.0;
+
   List<int> chartDataParam = [0, 0, 0, 0, 0, 0, 0, 0];
   void addToChartDataParam(int item) => chartDataParam.add(item);
   void removeFromChartDataParam(int item) => chartDataParam.remove(item);

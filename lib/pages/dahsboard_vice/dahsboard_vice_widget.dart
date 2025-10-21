@@ -63,16 +63,32 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
       safeSetState(() {});
       FFAppState().usertype = widget.userType!;
       safeSetState(() {});
+      // Debug: PostsTable 쿼리 확인
+      print('=== PostsTable Query ===');
+      print('widget.email: ${widget.email}');
+      print('currentUserEmail: $currentUserEmail');
+
       _model.prfoutput = await PostsTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'user_email',
-          currentUserEmail,
+          widget.email,
         ),
       );
+
+      print('prfoutput length: ${_model.prfoutput?.length}');
+      if (_model.prfoutput != null && _model.prfoutput!.isNotEmpty) {
+        print('prfoutput first record: name=${_model.prfoutput!.first.name}, email=${_model.prfoutput!.first.email}');
+      } else {
+        print('⚠️ PostsTable에서 교수 정보를 찾을 수 없습니다!');
+      }
+
       _model.profeesorName = valueOrDefault<String>(
         _model.prfoutput?.firstOrNull?.name,
         '교수님 이름',
       );
+
+      print('profeesorName: ${_model.profeesorName}');
+
       safeSetState(() {});
       _model.classSelectedOnload = await ClassTable().queryRows(
         queryFn: (q) => q.eqOrNull(
@@ -86,7 +102,125 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
           .toList()
           .toList()
           .cast<ClassRow>();
+
+      // Debug: 초기 로드시 데이터 확인
+      print('=== initState classOnload ===');
+      print('Professor: ${_model.profeesorName}');
+      print('Year: ${_model.years}, Semester: ${_model.semester}');
+      print('classSelectedOnload length: ${_model.classSelectedOnload?.length}');
+      print('classOnload length: ${_model.classOnload.length}');
+      print('classOnload data:');
+      for (var c in _model.classOnload) {
+        print('  - id: ${c.id}, grade: ${c.grade}, course: ${c.course}, section: ${c.section}, year: ${c.year}, semester: ${c.semester}');
+      }
+
       safeSetState(() {});
+
+      // 차트 데이터 계산: 교수의 주차별 크리틱 업로드 현황
+      int classCount = _model.classOnload.length;
+      if (classCount > 0) {
+        // 15주치 데이터 초기화
+        _model.chartDataParam = List<int>.filled(15, 0);
+
+        // 교수의 모든 포트폴리오 데이터 가져오기
+        final portfolioData = await SubjectportpolioTable().queryRows(
+          queryFn: (q) => q.eqOrNull(
+            'professor_name',
+            _model.profeesorName,
+          ),
+        );
+
+        // 주차별로 critic_html이 채워진 수업이 있는지 확인
+        for (int week = 0; week < 15; week++) {
+          String weekStr = '${week + 1}주차';
+
+          // 해당 주차에 critic_html이 채워진 수업 수
+          int classesWithCritic = 0;
+
+          // 각 수업별로 해당 주차에 critic_html 데이터가 있는지 확인
+          for (var classRow in _model.classOnload) {
+            bool hasCritic = portfolioData?.any((p) =>
+              p.week == weekStr &&
+              p.classField == classRow.id &&
+              p.criticHtml != null &&
+              p.criticHtml!.isNotEmpty) ?? false;
+
+            if (hasCritic) {
+              classesWithCritic++;
+            }
+          }
+
+          // 제출률 계산: (크리틱 있는 수업 수 / 전체 수업 수) * 100
+          _model.chartDataParam[week] = ((classesWithCritic / classCount) * 100).round().clamp(0, 100);
+        }
+
+        // 과목 포트폴리오 진도율 계산
+        // 전체 가능한 제출 수 = 수업 수 × 15주
+        int totalPossible = classCount * 15;
+        if (totalPossible > 0) {
+          // 실제 critic_html이 채워진 수 계산
+          int totalSubmitted = portfolioData?.where((p) =>
+            p.criticHtml != null &&
+            p.criticHtml!.isNotEmpty &&
+            _model.classOnload.any((c) => c.id == p.classField)
+          ).length ?? 0;
+
+          _model.progressPortfolio = totalSubmitted / totalPossible;
+          print('과목 포트폴리오 진도: $totalSubmitted / $totalPossible = ${(_model.progressPortfolio * 100).toStringAsFixed(1)}%');
+        }
+
+        // 1차-2차 성과물 진도율 계산
+        // 1차 = 중간고사, 2차 = 기말고사
+        // 교수의 수업별 중간/기말 성과물 제출 현황 조회
+        final midtermData = await MidtermResultsTable().queryRows(
+          queryFn: (q) => q.eqOrNull(
+            'professor_name',
+            _model.profeesorName,
+          ),
+        );
+
+        final finalData = await FinalResultsTable().queryRows(
+          queryFn: (q) => q.eqOrNull(
+            'professor_name',
+            _model.profeesorName,
+          ),
+        );
+
+        // 각 수업별로 중간/기말 제출이 있는지 확인
+        int classesWithMidterm = 0;
+        int classesWithFinal = 0;
+
+        for (var classRow in _model.classOnload) {
+          // 해당 수업의 중간 성과물이 있는지 확인
+          bool hasMidterm = midtermData?.any((m) => m.classField == classRow.id) ?? false;
+          if (hasMidterm) classesWithMidterm++;
+
+          // 해당 수업의 기말 성과물이 있는지 확인
+          bool hasFinal = finalData?.any((f) => f.classField == classRow.id) ?? false;
+          if (hasFinal) classesWithFinal++;
+        }
+
+        // 진도율 계산: (제출된 성과물 수 / 전체 가능한 성과물 수)
+        // 전체 가능한 성과물 수 = 수업 수 × 2 (중간 + 기말)
+        int totalResultsPossible = classCount * 2;
+        if (totalResultsPossible > 0) {
+          int totalResultsSubmitted = classesWithMidterm + classesWithFinal;
+          _model.progressResults = totalResultsSubmitted / totalResultsPossible;
+          print('1차-2차 성과물 진도: $totalResultsSubmitted / $totalResultsPossible = ${(_model.progressResults * 100).toStringAsFixed(1)}%');
+          print('  - 중간(1차): $classesWithMidterm / $classCount');
+          print('  - 기말(2차): $classesWithFinal / $classCount');
+        }
+      }
+
+      // 총 진행사항 계산 (과목 포트폴리오와 1차-2차 성과물의 평균)
+      // 각각 1.0을 넘지 않도록 clamp 처리
+      double portfolioProgress = _model.progressPortfolio.clamp(0.0, 1.0);
+      double resultsProgress = _model.progressResults.clamp(0.0, 1.0);
+      _model.progressTotal = (portfolioProgress + resultsProgress) / 2;
+      print('총 진행사항: ${(_model.progressTotal * 100).toStringAsFixed(1)}% (포트폴리오: ${(portfolioProgress * 100).toStringAsFixed(1)}%, 성과물: ${(resultsProgress * 100).toStringAsFixed(1)}%)');
+
+      safeSetState(() {});
+
       FFAppState().usertype = widget.userType!;
       safeSetState(() {});
     });
@@ -3419,12 +3553,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                 percent:
                                                                     valueOrDefault<
                                                                         double>(
-                                                                  math.min(
-                                                                      1.0,
-                                                                      math.max(
-                                                                          0.0,
-                                                                          (((_model.progressSubject!)) /
-                                                                              (8 * 15)))),
+                                                                  _model.progressTotal.clamp(0.0, 1.0),
                                                                   0.0,
                                                                 ),
                                                                 width: MediaQuery.sizeOf(
@@ -4921,7 +5050,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                     padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                     child: LinearPercentIndicator(
                                                                                       percent: valueOrDefault<double>(
-                                                                                        math.min(1.0, math.max(0.0, (((_model.progressSubject!)) / (8 * 15)))),
+                                                                                        _model.progressPortfolio.clamp(0.0, 1.0),
                                                                                         0.0,
                                                                                       ),
                                                                                       width: MediaQuery.sizeOf(context).width * 0.085,
@@ -5107,7 +5236,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                     padding: EdgeInsetsDirectional.fromSTEB(5.0, 10.0, 2.0, 0.0),
                                                                                     child: LinearPercentIndicator(
                                                                                       percent: valueOrDefault<double>(
-                                                                                        math.min(1.0, math.max(0.0, (((_model.progressSubject!)) / (8 * 15)))),
+                                                                                        _model.progressResults.clamp(0.0, 1.0),
                                                                                         0.0,
                                                                                       ),
                                                                                       width: MediaQuery.sizeOf(context).width * 0.085,
@@ -6615,6 +6744,13 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                   [];
                                                               safeSetState(
                                                                   () {});
+
+                                                              // Debug: 5학년 버튼 클릭시 데이터 확인
+                                                              print('=== 5학년 button clicked ===');
+                                                              print('buttonGrades: ${_model.buttonGrades}');
+                                                              print('classOnload length: ${_model.classOnload.length}');
+                                                              print('classOnload grades: ${_model.classOnload.map((e) => e.grade).toList()}');
+
                                                               _model.classAfterGrade = _model
                                                                   .classOnload
                                                                   .sortedList(
@@ -6629,6 +6765,10 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                   .toList()
                                                                   .cast<
                                                                       ClassRow>();
+
+                                                              print('classAfterGrade length: ${_model.classAfterGrade.length}');
+                                                              print('classAfterGrade: ${_model.classAfterGrade.map((e) => 'grade=${e.grade}, course=${e.course}').toList()}');
+
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -8234,12 +8374,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                 percent:
                                                                     valueOrDefault<
                                                                         double>(
-                                                                  math.min(
-                                                                      1.0,
-                                                                      math.max(
-                                                                          0.0,
-                                                                          (((_model.progressSubject!)) /
-                                                                              (8 * 15)))),
+                                                                  _model.progressTotal.clamp(0.0, 1.0),
                                                                   0.0,
                                                                 ),
                                                                 width: MediaQuery.sizeOf(
@@ -9703,7 +9838,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                         padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 2.0, 0.0),
                                                                                         child: LinearPercentIndicator(
                                                                                           percent: valueOrDefault<double>(
-                                                                                            math.min(1.0, math.max(0.0, (((_model.progressSubject!)) / (8 * 15)))),
+                                                                                            _model.progressPortfolio.clamp(0.0, 1.0),
                                                                                             0.0,
                                                                                           ),
                                                                                           width: MediaQuery.sizeOf(context).width * 0.45,
@@ -9859,7 +9994,7 @@ class _DahsboardViceWidgetState extends State<DahsboardViceWidget> {
                                                                                       padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 2.0, 0.0),
                                                                                       child: LinearPercentIndicator(
                                                                                         percent: valueOrDefault<double>(
-                                                                                          math.min(1.0, math.max(0.0, (((_model.progressSubject!)) / (8 * 15)))),
+                                                                                          _model.progressResults.clamp(0.0, 1.0),
                                                                                           0.0,
                                                                                         ),
                                                                                         width: MediaQuery.sizeOf(context).width * 0.45,
