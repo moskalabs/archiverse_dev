@@ -2,6 +2,8 @@
 export '/pages/auth/login_page/login_page_widget.dart' show LoginPageWidget;
 export '/pages/auth/reset_password/reset_password_widget.dart'
     show ResetPasswordWidget;
+export '/pages/auth/new_password/new_password_widget.dart'
+    show NewPasswordWidget;
 export '/pages/auth/register_page/register_page_widget.dart'
     show RegisterPageWidget;
 export '/pages/not_used/message/message_widget.dart' show MessageWidget;

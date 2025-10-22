@@ -118,7 +118,11 @@ class _ProgressContainerSWidgetState extends State<ProgressContainerSWidget> {
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 3.0, 5.0, 0.0),
                     child: LinearPercentIndicator(
-                      percent: 0.2,
+                      percent: widget.percentageDenominator > 0
+                          ? (widget.percentageNumerator /
+                                  widget.percentageDenominator)
+                              .clamp(0.0, 1.0)
+                          : 0.0,
                       lineHeight: 25.0,
                       animation: true,
                       animateFromLastPercent: true,
@@ -141,9 +145,7 @@ class _ProgressContainerSWidgetState extends State<ProgressContainerSWidget> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          FFLocalizations.of(context).getText(
-                            't8rzh23o' /* 0% */,
-                          ),
+                          '${widget.percentageNumerator.toInt()}/${widget.percentageDenominator.toInt()}',
                           style: FlutterFlowTheme.of(context)
                               .bodyMedium
                               .override(
@@ -180,9 +182,9 @@ class _ProgressContainerSWidgetState extends State<ProgressContainerSWidget> {
                           child: Align(
                             alignment: AlignmentDirectional(1.0, 0.0),
                             child: Text(
-                              FFLocalizations.of(context).getText(
-                                '58xgozic' /* 100% */,
-                              ),
+                              widget.percentageDenominator > 0
+                                  ? '${((widget.percentageNumerator / widget.percentageDenominator) * 100).toStringAsFixed(1)}%'
+                                  : '0%',
                               textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium

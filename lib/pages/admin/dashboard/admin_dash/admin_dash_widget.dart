@@ -1837,27 +1837,148 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: wrapWithModel(
-                                                    model: _model
-                                                        .progressContainerSModel1,
-                                                    updateCallback: () =>
-                                                        safeSetState(() {}),
-                                                    child:
-                                                        ProgressContainerSWidget(
-                                                      title: '학생 주차별 설계진행표 제출률',
+                                                  child: FutureBuilder<
+                                                      List<SubjectportpolioRow>>(
+                                                    future: SubjectportpolioTable()
+                                                        .queryRows(
+                                                      queryFn: (q) => q
+                                                          .eqOrNull(
+                                                            'year',
+                                                            _model
+                                                                .dropDownYearValue1,
+                                                          )
+                                                          .eqOrNull(
+                                                            'semester',
+                                                            _model
+                                                                .dropDownSemesterValue1,
+                                                          ),
                                                     ),
+                                                    builder: (context, snapshot) {
+                                                      // Loading state
+                                                      if (!snapshot.hasData) {
+                                                        return Center(
+                                                          child: SizedBox(
+                                                            width: 30.0,
+                                                            height: 30.0,
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              valueColor:
+                                                                  AlwaysStoppedAnimation<
+                                                                      Color>(
+                                                                Color(0xFF284E75),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                      List<SubjectportpolioRow>
+                                                          subjectSubmitList =
+                                                          snapshot.data!;
+
+                                                      return wrapWithModel(
+                                                        model: _model
+                                                            .progressContainerSModel1,
+                                                        updateCallback: () =>
+                                                            safeSetState(() {}),
+                                                        child:
+                                                            ProgressContainerSWidget(
+                                                          title:
+                                                              '학생 주차별 설계진행표 제출률',
+                                                          percentageNumerator:
+                                                              valueOrDefault<
+                                                                  double>(
+                                                            subjectSubmitList
+                                                                .length
+                                                                .toDouble(),
+                                                            0.0,
+                                                          ),
+                                                          percentageDenominator:
+                                                              valueOrDefault<
+                                                                  double>(
+                                                            (_model.allStudents
+                                                                        .length *
+                                                                    15)
+                                                                .toDouble(),
+                                                            1.0,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: wrapWithModel(
-                                                    model: _model
-                                                        .progressContainerSModel2,
-                                                    updateCallback: () =>
-                                                        safeSetState(() {}),
-                                                    child:
-                                                        ProgressContainerSWidget(
-                                                      title: '포트폴리오 크리틱 진행률',
+                                                  child: FutureBuilder<
+                                                      List<SubjectportpolioRow>>(
+                                                    future: SubjectportpolioTable()
+                                                        .queryRows(
+                                                      queryFn: (q) => q
+                                                          .eqOrNull(
+                                                            'year',
+                                                            _model
+                                                                .dropDownYearValue1,
+                                                          )
+                                                          .eqOrNull(
+                                                            'semester',
+                                                            _model
+                                                                .dropDownSemesterValue1,
+                                                          )
+                                                          .not(
+                                                            'critic_confirmed_at',
+                                                            'is',
+                                                            null,
+                                                          ),
                                                     ),
+                                                    builder: (context, snapshot) {
+                                                      // Loading state
+                                                      if (!snapshot.hasData) {
+                                                        return Center(
+                                                          child: SizedBox(
+                                                            width: 30.0,
+                                                            height: 30.0,
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              valueColor:
+                                                                  AlwaysStoppedAnimation<
+                                                                      Color>(
+                                                                Color(0xFF284E75),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                      List<SubjectportpolioRow>
+                                                          criticCompletedList =
+                                                          snapshot.data!;
+
+                                                      return wrapWithModel(
+                                                        model: _model
+                                                            .progressContainerSModel2,
+                                                        updateCallback: () =>
+                                                            safeSetState(() {}),
+                                                        child:
+                                                            ProgressContainerSWidget(
+                                                          title:
+                                                              '포트폴리오 크리틱 진행률',
+                                                          percentageNumerator:
+                                                              valueOrDefault<
+                                                                  double>(
+                                                            criticCompletedList
+                                                                .length
+                                                                .toDouble(),
+                                                            0.0,
+                                                          ),
+                                                          percentageDenominator:
+                                                              valueOrDefault<
+                                                                  double>(
+                                                            (_model.allStudents
+                                                                        .length *
+                                                                    15)
+                                                                .toDouble(),
+                                                            1.0,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                               ].divide(SizedBox(width: 10.0)),

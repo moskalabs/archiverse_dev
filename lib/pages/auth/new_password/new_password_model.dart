@@ -1,41 +1,11 @@
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
-import 'reset_password_widget.dart' show ResetPasswordWidget;
+import 'new_password_widget.dart' show NewPasswordWidget;
 import 'package:flutter/material.dart';
 
-class ResetPasswordModel extends FlutterFlowModel<ResetPasswordWidget> {
+class NewPasswordModel extends FlutterFlowModel<NewPasswordWidget> {
   ///  State fields for stateful widgets in this page.
 
   final formKey = GlobalKey<FormState>();
-  // State field(s) for PageView widget.
-  PageController? pageViewController;
-
-  int get pageViewCurrentIndex => pageViewController != null &&
-          pageViewController!.hasClients &&
-          pageViewController!.page != null
-      ? pageViewController!.page!.round()
-      : 0;
-  // State field(s) for EmailTextField widget.
-  FocusNode? emailTextFieldFocusNode;
-  TextEditingController? emailTextFieldTextController;
-  String? Function(BuildContext, String?)?
-      emailTextFieldTextControllerValidator;
-  String? _emailTextFieldTextControllerValidator(
-      BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
-      return '이메일을 입력해주세요.';
-    }
-
-    if (!RegExp(kTextValidatorEmailRegex).hasMatch(val)) {
-      return '올바른 이메일 형식이 아닙니다.';
-    }
-
-    if (!val.endsWith('@sch.ac.kr')) {
-      return '@sch.ac.kr 이메일 주소를 입력해주세요.';
-    }
-
-    return null;
-  }
 
   // State field(s) for NewPassword widget.
   FocusNode? newPasswordFocusNode;
@@ -76,8 +46,6 @@ class ResetPasswordModel extends FlutterFlowModel<ResetPasswordWidget> {
 
   @override
   void initState(BuildContext context) {
-    emailTextFieldTextControllerValidator =
-        _emailTextFieldTextControllerValidator;
     newPasswordVisibility = false;
     newPasswordTextControllerValidator =
         _newPasswordTextControllerValidator;
@@ -88,9 +56,6 @@ class ResetPasswordModel extends FlutterFlowModel<ResetPasswordWidget> {
 
   @override
   void dispose() {
-    emailTextFieldFocusNode?.dispose();
-    emailTextFieldTextController?.dispose();
-
     newPasswordFocusNode?.dispose();
     newPasswordTextController?.dispose();
 

@@ -122,6 +122,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
+          name: NewPasswordWidget.routeName,
+          path: NewPasswordWidget.routePath,
+          builder: (context, params) => NewPasswordWidget(),
+        ),
+        FFRoute(
           name: RegisterPageWidget.routeName,
           path: RegisterPageWidget.routePath,
           builder: (context, params) => RegisterPageWidget(),

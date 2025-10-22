@@ -11,10 +11,12 @@ class WeeklyProgressTableWidget extends StatefulWidget {
     super.key,
     required this.studentNames,
     required this.getWeekStatus,
+    this.onCellTap,
   });
 
   final List<String> studentNames;
   final String Function(String studentName, int week) getWeekStatus;
+  final Function(String studentName, int week)? onCellTap;
 
   @override
   State<WeeklyProgressTableWidget> createState() =>
@@ -123,39 +125,45 @@ class _WeeklyProgressTableWidgetState
                         (weekIndex) {
                           final status = widget.getWeekStatus(studentName, weekIndex + 1);
                           final isSubmitted = status == '제출';
+                          final week = weekIndex + 1;
                           return DataCell(
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSubmitted
-                                    ? Color(0xFF4CAF50).withOpacity(0.1)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: isSubmitted
-                                      ? Color(0xFF4CAF50)
-                                      : FlutterFlowTheme.of(context).alternate,
-                                  width: 1,
+                            InkWell(
+                              onTap: isSubmitted
+                                  ? () => widget.onCellTap?.call(studentName, week)
+                                  : null,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                              ),
-                              child: Text(
-                                status,
-                                textAlign: TextAlign.center,
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.openSans(
-                                        color: isSubmitted
-                                            ? Color(0xFF4CAF50)
-                                            : FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                        fontWeight: FontWeight.w600,
+                                decoration: BoxDecoration(
+                                  color: isSubmitted
+                                      ? Color(0xFF4CAF50).withOpacity(0.1)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: isSubmitted
+                                        ? Color(0xFF4CAF50)
+                                        : FlutterFlowTheme.of(context).alternate,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  status,
+                                  textAlign: TextAlign.center,
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        font: GoogleFonts.openSans(
+                                          color: isSubmitted
+                                              ? Color(0xFF4CAF50)
+                                              : FlutterFlowTheme.of(context)
+                                                  .secondaryText,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        fontSize: 11.0,
                                       ),
-                                      fontSize: 11.0,
-                                    ),
+                                ),
                               ),
                             ),
                           );

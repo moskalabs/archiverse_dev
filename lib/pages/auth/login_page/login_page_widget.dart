@@ -1422,35 +1422,26 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                                         .primaryBackground,
                                                                   ),
                                                                   child:
-                                                                      Visibility(
-                                                                    visible:
-                                                                        false,
+                                                                      Padding(
+                                                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        8.0,
+                                                                        8.0,
+                                                                        0.0,
+                                                                        8.0),
                                                                     child:
-                                                                        Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                                                          8.0,
-                                                                          8.0,
-                                                                          0.0,
-                                                                          8.0),
-                                                                      child:
-                                                                          Text(
-                                                                        FFLocalizations.of(context)
-                                                                            .getText(
-                                                                          '0btwfi00' /* Forgot Password? */,
-                                                                        ),
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              font: GoogleFonts.openSans(
-                                                                                fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                              ),
-                                                                              color: FlutterFlowTheme.of(context).secondaryText,
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                        Text(
+                                                                      '비밀번호를 잊으셨나요?',
+                                                                      style: FlutterFlowTheme.of(context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            font: GoogleFonts.openSans(
+                                                                              fontWeight: FontWeight.w500,
                                                                             ),
-                                                                      ),
+                                                                            color: Color(0xFF284E75),
+                                                                            fontSize: 13.0,
+                                                                            letterSpacing: 0.0,
+                                                                            decoration: TextDecoration.underline,
+                                                                          ),
                                                                     ),
                                                                   ),
                                                                 ),
