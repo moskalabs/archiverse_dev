@@ -13,11 +13,15 @@ class MidtermFinalResultsTableWidget extends StatefulWidget {
     required this.studentNames,
     required this.getMidtermStatus,
     required this.getFinalStatus,
+    this.onMidtermTap,
+    this.onFinalTap,
   });
 
   final List<String> studentNames;
   final String Function(String) getMidtermStatus;
   final String Function(String) getFinalStatus;
+  final Function(String studentName)? onMidtermTap;
+  final Function(String studentName)? onFinalTap;
 
   @override
   State<MidtermFinalResultsTableWidget> createState() =>
@@ -168,69 +172,79 @@ class _MidtermFinalResultsTableWidgetState
                       ),
                       // Midterm Status
                       DataCell(
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: midtermStatus == '제출'
-                                ? Color(0xFF4CAF50).withOpacity(0.1)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
+                        InkWell(
+                          onTap: midtermStatus == '제출'
+                              ? () => widget.onMidtermTap?.call(studentName)
+                              : null,
+                          child: Container(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
                               color: midtermStatus == '제출'
-                                  ? Color(0xFF4CAF50)
-                                  : FlutterFlowTheme.of(context).alternate,
-                              width: 1,
+                                  ? Color(0xFF4CAF50).withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: midtermStatus == '제출'
+                                    ? Color(0xFF4CAF50)
+                                    : FlutterFlowTheme.of(context).alternate,
+                                width: 1,
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            midtermStatus,
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  font: GoogleFonts.openSans(
-                                    color: midtermStatus == '제출'
-                                        ? Color(0xFF4CAF50)
-                                        : FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                    fontWeight: FontWeight.w600,
+                            child: Text(
+                              midtermStatus,
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    font: GoogleFonts.openSans(
+                                      color: midtermStatus == '제출'
+                                          ? Color(0xFF4CAF50)
+                                          : FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    fontSize: 12.0,
                                   ),
-                                  fontSize: 12.0,
-                                ),
+                            ),
                           ),
                         ),
                       ),
                       // Final Status
                       DataCell(
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: finalStatus == '제출'
-                                ? Color(0xFF2196F3).withOpacity(0.1)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
+                        InkWell(
+                          onTap: finalStatus == '제출'
+                              ? () => widget.onFinalTap?.call(studentName)
+                              : null,
+                          child: Container(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
                               color: finalStatus == '제출'
-                                  ? Color(0xFF2196F3)
-                                  : FlutterFlowTheme.of(context).alternate,
-                              width: 1,
+                                  ? Color(0xFF2196F3).withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: finalStatus == '제출'
+                                    ? Color(0xFF2196F3)
+                                    : FlutterFlowTheme.of(context).alternate,
+                                width: 1,
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            finalStatus,
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  font: GoogleFonts.openSans(
-                                    color: finalStatus == '제출'
-                                        ? Color(0xFF2196F3)
-                                        : FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                    fontWeight: FontWeight.w600,
+                            child: Text(
+                              finalStatus,
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    font: GoogleFonts.openSans(
+                                      color: finalStatus == '제출'
+                                          ? Color(0xFF2196F3)
+                                          : FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    fontSize: 12.0,
                                   ),
-                                  fontSize: 12.0,
-                                ),
+                            ),
                           ),
                         ),
                       ),

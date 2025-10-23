@@ -45,24 +45,21 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
         .toSet()
         .toList();
 
-    // Add dummy students for testing pagination (총 7명 = 3페이지)
-    final dummyStudents = [
-      '이철수',
-      '최영희',
-      '정민준',
-      '강서연',
-      '윤지훈',
-    ];
-
-    return [...realStudents, ...dummyStudents];
+    return realStudents;
   }
 
   // Helper functions for midterm/final results
   String _getMidtermSubmitStatus(String studentName) {
-    // Dummy data for testing
-    final submittedStudents = ['김민수', '박희원', '이철수', '정민준', '윤지훈'];
-    if (submittedStudents.contains(studentName)) {
-      return '제출';
+    try {
+      final submission = _model.midtermResults?.firstWhere(
+        (e) => e.studentName == studentName,
+      );
+
+      if (submission != null && submission.url != null && submission.url!.isNotEmpty) {
+        return '제출';
+      }
+    } catch (e) {
+      // No submission found for this student
     }
     return '-';
   }
@@ -73,10 +70,16 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   }
 
   String _getFinalSubmitStatus(String studentName) {
-    // Dummy data for testing
-    final submittedStudents = ['김민수', '최영희', '정민준', '강서연'];
-    if (submittedStudents.contains(studentName)) {
-      return '제출';
+    try {
+      final submission = _model.finalResults?.firstWhere(
+        (e) => e.studentName == studentName,
+      );
+
+      if (submission != null && submission.url != null && submission.url!.isNotEmpty) {
+        return '제출';
+      }
+    } catch (e) {
+      // No submission found for this student
     }
     return '-';
   }
@@ -104,6 +107,71 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
       // No submission found for this student/week
     }
     return '-';
+  }
+
+  // Helper method to get preview URL based on selection
+  String? _getPreviewUrl() {
+    if (_model.datatableNameSelect == null || _model.imageLoadByWeeks == null) {
+      return null;
+    }
+
+    // Handle midterm submissions
+    if (_model.imageLoadByWeeks == '중간') {
+      try {
+        final submission = _model.midtermResults?.firstWhere(
+          (e) => e.studentName == _model.datatableNameSelect,
+        );
+        return submission?.url;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Handle final submissions
+    if (_model.imageLoadByWeeks == '기말') {
+      try {
+        final submission = _model.finalResults?.firstWhere(
+          (e) => e.studentName == _model.datatableNameSelect,
+        );
+        return submission?.url;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Handle weekly submissions
+    try {
+      final submission = _model.subjectSubmitList.firstWhere(
+        (e) => e.studentName == _model.datatableNameSelect &&
+               e.week == _model.imageLoadByWeeks,
+      );
+      return submission.url;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Callback handlers for table cell clicks
+  void _onWeekCellTap(String studentName, int week) {
+    final weekString = '${week}주차';
+    setState(() {
+      _model.datatableNameSelect = studentName;
+      _model.imageLoadByWeeks = weekString;
+    });
+  }
+
+  void _onMidtermTap(String studentName) {
+    setState(() {
+      _model.datatableNameSelect = studentName;
+      _model.imageLoadByWeeks = '중간';
+    });
+  }
+
+  void _onFinalTap(String studentName) {
+    setState(() {
+      _model.datatableNameSelect = studentName;
+      _model.imageLoadByWeeks = '기말';
+    });
   }
 
   @override
@@ -461,6 +529,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                             WeeklyProgressTableWidget(
                                                                               studentNames: _getUniqueStudentNames(),
                                                                               getWeekStatus: _getWeekSubmitStatus,
+                                                                              onCellTap: _onWeekCellTap,
                                                                             ),
                                                                       ),
                                                                     Expanded(
@@ -535,6 +604,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                               studentNames: _getUniqueStudentNames(),
                                                                               getMidtermStatus: _getMidtermSubmitStatus,
                                                                               getFinalStatus: _getFinalSubmitStatus,
+                                                                              onMidtermTap: _onMidtermTap,
+                                                                              onFinalTap: _onFinalTap,
                                                                             ),
                                                                       ),
                                                                   ],
@@ -637,7 +708,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                               _model.imageLoadByWeeks != '')
                                                                             FlutterFlowPdfViewer(
                                                                               networkPath: valueOrDefault<String>(
-                                                                                _model.subjectSubmitList.where((e) => (e.studentName == _model.datatableNameSelect) && (e.week == _model.imageLoadByWeeks)).toList().elementAtOrNull(0)?.url,
+                                                                                _getPreviewUrl(),
                                                                                 'd',
                                                                               ),
                                                                               width: double.infinity,
@@ -5966,7 +6037,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                                         FlutterFlowPdfViewer(
                                                                           networkPath:
                                                                               valueOrDefault<String>(
-                                                                            _model.subjectSubmitList.where((e) => (e.studentName == _model.datatableNameSelect) && (e.week == _model.imageLoadByWeeks)).toList().elementAtOrNull(0)?.url,
+                                                                            _getPreviewUrl(),
                                                                             'd',
                                                                           ),
                                                                           width:

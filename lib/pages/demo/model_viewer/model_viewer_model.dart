@@ -8,6 +8,8 @@ class ModelViewerModel extends FlutterFlowModel<ModelViewerWidget> {
 
   bool isDataUploading = false;
   FFUploadedFile uploadedLocalFile = FFUploadedFile(bytes: Uint8List.fromList([]));
+  String uploadedFileUrl = '';
+  String? selectedModelUrl;
 
   @override
   void initState(BuildContext context) {}

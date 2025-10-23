@@ -1,0 +1,90 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run -d chrome
+
+## exception
+
+SocketException: SocketException: Read failed (OS Error: Input/output error, errno = 5), port = 0
+
+```
+#0      _NativeSocket.read (dart:io-patch/socket_patch.dart:1350:33)
+#1      _RawSocket.read (dart:io-patch/socket_patch.dart:2390:26)
+#2      _Socket._onData (dart:io-patch/socket_patch.dart:2911:28)
+#3      _rootRunUnary (dart:async/zone.dart:1546:13)
+#4      _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#5      _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#6      _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#7      _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#8      _SyncStreamControllerDispatch._sendData (dart:async/stream_controller.dart:798:19)
+#9      _StreamController._add (dart:async/stream_controller.dart:663:7)
+#10     _StreamController.add (dart:async/stream_controller.dart:618:5)
+#11     new _RawSocket.<anonymous closure> (dart:io-patch/socket_patch.dart:2331:31)
+#12     _NativeSocket.issueReadEvent.issue (dart:io-patch/socket_patch.dart:1655:14)
+#13     _microtaskLoop (dart:async/schedule_microtask.dart:40:35)
+#14     _startMicrotaskLoop (dart:async/schedule_microtask.dart:49:5)
+#15     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:127:13)
+#16     _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:194:5)
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.35.4, on macOS 15.6 24G84 darwin-arm64, locale
+    ko-KR) [165ms]
+    [32m•[39m Flutter version 3.35.4 on channel stable at
+      /Users/moseonghwan/fvm/versions/3.35.4
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision d693b4b9db (5 weeks ago), 2025-09-16 14:27:41 +0000
+    [32m•[39m Engine revision c298091351
+    [32m•[39m Dart version 3.9.2
+    [32m•[39m DevTools version 2.48.0
+    [32m•[39m Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop,
+      enable-windows-desktop, enable-android, enable-ios, cli-animations,
+      enable-lldb-debugging
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version
+    36.1.0-rc1) [2.6s]
+    [32m•[39m Android SDK at /Users/moseonghwan/Library/Android/sdk
+    [32m•[39m Emulator version 36.1.9.0 (build_id 13823996) (CL:N/A)
+    [32m•[39m Platform android-36, build-tools 36.1.0-rc1
+    [32m•[39m ANDROID_SDK_ROOT = /Users/moseonghwan/Library/Android/sdk
+    [32m•[39m Java binary at: /Applications/Android
+      Studio.app/Contents/jbr/Contents/Home/bin/java
+      This is the JDK bundled with the latest Android Studio installation on this
+      machine.
+      To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.
+    [32m•[39m Java version OpenJDK Runtime Environment (build 21.0.7+-13880790-b1038.58)
+    [32m•[39m All Android licenses accepted.
+
+[32m[✓][39m Xcode - develop for iOS and macOS (Xcode 16.3) [1,577ms]
+    [32m•[39m Xcode at /Applications/Xcode.app/Contents/Developer
+    [32m•[39m Build 16E140
+    [32m•[39m CocoaPods version 1.16.2
+
+[32m[✓][39m Chrome - develop for the web [4ms]
+    [32m•[39m Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[32m[✓][39m Android Studio (version 2025.1) [3ms]
+    [32m•[39m Android Studio at /Applications/Android Studio.app/Contents
+    [32m•[39m Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    [32m•[39m Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    [32m•[39m Java version OpenJDK Runtime Environment (build 21.0.7+-13880790-b1038.58)
+
+[32m[✓][39m VS Code (version 1.95.1) [2ms]
+    [32m•[39m VS Code at /Users/moseonghwan/Downloads/Visual Studio Code.app/Contents
+    [32m•[39m Flutter extension version 3.120.0
+
+[32m[✓][39m Connected device (2 available) [5.9s]
+    [32m•[39m macOS (desktop) • macos  • darwin-arm64   • macOS 15.6 24G84 darwin-arm64
+    [32m•[39m Chrome (web)    • chrome • web-javascript • Google Chrome 141.0.7390.109
+
+[32m[✓][39m Network resources [1,157ms]
+    [32m•[39m All expected network resources are available.
+
+[32m•[39m No issues found!
+```
