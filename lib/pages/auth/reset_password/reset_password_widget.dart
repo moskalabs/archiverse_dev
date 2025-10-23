@@ -3,10 +3,14 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'reset_password_model.dart';
 export 'reset_password_model.dart';
+
+// dart:html for web
+import 'dart:html' as html show window;
 
 class ResetPasswordWidget extends StatefulWidget {
   const ResetPasswordWidget({
@@ -31,13 +35,93 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
   @override
   void initState() {
     super.initState();
+    print('🎯 [ResetPassword] initState called - Widget loaded!');
     _model = createModel(context, () => ResetPasswordModel());
 
     _model.emailTextFieldTextController ??=
         TextEditingController(text: widget.email);
     _model.emailTextFieldFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    // URL 파라미터에서 토큰 확인 및 처리
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print('🎯 [ResetPassword] PostFrameCallback started');
+      if (!kIsWeb) {
+        print('⚠️ [ResetPassword] Not web platform, skipping token check');
+        return;
+      }
+
+      String? accessToken;
+      String? refreshToken;
+      String? type;
+
+      // 1. sessionStorage에서 먼저 확인 (index.html에서 저장한 fragment)
+      try {
+        final storedFragment = html.window.sessionStorage['url_fragment'];
+        print('🔍 [Flutter] sessionStorage fragment: $storedFragment');
+
+        if (storedFragment != null && storedFragment.isNotEmpty) {
+          final hashContent = storedFragment.startsWith('#')
+              ? storedFragment.substring(1)
+              : storedFragment;
+
+          final fragmentParams = Uri.splitQueryString(hashContent);
+          accessToken = fragmentParams['access_token'];
+          refreshToken = fragmentParams['refresh_token'];
+          type = fragmentParams['type'];
+          print('✅ [Flutter] Parsed from sessionStorage - access_token: ${accessToken?.substring(0, 20)}..., refresh_token: ${refreshToken?.substring(0, 10)}..., type: $type');
+
+          // 사용 후 삭제 (보안)
+          html.window.sessionStorage.remove('url_fragment');
+        }
+      } catch (e) {
+        print('⚠️ [Flutter] Error reading sessionStorage: $e');
+      }
+
+      // 2. Fallback: URL에서 직접 시도 (query params)
+      if (accessToken == null) {
+        final url = html.window.location.href;
+        final uri = Uri.parse(url);
+        accessToken = uri.queryParameters['access_token'] ??
+            uri.queryParameters['token'];
+        refreshToken = uri.queryParameters['refresh_token'];
+        type = uri.queryParameters['type'];
+        print('📝 [Flutter] Query params - access_token: $accessToken, refresh_token: $refreshToken, type: $type');
+      }
+
+      // recovery 토큰이 있으면 세션 설정하고 비밀번호 변경 화면으로 이동
+      if (accessToken != null && refreshToken != null && type == 'recovery') {
+        print('✅ Recovery token found, setting session...');
+        try {
+          // Supabase 세션 설정 (access_token과 refresh_token 모두 필요)
+          final response = await SupaFlow.client.auth.setSession(
+            refreshToken,
+          );
+          print('✅ Session set successfully: ${response.session != null}');
+
+          // 비밀번호 변경 페이지로 리다이렉트
+          print('🔄 Navigating to NewPassword page...');
+          if (mounted) {
+            context.pushNamed('NewPassword');
+            print('✅ Navigated to NewPassword page');
+          }
+        } catch (e) {
+          print('❌ Error setting session: $e');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('유효하지 않거나 만료된 링크입니다: ${e.toString()}'),
+                backgroundColor: FlutterFlowTheme.of(context).error,
+                duration: Duration(seconds: 4),
+              ),
+            );
+          }
+        }
+      } else {
+        print('ℹ️ No recovery token found');
+      }
+
+      safeSetState(() {});
+    });
   }
 
   @override
@@ -249,11 +333,14 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                                       try {
                                         // Supabase 비밀번호 재설정 이메일 전송
                                         // 리다이렉트 URL은 새 비밀번호 입력 페이지로 설정
+                                        // 현재 호스트를 기반으로 URL 생성
+                                        final currentUrl = Uri.base;
+                                        final redirectUrl = '${currentUrl.origin}/resetPassword';
+
                                         await SupaFlow.client.auth
                                             .resetPasswordForEmail(
                                           email,
-                                          redirectTo:
-                                              'http://localhost:58791/newPassword',
+                                          redirectTo: redirectUrl,
                                         );
 
                                         if (context.mounted) {
@@ -269,15 +356,13 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                                                 ),
                                               ),
                                               duration:
-                                                  Duration(milliseconds: 4000),
+                                                  Duration(milliseconds: 6000),
                                               backgroundColor: Color(0xFF284E75),
                                             ),
                                           );
 
-                                          // 잠시 후 로그인 페이지로 이동
-                                          await Future.delayed(
-                                              Duration(milliseconds: 2000));
-                                          context.pop();
+                                          // 로그인 페이지로 돌아가지 않고 현재 페이지에 유지
+                                          // 사용자가 이메일 확인할 수 있도록 함
                                         }
                                       } catch (e) {
                                         if (context.mounted) {

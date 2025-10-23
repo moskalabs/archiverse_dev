@@ -30,10 +30,7 @@ class ResetPasswordModel extends FlutterFlowModel<ResetPasswordWidget> {
       return '올바른 이메일 형식이 아닙니다.';
     }
 
-    if (!val.endsWith('@sch.ac.kr')) {
-      return '@sch.ac.kr 이메일 주소를 입력해주세요.';
-    }
-
+    // @sch.ac.kr 체크 제거 - 모든 이메일 도메인 허용
     return null;
   }
 

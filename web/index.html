@@ -127,8 +127,37 @@
   }
   </script>
         
-  
-  
+
+
+  <!-- Capture URL fragment before Flutter loads (for password reset tokens) -->
+  <script>
+    (function() {
+      // URL fragment (#access_token=...) 캡처
+      if (window.location.hash) {
+        console.log('🔍 [index.html] Captured hash:', window.location.hash);
+
+        // Fragment를 sessionStorage에 저장
+        sessionStorage.setItem('url_fragment', window.location.hash);
+
+        // Fragment 파라미터 파싱
+        const hashContent = window.location.hash.startsWith('#')
+          ? window.location.hash.substring(1)
+          : window.location.hash;
+
+        const params = new URLSearchParams(hashContent);
+        const accessToken = params.get('access_token');
+        const type = params.get('type');
+
+        if (accessToken) {
+          console.log('✅ [index.html] Stored access_token (first 20 chars):', accessToken.substring(0, 20) + '...');
+          console.log('✅ [index.html] Token type:', type);
+        }
+      } else {
+        console.log('ℹ️ [index.html] No hash fragment found');
+      }
+    })();
+  </script>
+
   <script>
     {{flutter_bootstrap_js}}
   </script>

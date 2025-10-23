@@ -1,3 +1,4 @@
+import '/backend/supabase/supabase.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -38,6 +39,9 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
   }
 
   String _getHtmlContent() {
+    final modelUrl = _model.selectedModelUrl ??
+        'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoomBox/glTF-Binary/BoomBox.glb';
+
     return '''<!DOCTYPE html>
 <html>
 <head>
@@ -66,7 +70,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
 </head>
 <body>
   <model-viewer
-    src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoomBox/glTF-Binary/BoomBox.glb"
+    src="$modelUrl"
     alt="3D Model"
     auto-rotate
     camera-controls
@@ -166,29 +170,69 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     final selectedFiles = await selectFiles(
-                      allowedExtensions: ['glb', 'gltf', 'obj', 'fbx', 'stl'],
+                      allowedExtensions: ['glb', 'gltf', 'skp'],
                       multiFile: false,
                     );
                     if (selectedFiles != null && selectedFiles.isNotEmpty) {
                       setState(() {
+                        _model.isDataUploading = true;
                         _model.uploadedLocalFile = FFUploadedFile(
                           name: selectedFiles.first.storagePath.split('/').last,
                           bytes: selectedFiles.first.bytes,
                         );
                       });
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('파일이 선택되었습니다!'),
-                          backgroundColor: FlutterFlowTheme.of(context).success,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                      try {
+                        // Upload to Supabase Storage
+                        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${_model.uploadedLocalFile.name}';
+                        await SupaFlow.client.storage
+                            .from('3d-models')
+                            .uploadBinary(
+                              fileName,
+                              _model.uploadedLocalFile.bytes!,
+                            );
+
+                        // Get public URL
+                        final publicUrl = SupaFlow.client.storage
+                            .from('3d-models')
+                            .getPublicUrl(fileName);
+
+                        setState(() {
+                          _model.uploadedFileUrl = publicUrl;
+                          _model.selectedModelUrl = publicUrl;
+                          _model.isDataUploading = false;
+                        });
+
+                        // Reload WebView with new model
+                        if (_webViewController != null) {
+                          await _webViewController!.loadData(data: _getHtmlContent());
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('파일이 업로드되었습니다!'),
+                            backgroundColor: FlutterFlowTheme.of(context).success,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      } catch (e) {
+                        setState(() {
+                          _model.isDataUploading = false;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('업로드 실패: ${e.toString()}'),
+                            backgroundColor: FlutterFlowTheme.of(context).error,
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
                     }
                   },
-                  text: '3D 모델 파일 업로드',
+                  text: _model.isDataUploading ? '업로드 중...' : '3D 모델 파일 업로드',
                   icon: Icon(
-                    Icons.upload_file,
+                    _model.isDataUploading ? Icons.hourglass_empty : Icons.upload_file,
                     size: 20,
                   ),
                   options: FFButtonOptions(
@@ -243,7 +287,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '선택된 ��일',
+                                  '업로드된 파일',
                                   style: FlutterFlowTheme.of(context)
                                       .bodySmall
                                       .override(
@@ -274,6 +318,22 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                               ],
                             ),
                           ),
+                          if (_model.uploadedFileUrl.isNotEmpty)
+                            FlutterFlowIconButton(
+                              borderColor: FlutterFlowTheme.of(context).primary,
+                              borderRadius: 8,
+                              borderWidth: 1,
+                              buttonSize: 40,
+                              fillColor: FlutterFlowTheme.of(context).accent1,
+                              icon: Icon(
+                                Icons.download,
+                                color: FlutterFlowTheme.of(context).primary,
+                                size: 20,
+                              ),
+                              onPressed: () async {
+                                await launchURL(_model.uploadedFileUrl);
+                              },
+                            ),
                         ],
                       ),
                     ),
