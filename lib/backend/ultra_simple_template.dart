@@ -62,14 +62,19 @@ class UltraSimpleTemplate {
           // 각 문서 페이지마다 템플릿 생성
           final pageDoc = pw.Document();
           pageDoc.addPage(pw.Page(
-            pageFormat: PdfPageFormat.a4,
+            pageFormat: PdfPageFormat.a4.copyWith(
+              marginLeft: 0,
+              marginRight: 0,
+              marginTop: 0,
+              marginBottom: 0,
+            ),
             theme: font != null ? pw.ThemeData.withFont(base: font) : null,
             build: (context) => pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 // 헤더 부분
                 pw.Padding(
-                  padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                  padding: const pw.EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
@@ -92,13 +97,13 @@ class UltraSimpleTemplate {
                     ],
                   ),
                 ),
-                
-                pw.SizedBox(height: 20),
+
+                pw.SizedBox(height: 10),
                 
                 // 콘텐츠 영역
                 pw.Expanded(
                   child: pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: pw.Container(
                       width: double.infinity,
                       decoration: pw.BoxDecoration(
@@ -116,7 +121,7 @@ class UltraSimpleTemplate {
                 
                 // 푸터 부분
                 pw.Padding(
-                  padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                  padding: const pw.EdgeInsets.fromLTRB(20, 5, 20, 10),
                   child: pw.Text(
                     '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 천준호, 김승, 이재',
                     style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
@@ -138,10 +143,10 @@ class UltraSimpleTemplate {
           newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
           
           // 실제 PDF 콘텐츠를 콘텐츠 영역에 오버레이로 그리기
-          final contentX = 50.0;
-          final contentY = 80.0;
-          final contentWidth = newPage.getClientSize().width - 100;
-          final contentHeight = newPage.getClientSize().height - 150;
+          final contentX = 20.0;
+          final contentY = 65.0;
+          final contentWidth = newPage.getClientSize().width - 40;
+          final contentHeight = newPage.getClientSize().height - 80;
           
           // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
           final sourceSize = sourceTemplate.size;

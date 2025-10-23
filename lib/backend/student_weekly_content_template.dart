@@ -125,14 +125,19 @@ class StudentWeeklyContentTemplate {
             // 주차별 페이지 템플릿 생성
             final pageDoc = pw.Document();
             pageDoc.addPage(pw.Page(
-              pageFormat: PdfPageFormat.a4,
+              pageFormat: PdfPageFormat.a4.copyWith(
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              ),
               theme: font != null ? pw.ThemeData.withFont(base: font) : null,
               build: (context) => pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   // 헤더 부분
                   pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
@@ -150,17 +155,17 @@ class StudentWeeklyContentTemplate {
                           )),
                         ]),
                         pw.Text('${year ?? '2025'}년도 ${semester ?? '1학기'}', style: pw.TextStyle(
-                          fontSize: 14, color: PdfColors.black, font: font,
+                          fontSize: 12, color: PdfColors.black, font: font,
                         )),
                       ],
                     ),
                   ),
-                  
-                  pw.SizedBox(height: 10),
-                  
+
+                  pw.SizedBox(height: 5),
+
                   // 학생 정보 (헤더 바로 아래)
                   pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(40, 0, 40, 0),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
@@ -173,12 +178,13 @@ class StudentWeeklyContentTemplate {
                       ],
                     ),
                   ),
-                  
-                  pw.SizedBox(height: 15),
-                  
+
+
+                  pw.SizedBox(height: 5),
+
                   // 스케치 및 이미지 섹션 헤더
                   pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(40, 0, 40, 10),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: pw.Text(
                       '스케치 및 이미지',
                       style: pw.TextStyle(
@@ -189,24 +195,25 @@ class StudentWeeklyContentTemplate {
                       ),
                     ),
                   ),
-                  
+
                   // 콘텐츠 영역 (PDF 삽입 영역)
                   pw.Expanded(
                     flex: 3,
                     child: pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 10),
+                      padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: pw.Container(
                         width: double.infinity,
                         color: PdfColors.white,
                       ),
                     ),
                   ),
-                  
-                  pw.SizedBox(height: 20),
-                  
+
+
+                  pw.SizedBox(height: 5),
+
                   // 크리틱 내용 섹션 헤더
                   pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(40, 0, 40, 10),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: pw.Text(
                       '크리틱 내용',
                       style: pw.TextStyle(
@@ -217,12 +224,12 @@ class StudentWeeklyContentTemplate {
                       ),
                     ),
                   ),
-                  
+
                   // 크리틱 내용 영역
                   pw.Expanded(
                     flex: 1,
                     child: pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                      padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: pw.Container(
                         width: double.infinity,
                         padding: const pw.EdgeInsets.all(5),
@@ -234,10 +241,11 @@ class StudentWeeklyContentTemplate {
                       ),
                     ),
                   ),
-                  
+
+
                   // 푸터 부분
                   pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                    padding: const pw.EdgeInsets.fromLTRB(20, 5, 20, 10),
                     child: pw.Text(
                       '순천향대학교 건축학과(9) | 건축설계 9 (5학년) | 교수 천준호, 김승, 이재',
                       style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
@@ -259,43 +267,40 @@ class StudentWeeklyContentTemplate {
             newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
             
             // 실제 PDF 콘텐츠를 "스케치 및 이미지" 영역에만 그리기
-            final contentX = 50.0;
-            final contentY = 175.0; // 헤더(80) + 학생정보(35) + 스케치헤더(25) + 여백(35)
-            
+            final contentX = 30.0; // 좌우 여백 30pt
+            final contentY = 110.0; // 헤더(40) + 학생정보(35) + 스케치텍스트(25) + 여유(10)
+
             // 전체 페이지 크기
             final pageHeight = newPage.getClientSize().height;
             final pageWidth = newPage.getClientSize().width;
-            
-            // 스케치 및 이미지 영역 크기 계산
-            // 헤더(80) + 학생정보(35) + 스케치헤더(25) + 여백(35) = 175
-            // 푸터(50) + 크리틱헤더(25) + 크리틱영역(~150) + 여백(20) = 245
-            // 스케치 영역 = 전체 - 175(top) - 245(bottom)
-            final contentWidth = pageWidth - 100; // 좌우 여백 50씩
-            final contentHeight = pageHeight - 175 - 245; // 스케치 영역만 사용
-            
+
+            // 스케치 및 이미지 영역 크기 계산 - Expanded(flex:3) 영역에만 콘텐츠 배치
+            final contentWidth = pageWidth - 60; // 좌우 여백 30씩
+            final contentHeight = pageHeight - 110.0 - 150.0; // 상단(110) + 하단(크리틱영역+푸터 약 150) 제외
+
             // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
             final sourceSize = sourceTemplate.size;
             final contentScaleX = contentWidth / sourceSize.width;
             final contentScaleY = contentHeight / sourceSize.height;
-            final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.9;
-            
+            final contentScale = (contentScaleX < contentScaleY ? contentScaleX : contentScaleY) * 0.75; // 강의자료와 동일 75%
+
             final finalWidth = sourceSize.width * contentScale;
             final finalHeight = sourceSize.height * contentScale;
-            
-            // 콘텐츠 영역 내에서 중앙 정렬
+
+            // 콘텐츠 영역 내에서 좌우 중앙, 상단 정렬
             final contentCenterX = contentX + (contentWidth - finalWidth) / 2;
-            final contentCenterY = contentY + (contentHeight - finalHeight) / 2;
-            
+            final contentTopY = contentY; // 상단 정렬로 변경
+
             newPage.graphics.save();
-            newPage.graphics.translateTransform(contentCenterX, contentCenterY);
-            
+            newPage.graphics.translateTransform(contentCenterX, contentTopY);
+
             // 실제 PDF 콘텐츠 그리기
             newPage.graphics.drawPdfTemplate(
               sourceTemplate,
               ui.Offset.zero,
               ui.Size(finalWidth, finalHeight)
             );
-            
+
             newPage.graphics.restore();
             
             pageSyncDoc.dispose();

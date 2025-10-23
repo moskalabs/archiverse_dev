@@ -58,14 +58,19 @@ class LectureMaterialTemplate {
         // 강의자료 페이지 템플릿 생성
         final pageDoc = pw.Document();
         pageDoc.addPage(pw.Page(
-          pageFormat: PdfPageFormat.a4,
+          pageFormat: PdfPageFormat.a4.copyWith(
+            marginLeft: 0,
+            marginRight: 0,
+            marginTop: 0,
+            marginBottom: 0,
+          ),
           theme: font != null ? pw.ThemeData.withFont(base: font) : null,
           build: (context) => pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               // 헤더 부분 (강의자료용)
               pw.Padding(
-                padding: const pw.EdgeInsets.fromLTRB(40, 30, 40, 0),
+                padding: const pw.EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
@@ -88,13 +93,13 @@ class LectureMaterialTemplate {
                   ],
                 ),
               ),
-              
-              pw.SizedBox(height: 20),
-              
+
+              pw.SizedBox(height: 10),
+
               // 콘텐츠 영역 (네모 테두리 - rotation된 내용이 들어갈 영역)
               pw.Expanded(
                 child: pw.Padding(
-                  padding: const pw.EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  padding: const pw.EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: pw.Container(
                     width: double.infinity,
                     decoration: pw.BoxDecoration(
@@ -116,7 +121,7 @@ class LectureMaterialTemplate {
               
               // 푸터 부분
               pw.Padding(
-                padding: const pw.EdgeInsets.fromLTRB(40, 10, 40, 20),
+                padding: const pw.EdgeInsets.fromLTRB(20, 5, 20, 10),
                 child: pw.Text(
                   '순천향대학교 건축학과 | 건축설계 (5학년) | 교수 ${professorName ?? '교수명'}',
                   style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600, font: font),
@@ -138,10 +143,10 @@ class LectureMaterialTemplate {
         newPage.graphics.drawPdfTemplate(pageTemplate, ui.Offset.zero);
         
         // 강의자료는 rotation(90도) 적용하여 콘텐츠 영역에 그리기
-        final contentX = 60.0; // 테두리 안쪽
-        final contentY = 90.0;
-        final contentWidth = newPage.getClientSize().width - 120; // 테두리 여백 고려
-        final contentHeight = newPage.getClientSize().height - 170;
+        final contentX = 30.0; // 테두리 안쪽
+        final contentY = 50.0;
+        final contentWidth = newPage.getClientSize().width - 60; // 테두리 여백 고려
+        final contentHeight = newPage.getClientSize().height - 85;
         
         // rotation(90도 회전) 적용을 위한 스케일링 계산
         final sourceSize = sourceTemplate.size;

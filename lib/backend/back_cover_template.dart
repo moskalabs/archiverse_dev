@@ -33,7 +33,12 @@ class BackCoverTemplate {
       // 뒷표지 페이지 생성 (스크린샷과 동일한 스타일)
       final backCoverDoc = pw.Document();
       backCoverDoc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: PdfPageFormat.a4.copyWith(
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              ),
         margin: pw.EdgeInsets.zero,
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
         build: (context) => pw.FullPage(

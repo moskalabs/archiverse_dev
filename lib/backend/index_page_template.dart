@@ -36,7 +36,12 @@ class IndexPageTemplate {
 
     pdf.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: PdfPageFormat.a4.copyWith(
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              ),
         theme: font != null ? pw.ThemeData.withFont(base: font) : null,
         build: (context) {
           return pw.Padding(

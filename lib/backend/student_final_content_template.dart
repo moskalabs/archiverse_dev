@@ -90,7 +90,12 @@ class StudentFinalContentTemplate {
             // 기말결과물 페이지 템플릿 생성
             final pageDoc = pw.Document();
             pageDoc.addPage(pw.Page(
-              pageFormat: PdfPageFormat.a4,
+              pageFormat: PdfPageFormat.a4.copyWith(
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              ),
               theme: font != null ? pw.ThemeData.withFont(base: font) : null,
               build: (context) => pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
