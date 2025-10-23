@@ -268,7 +268,7 @@ class StudentWeeklyContentTemplate {
             
             // 실제 PDF 콘텐츠를 "스케치 및 이미지" 영역에만 그리기
             final contentX = 30.0; // 좌우 여백 30pt
-            final contentY = 110.0; // 헤더(40) + 학생정보(35) + 스케치텍스트(25) + 여유(10)
+            final contentY = 125.0; // 헤더(40) + 학생정보(35) + 스케치텍스트(35) + 여유(15)
 
             // 전체 페이지 크기
             final pageHeight = newPage.getClientSize().height;
@@ -276,7 +276,7 @@ class StudentWeeklyContentTemplate {
 
             // 스케치 및 이미지 영역 크기 계산 - Expanded(flex:3) 영역에만 콘텐츠 배치
             final contentWidth = pageWidth - 60; // 좌우 여백 30씩
-            final contentHeight = pageHeight - 110.0 - 150.0; // 상단(110) + 하단(크리틱영역+푸터 약 150) 제외
+            final contentHeight = pageHeight - 125.0 - 150.0; // 상단(125) + 하단(크리틱영역+푸터 약 150) 제외
 
             // 실제 PDF 콘텐츠를 콘텐츠 영역에 맞게 스케일링하여 그리기
             final sourceSize = sourceTemplate.size;
