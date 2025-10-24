@@ -1,4 +1,5 @@
 import '/components/default_layout/divider/divider_widget.dart';
+import '/components/dialogs/pdf_download_selection_dialog.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -693,6 +694,29 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                           return;
                         }
 
+                        // 먼저 선택 다이얼로그 표시
+                        final selectedItems = await showDialog<Map<String, bool>>(
+                          context: context,
+                          builder: (dialogContext) => PdfDownloadSelectionDialog(
+                            year: FFAppState().yearSelected,
+                            semester: FFAppState().semesterSelected,
+                            courseName: FFAppState().courseNameSelected,
+                            professorName: FFAppState().professorNameSelected,
+                            grade: FFAppState().gradeSelected,
+                            section: FFAppState().sectionSelected,
+                            classId: FFAppState().classSelectedID,
+                          ),
+                        );
+
+                        // 사용자가 취소하거나 아무것도 선택하지 않은 경우
+                        if (selectedItems == null || !mounted) {
+                          return;
+                        }
+
+                        // 선택된 항목 확인
+                        print('[RightWidgetWidget] 선택된 항목: $selectedItems');
+
+                        // 다운로드 진행
                         FFAppState().update(() {
                           FFAppState().downloadProgress = 0.0;
                           FFAppState().downloadProgressMessage = '문서 목록을 불러오는 중';
@@ -718,11 +742,11 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                             section: FFAppState().sectionSelected,
                           );
 
-                                                    FFAppState().update(() {
+                          FFAppState().update(() {
                             FFAppState().downloadProgressMessage = 'PDF 생성 준비 중';
                           });
 
-                          // 관리자 대시보드와 동일한 완전한 PDF 생성
+                          // 선택된 항목에 따라 PDF 생성
                           await actions.generateCleanPdf(
                             year: FFAppState().yearSelected,
                             semester: FFAppState().semesterSelected,
@@ -731,6 +755,7 @@ class _RightWidgetWidgetState extends State<RightWidgetWidget> {
                             grade: FFAppState().gradeSelected,
                             section: FFAppState().sectionSelected,
                             classId: selectedClassId,
+                            selectedItems: selectedItems, // 선택된 항목 전달
                           );
 
                           if (mounted) {

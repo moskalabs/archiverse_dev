@@ -199,6 +199,7 @@ class UltraSimpleTemplate {
     String? section,
     int? classId,
     Function(double, String)? updateProgressCallback, // 진행률 콜백 추가
+    Map<String, bool>? selectedItems, // 선택된 항목들
   }) async {
     print('Ultra Simple PDF 생성 시작');
     
@@ -491,27 +492,32 @@ class UltraSimpleTemplate {
       updateProgress(0.5, '섹션 구분자 완료');
       
       // 4. 수업계획서 PDF 병합
-      if (coursePlanUrl != null && coursePlanUrl!.isNotEmpty) {
+      if (coursePlanUrl != null && coursePlanUrl!.isNotEmpty &&
+          (selectedItems == null || selectedItems['coursePlan'] == true)) {
         await _addDocumentWithTemplate(finalDoc, coursePlanUrl!, '01', '수업계획서', displayYear, displaySemester, font, updateProgress, 0.5, 0.6);
       }
-      
+
       // 5. 출석부 PDF 병합
-      if (attendanceUrl != null && attendanceUrl!.isNotEmpty) {
+      if (attendanceUrl != null && attendanceUrl!.isNotEmpty &&
+          (selectedItems == null || selectedItems['attendance'] == true)) {
         await _addDocumentWithTemplate(finalDoc, attendanceUrl!, '02', '출석부 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.6, 0.65);
       }
-      
+
       // 6. 성적기록표 PDF 병합
-      if (gradeRecordUrl != null && gradeRecordUrl!.isNotEmpty) {
+      if (gradeRecordUrl != null && gradeRecordUrl!.isNotEmpty &&
+          (selectedItems == null || selectedItems['grade'] == true)) {
         await _addDocumentWithTemplate(finalDoc, gradeRecordUrl!, '03', '성적기록표 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.65, 0.7);
       }
-      
+
       // 7. 학생작품평가표 PDF 병합
-      if (workEvalUrl != null && workEvalUrl!.isNotEmpty) {
+      if (workEvalUrl != null && workEvalUrl!.isNotEmpty &&
+          (selectedItems == null || selectedItems['studentEvaluation'] == true)) {
         await _addDocumentWithTemplate(finalDoc, workEvalUrl!, '04', '학생작품평가표 ($displayProfessorName 교수)', displayYear, displaySemester, font, updateProgress, 0.7, 0.8);
       }
       
       // 8. 강의자료 rotation 적용 (별도 처리)
-      if (lectureMaterialUrl != null && lectureMaterialUrl!.isNotEmpty) {
+      if (lectureMaterialUrl != null && lectureMaterialUrl!.isNotEmpty &&
+          (selectedItems == null || selectedItems['lectureMaterial'] == true)) {
         await LectureMaterialTemplate.addLectureMaterialPages(
           finalDoc: finalDoc,
           lectureMaterialUrl: lectureMaterialUrl!,
@@ -523,27 +529,33 @@ class UltraSimpleTemplate {
           endProgress: 0.9,
         );
       } else {
-        print('강의자료 URL이 없음: $lectureMaterialUrl');
-        updateProgress(0.9, '강의자료 없음 - 스킵');
+        print('강의자료 URL이 없거나 선택되지 않음: $lectureMaterialUrl');
+        updateProgress(0.9, '강의자료 없음/선택안됨 - 스킵');
       }
       
       // 9. 주차별 설계진행표 표지 (학생 목록 포함)
-      final weeklyStudentNames = await WeeklyProgressCoverTemplate.addWeeklyProgressCover(
-        finalDoc: finalDoc,
-        classId: classId,
-        year: displayYear,
-        semester: displaySemester,
-        courseName: displayCourseName,
-        professorName: displayProfessorName,
-        grade: displayGrade,
-        section: displaySection,
-        updateProgress: updateProgress,
-        startProgress: 0.85,
-        endProgress: 0.87,
-      );
-      
+      List<String> weeklyStudentNames = [];
+      if (selectedItems == null || selectedItems['weeklyProgress'] == true) {
+        weeklyStudentNames = await WeeklyProgressCoverTemplate.addWeeklyProgressCover(
+          finalDoc: finalDoc,
+          classId: classId,
+          year: displayYear,
+          semester: displaySemester,
+          courseName: displayCourseName,
+          professorName: displayProfessorName,
+          grade: displayGrade,
+          section: displaySection,
+          updateProgress: updateProgress,
+          startProgress: 0.85,
+          endProgress: 0.87,
+        );
+      } else {
+        print('주차별 설계진행표가 선택되지 않음 - 스킵');
+      }
+
       // 10. 각 학생별로 [표지 + 1주차~15주차] 순서로 추가
-      if (weeklyStudentNames.isNotEmpty && classId != null) {
+      if (weeklyStudentNames.isNotEmpty && classId != null &&
+          (selectedItems == null || selectedItems['weeklyProgress'] == true)) {
         print('======= 학생별 표지 + 주차별 자료 추가 시작 (${weeklyStudentNames.length}명) =======');
         
         for (int i = 0; i < weeklyStudentNames.length; i++) {
@@ -594,22 +606,28 @@ class UltraSimpleTemplate {
       }
       
       // 11. 중간결과물 표지 (학생 목록 포함)
-      final midtermStudentNames = await MidtermResultsCoverTemplate.addMidtermResultsCover(
-        finalDoc: finalDoc,
-        classId: classId,
-        year: displayYear,
-        semester: displaySemester,
-        courseName: displayCourseName,
-        professorName: displayProfessorName,
-        grade: displayGrade,
-        section: displaySection,
-        updateProgress: updateProgress,
-        startProgress: 0.98,
-        endProgress: 0.985,
-      );
-      
+      List<String> midtermStudentNames = [];
+      if (selectedItems == null || selectedItems['midterm'] == true) {
+        midtermStudentNames = await MidtermResultsCoverTemplate.addMidtermResultsCover(
+          finalDoc: finalDoc,
+          classId: classId,
+          year: displayYear,
+          semester: displaySemester,
+          courseName: displayCourseName,
+          professorName: displayProfessorName,
+          grade: displayGrade,
+          section: displaySection,
+          updateProgress: updateProgress,
+          startProgress: 0.98,
+          endProgress: 0.985,
+        );
+      } else {
+        print('중간 결과물이 선택되지 않음 - 스킵');
+      }
+
       // 12. 각 학생별 중간결과물 [표지 + 콘텐츠] 추가
-      if (midtermStudentNames.isNotEmpty && classId != null) {
+      if (midtermStudentNames.isNotEmpty && classId != null &&
+          (selectedItems == null || selectedItems['midterm'] == true)) {
         print('======= 학생별 중간결과물 추가 시작 (${midtermStudentNames.length}명) =======');
         
         for (int i = 0; i < midtermStudentNames.length; i++) {
@@ -663,22 +681,28 @@ class UltraSimpleTemplate {
       }
       
       // 13. 기말결과물 표지 (학생 목록 포함)
-      final finalStudentNames = await FinalResultsCoverTemplate.addFinalResultsCover(
-        finalDoc: finalDoc,
-        classId: classId,
-        year: displayYear,
-        semester: displaySemester,
-        courseName: displayCourseName,
-        professorName: displayProfessorName,
-        grade: displayGrade,
-        section: displaySection,
-        updateProgress: updateProgress,
-        startProgress: 0.995,
-        endProgress: 0.997,
-      );
-      
+      List<String> finalStudentNames = [];
+      if (selectedItems == null || selectedItems['final'] == true) {
+        finalStudentNames = await FinalResultsCoverTemplate.addFinalResultsCover(
+          finalDoc: finalDoc,
+          classId: classId,
+          year: displayYear,
+          semester: displaySemester,
+          courseName: displayCourseName,
+          professorName: displayProfessorName,
+          grade: displayGrade,
+          section: displaySection,
+          updateProgress: updateProgress,
+          startProgress: 0.995,
+          endProgress: 0.997,
+        );
+      } else {
+        print('기말 결과물이 선택되지 않음 - 스킵');
+      }
+
       // 14. 각 학생별 기말결과물 [표지] 추가 (콘텐츠는 다음 단계)
-      if (finalStudentNames.isNotEmpty && classId != null) {
+      if (finalStudentNames.isNotEmpty && classId != null &&
+          (selectedItems == null || selectedItems['final'] == true)) {
         print('======= 학생별 기말결과물 추가 시작 (${finalStudentNames.length}명) =======');
         
         for (int i = 0; i < finalStudentNames.length; i++) {

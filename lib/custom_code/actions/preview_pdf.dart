@@ -13,7 +13,8 @@ import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import '/backend/ultra_simple_template.dart';
 
-Future<void> generateCleanPdf({
+/// PDF 미리보기 - 새 탭에서 열기
+Future<void> previewPdf({
   String? year,
   String? semester,
   String? courseName,
@@ -21,11 +22,11 @@ Future<void> generateCleanPdf({
   int? grade,
   String? section,
   int? classId,
-  Map<String, bool>? selectedItems, // 선택된 항목들
+  Map<String, bool>? selectedItems,
 }) async {
-  print('======= CLEAN PDF GENERATION START =======');
+  print('======= PDF PREVIEW START =======');
   print('전달된 데이터: year=$year, semester=$semester, courseName=$courseName, professorName=$professorName, grade=$grade, section=$section, classId=$classId');
-  
+
   try {
     // 진행률 업데이트 함수 (FFAppState 업데이트)
     void updateProgressState(double progress, String message) {
@@ -39,10 +40,10 @@ Future<void> generateCleanPdf({
         print('진행률 UI 업데이트 실패: $e');
       }
     }
-    
-    updateProgressState(0.0, 'PDF 생성 시작');
-    
-    // 4페이지 PDF 생성 (표지 + INDEX + 섹션구분자 + 수업계획서)
+
+    updateProgressState(0.0, 'PDF 미리보기 생성 시작');
+
+    // PDF 생성
     final combinedPdfBytes = await UltraSimpleTemplate.generateCombinedPdf(
       year: year,
       semester: semester,
@@ -51,40 +52,56 @@ Future<void> generateCleanPdf({
       grade: grade != null ? '${grade}학년' : '학년',
       section: section,
       classId: classId,
-      updateProgressCallback: updateProgressState, // 진행률 콜백 전달
-      selectedItems: selectedItems, // 선택된 항목 전달
+      updateProgressCallback: updateProgressState,
+      selectedItems: selectedItems,
     );
-    
-    print('4페이지 PDF 생성 완료: ${combinedPdfBytes.length} bytes');
-    
+
+    print('PDF 생성 완료: ${combinedPdfBytes.length} bytes');
+
     if (combinedPdfBytes.isEmpty) {
       throw Exception('PDF 생성 실패');
     }
-    
-    updateProgressState(0.95, 'PDF 다운로드 준비 중');
-    
+
+    updateProgressState(0.95, 'PDF 미리보기 준비 중');
+
     if (kIsWeb && combinedPdfBytes.isNotEmpty) {
-      print('======= 다운로드 시작 =======');
-      
-      final fileName = 'portfolio_complete_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final blob = html.Blob([combinedPdfBytes], 'application/pdf');
-      final dlUrl = html.Url.createObjectUrlFromBlob(blob);
-      final a = html.document.createElement('a') as html.AnchorElement
-        ..href = dlUrl
-        ..download = fileName;
-      a.click();
-      html.Url.revokeObjectUrl(dlUrl);
-      
-      updateProgressState(1.0, 'PDF 다운로드 완료');
-      
-      print('======= 전체 PDF SUCCESS =======');
-      print('파일명: $fileName');
+      print('======= PDF 미리보기 열기 =======');
+
+      try {
+        // Blob 생성
+        final blob = html.Blob([combinedPdfBytes], 'application/pdf');
+        final url = html.Url.createObjectUrlFromBlob(blob);
+
+        print('Blob URL 생성: $url');
+
+        // 새 탭에서 PDF 열기
+        final newWindow = html.window.open(url, '_blank');
+
+        if (newWindow == null) {
+          print('팝업이 차단되었습니다. 대체 방법 사용');
+
+          // 팝업이 차단된 경우 현재 탭에서 열기
+          final anchor = html.AnchorElement(href: url)
+            ..target = '_blank'
+            ..rel = 'noopener noreferrer';
+          html.document.body?.append(anchor);
+          anchor.click();
+          anchor.remove();
+        }
+
+        updateProgressState(1.0, 'PDF 미리보기 완료');
+
+        print('======= PDF PREVIEW SUCCESS =======');
+      } catch (e) {
+        print('PDF 미리보기 열기 실패: $e');
+        rethrow;
+      }
     } else {
-      print('======= PDF GENERATION FAILED =======');
+      print('======= PDF PREVIEW FAILED =======');
       print('PDF empty: ${combinedPdfBytes.isEmpty}');
     }
   } catch (e) {
-    print('======= PDF GENERATION ERROR: $e =======');
+    print('======= PDF PREVIEW ERROR: $e =======');
     rethrow;
   }
 }

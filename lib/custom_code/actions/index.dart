@@ -8,3 +8,4 @@ export 'get_class_documents.dart' show getClassDocuments;
 export 'search_posts.dart' show searchPosts;
 export 'generate_clean_pdf.dart' show generateCleanPdf;
 export 'add_lecture_material_rotation.dart' show addLectureMaterialRotation;
+export 'preview_pdf.dart' show previewPdf;

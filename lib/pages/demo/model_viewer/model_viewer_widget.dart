@@ -39,15 +39,18 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
   }
 
   String _getHtmlContent() {
-    final modelUrl = _model.selectedModelUrl ??
-        'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoomBox/glTF-Binary/BoomBox.glb';
+    final modelUrl = _model.selectedModelUrl ?? '';
+    final fileExtension = _model.uploadedLocalFile.name?.split('.').last.toLowerCase() ?? 'glb';
 
     return '''<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three-sketchup-loader@1.0.0/dist/SKPLoader.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -57,27 +60,167 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
     }
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    model-viewer {
+    #viewer {
       width: 100%;
       height: 100%;
-      background-color: transparent;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <model-viewer
-    src="$modelUrl"
-    alt="3D Model"
-    auto-rotate
-    camera-controls
-    shadow-intensity="1"
-    exposure="1"
-    camera-orbit="45deg 75deg 2.5m">
-  </model-viewer>
+  <div id="loading">로딩 중...</div>
+  <div id="viewer"></div>
+
+  <script>
+    let scene, camera, renderer, controls;
+
+    function init() {
+      // Scene
+      scene = new THREE.Scene();
+      scene.background = null;
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(5, 5, 5);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.getElementById('viewer').appendChild(renderer.domElement);
+
+      // Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 2.0;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(10, 10, 5);
+      directionalLight.castShadow = true;
+      scene.add(directionalLight);
+
+      const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+      directionalLight2.position.set(-10, 5, -5);
+      scene.add(directionalLight2);
+
+      // Load model
+      loadModel();
+
+      // Animation loop
+      animate();
+
+      // Handle window resize
+      window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function loadModel() {
+      const modelUrl = "$modelUrl";
+      const fileExt = "$fileExtension";
+
+      if (!modelUrl) {
+        document.getElementById('loading').textContent = 'SKP 파일을 업로드해주세요';
+        return;
+      }
+
+      if (fileExt === 'skp') {
+        // Load SKP file
+        const loader = new THREE.SKPLoader();
+        loader.load(
+          modelUrl,
+          function(object) {
+            // Center and scale the model
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 5 / maxDim;
+            object.scale.multiplyScalar(scale);
+
+            object.position.x = -center.x * scale;
+            object.position.y = -center.y * scale;
+            object.position.z = -center.z * scale;
+
+            scene.add(object);
+            document.getElementById('loading').style.display = 'none';
+            console.log('SKP model loaded successfully');
+          },
+          function(xhr) {
+            const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
+            document.getElementById('loading').textContent = '로딩 중... ' + percent + '%';
+          },
+          function(error) {
+            console.error('SKP loading error:', error);
+            document.getElementById('loading').textContent = 'SKP 파일 로드 실패';
+          }
+        );
+      } else if (fileExt === 'glb' || fileExt === 'gltf') {
+        // Load GLB/GLTF file
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+          modelUrl,
+          function(gltf) {
+            const object = gltf.scene;
+
+            // Center and scale the model
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 5 / maxDim;
+            object.scale.multiplyScalar(scale);
+
+            object.position.x = -center.x * scale;
+            object.position.y = -center.y * scale;
+            object.position.z = -center.z * scale;
+
+            scene.add(object);
+            document.getElementById('loading').style.display = 'none';
+            console.log('GLB/GLTF model loaded successfully');
+          },
+          function(xhr) {
+            const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
+            document.getElementById('loading').textContent = '로딩 중... ' + percent + '%';
+          },
+          function(error) {
+            console.error('GLB/GLTF loading error:', error);
+            document.getElementById('loading').textContent = 'GLB/GLTF 파일 로드 실패';
+          }
+        );
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    init();
+  </script>
 </body>
 </html>''';
   }
@@ -152,7 +295,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Google Model Viewer 기반 3D 모델을 표시합니다.',
+                        'Three.js 기반 SKP, GLB, GLTF 파일을 표시합니다.',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               color: FlutterFlowTheme.of(context).secondaryText,
@@ -183,18 +326,31 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       });
 
                       try {
-                        // Upload to Supabase Storage
-                        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${_model.uploadedLocalFile.name}';
+                        // Upload to Supabase Storage (fileupload bucket, 3d-models folder)
+                        final fileName = '3d-models/${DateTime.now().millisecondsSinceEpoch}_${_model.uploadedLocalFile.name}';
+
+                        // MIME type 설정 (SKP는 application/octet-stream으로)
+                        final fileExtension = _model.uploadedLocalFile.name?.split('.').last.toLowerCase() ?? '';
+                        String contentType = 'application/octet-stream';
+                        if (fileExtension == 'glb') {
+                          contentType = 'model/gltf-binary';
+                        } else if (fileExtension == 'gltf') {
+                          contentType = 'model/gltf+json';
+                        }
+
                         await SupaFlow.client.storage
-                            .from('3d-models')
+                            .from('fileupload')
                             .uploadBinary(
                               fileName,
                               _model.uploadedLocalFile.bytes!,
+                              fileOptions: FileOptions(
+                                contentType: contentType,
+                              ),
                             );
 
                         // Get public URL
                         final publicUrl = SupaFlow.client.storage
-                            .from('3d-models')
+                            .from('fileupload')
                             .getPublicUrl(fileName);
 
                         setState(() {
@@ -230,7 +386,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       }
                     }
                   },
-                  text: _model.isDataUploading ? '업로드 중...' : '3D 모델 파일 업로드',
+                  text: _model.isDataUploading ? '업로드 중...' : 'SKP 파일 업로드',
                   icon: Icon(
                     _model.isDataUploading ? Icons.hourglass_empty : Icons.upload_file,
                     size: 20,
@@ -408,7 +564,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Model Viewer • 드래그로 회전 • 휠로 확대/축소 • 자동 회전',
+                          'Three.js Viewer • 드래그로 회전 • 휠로 확대/축소 • 자동 회전',
                           textAlign: TextAlign.center,
                           style: FlutterFlowTheme.of(context).bodySmall.override(
                                 fontFamily: 'Readex Pro',

@@ -4662,61 +4662,117 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                     5.0,
                                                                     0.0,
                                                                     5.0),
-                                                        child: Text(
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .getText(
-                                                            'wpd1dqic' /* 총 진행사항 */,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                font: GoogleFonts
-                                                                    .openSans(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
-                                                                ),
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .secondaryText,
-                                                                fontSize: () {
-                                                                  if (MediaQuery.sizeOf(
-                                                                              context)
-                                                                          .width <
-                                                                      kBreakpointSmall) {
-                                                                    return 12.0;
-                                                                  } else if (MediaQuery.sizeOf(
-                                                                              context)
-                                                                          .width <
-                                                                      kBreakpointMedium) {
-                                                                    return 16.0;
-                                                                  } else if (MediaQuery.sizeOf(
-                                                                              context)
-                                                                          .width <
-                                                                      kBreakpointLarge) {
-                                                                    return 18.0;
-                                                                  } else {
-                                                                    return 22.0;
-                                                                  }
-                                                                }(),
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
+                                                        child: Row(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .getText(
+                                                                'wpd1dqic' /* 총 진행사항 */,
                                                               ),
+                                                              textAlign:
+                                                                  TextAlign.start,
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    font: GoogleFonts
+                                                                        .openSans(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .secondaryText,
+                                                                    fontSize: () {
+                                                                      if (MediaQuery.sizeOf(
+                                                                                  context)
+                                                                              .width <
+                                                                          kBreakpointSmall) {
+                                                                        return 12.0;
+                                                                      } else if (MediaQuery.sizeOf(
+                                                                                  context)
+                                                                              .width <
+                                                                          kBreakpointMedium) {
+                                                                        return 16.0;
+                                                                      } else if (MediaQuery.sizeOf(
+                                                                                  context)
+                                                                              .width <
+                                                                          kBreakpointLarge) {
+                                                                        return 18.0;
+                                                                      } else {
+                                                                        return 22.0;
+                                                                      }
+                                                                    }(),
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontStyle: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .fontStyle,
+                                                                  ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                                                              child: Text(
+                                                                '${(_model.studentCount > 0 ? math.min(100.0, (((_model.progressSubject) / (_model.studentCount * 15)) * 100)) : 0.0).toStringAsFixed(0)}%',
+                                                                style: FlutterFlowTheme
+                                                                        .of(context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .openSans(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontStyle: FlutterFlowTheme.of(
+                                                                                context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      color: Color(0xFF284E75),
+                                                                      fontSize: () {
+                                                                        if (MediaQuery.sizeOf(
+                                                                                    context)
+                                                                                .width <
+                                                                            kBreakpointSmall) {
+                                                                          return 12.0;
+                                                                        } else if (MediaQuery.sizeOf(
+                                                                                    context)
+                                                                                .width <
+                                                                            kBreakpointMedium) {
+                                                                          return 16.0;
+                                                                        } else if (MediaQuery.sizeOf(
+                                                                                    context)
+                                                                                .width <
+                                                                            kBreakpointLarge) {
+                                                                          return 18.0;
+                                                                        } else {
+                                                                          return 22.0;
+                                                                        }
+                                                                      }(),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -4736,10 +4792,11 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                   double>(
                                                             math.min(
                                                                 1.0,
-                                                                ((_model.progressSubject) /
-                                                                    (8 *
-                                                                        15 *
-                                                                        3))),
+                                                                _model.studentCount > 0
+                                                                    ? ((_model.progressSubject) /
+                                                                        (_model.studentCount *
+                                                                            15))
+                                                                    : 0.0),
                                                             0.0,
                                                           ),
                                                           width:
@@ -4788,11 +4845,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                     .start,
                                                             children: [
                                                               Text(
-                                                                FFLocalizations.of(
-                                                                        context)
-                                                                    .getText(
-                                                                  'v682now1' /* 0% */,
-                                                                ),
+                                                                '0%',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -15070,58 +15123,111 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                       5.0,
                                                                       0.0,
                                                                       5.0),
-                                                          child: Text(
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .getText(
-                                                              '7btbj71q' /* 총 진행사항 */,
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .openSans(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .fontStyle,
-                                                                  ),
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText,
-                                                                  fontSize: () {
-                                                                    if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointSmall) {
-                                                                      return 12.0;
-                                                                    } else if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointMedium) {
-                                                                      return 12.0;
-                                                                    } else if (MediaQuery.sizeOf(context)
-                                                                            .width <
-                                                                        kBreakpointLarge) {
-                                                                      return 18.0;
-                                                                    } else {
-                                                                      return 22.0;
-                                                                    }
-                                                                  }(),
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .fontStyle,
+                                                          child: Row(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Text(
+                                                                FFLocalizations.of(
+                                                                        context)
+                                                                    .getText(
+                                                                  '7btbj71q' /* 총 진행사항 */,
                                                                 ),
+                                                                textAlign:
+                                                                    TextAlign.start,
+                                                                style: FlutterFlowTheme
+                                                                        .of(context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      font: GoogleFonts
+                                                                          .openSans(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontStyle: FlutterFlowTheme.of(
+                                                                                context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondaryText,
+                                                                      fontSize: () {
+                                                                        if (MediaQuery.sizeOf(context)
+                                                                                .width <
+                                                                            kBreakpointSmall) {
+                                                                          return 12.0;
+                                                                        } else if (MediaQuery.sizeOf(context)
+                                                                                .width <
+                                                                            kBreakpointMedium) {
+                                                                          return 12.0;
+                                                                        } else if (MediaQuery.sizeOf(context)
+                                                                                .width <
+                                                                            kBreakpointLarge) {
+                                                                          return 18.0;
+                                                                        } else {
+                                                                          return 22.0;
+                                                                        }
+                                                                      }(),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .fontStyle,
+                                                                    ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                                                                child: Text(
+                                                                  '${(_model.studentCount > 0 ? math.min(100.0, (((_model.progressSubject) / (_model.studentCount * 15)) * 100)) : 0.0).toStringAsFixed(0)}%',
+                                                                  style: FlutterFlowTheme
+                                                                          .of(context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        font: GoogleFonts
+                                                                            .openSans(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                          fontStyle: FlutterFlowTheme.of(
+                                                                                  context)
+                                                                              .bodyMedium
+                                                                              .fontStyle,
+                                                                        ),
+                                                                        color: Color(0xFF284E75),
+                                                                        fontSize: () {
+                                                                          if (MediaQuery.sizeOf(context)
+                                                                                  .width <
+                                                                              kBreakpointSmall) {
+                                                                            return 12.0;
+                                                                          } else if (MediaQuery.sizeOf(context)
+                                                                                  .width <
+                                                                              kBreakpointMedium) {
+                                                                            return 12.0;
+                                                                          } else if (MediaQuery.sizeOf(context)
+                                                                                  .width <
+                                                                              kBreakpointLarge) {
+                                                                            return 18.0;
+                                                                          } else {
+                                                                            return 22.0;
+                                                                          }
+                                                                        }(),
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontStyle: FlutterFlowTheme.of(
+                                                                                context)
+                                                                            .bodyMedium
+                                                                            .fontStyle,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
@@ -15141,10 +15247,11 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                     double>(
                                                               math.min(
                                                                   1.0,
-                                                                  ((_model.progressSubject) /
-                                                                      (8 *
-                                                                          15 *
-                                                                          3))),
+                                                                  _model.studentCount > 0
+                                                                      ? ((_model.progressSubject) /
+                                                                          (_model.studentCount *
+                                                                              15))
+                                                                      : 0.0),
                                                               0.0,
                                                             ),
                                                             width: MediaQuery
@@ -15199,11 +15306,7 @@ class _ProfDashboardWidgetState extends State<ProfDashboardWidget> {
                                                                       .start,
                                                               children: [
                                                                 Text(
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    'guy2ojw4' /* 0% */,
-                                                                  ),
+                                                                  '0%',
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMedium

@@ -181,12 +181,12 @@ class _MidtermFinalResultsTableWidgetState
                                 EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: midtermStatus == '제출'
-                                  ? Color(0xFF4CAF50).withOpacity(0.1)
+                                  ? Color(0xFF284E75).withOpacity(0.1)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: midtermStatus == '제출'
-                                    ? Color(0xFF4CAF50)
+                                    ? Color(0xFF284E75)
                                     : FlutterFlowTheme.of(context).alternate,
                                 width: 1,
                               ),
@@ -198,7 +198,7 @@ class _MidtermFinalResultsTableWidgetState
                                   .override(
                                     font: GoogleFonts.openSans(
                                       color: midtermStatus == '제출'
-                                          ? Color(0xFF4CAF50)
+                                          ? Color(0xFF284E75)
                                           : FlutterFlowTheme.of(context)
                                               .secondaryText,
                                       fontWeight: FontWeight.w600,
@@ -220,12 +220,12 @@ class _MidtermFinalResultsTableWidgetState
                                 EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: finalStatus == '제출'
-                                  ? Color(0xFF2196F3).withOpacity(0.1)
+                                  ? Color(0xFFFF9800).withOpacity(0.1)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: finalStatus == '제출'
-                                    ? Color(0xFF2196F3)
+                                    ? Color(0xFFFF9800)
                                     : FlutterFlowTheme.of(context).alternate,
                                 width: 1,
                               ),
@@ -237,7 +237,7 @@ class _MidtermFinalResultsTableWidgetState
                                   .override(
                                     font: GoogleFonts.openSans(
                                       color: finalStatus == '제출'
-                                          ? Color(0xFF2196F3)
+                                          ? Color(0xFFFF9800)
                                           : FlutterFlowTheme.of(context)
                                               .secondaryText,
                                       fontWeight: FontWeight.w600,
