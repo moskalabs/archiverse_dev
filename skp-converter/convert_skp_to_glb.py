@@ -42,13 +42,13 @@ def main():
             print("Importing SKP file using SketchUp Importer addon...")
 
             # Check if addon is enabled
-            if 'io_skp_import' not in bpy.context.preferences.addons:
+            if 'sketchup_importer' not in bpy.context.preferences.addons:
                 print("Error: SketchUp Importer addon not found!")
                 print("Please install: https://github.com/RedHaloStudio/Sketchup_Importer/releases")
                 sys.exit(1)
 
             # Import SKP file
-            bpy.ops.import_skp.sketchup(filepath=input_file)
+            bpy.ops.import_scene.skp(filepath=input_file)
             print(f"Import successful")
         else:
             print(f"Error: Expected .skp file, got {input_file}")
