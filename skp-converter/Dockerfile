@@ -24,10 +24,10 @@ COPY main.py .
 COPY convert_skp_to_glb.py .
 
 # SketchUp Importer 애드온 다운로드 및 설치
-RUN mkdir -p /root/.config/blender/4.0/scripts/addons && \
+RUN mkdir -p /root/.config/blender/3.0/scripts/addons && \
     wget https://github.com/RedHaloStudio/Sketchup_Importer/archive/refs/heads/main.zip -O /tmp/skp_importer.zip && \
     unzip /tmp/skp_importer.zip -d /tmp && \
-    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/4.0/scripts/addons/ && \
+    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/3.0/scripts/addons/ && \
     rm -rf /tmp/skp_importer.zip /tmp/Sketchup_Importer-main
 
 # Blender 애드온 활성화 스크립트
