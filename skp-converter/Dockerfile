@@ -27,11 +27,11 @@ COPY convert_skp_to_glb.py .
 RUN mkdir -p /root/.config/blender/4.0/scripts/addons && \
     wget https://github.com/RedHaloStudio/Sketchup_Importer/archive/refs/heads/main.zip -O /tmp/skp_importer.zip && \
     unzip /tmp/skp_importer.zip -d /tmp && \
-    cp -r /tmp/Sketchup_Importer-main/io_skp_import /root/.config/blender/4.0/scripts/addons/ && \
+    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/4.0/scripts/addons/ && \
     rm -rf /tmp/skp_importer.zip /tmp/Sketchup_Importer-main
 
 # Blender 애드온 활성화 스크립트
-RUN echo "import bpy; bpy.ops.preferences.addon_enable(module='io_skp_import'); bpy.ops.wm.save_userpref()" > /tmp/enable_addon.py && \
+RUN echo "import bpy; bpy.ops.preferences.addon_enable(module='sketchup_importer'); bpy.ops.wm.save_userpref()" > /tmp/enable_addon.py && \
     blender -b --python /tmp/enable_addon.py && \
     rm /tmp/enable_addon.py
 
