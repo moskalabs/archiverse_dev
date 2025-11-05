@@ -5,7 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import os
 import uuid
+import logging
 from pathlib import Path
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -57,6 +62,8 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
         )
 
         if result.returncode != 0:
+            error_msg = f"❌ Blender returncode: {result.returncode}\n❌ stdout: {result.stdout}\n❌ stderr: {result.stderr}"
+            print(error_msg, flush=True)
             raise HTTPException(
                 status_code=500,
                 detail=f"변환 실패: {result.stderr}"
@@ -64,6 +71,8 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
 
         # GLB 파일이 생성되었는지 확인
         if not glb_path.exists():
+            error_msg = f"❌ GLB file not created at {glb_path}\n❌ Blender stdout: {result.stdout}\n❌ Blender stderr: {result.stderr}"
+            print(error_msg, flush=True)
             raise HTTPException(
                 status_code=500,
                 detail="GLB 파일 생성 실패"
@@ -77,9 +86,13 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
         )
 
     except subprocess.TimeoutExpired:
+        logger.error("❌ Timeout expired during conversion")
         raise HTTPException(status_code=408, detail="변환 시간 초과")
 
     except Exception as e:
+        logger.error(f"❌ Unexpected error: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
