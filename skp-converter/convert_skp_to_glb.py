@@ -41,6 +41,12 @@ def main():
         if input_file.endswith('.skp'):
             print("Importing SKP file using SketchUp Importer addon...")
 
+            # Debug: List all enabled addons
+            print(f"DEBUG: Enabled addons: {list(bpy.context.preferences.addons.keys())}")
+
+            # Debug: List addon paths
+            print(f"DEBUG: Addon paths: {bpy.utils.script_paths('addons')}")
+
             # Check if addon is enabled
             if 'sketchup_importer' not in bpy.context.preferences.addons:
                 print("Error: SketchUp Importer addon not found!")
