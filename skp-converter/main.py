@@ -61,8 +61,13 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
             timeout=300  # 5분 타임아웃
         )
 
+        # 항상 Blender 출력을 로그에 출력
+        print(f"🔍 Blender stdout:\n{result.stdout}", flush=True)
+        print(f"🔍 Blender stderr:\n{result.stderr}", flush=True)
+        print(f"🔍 Blender returncode: {result.returncode}", flush=True)
+
         if result.returncode != 0:
-            error_msg = f"❌ Blender returncode: {result.returncode}\n❌ stdout: {result.stdout}\n❌ stderr: {result.stderr}"
+            error_msg = f"❌ Blender conversion failed with returncode: {result.returncode}"
             print(error_msg, flush=True)
             raise HTTPException(
                 status_code=500,
