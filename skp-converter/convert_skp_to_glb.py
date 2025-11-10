@@ -45,13 +45,19 @@ def main():
             print(f"DEBUG: Enabled addons: {list(bpy.context.preferences.addons.keys())}")
 
             # Debug: List addon paths
-            print(f"DEBUG: Addon paths: {bpy.utils.script_paths('addons')}")
+            addon_paths = bpy.utils.script_paths()
+            print(f"DEBUG: Script paths: {addon_paths}")
 
-            # Check if addon is enabled
+            # Try to enable addon if not already enabled
             if 'sketchup_importer' not in bpy.context.preferences.addons:
-                print("Error: SketchUp Importer addon not found!")
-                print("Please install: https://github.com/RedHaloStudio/Sketchup_Importer/releases")
-                sys.exit(1)
+                print("Addon not enabled, attempting to enable it...")
+                try:
+                    bpy.ops.preferences.addon_enable(module='sketchup_importer')
+                    print("Successfully enabled sketchup_importer addon")
+                except Exception as e:
+                    print(f"Failed to enable addon: {e}")
+                    print("Error: SketchUp Importer addon not found!")
+                    sys.exit(1)
 
             # Import SKP file
             bpy.ops.import_scene.skp(filepath=input_file)
