@@ -7,10 +7,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
-    blender \
     wget \
     unzip \
+    xz-utils \
+    libxrender1 \
+    libxi6 \
+    libxkbcommon0 \
+    libsm6 \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
+
+# Blender 4.2 LTS 다운로드 및 설치
+RUN wget https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz -O /tmp/blender.tar.xz && \
+    tar -xf /tmp/blender.tar.xz -C /opt && \
+    ln -s /opt/blender-4.2.0-linux-x64/blender /usr/local/bin/blender && \
+    rm /tmp/blender.tar.xz
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -24,10 +35,10 @@ COPY main.py .
 COPY convert_skp_to_glb.py .
 
 # SketchUp Importer 애드온 다운로드 및 설치
-RUN mkdir -p /root/.config/blender/3.0/scripts/addons && \
+RUN mkdir -p /root/.config/blender/4.2/scripts/addons && \
     wget https://github.com/RedHaloStudio/Sketchup_Importer/archive/refs/heads/main.zip -O /tmp/skp_importer.zip && \
     unzip /tmp/skp_importer.zip -d /tmp && \
-    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/3.0/scripts/addons/ && \
+    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/4.2/scripts/addons/ && \
     rm -rf /tmp/skp_importer.zip /tmp/Sketchup_Importer-main
 
 # Blender 애드온 활성화 스크립트
