@@ -52,7 +52,6 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three-sketchup-loader@1.0.0/dist/SKPLoader.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -61,7 +60,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
       overflow: hidden;
     }
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #2540A8 0%, #192252 100%);
     }
     #viewer {
       width: 100%;
@@ -136,50 +135,17 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
       const fileExt = "$fileExtension";
 
       if (!modelUrl) {
-        document.getElementById('loading').textContent = 'SKP 파일을 업로드해주세요';
+        document.getElementById('loading').textContent = 'GLB 파일을 업로드해주세요';
         return;
       }
 
-      if (fileExt === 'skp') {
-        // Load SKP file
-        const loader = new THREE.SKPLoader();
-        loader.load(
-          modelUrl,
-          function(object) {
-            // Center and scale the model
-            const box = new THREE.Box3().setFromObject(object);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 5 / maxDim;
-            object.scale.multiplyScalar(scale);
-
-            object.position.x = -center.x * scale;
-            object.position.y = -center.y * scale;
-            object.position.z = -center.z * scale;
-
-            scene.add(object);
-            document.getElementById('loading').style.display = 'none';
-            console.log('SKP model loaded successfully');
-          },
-          function(xhr) {
-            const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
-            document.getElementById('loading').textContent = '로딩 중... ' + percent + '%';
-          },
-          function(error) {
-            console.error('SKP loading error:', error);
-            document.getElementById('loading').textContent = 'SKP 파일 로드 실패';
-          }
-        );
-      } else if (fileExt === 'glb' || fileExt === 'gltf') {
+      if (fileExt === 'glb' || fileExt === 'gltf') {
         // Load GLB/GLTF file
         const loader = new THREE.GLTFLoader();
         loader.load(
           modelUrl,
           function(gltf) {
             const object = gltf.scene;
-
             // Center and scale the model
             const box = new THREE.Box3().setFromObject(object);
             const center = box.getCenter(new THREE.Vector3());
@@ -195,7 +161,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
 
             scene.add(object);
             document.getElementById('loading').style.display = 'none';
-            console.log('GLB/GLTF model loaded successfully');
+            console.log('GLB/GLTF 모델 로드 성공');
           },
           function(xhr) {
             const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
@@ -235,7 +201,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: FlutterFlowTheme.of(context).brand700,
           automaticallyImplyLeading: false,
           leading: FlutterFlowIconButton(
             borderColor: Colors.transparent,
@@ -389,7 +355,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       }
                     }
                   },
-                  text: _model.isDataUploading ? '업로드 중...' : 'SKP/GLB 파일 업로드',
+                  text: _model.isDataUploading ? '업로드 중...' : 'GLB 파일 업로드',
                   icon: Icon(
                     _model.isDataUploading ? Icons.hourglass_empty : Icons.upload_file,
                     size: 20,
@@ -399,7 +365,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                     height: 50,
                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: FlutterFlowTheme.of(context).primary,
+                    color: FlutterFlowTheme.of(context).brand600,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                           fontFamily: 'Readex Pro',
                           color: Colors.white,
@@ -410,7 +376,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       color: Colors.transparent,
                       width: 1,
                     ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
@@ -422,10 +388,10 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).accent1,
-                      borderRadius: BorderRadius.circular(8),
+                      color: FlutterFlowTheme.of(context).brand100,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: FlutterFlowTheme.of(context).primary,
+                        color: FlutterFlowTheme.of(context).brand300,
                         width: 1,
                       ),
                     ),
