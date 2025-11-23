@@ -6,6 +6,8 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/upload_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 
 import 'model_viewer_model.dart';
 export 'model_viewer_model.dart';
@@ -295,7 +297,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Three.js 기반 SKP, GLB, GLTF 파일을 표시합니다.',
+                        'Three.js 기반 GLB, GLTF 파일을 표시합니다.',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               color: FlutterFlowTheme.of(context).secondaryText,
@@ -313,7 +315,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     final selectedFiles = await selectFiles(
-                      allowedExtensions: ['glb', 'gltf', 'skp'],
+                      allowedExtensions: ['glb', 'gltf'],
                       multiFile: false,
                     );
                     if (selectedFiles != null && selectedFiles.isNotEmpty) {
@@ -326,15 +328,16 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       });
 
                       try {
-                        // Upload to Supabase Storage (fileupload bucket, 3d-models folder)
-                        final fileName = '3d-models/${DateTime.now().millisecondsSinceEpoch}_${_model.uploadedLocalFile.name}';
+                        // GLB/GLTF 파일 그대로 사용
+                        final fileToUpload = _model.uploadedLocalFile.bytes!;
+                        final uploadFileName = _model.uploadedLocalFile.name!;
 
-                        // MIME type 설정 (SKP는 application/octet-stream으로)
-                        final fileExtension = _model.uploadedLocalFile.name?.split('.').last.toLowerCase() ?? '';
-                        String contentType = 'application/octet-stream';
-                        if (fileExtension == 'glb') {
-                          contentType = 'model/gltf-binary';
-                        } else if (fileExtension == 'gltf') {
+                        // Upload to Supabase Storage (fileupload bucket, 3d-models folder)
+                        final fileName = '3d-models/${DateTime.now().millisecondsSinceEpoch}_$uploadFileName';
+
+                        // MIME type 설정
+                        String contentType = 'model/gltf-binary';
+                        if (uploadFileName.endsWith('.gltf')) {
                           contentType = 'model/gltf+json';
                         }
 
@@ -342,7 +345,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                             .from('fileupload')
                             .uploadBinary(
                               fileName,
-                              _model.uploadedLocalFile.bytes!,
+                              fileToUpload,
                               fileOptions: FileOptions(
                                 contentType: contentType,
                               ),
@@ -386,7 +389,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       }
                     }
                   },
-                  text: _model.isDataUploading ? '업로드 중...' : 'SKP 파일 업로드',
+                  text: _model.isDataUploading ? '업로드 중...' : 'SKP/GLB 파일 업로드',
                   icon: Icon(
                     _model.isDataUploading ? Icons.hourglass_empty : Icons.upload_file,
                     size: 20,
