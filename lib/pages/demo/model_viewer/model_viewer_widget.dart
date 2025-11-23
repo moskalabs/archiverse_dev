@@ -263,7 +263,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Three.js 기반 GLB, GLTF 파일을 표시합니다.',
+                        '지원 파일 형식: GLB, GLTF',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               color: FlutterFlowTheme.of(context).secondaryText,
@@ -355,7 +355,7 @@ class _ModelViewerWidgetState extends State<ModelViewerWidget> {
                       }
                     }
                   },
-                  text: _model.isDataUploading ? '업로드 중...' : 'GLB 파일 업로드',
+                  text: _model.isDataUploading ? '업로드 중...' : 'GLB/GLTF 파일 업로드',
                   icon: Icon(
                     _model.isDataUploading ? Icons.hourglass_empty : Icons.upload_file,
                     size: 20,
