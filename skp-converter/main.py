@@ -46,13 +46,11 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
             content = await file.read()
             f.write(content)
 
-        # Blender CLI로 변환
+        # Python 스크립트로 변환 (assimp + Blender)
         result = subprocess.run(
             [
-                "blender",
-                "-b",  # 백그라운드 모드
-                "--python", "convert_skp_to_glb.py",
-                "--",
+                "python3",
+                "convert_skp_to_glb.py",
                 str(skp_path),
                 str(glb_path)
             ],
@@ -61,13 +59,13 @@ async def convert_skp_to_glb(file: UploadFile = File(...)):
             timeout=300  # 5분 타임아웃
         )
 
-        # 항상 Blender 출력을 로그에 출력
-        print(f"🔍 Blender stdout:\n{result.stdout}", flush=True)
-        print(f"🔍 Blender stderr:\n{result.stderr}", flush=True)
-        print(f"🔍 Blender returncode: {result.returncode}", flush=True)
+        # 항상 변환 출력을 로그에 출력
+        print(f"🔍 Converter stdout:\n{result.stdout}", flush=True)
+        print(f"🔍 Converter stderr:\n{result.stderr}", flush=True)
+        print(f"🔍 Converter returncode: {result.returncode}", flush=True)
 
         if result.returncode != 0:
-            error_msg = f"❌ Blender conversion failed with returncode: {result.returncode}"
+            error_msg = f"❌ Conversion failed with returncode: {result.returncode}"
             print(error_msg, flush=True)
             raise HTTPException(
                 status_code=500,

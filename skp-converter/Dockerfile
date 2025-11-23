@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 # 비대화형 모드 설정
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 시스템 패키지 업데이트 및 필수 도구 설치
+# 시스템 패키지 업데이트 및 필수 도구 설치 (assimp 포함)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y \
     libxkbcommon0 \
     libsm6 \
     libgl1 \
+    libassimp-dev \
+    assimp-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Blender 4.2 LTS 다운로드 및 설치
@@ -33,18 +35,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # 애플리케이션 파일 복사
 COPY main.py .
 COPY convert_skp_to_glb.py .
-
-# SketchUp Importer 애드온 다운로드 및 설치
-RUN mkdir -p /root/.config/blender/4.2/scripts/addons && \
-    wget https://github.com/RedHaloStudio/Sketchup_Importer/archive/refs/heads/main.zip -O /tmp/skp_importer.zip && \
-    unzip /tmp/skp_importer.zip -d /tmp && \
-    cp -r /tmp/Sketchup_Importer-main/sketchup_importer /root/.config/blender/4.2/scripts/addons/ && \
-    rm -rf /tmp/skp_importer.zip /tmp/Sketchup_Importer-main
-
-# Blender 애드온 활성화 스크립트
-RUN echo "import bpy; bpy.ops.preferences.addon_enable(module='sketchup_importer'); bpy.ops.wm.save_userpref()" > /tmp/enable_addon.py && \
-    blender -b --python /tmp/enable_addon.py && \
-    rm /tmp/enable_addon.py
 
 # temp 디렉토리 생성
 RUN mkdir -p /app/temp
