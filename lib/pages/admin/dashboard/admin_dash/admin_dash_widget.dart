@@ -91,11 +91,17 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
         queryFn: (q) => q
             .eqOrNull(
               'year',
-              _model.dropDownYearValue1,
+              valueOrDefault<String>(
+                _model.dropDownYearValue1,
+                '2025',
+              ),
             )
             .eqOrNull(
               'semester',
-              _model.dropDownSemesterValue1,
+              valueOrDefault<String>(
+                _model.dropDownSemesterValue1,
+                '1학기',
+              ),
             ),
       );
       _model.allStudents =
@@ -327,6 +333,17 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               _model.textColor5 =
                                                                   Color(
                                                                       4280831605);
+                                                              _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+                                                                queryFn: (q) => q
+                                                                    .eqOrNull('year', _model.dropDownYearValue1)
+                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1),
+                                                              );
+                                                              _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+                                                                queryFn: (q) => q
+                                                                    .eqOrNull('year', _model.dropDownYearValue1)
+                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1)
+                                                                    .not('critic_confirmed_at', 'is', null),
+                                                              );
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -543,6 +560,17 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               _model.textColor5 =
                                                                   Color(
                                                                       4280831605);
+                                                              _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+                                                                queryFn: (q) => q
+                                                                    .eqOrNull('year', _model.dropDownYearValue1)
+                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1),
+                                                              );
+                                                              _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+                                                                queryFn: (q) => q
+                                                                    .eqOrNull('year', _model.dropDownYearValue1)
+                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1)
+                                                                    .not('critic_confirmed_at', 'is', null),
+                                                              );
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -1837,35 +1865,33 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                 Expanded(
                                                   child: FutureBuilder<
                                                       List<SubjectportpolioRow>>(
-                                                    future: SubjectportpolioTable()
-                                                        .queryRows(
+                                                    future: _model.subjectPortfolioFuture1 ?? SubjectportpolioTable().queryRows(
                                                       queryFn: (q) => q
-                                                          .eqOrNull(
-                                                            'year',
-                                                            _model
-                                                                .dropDownYearValue1,
-                                                          )
-                                                          .eqOrNull(
-                                                            'semester',
-                                                            _model
-                                                                .dropDownSemesterValue1,
-                                                          ),
+                                                          .eqOrNull('year', _model.dropDownYearValue1)
+                                                          .eqOrNull('semester', _model.dropDownSemesterValue1),
                                                     ),
                                                     builder: (context, snapshot) {
                                                       // Loading state
                                                       if (!snapshot.hasData) {
                                                         return Center(
-                                                          child: SizedBox(
-                                                            width: 30.0,
-                                                            height: 30.0,
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                              valueColor:
-                                                                  AlwaysStoppedAnimation<
-                                                                      Color>(
-                                                                Color(0xFF284E75),
+                                                          child: Column(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 30.0,
+                                                                height: 30.0,
+                                                                child: CircularProgressIndicator(
+                                                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                                                    Color(0xFF284E75),
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
+                                                              SizedBox(height: 10.0),
+                                                              Text(
+                                                                '설계진행표 로딩 중...',
+                                                                style: FlutterFlowTheme.of(context).bodyMedium,
+                                                              ),
+                                                            ],
                                                           ),
                                                         );
                                                       }
@@ -1907,40 +1933,34 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                 Expanded(
                                                   child: FutureBuilder<
                                                       List<SubjectportpolioRow>>(
-                                                    future: SubjectportpolioTable()
-                                                        .queryRows(
+                                                    future: _model.subjectPortfolioFuture2 ?? SubjectportpolioTable().queryRows(
                                                       queryFn: (q) => q
-                                                          .eqOrNull(
-                                                            'year',
-                                                            _model
-                                                                .dropDownYearValue1,
-                                                          )
-                                                          .eqOrNull(
-                                                            'semester',
-                                                            _model
-                                                                .dropDownSemesterValue1,
-                                                          )
-                                                          .not(
-                                                            'critic_confirmed_at',
-                                                            'is',
-                                                            null,
-                                                          ),
+                                                          .eqOrNull('year', _model.dropDownYearValue1)
+                                                          .eqOrNull('semester', _model.dropDownSemesterValue1)
+                                                          .not('critic_confirmed_at', 'is', null),
                                                     ),
                                                     builder: (context, snapshot) {
                                                       // Loading state
                                                       if (!snapshot.hasData) {
                                                         return Center(
-                                                          child: SizedBox(
-                                                            width: 30.0,
-                                                            height: 30.0,
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                              valueColor:
-                                                                  AlwaysStoppedAnimation<
-                                                                      Color>(
-                                                                Color(0xFF284E75),
+                                                          child: Column(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 30.0,
+                                                                height: 30.0,
+                                                                child: CircularProgressIndicator(
+                                                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                                                    Color(0xFF284E75),
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
+                                                              SizedBox(height: 10.0),
+                                                              Text(
+                                                                '크리틱 로딩 중...',
+                                                                style: FlutterFlowTheme.of(context).bodyMedium,
+                                                              ),
+                                                            ],
                                                           ),
                                                         );
                                                       }
@@ -2178,11 +2198,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                   ),
                                                                 ),
                                                                 Container(
-                                                                  height: 580.0,
+                                                                  height: 480.0,
                                                                   decoration:
                                                                       BoxDecoration(),
-                                                                  child:
-                                                                        Builder(
+                                                                  child: Builder(
                                                                       builder:
                                                                           (context) {
                                                                         final visibleClass = _model
@@ -2249,7 +2268,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                         );
                                                                       },
                                                                     ),
-                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
                                                           if (_model
@@ -2349,7 +2368,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     ),
                                                                   ),
                                                                   Container(
-                                                                    height: 580.0,
+                                                                    height: 480.0,
                                                                     child: Builder(
                                                                       builder:
                                                                           (context) {

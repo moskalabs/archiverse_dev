@@ -314,6 +314,11 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
   List<ClassRow>? classSelectedOnLoad;
   // Stores action output result for [Backend Call - Query Rows] action in AdminDash widget.
   List<CourseStudentRow>? allStudentsByYearSem;
+  
+  // Future variables for caching subject portfolio data
+  Future<List<SubjectportpolioRow>>? subjectPortfolioFuture1;
+  Future<List<SubjectportpolioRow>>? subjectPortfolioFuture2;
+
   // Model for AdminNaviSidebar component.
   late AdminNaviSidebarModel adminNaviSidebarModel;
   // State field(s) for DropDown_Year widget.

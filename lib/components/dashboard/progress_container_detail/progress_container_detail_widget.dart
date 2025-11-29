@@ -106,43 +106,25 @@ class _ProgressContainerDetailWidgetState
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
                   ),
-                  Text(
-                    valueOrDefault<String>(
-                      widget.percentageNumerator?.toString(),
-                      '0',
-                    ),
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.openSans(
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(5.0, 0.0, 0.0, 0.0),
+                    child: Text(
+                      '(${widget.percentageNumerator}/${widget.percentageDenominator})',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.openSans(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            fontSize: 14.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                            fontStyle:
+                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                           ),
-                          color: Color(0xFFFF0000),
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.bold,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
-                  ),
-                  Text(
-                    valueOrDefault<String>(
-                      widget.percentageDenominator?.toString(),
-                      '00',
                     ),
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.openSans(
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                          color: FlutterFlowTheme.of(context).primary,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.bold,
-                          fontStyle:
-                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                        ),
                   ),
                 ],
               ),
@@ -154,7 +136,7 @@ class _ProgressContainerDetailWidgetState
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 3.0, 5.0, 0.0),
                     child: LinearPercentIndicator(
                       percent: (int var1, int var2) {
-                        return var2 != 0 ? (var1 / var2).toDouble() : 1.0;
+                        return var2 != 0 ? (var1 / var2).toDouble() : 0.0;
                       }(widget.percentageNumerator!,
                           widget.percentageDenominator!),
                       lineHeight: 25.0,
@@ -170,7 +152,7 @@ class _ProgressContainerDetailWidgetState
               ),
               Flexible(
                 child: Container(
-                  height: MediaQuery.sizeOf(context).height * 0.02,
+                  height: 30.0,
                   decoration: BoxDecoration(),
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 3.0, 0.0, 0.0),

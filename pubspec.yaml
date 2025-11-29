@@ -120,9 +120,9 @@ dependencies:
   storage_client: 2.4.0
   supabase: 2.7.0
   supabase_flutter: 2.9.0
-  syncfusion_flutter_calendar: ^28.2.7
-  syncfusion_flutter_pdf: ^28.2.11
-  syncfusion_flutter_pdfviewer: ^28.2.11
+  syncfusion_flutter_calendar: ^28.0.0
+  syncfusion_flutter_pdf: ^28.0.0
+  syncfusion_flutter_pdfviewer: ^28.0.0
   table_calendar: 3.2.0
   text_search: 1.0.1
   timeago: 3.7.1
@@ -138,21 +138,18 @@ dependencies:
   url_launcher_windows: 3.1.4
   uuid: ^4.0.0
   vector_math: ^2.1.4
-  video_player: 2.10.0
-  video_player_android: 2.8.7
-  video_player_avfoundation: 2.7.1
-  video_player_platform_interface: 6.3.0
-  video_player_web: 2.3.5
+  video_player: ^2.0.0
+  video_player_android: ^2.0.0
+  video_player_avfoundation: ^2.0.0
+  video_player_platform_interface: ^6.0.0
+  video_player_web: ^2.0.0
   visibility_detector: ^0.4.0+2
-  webview_flutter: 4.13.0
-  webview_flutter_android: 4.7.0
-  webview_flutter_platform_interface: 2.13.1
-  webview_flutter_wkwebview: 3.22.0
-  webviewx_plus: 
-    git:
-      url: https://github.com/FlutterFlow/webviewx_plus.git
-      ref: 4f84ece5e06d52643c5d844f41880baf8440c584
-  device_info_plus: ^11.5.0   # ✅ 최신 버전
+  webview_flutter: ^4.0.0
+  webview_flutter_android: ^3.0.0
+  webview_flutter_platform_interface: ^2.0.0
+  webview_flutter_wkwebview: ^3.0.0
+  webviewx_plus: ^0.5.1
+  device_info_plus: ^10.0.0   # ✅ Downgraded for compatibility
 
   cupertino_icons: ^1.0.0
 

@@ -136,7 +136,7 @@ class _ProgressContainerSWidgetState extends State<ProgressContainerSWidget> {
               ),
               Flexible(
                 child: Container(
-                  height: MediaQuery.sizeOf(context).height * 0.02,
+                  height: 30.0,
                   decoration: BoxDecoration(),
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 3.0, 0.0, 0.0),
