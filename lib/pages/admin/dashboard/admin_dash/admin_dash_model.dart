@@ -501,6 +501,20 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
         .toList()
         .toList()
         .cast<CourseStudentRow>();
+
+    // Update portfolio futures with filtered classes
+    subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+      queryFn: (q) => q,
+    ).then((rows) => rows.where((row) =>
+      filteredClass.any((classRow) => classRow.id == row.classField)
+    ).toList());
+
+    subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+      queryFn: (q) => q
+          .not('critic_confirmed_at', 'is', null),
+    ).then((rows) => rows.where((row) =>
+      filteredClass.any((classRow) => classRow.id == row.classField)
+    ).toList());
   }
 
   Future getClassDetail(BuildContext context) async {
