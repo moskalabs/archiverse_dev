@@ -1930,7 +1930,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.allStudents
+                                                            (_model.courseStudent
                                                                         .length *
                                                                     15)
                                                                 .toDouble(),
@@ -1999,7 +1999,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.allStudents
+                                                            (_model.courseStudent
                                                                         .length *
                                                                     15)
                                                                 .toDouble(),
