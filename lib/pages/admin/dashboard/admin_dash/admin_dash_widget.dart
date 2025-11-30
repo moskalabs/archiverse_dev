@@ -106,6 +106,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       );
       _model.allStudents =
           _model.allStudentsByYearSem!.toList().cast<CourseStudentRow>();
+      _model.studentsByGrade = _model.allStudents
+          .where((e) => e.grade == 1)
+          .toList()
+          .cast<CourseStudentRow>();
       _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
         queryFn: (q) => q,
       ).then((rows) => rows.where((row) =>
@@ -1930,7 +1934,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.courseStudent
+                                                            (_model.studentsByGrade
                                                                         .length *
                                                                     15)
                                                                 .toDouble(),
@@ -1999,7 +2003,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.courseStudent
+                                                            (_model.studentsByGrade
                                                                         .length *
                                                                     15)
                                                                 .toDouble(),
