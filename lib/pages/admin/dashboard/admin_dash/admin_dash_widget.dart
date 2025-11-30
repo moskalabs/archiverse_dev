@@ -106,6 +106,17 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       );
       _model.allStudents =
           _model.allStudentsByYearSem!.toList().cast<CourseStudentRow>();
+      _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+        queryFn: (q) => q,
+      ).then((rows) => rows.where((row) =>
+        _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
+      ).toList());
+      _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .not('critic_confirmed_at', 'is', null),
+      ).then((rows) => rows.where((row) =>
+        _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
+      ).toList());
       safeSetState(() {});
       FFAppState().usertype = 0;
       safeSetState(() {});
@@ -334,16 +345,16 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                   Color(
                                                                       4280831605);
                                                               _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-                                                                queryFn: (q) => q
-                                                                    .eqOrNull('year', _model.dropDownYearValue1)
-                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1),
-                                                              );
+                                                                queryFn: (q) => q,
+                                                              ).then((rows) => rows.where((row) =>
+                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
+                                                              ).toList());
                                                               _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
                                                                 queryFn: (q) => q
-                                                                    .eqOrNull('year', _model.dropDownYearValue1)
-                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1)
                                                                     .not('critic_confirmed_at', 'is', null),
-                                                              );
+                                                              ).then((rows) => rows.where((row) =>
+                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
+                                                              ).toList());
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -561,16 +572,16 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                   Color(
                                                                       4280831605);
                                                               _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-                                                                queryFn: (q) => q
-                                                                    .eqOrNull('year', _model.dropDownYearValue1)
-                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1),
-                                                              );
+                                                                queryFn: (q) => q,
+                                                              ).then((rows) => rows.where((row) =>
+                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
+                                                              ).toList());
                                                               _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
                                                                 queryFn: (q) => q
-                                                                    .eqOrNull('year', _model.dropDownYearValue1)
-                                                                    .eqOrNull('semester', _model.dropDownSemesterValue1)
                                                                     .not('critic_confirmed_at', 'is', null),
-                                                              );
+                                                              ).then((rows) => rows.where((row) =>
+                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
+                                                              ).toList());
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -1866,10 +1877,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                   child: FutureBuilder<
                                                       List<SubjectportpolioRow>>(
                                                     future: _model.subjectPortfolioFuture1 ?? SubjectportpolioTable().queryRows(
-                                                      queryFn: (q) => q
-                                                          .eqOrNull('year', _model.dropDownYearValue1)
-                                                          .eqOrNull('semester', _model.dropDownSemesterValue1),
-                                                    ),
+                                                      queryFn: (q) => q,
+                                                    ).then((rows) => rows.where((row) =>
+                                                      _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
+                                                    ).toList()),
                                                     builder: (context, snapshot) {
                                                       // Loading state
                                                       if (!snapshot.hasData) {
@@ -1935,10 +1946,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       List<SubjectportpolioRow>>(
                                                     future: _model.subjectPortfolioFuture2 ?? SubjectportpolioTable().queryRows(
                                                       queryFn: (q) => q
-                                                          .eqOrNull('year', _model.dropDownYearValue1)
-                                                          .eqOrNull('semester', _model.dropDownSemesterValue1)
                                                           .not('critic_confirmed_at', 'is', null),
-                                                    ),
+                                                    ).then((rows) => rows.where((row) =>
+                                                      _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
+                                                    ).toList()),
                                                     builder: (context, snapshot) {
                                                       // Loading state
                                                       if (!snapshot.hasData) {
