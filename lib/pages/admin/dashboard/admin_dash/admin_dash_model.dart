@@ -497,7 +497,7 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
       return aSection.compareTo(bSection);
     });
     studentsByGrade = allStudents
-        .where((e) => e.grade == selectedGrade)
+        .where((e) => e.studentGrade == selectedGrade)
         .toList()
         .toList()
         .cast<CourseStudentRow>();

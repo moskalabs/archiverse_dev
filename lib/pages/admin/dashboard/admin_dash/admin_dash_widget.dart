@@ -107,7 +107,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
       _model.allStudents =
           _model.allStudentsByYearSem!.toList().cast<CourseStudentRow>();
       _model.studentsByGrade = _model.allStudents
-          .where((e) => e.grade == 1)
+          .where((e) => e.studentGrade == 1)
           .toList()
           .cast<CourseStudentRow>();
       _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
