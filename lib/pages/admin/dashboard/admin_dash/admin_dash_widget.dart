@@ -87,40 +87,33 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
           .toList()
           .cast<ClassRow>();
       safeSetState(() {});
-      _model.allStudentsByYearSem = await CourseStudentTable().queryRows(
-        queryFn: (q) => q
-            .eqOrNull(
-              'year',
-              valueOrDefault<String>(
-                _model.dropDownYearValue1,
-                '2025',
-              ),
-            )
-            .eqOrNull(
-              'semester',
-              valueOrDefault<String>(
-                _model.dropDownSemesterValue1,
-                '1학기',
-              ),
-            ),
-      );
-      _model.allStudents =
-          _model.allStudentsByYearSem!.toList().cast<CourseStudentRow>();
-      _model.studentsByGrade = _model.allStudents
-          .where((e) => e.studentGrade == 1)
-          .toList()
-          .cast<CourseStudentRow>();
-      _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-        queryFn: (q) => q,
-      ).then((rows) => rows.where((row) =>
-        _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
-      ).toList());
-      _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
-        queryFn: (q) => q
-            .not('critic_confirmed_at', 'is', null),
-      ).then((rows) => rows.where((row) =>
-        _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
-      ).toList());
+      
+      // Get student count for the selected grade using class IDs
+      if (_model.filteredClass.isNotEmpty) {
+        final classIds = _model.filteredClass.map((c) => c.id).toList();
+        print('🔍 [initState] filteredClass count: ${_model.filteredClass.length}');
+        print('🔍 [initState] classIds: $classIds');
+        final studentCountResult = await CourseStudentTable().queryRows(
+          queryFn: (q) => q.filter('classid', 'in', '(${classIds.join(',')})'),
+        );
+        _model.studentCountByGrade = studentCountResult.length;
+        print('🔍 [initState] studentCountByGrade set to: ${_model.studentCountByGrade}');
+        
+        // Update portfolio futures using the same classIds
+        _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+          queryFn: (q) => q.filter('class', 'in', '(${classIds.join(',')})'),
+        );
+        _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+          queryFn: (q) => q
+              .filter('class', 'in', '(${classIds.join(',')})')
+              .not('critic_confirmed_at', 'is', null),
+        );
+      } else {
+        print('⚠️ [initState] filteredClass is EMPTY!');
+        _model.studentCountByGrade = 0;
+        _model.subjectPortfolioFuture1 = Future.value([]);
+        _model.subjectPortfolioFuture2 = Future.value([]);
+      }
       safeSetState(() {});
       FFAppState().usertype = 0;
       safeSetState(() {});
@@ -348,17 +341,16 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               _model.textColor5 =
                                                                   Color(
                                                                       4280831605);
+                                                              final classIds = _model.classOnLoad.map((e) => e.id).toList();
+                                                              final classIdsString = classIds.isEmpty ? '(0)' : '(${classIds.join(',')})';
                                                               _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-                                                                queryFn: (q) => q,
-                                                              ).then((rows) => rows.where((row) =>
-                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
-                                                              ).toList());
+                                                                queryFn: (q) => q.filter('class', 'in', classIdsString),
+                                                              );
                                                               _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
                                                                 queryFn: (q) => q
+                                                                    .filter('class', 'in', classIdsString)
                                                                     .not('critic_confirmed_at', 'is', null),
-                                                              ).then((rows) => rows.where((row) =>
-                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
-                                                              ).toList());
+                                                              );
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -575,17 +567,16 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               _model.textColor5 =
                                                                   Color(
                                                                       4280831605);
+                                                              final classIds = _model.classOnLoad.map((e) => e.id).toList();
+                                                              final classIdsString = classIds.isEmpty ? '(0)' : '(${classIds.join(',')})';
                                                               _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-                                                                queryFn: (q) => q,
-                                                              ).then((rows) => rows.where((row) =>
-                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
-                                                              ).toList());
+                                                                queryFn: (q) => q.filter('class', 'in', classIdsString),
+                                                              );
                                                               _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
                                                                 queryFn: (q) => q
+                                                                    .filter('class', 'in', classIdsString)
                                                                     .not('critic_confirmed_at', 'is', null),
-                                                              ).then((rows) => rows.where((row) =>
-                                                                _model.classOnLoad.any((classRow) => classRow.id == row.classField)
-                                                              ).toList());
+                                                              );
                                                               safeSetState(
                                                                   () {});
                                                             },
@@ -1066,6 +1057,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1160,6 +1153,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1254,6 +1249,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1348,6 +1345,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1442,6 +1441,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1934,10 +1935,13 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.studentsByGrade
-                                                                        .length *
-                                                                    15)
-                                                                .toDouble(),
+                                                            () {
+                                                              final denominator = ((_model.studentCountByGrade ?? 0) *
+                                                                      15)
+                                                                  .toDouble();
+                                                              print('🎨 [UI Render] studentCountByGrade: ${_model.studentCountByGrade}, denominator: $denominator');
+                                                              return denominator;
+                                                            }(),
                                                             1.0,
                                                           ),
                                                         ),

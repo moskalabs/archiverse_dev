@@ -43,6 +43,9 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
 
   int? courseSelected = -1;
 
+  int? studentCountByGrade = 0;
+
+
   List<SemestersGradesMapRow> semesterGradeOutput = [];
   void addToSemesterGradeOutput(SemestersGradesMapRow item) =>
       semesterGradeOutput.add(item);
@@ -481,7 +484,7 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
   }
 
   /// Action blocks.
-    Future filterDataByGrade(BuildContext context) async {
+  Future filterDataByGrade(BuildContext context) async {
     // filter_class_by_grade with section sorting
     filteredClass = classSelectedOnLoad!
         .where((e) => e.grade == selectedGrade)
@@ -496,25 +499,37 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
       final bSection = _extractSectionNumber(b.section);
       return aSection.compareTo(bSection);
     });
-    studentsByGrade = allStudents
-        .where((e) => e.studentGrade == selectedGrade)
-        .toList()
-        .toList()
-        .cast<CourseStudentRow>();
 
-    // Update portfolio futures with filtered classes
-    subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-      queryFn: (q) => q,
-    ).then((rows) => rows.where((row) =>
-      filteredClass.any((classRow) => classRow.id == row.classField)
-    ).toList());
+    // Update student count using server-side filtering
+    print('🔍 [filterDataByGrade] selectedGrade: $selectedGrade');
+    print('🔍 [filterDataByGrade] filteredClass count: ${filteredClass.length}');
+    if (filteredClass.isNotEmpty) {
+      final classIds = filteredClass.map((c) => c.id).toList();
+      final classIdsString = '(${classIds.join(',')})';
+      print('🔍 [filterDataByGrade] classIds: $classIds');
+      
+      final studentCountResult = await CourseStudentTable().queryRows(
+        queryFn: (q) => q.filter('classid', 'in', classIdsString),
+      );
+      studentCountByGrade = studentCountResult.length;
+      print('🔍 [filterDataByGrade] studentCountByGrade set to: $studentCountByGrade');
 
-    subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
-      queryFn: (q) => q
-          .not('critic_confirmed_at', 'is', null),
-    ).then((rows) => rows.where((row) =>
-      filteredClass.any((classRow) => classRow.id == row.classField)
-    ).toList());
+      // Update portfolio futures with filtered classes
+      subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
+        queryFn: (q) => q.filter('class', 'in', classIdsString),
+      );
+
+      subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .filter('class', 'in', classIdsString)
+            .not('critic_confirmed_at', 'is', null),
+      );
+    } else {
+      print('⚠️ [filterDataByGrade] filteredClass is EMPTY!');
+      studentCountByGrade = 0;
+      subjectPortfolioFuture1 = Future.value([]);
+      subjectPortfolioFuture2 = Future.value([]);
+    }
   }
 
   Future getClassDetail(BuildContext context) async {
