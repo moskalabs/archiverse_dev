@@ -505,23 +505,22 @@ class AdminDashModel extends FlutterFlowModel<AdminDashWidget> {
     print('🔍 [filterDataByGrade] filteredClass count: ${filteredClass.length}');
     if (filteredClass.isNotEmpty) {
       final classIds = filteredClass.map((c) => c.id).toList();
-      final classIdsString = '(${classIds.join(',')})';
       print('🔍 [filterDataByGrade] classIds: $classIds');
-      
+
       final studentCountResult = await CourseStudentTable().queryRows(
-        queryFn: (q) => q.filter('classid', 'in', classIdsString),
+        queryFn: (q) => q.inFilter('classid', classIds),
       );
       studentCountByGrade = studentCountResult.length;
       print('🔍 [filterDataByGrade] studentCountByGrade set to: $studentCountByGrade');
 
       // Update portfolio futures with filtered classes
       subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-        queryFn: (q) => q.filter('class', 'in', classIdsString),
+        queryFn: (q) => q.inFilter('class', classIds),
       );
 
       subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
         queryFn: (q) => q
-            .filter('class', 'in', classIdsString)
+            .inFilter('class', classIds)
             .not('critic_confirmed_at', 'is', null),
       );
     } else {

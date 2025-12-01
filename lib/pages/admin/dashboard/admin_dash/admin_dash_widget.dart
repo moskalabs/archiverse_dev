@@ -94,18 +94,18 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
         print('🔍 [initState] filteredClass count: ${_model.filteredClass.length}');
         print('🔍 [initState] classIds: $classIds');
         final studentCountResult = await CourseStudentTable().queryRows(
-          queryFn: (q) => q.filter('classid', 'in', '(${classIds.join(',')})'),
+          queryFn: (q) => q.inFilter('classid', classIds),
         );
         _model.studentCountByGrade = studentCountResult.length;
         print('🔍 [initState] studentCountByGrade set to: ${_model.studentCountByGrade}');
-        
+
         // Update portfolio futures using the same classIds
         _model.subjectPortfolioFuture1 = SubjectportpolioTable().queryRows(
-          queryFn: (q) => q.filter('class', 'in', '(${classIds.join(',')})'),
+          queryFn: (q) => q.inFilter('class', classIds),
         );
         _model.subjectPortfolioFuture2 = SubjectportpolioTable().queryRows(
           queryFn: (q) => q
-              .filter('class', 'in', '(${classIds.join(',')})')
+              .inFilter('class', classIds)
               .not('critic_confirmed_at', 'is', null),
         );
       } else {
@@ -1936,10 +1936,15 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                               valueOrDefault<
                                                                   double>(
                                                             () {
-                                                              final denominator = ((_model.studentCountByGrade ?? 0) *
-                                                                      15)
-                                                                  .toDouble();
-                                                              print('🎨 [UI Render] studentCountByGrade: ${_model.studentCountByGrade}, denominator: $denominator');
+                                                              // Calculate total expected submissions based on actual unique students
+                                                              // who have submitted at least one portfolio
+                                                              final uniqueStudents = subjectSubmitList
+                                                                  .map((row) => row.studentName)
+                                                                  .where((name) => name != null && name.isNotEmpty)
+                                                                  .toSet()
+                                                                  .length;
+                                                              final denominator = (uniqueStudents * 15).toDouble();
+                                                              print('🎨 [UI Render] uniqueStudents: $uniqueStudents, total expected: $denominator, actual submissions: ${subjectSubmitList.length}');
                                                               return denominator;
                                                             }(),
                                                             1.0,
@@ -1952,9 +1957,8 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                 Expanded(
                                                   child: FutureBuilder<
                                                       List<SubjectportpolioRow>>(
-                                                    future: _model.subjectPortfolioFuture2 ?? SubjectportpolioTable().queryRows(
-                                                      queryFn: (q) => q
-                                                          .not('critic_confirmed_at', 'is', null),
+                                                    future: _model.subjectPortfolioFuture1 ?? SubjectportpolioTable().queryRows(
+                                                      queryFn: (q) => q,
                                                     ).then((rows) => rows.where((row) =>
                                                       _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
                                                     ).toList()),
@@ -1983,9 +1987,21 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           ),
                                                         );
                                                       }
-                                                      List<SubjectportpolioRow>
-                                                          criticCompletedList =
-                                                          snapshot.data!;
+
+                                                      List<SubjectportpolioRow> allPortfolios = snapshot.data!;
+
+                                                      // Filter portfolios where critic_html has been edited by professor
+                                                      List<SubjectportpolioRow> criticCompletedList = allPortfolios
+                                                          .where((row) => row.criticHtml != null && row.criticHtml!.isNotEmpty)
+                                                          .toList();
+
+                                                      // Calculate denominator based on unique students who submitted
+                                                      final uniqueStudents = allPortfolios
+                                                          .map((row) => row.studentName)
+                                                          .where((name) => name != null && name.isNotEmpty)
+                                                          .toSet()
+                                                          .length;
+                                                      final totalExpected = uniqueStudents * 15;
 
                                                       return wrapWithModel(
                                                         model: _model
@@ -2007,10 +2023,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                           percentageDenominator:
                                                               valueOrDefault<
                                                                   double>(
-                                                            (_model.studentsByGrade
-                                                                        .length *
-                                                                    15)
-                                                                .toDouble(),
+                                                            totalExpected.toDouble(),
                                                             1.0,
                                                           ),
                                                         ),
