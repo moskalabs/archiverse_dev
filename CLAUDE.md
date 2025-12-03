@@ -2,6 +2,33 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL RULES - READ FIRST
+
+### Rule #1: DO NOT MODIFY WORKING CODE
+**NEVER modify code that is already working properly unless explicitly instructed by the user.**
+
+- If you are asked to fix a specific feature or section, ONLY modify that exact feature/section
+- Do not touch other parts of the codebase, even if they seem related
+- Do not make "improvements" or "optimizations" to working code
+- When searching for code to modify, verify you are in the correct location before making changes
+- If unclear which section to modify, ASK the user first before making any changes
+
+**Example of what NOT to do:**
+- User asks to fix "학생 업로드 현황" section graphs
+- You modify both that section AND the "학생 주차별 설계진행표 제출률" in the grade-level view
+- Result: You broke working code that wasn't part of the request ❌
+
+**Example of correct approach:**
+- User asks to fix "학생 업로드 현황" section graphs
+- You search for and identify ONLY the "학생 업로드 현황" section code
+- You modify ONLY that specific section
+- You verify your changes didn't affect other parts ✅
+
+### Rule #2: Verify Before Reporting Completion
+- Always test or verify changes before saying "완료" (complete)
+- Use debug logs to confirm functionality
+- If you cannot test, clearly state what needs to be tested by the user
+
 ## Project Overview
 
 **Archiverse** is a Flutter-based academic portfolio management system for architecture and technical students. The application serves three user roles (Professor, Student, Admin) and manages course materials, student submissions, portfolios, and academic records. The backend uses Supabase for authentication, database, and storage.

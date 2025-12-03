@@ -3312,6 +3312,33 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                             progressContainerDetailSubjectportpolioRowList =
                                                                             snapshot.data!;
 
+                                                                        // Filter for weekly submissions only (exclude midterm and final)
+                                                                        final weeklySubmissions = progressContainerDetailSubjectportpolioRowList
+                                                                            .where((row) {
+                                                                              final week = row.week ?? '';
+                                                                              return week != '중간고사' && week != '기말고사' && week.isNotEmpty;
+                                                                            })
+                                                                            .length;
+
+                                                                        // Count midterm and final submissions for the second graph
+                                                                        final resultSubmissions = progressContainerDetailSubjectportpolioRowList
+                                                                            .where((row) {
+                                                                              final week = row.week ?? '';
+                                                                              return week == '중간고사' || week == '기말고사';
+                                                                            })
+                                                                            .length;
+
+                                                                        // Count unique students from submissions
+                                                                        final uniqueStudents = progressContainerDetailSubjectportpolioRowList
+                                                                            .map((row) => row.studentName)
+                                                                            .where((name) => name != null && name.isNotEmpty)
+                                                                            .toSet()
+                                                                            .length;
+
+                                                                        final expectedTotalWeekly = uniqueStudents > 0 ? uniqueStudents * 15 : 1;
+
+                                                                        print('📊 [Upload Status] Weekly: $weeklySubmissions/$expectedTotalWeekly, Unique Students: $uniqueStudents');
+
                                                                         return wrapWithModel(
                                                                           model:
                                                                               _model.progressContainerDetailModel1,
@@ -3323,12 +3350,12 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                                 '주차별 설계진행표 제출률',
                                                                             percentageNumerator:
                                                                                 valueOrDefault<int>(
-                                                                              progressContainerDetailSubjectportpolioRowList.length,
+                                                                              weeklySubmissions,
                                                                               0,
                                                                             ),
                                                                             percentageDenominator:
                                                                                 valueOrDefault<int>(
-                                                                              _model.courseStudent.length * 15,
+                                                                              expectedTotalWeekly,
                                                                               100,
                                                                             ),
                                                                           ),
@@ -3337,26 +3364,70 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                     ),
                                                                   ),
                                                                   Flexible(
-                                                                    child:
-                                                                        wrapWithModel(
-                                                                      model: _model
-                                                                          .progressContainerDetailModel2,
-                                                                      updateCallback:
-                                                                          () =>
-                                                                              safeSetState(() {}),
-                                                                      child:
-                                                                          ProgressContainerDetailWidget(
-                                                                        title:
-                                                                            '1차 - 2차 결과물 제출률',
-                                                                        percentageNumerator:
-                                                                            0,
-                                                                        percentageDenominator:
-                                                                            valueOrDefault<int>(
-                                                                          _model.courseStudent.length *
-                                                                              2,
-                                                                          101,
+                                                                    child: FutureBuilder<List<dynamic>>(
+                                                                      future: Future.wait([
+                                                                        MidtermResultsTable().queryRows(
+                                                                          queryFn: (q) => q.eqOrNull(
+                                                                            'class',
+                                                                            _model.selectedClassDetailID,
+                                                                          ),
                                                                         ),
-                                                                      ),
+                                                                        FinalResultsTable().queryRows(
+                                                                          queryFn: (q) => q.eqOrNull(
+                                                                            'class',
+                                                                            _model.selectedClassDetailID,
+                                                                          ),
+                                                                        ),
+                                                                      ]),
+                                                                      builder: (context, snapshot) {
+                                                                        if (!snapshot.hasData) {
+                                                                          return Center(
+                                                                            child: SizedBox(
+                                                                              width: 50.0,
+                                                                              height: 50.0,
+                                                                              child: CircularProgressIndicator(
+                                                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                                                  Color(0xFF284E75),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }
+
+                                                                        final midtermResults = snapshot.data![0] as List<MidtermResultsRow>;
+                                                                        final finalResults = snapshot.data![1] as List<FinalResultsRow>;
+
+                                                                        final resultSubmissions = midtermResults.length + finalResults.length;
+
+                                                                        // Count unique students from both midterm and final results
+                                                                        final uniqueStudentsMidterm = midtermResults
+                                                                            .map((row) => row.studentName)
+                                                                            .where((name) => name != null && name.isNotEmpty)
+                                                                            .toSet();
+                                                                        final uniqueStudentsFinal = finalResults
+                                                                            .map((row) => row.studentName)
+                                                                            .where((name) => name != null && name.isNotEmpty)
+                                                                            .toSet();
+                                                                        final allUniqueStudents = {...uniqueStudentsMidterm, ...uniqueStudentsFinal};
+                                                                        final uniqueStudents = allUniqueStudents.length;
+
+                                                                        final expectedTotalResults = uniqueStudents > 0 ? uniqueStudents * 2 : 1;
+
+                                                                        print('📊 [Results Status] Midterm: ${midtermResults.length}, Final: ${finalResults.length}, Total: $resultSubmissions/$expectedTotalResults, Unique Students: $uniqueStudents');
+
+                                                                        return wrapWithModel(
+                                                                          model: _model.progressContainerDetailModel2,
+                                                                          updateCallback: () => safeSetState(() {}),
+                                                                          child: ProgressContainerDetailWidget(
+                                                                            title: '1차 - 2차 결과물 제출률',
+                                                                            percentageNumerator: resultSubmissions,
+                                                                            percentageDenominator: valueOrDefault<int>(
+                                                                              expectedTotalResults,
+                                                                              101,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
                                                                     ),
                                                                   ),
                                                                 ].divide(SizedBox(
@@ -5268,57 +5339,78 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                               progressContainerDetailSubjectportpolioRowList =
                                               snapshot.data!;
 
-                                          return InkWell(
-                                            splashColor: Colors.transparent,
-                                            focusColor: Colors.transparent,
-                                            hoverColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            onTap: () async {
-                                              context.pushNamed(
-                                                  ProfSubjectPortpolioWidget
-                                                      .routeName);
-                                            },
-                                            child: wrapWithModel(
-                                              model: _model
-                                                  .progressContainerDetailModel3,
-                                              updateCallback: () =>
-                                                  safeSetState(() {}),
-                                              child:
-                                                  ProgressContainerDetailWidget(
-                                                title: '주차별 설계진행표 제출률',
-                                                percentageNumerator:
-                                                    valueOrDefault<int>(
-                                                  progressContainerDetailSubjectportpolioRowList
-                                                      .length,
-                                                  0,
-                                                ),
-                                                percentageDenominator:
-                                                    valueOrDefault<int>(
-                                                  _model.courseStudent.length *
-                                                      15,
-                                                  100,
+                                          // Count only weekly submissions (week 1-15, excluding midterm/final)
+                                          final weeklySubmissions = progressContainerDetailSubjectportpolioRowList
+                                              .where((row) {
+                                                final week = row.week ?? '';
+                                                return week != '중간고사' && week != '기말고사' && week.isNotEmpty;
+                                              })
+                                              .length;
+
+                                          // Count midterm and final submissions
+                                          final resultSubmissions = progressContainerDetailSubjectportpolioRowList
+                                              .where((row) {
+                                                final week = row.week ?? '';
+                                                return week == '중간고사' || week == '기말고사';
+                                              })
+                                              .length;
+
+                                          return Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                onTap: () async {
+                                                  context.pushNamed(
+                                                      ProfSubjectPortpolioWidget
+                                                          .routeName);
+                                                },
+                                                child: wrapWithModel(
+                                                  model: _model
+                                                      .progressContainerDetailModel3,
+                                                  updateCallback: () =>
+                                                      safeSetState(() {}),
+                                                  child:
+                                                      ProgressContainerDetailWidget(
+                                                    title: '주차별 설계진행표 제출률',
+                                                    percentageNumerator:
+                                                        valueOrDefault<int>(
+                                                      weeklySubmissions,
+                                                      0,
+                                                    ),
+                                                    percentageDenominator:
+                                                        valueOrDefault<int>(
+                                                      _model.courseStudent.length *
+                                                          15,
+                                                      100,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
+                                              SizedBox(height: 10.0),
+                                              wrapWithModel(
+                                                model:
+                                                    _model.progressContainerDetailModel4,
+                                                updateCallback: () => safeSetState(() {}),
+                                                child: ProgressContainerDetailWidget(
+                                                  title: '1차 - 2차 결과물 제출률',
+                                                  percentageNumerator: valueOrDefault<int>(
+                                                    resultSubmissions,
+                                                    0,
+                                                  ),
+                                                  percentageDenominator:
+                                                      valueOrDefault<int>(
+                                                    _model.courseStudent.length * 2,
+                                                    100,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           );
                                         },
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 70.0,
-                                    child: wrapWithModel(
-                                      model:
-                                          _model.progressContainerDetailModel4,
-                                      updateCallback: () => safeSetState(() {}),
-                                      child: ProgressContainerDetailWidget(
-                                        title: '1차 - 2차 결과물 제출률',
-                                        percentageNumerator: 0,
-                                        percentageDenominator:
-                                            valueOrDefault<int>(
-                                          _model.courseStudent.length * 2,
-                                          100,
-                                        ),
                                       ),
                                     ),
                                   ),
