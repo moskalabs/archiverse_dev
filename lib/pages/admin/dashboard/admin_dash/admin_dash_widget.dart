@@ -1869,13 +1869,76 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: wrapWithModel(
-                                                    model: _model
-                                                        .progressContainerWeeksModel1,
-                                                    updateCallback: () =>
-                                                        safeSetState(() {}),
-                                                    child:
-                                                        ProgressContainerWeeksWidget(),
+                                                  child: FutureBuilder<
+                                                      List<SubjectportpolioRow>>(
+                                                    future: SubjectportpolioTable().queryRows(
+                                                      queryFn: (q) => q,
+                                                    ).then((rows) => rows.where((row) =>
+                                                      _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
+                                                    ).toList()),
+                                                    builder: (context, snapshot) {
+                                                      // Loading state
+                                                      if (!snapshot.hasData) {
+                                                        return Center(
+                                                          child: SizedBox(
+                                                            width: 30.0,
+                                                            height: 30.0,
+                                                            child: CircularProgressIndicator(
+                                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                                Color(0xFF284E75),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+
+                                                      List<SubjectportpolioRow> allPortfolios = snapshot.data!;
+
+                                                      // Calculate completed weeks
+                                                      // Get unique students who have submitted at least once
+                                                      final uniqueStudents = allPortfolios
+                                                          .map((row) => row.studentName)
+                                                          .where((name) => name != null && name.isNotEmpty)
+                                                          .toSet()
+                                                          .toList();
+
+                                                      int completedWeeks = 0;
+
+                                                      // Check each week from 1 to 15
+                                                      for (int week = 1; week <= 15; week++) {
+                                                        final weekStr = '${week}주차';  // Match format: "1주차", "2주차", etc.
+
+                                                        // Get submissions for this week
+                                                        final weekSubmissions = allPortfolios
+                                                            .where((row) => row.week == weekStr)
+                                                            .toList();
+
+                                                        // Check if all students submitted for this week
+                                                        final studentsWhoSubmitted = weekSubmissions
+                                                            .map((row) => row.studentName)
+                                                            .where((name) => name != null && name.isNotEmpty)
+                                                            .toSet()
+                                                            .toList();
+
+                                                        // Week is complete if all students submitted
+                                                        if (weekSubmissions.isNotEmpty &&
+                                                            studentsWhoSubmitted.length == uniqueStudents.length) {
+                                                          completedWeeks = week;
+                                                        } else {
+                                                          // Stop checking further weeks if this week is not complete
+                                                          break;
+                                                        }
+                                                      }
+
+                                                      return wrapWithModel(
+                                                        model: _model.progressContainerWeeksModel1,
+                                                        updateCallback: () => safeSetState(() {}),
+                                                        child: ProgressContainerWeeksWidget(
+                                                          percentageNumerator: completedWeeks.toDouble(),
+                                                          percentageDenominator: 15.0,
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                                 Expanded(
@@ -2516,15 +2579,78 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                         0.0,
                                                                         10.0,
                                                                         0.0),
-                                                            child:
-                                                                wrapWithModel(
-                                                              model: _model
-                                                                  .progressContainerWeeksModel2,
-                                                              updateCallback: () =>
-                                                                  safeSetState(
-                                                                      () {}),
-                                                              child:
-                                                                  ProgressContainerWeeksWidget(),
+                                                            child: FutureBuilder<
+                                                                List<SubjectportpolioRow>>(
+                                                              key: ValueKey('class_${_model.selectedClassDetailID}'),
+                                                              future: SubjectportpolioTable().queryRows(
+                                                                queryFn: (q) => q,
+                                                              ),
+                                                              builder: (context, snapshot) {
+                                                                // Loading state
+                                                                if (!snapshot.hasData) {
+                                                                  return Center(
+                                                                    child: SizedBox(
+                                                                      width: 30.0,
+                                                                      height: 30.0,
+                                                                      child: CircularProgressIndicator(
+                                                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                                                          Color(0xFF284E75),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                }
+
+                                                                // Filter by selected class ID
+                                                                List<SubjectportpolioRow> allPortfolios = snapshot.data!
+                                                                    .where((row) => row.classField == _model.selectedClassDetailID)
+                                                                    .toList();
+
+                                                                // Calculate completed weeks
+                                                                // Get unique students
+                                                                final uniqueStudents = allPortfolios
+                                                                    .map((row) => row.studentName)
+                                                                    .where((name) => name != null && name.isNotEmpty)
+                                                                    .toSet()
+                                                                    .toList();
+
+                                                                int completedWeeks = 0;
+
+                                                                // Check each week from 1 to 15
+                                                                for (int week = 1; week <= 15; week++) {
+                                                                  final weekStr = '${week}주차';  // Match format: "1주차", "2주차", etc.
+
+                                                                  // Get submissions for this week
+                                                                  final weekSubmissions = allPortfolios
+                                                                      .where((row) => row.week == weekStr)
+                                                                      .toList();
+
+                                                                  // Check if all students submitted for this week
+                                                                  final studentsWhoSubmitted = weekSubmissions
+                                                                      .map((row) => row.studentName)
+                                                                      .where((name) => name != null && name.isNotEmpty)
+                                                                      .toSet()
+                                                                      .toList();
+
+                                                                  // Week is complete if all students submitted
+                                                                  if (weekSubmissions.isNotEmpty &&
+                                                                      studentsWhoSubmitted.length == uniqueStudents.length) {
+                                                                    completedWeeks = week;
+                                                                  } else {
+                                                                    // Stop checking further weeks if this week is not complete
+                                                                    break;
+                                                                  }
+                                                                }
+
+                                                                return wrapWithModel(
+                                                                  model: _model.progressContainerWeeksModel2,
+                                                                  updateCallback: () => safeSetState(() {}),
+                                                                  child: ProgressContainerWeeksWidget(
+                                                                    percentageNumerator: completedWeeks.toDouble(),
+                                                                    percentageDenominator: 15.0,
+                                                                  ),
+                                                                );
+                                                              },
                                                             ),
                                                           ),
                                                         ),
