@@ -1873,9 +1873,18 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       List<SubjectportpolioRow>>(
                                                     future: SubjectportpolioTable().queryRows(
                                                       queryFn: (q) => q,
-                                                    ).then((rows) => rows.where((row) =>
-                                                      _model.classSelectedOnLoad?.any((classRow) => classRow.id == row.classField) ?? false
-                                                    ).toList()),
+                                                    ).then((rows) {
+                                                      // Get design class IDs from filteredClass (current grade only)
+                                                      final designClassIds = _model.filteredClass
+                                                          .where((c) => c.course?.contains('설계') ?? false)
+                                                          .map((c) => c.id)
+                                                          .toSet();
+
+                                                      // Only include portfolios from design classes
+                                                      return rows.where((row) =>
+                                                        designClassIds.contains(row.classField)
+                                                      ).toList();
+                                                    }),
                                                     builder: (context, snapshot) {
                                                       // Loading state
                                                       if (!snapshot.hasData) {
@@ -1894,41 +1903,64 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
 
                                                       List<SubjectportpolioRow> allPortfolios = snapshot.data!;
 
-                                                      // Calculate completed weeks
-                                                      // Get unique students who have submitted at least once
-                                                      final uniqueStudents = allPortfolios
-                                                          .map((row) => row.studentName)
-                                                          .where((name) => name != null && name.isNotEmpty)
+                                                      // Calculate completed weeks per class, then take minimum
+                                                      // Get unique class IDs from the portfolios
+                                                      final classIds = allPortfolios
+                                                          .map((row) => row.classField)
                                                           .toSet()
                                                           .toList();
 
-                                                      int completedWeeks = 0;
+                                                      int minCompletedWeeks = 15; // Start with maximum possible
 
-                                                      // Check each week from 1 to 15
-                                                      for (int week = 1; week <= 15; week++) {
-                                                        final weekStr = '${week}주차';  // Match format: "1주차", "2주차", etc.
-
-                                                        // Get submissions for this week
-                                                        final weekSubmissions = allPortfolios
-                                                            .where((row) => row.week == weekStr)
+                                                      // Calculate completed weeks for each class
+                                                      for (final classId in classIds) {
+                                                        // Get portfolios for this class
+                                                        final classPortfolios = allPortfolios
+                                                            .where((row) => row.classField == classId)
                                                             .toList();
 
-                                                        // Check if all students submitted for this week
-                                                        final studentsWhoSubmitted = weekSubmissions
+                                                        // Get unique students in this class
+                                                        final classStudents = classPortfolios
                                                             .map((row) => row.studentName)
                                                             .where((name) => name != null && name.isNotEmpty)
                                                             .toSet()
                                                             .toList();
 
-                                                        // Week is complete if all students submitted
-                                                        if (weekSubmissions.isNotEmpty &&
-                                                            studentsWhoSubmitted.length == uniqueStudents.length) {
-                                                          completedWeeks = week;
-                                                        } else {
-                                                          // Stop checking further weeks if this week is not complete
-                                                          break;
+                                                        int classCompletedWeeks = 0;
+
+                                                        // Check each week for this class
+                                                        for (int week = 1; week <= 15; week++) {
+                                                          final weekStr = '${week}주차';
+
+                                                          // Get submissions for this week in this class
+                                                          final weekSubmissions = classPortfolios
+                                                              .where((row) => row.week == weekStr)
+                                                              .toList();
+
+                                                          // Check if all students in this class submitted
+                                                          final studentsWhoSubmitted = weekSubmissions
+                                                              .map((row) => row.studentName)
+                                                              .where((name) => name != null && name.isNotEmpty)
+                                                              .toSet()
+                                                              .toList();
+
+                                                          // Week is complete if all students submitted
+                                                          if (weekSubmissions.isNotEmpty &&
+                                                              studentsWhoSubmitted.length == classStudents.length) {
+                                                            classCompletedWeeks = week;
+                                                          } else {
+                                                            // Stop checking further weeks
+                                                            break;
+                                                          }
+                                                        }
+
+                                                        // Update minimum
+                                                        if (classCompletedWeeks < minCompletedWeeks) {
+                                                          minCompletedWeeks = classCompletedWeeks;
                                                         }
                                                       }
+
+                                                      int completedWeeks = classIds.isEmpty ? 0 : minCompletedWeeks;
 
                                                       return wrapWithModel(
                                                         model: _model.progressContainerWeeksModel1,
@@ -2702,78 +2734,6 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           .bodyMedium
                                                                           .fontStyle,
                                                                     ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            5.0,
-                                                                            10.0,
-                                                                            5.0),
-                                                                child:
-                                                                    FFButtonWidget(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    context.pushNamed(
-                                                                        ProfSubjectPortpolioWidget
-                                                                            .routeName);
-                                                                  },
-                                                                  text: FFLocalizations.of(
-                                                                          context)
-                                                                      .getText(
-                                                                    't0enfic7' /* 전공 홈 바로가기 ▶ */,
-                                                                  ),
-                                                                  options:
-                                                                      FFButtonOptions(
-                                                                    width:
-                                                                        160.0,
-                                                                    height:
-                                                                        35.0,
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            16.0,
-                                                                            0.0,
-                                                                            16.0,
-                                                                            0.0),
-                                                                    iconPadding:
-                                                                        EdgeInsetsDirectional.fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .mainColor1,
-                                                                    textStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.openSans(
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                          ),
-                                                                          color:
-                                                                              Colors.white,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontStyle,
-                                                                        ),
-                                                                    elevation:
-                                                                        0.0,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8.0),
-                                                                  ),
-                                                                ),
                                                               ),
                                                             ],
                                                           ),
@@ -4923,66 +4883,6 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                       .bodyMedium
                                                       .fontStyle,
                                             ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 10.0, 5.0),
-                                        child: FFButtonWidget(
-                                          onPressed: () async {
-                                            context.pushNamed(
-                                                ProfSubjectPortpolioWidget
-                                                    .routeName);
-                                          },
-                                          text: FFLocalizations.of(context)
-                                              .getText(
-                                            'ci09091w' /* 전공 홈 바로가기 ▶ */,
-                                          ),
-                                          options: FFButtonOptions(
-                                            width: 155.0,
-                                            height: 35.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
-                                            iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0xFFB3B3B3),
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      font:
-                                                          GoogleFonts.openSans(
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .titleSmall
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .titleSmall
-                                                                .fontStyle,
-                                                      ),
-                                                      color: Colors.white,
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmall
-                                                              .fontWeight,
-                                                      fontStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmall
-                                                              .fontStyle,
-                                                    ),
-                                            elevation: 0.0,
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
                                       ),
                                     ],
                                   ),
