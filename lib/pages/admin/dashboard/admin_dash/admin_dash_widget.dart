@@ -1242,10 +1242,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           .transparent,
                                                                   onTap:
                                                                       () async {
-                                                                    _model.selectedGrade =
-                                                                        3;
-                                                                    safeSetState(
-                                                                        () {});
+                                                                    safeSetState(() {
+                                                                      _model.selectedClassDetailID = null;
+                                                                      _model.selectedGrade = 3;
+                                                                    });
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
@@ -1338,10 +1338,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           .transparent,
                                                                   onTap:
                                                                       () async {
-                                                                    _model.selectedGrade =
-                                                                        4;
-                                                                    safeSetState(
-                                                                        () {});
+                                                                    safeSetState(() {
+                                                                      _model.selectedClassDetailID = null;
+                                                                      _model.selectedGrade = 4;
+                                                                    });
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
@@ -1434,10 +1434,10 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           .transparent,
                                                                   onTap:
                                                                       () async {
-                                                                    _model.selectedGrade =
-                                                                        5;
-                                                                    safeSetState(
-                                                                        () {});
+                                                                    safeSetState(() {
+                                                                      _model.selectedClassDetailID = null;
+                                                                      _model.selectedGrade = 5;
+                                                                    });
                                                                     await _model
                                                                         .filterDataByGrade(
                                                                             context);
@@ -3335,7 +3335,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                             .toSet()
                                                                             .length;
 
-                                                                        final expectedTotalWeekly = uniqueStudents > 0 ? uniqueStudents * 15 : 1;
+                                                                        final expectedTotalWeekly = uniqueStudents > 0 ? uniqueStudents * 15 : 0;
 
                                                                         print('📊 [Upload Status] Weekly: $weeklySubmissions/$expectedTotalWeekly, Unique Students: $uniqueStudents');
 
@@ -3356,7 +3356,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                             percentageDenominator:
                                                                                 valueOrDefault<int>(
                                                                               expectedTotalWeekly,
-                                                                              100,
+                                                                              0,
                                                                             ),
                                                                           ),
                                                                         );
@@ -3411,7 +3411,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                         final allUniqueStudents = {...uniqueStudentsMidterm, ...uniqueStudentsFinal};
                                                                         final uniqueStudents = allUniqueStudents.length;
 
-                                                                        final expectedTotalResults = uniqueStudents > 0 ? uniqueStudents * 2 : 1;
+                                                                        final expectedTotalResults = uniqueStudents > 0 ? uniqueStudents * 2 : 0;
 
                                                                         print('📊 [Results Status] Midterm: ${midtermResults.length}, Final: ${finalResults.length}, Total: $resultSubmissions/$expectedTotalResults, Unique Students: $uniqueStudents');
 
@@ -3423,7 +3423,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                             percentageNumerator: resultSubmissions,
                                                                             percentageDenominator: valueOrDefault<int>(
                                                                               expectedTotalResults,
-                                                                              101,
+                                                                              0,
                                                                             ),
                                                                           ),
                                                                         );
@@ -4094,11 +4094,14 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    _model.selectedGrade = 2;
-                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.selectedClassDetailID = null;
+                                                      _model.selectedGrade = 2;
+                                                    });
                                                     await _model
                                                         .filterDataByGrade(
                                                             context);
+                                                    safeSetState(() {});
                                                   },
                                                   child: Text(
                                                     FFLocalizations.of(context)
@@ -4172,11 +4175,14 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    _model.selectedGrade = 3;
-                                                    safeSetState(() {});
+                                                    safeSetState(() {
+                                                      _model.selectedClassDetailID = null;
+                                                      _model.selectedGrade = 3;
+                                                    });
                                                     await _model
                                                         .filterDataByGrade(
                                                             context);
+                                                    safeSetState(() {});
                                                   },
                                                   child: Text(
                                                     FFLocalizations.of(context)
