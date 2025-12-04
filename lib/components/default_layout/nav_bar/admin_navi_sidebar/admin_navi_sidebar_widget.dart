@@ -776,23 +776,13 @@ class _AdminNaviSidebarWidgetState extends State<AdminNaviSidebarWidget> {
       ),
       onEnter: ((event) async {
         safeSetState(() => _model.mouseRegionHovered = true);
-        if (FFAppState().navOpen == true) {
-          FFAppState().navOpen = false;
-          safeSetState(() {});
-        } else {
-          FFAppState().navOpen = true;
-          safeSetState(() {});
-        }
+        FFAppState().navOpen = true;
+        safeSetState(() {});
       }),
       onExit: ((event) async {
         safeSetState(() => _model.mouseRegionHovered = false);
-        if (FFAppState().navOpen == true) {
-          FFAppState().navOpen = false;
-          safeSetState(() {});
-        } else {
-          FFAppState().navOpen = true;
-          safeSetState(() {});
-        }
+        FFAppState().navOpen = false;
+        safeSetState(() {});
       }),
     );
   }

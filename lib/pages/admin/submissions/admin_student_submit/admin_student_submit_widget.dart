@@ -54,25 +54,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      _model.prfoutput = await PostsTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.profeesorName = valueOrDefault<String>(
-        _model.prfoutput?.firstOrNull?.name,
-        '교수 이름',
-      );
-      safeSetState(() {});
-      _model.classSelectedOnload = await ClassTable().queryRows(
-        queryFn: (q) => q,
-      );
-      _model.classOnload = _model.classSelectedOnload!
-          .where((e) =>
-              (e.year == _model.years) && (e.semester == _model.semester))
-          .toList()
-          .toList()
-          .cast<ClassRow>();
-      safeSetState(() {});
       FFAppState().usertype = 0;
+
+      // Load students for the default selected grade on page load (fast query)
+      await _model.filterStudentByGrade(context);
       safeSetState(() {});
     });
 
@@ -1524,7 +1509,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       children: [
                                                         Column(
                                                           mainAxisSize:
-                                                              MainAxisSize.max,
+                                                              MainAxisSize.min,
                                                           children: [
                                                             wrapWithModel(
                                                               model: _model
@@ -1598,45 +1583,107 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                               child:
                                                                   BorderlineWidget(),
                                                             ),
-                                                            Padding(
+                                                          ],
+                                                        ),
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        0.0,
+                                                                        10.0,
+                                                                        10.0,
+                                                                        0.0),
+                                                            child: _model.isLoadingStudents
+                                                                ? Center(
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.all(20.0),
+                                                                      child: CircularProgressIndicator(),
+                                                                    ),
+                                                                  )
+                                                                : _model.filteredStudents.isEmpty
+                                                                    ? Center(
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.all(20.0),
+                                                                          child: Text(
+                                                                            '해당 학년의 학생이 없습니다',
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                              font: GoogleFonts.inter(),
+                                                                              color: Color(0xFF666666),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : ListView.separated(
                                                               padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          10.0,
-                                                                          10.0,
-                                                                          0.0),
-                                                              child: ListView(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .zero,
-                                                                shrinkWrap:
-                                                                    true,
-                                                                scrollDirection:
-                                                                    Axis.vertical,
-                                                                children: [
-                                                                  wrapWithModel(
-                                                                    model: _model
-                                                                        .studentSubmitButtonModel,
-                                                                    updateCallback: () =>
-                                                                        safeSetState(
-                                                                            () {}),
-                                                                    child:
-                                                                        StudentSubmitButtonWidget(
-                                                                      selectedStudentID:
-                                                                          (studentID) async {},
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              shrinkWrap:
+                                                                  false,
+                                                              scrollDirection:
+                                                                  Axis.vertical,
+                                                              itemCount: _model.filteredStudents.length,
+                                                              separatorBuilder: (_, __) => SizedBox(height: 10.0),
+                                                              itemBuilder: (context, index) {
+                                                                final student = _model.filteredStudents[index];
+                                                                final isSelected = _model.selectedStudentId == student.id;
+                                                                return InkWell(
+                                                                  onTap: () async {
+                                                                    await _model.selectStudent(
+                                                                      context,
+                                                                      student.name ?? '',
+                                                                      student.id,
+                                                                      int.tryParse(student.grade ?? '1') ?? 1,
+                                                                    );
+                                                                    safeSetState(() {});
+                                                                  },
+                                                                  child: Container(
+                                                                    height: 45.0,
+                                                                    decoration: BoxDecoration(
+                                                                      color: isSelected ? Color(0xFF666666) : Colors.white,
+                                                                      borderRadius: BorderRadius.circular(5.0),
+                                                                      border: Border.all(
+                                                                        color: Color(0x7F666666),
+                                                                      ),
+                                                                    ),
+                                                                    child: Padding(
+                                                                      padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                            student.name ?? '이름없음',
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
+                                                                              color: isSelected ? Colors.white : Color(0xFF666666),
+                                                                              fontSize: 20.0,
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            student.id.toString(),
+                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                              font: GoogleFonts.inter(
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
+                                                                              color: isSelected ? Colors.white : Color(0xFF666666),
+                                                                              fontSize: 20.0,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        10.0)),
-                                                              ),
+                                                                );
+                                                              },
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
                                                         Column(
                                                           mainAxisSize:
-                                                              MainAxisSize.max,
+                                                              MainAxisSize.min,
                                                           children: [
                                                             wrapWithModel(
                                                               model: _model
@@ -1697,9 +1744,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              FFLocalizations.of(context).getText(
-                                                                            'xptlusld' /* 3 */,
-                                                                          ),
+                                                                              _model.filteredStudents.length.toString(),
                                                                           style:
                                                                               TextStyle(),
                                                                         ),
@@ -2117,7 +2162,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: Color(0xFF666666),
-                                                                                                fontSize: 16.0,
+                                                                                                fontSize: 15.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2164,7 +2209,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                                                                                                 ),
                                                                                                 color: Color(0xFF666666),
-                                                                                                fontSize: 16.0,
+                                                                                                fontSize: 15.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
@@ -2804,7 +2849,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 16.0,
+                                                        fontSize: 15.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -2878,7 +2923,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 16.0,
+                                                        fontSize: 15.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -2952,7 +2997,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 16.0,
+                                                        fontSize: 15.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3026,7 +3071,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 16.0,
+                                                        fontSize: 15.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3100,7 +3145,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         ),
                                                         color:
                                                             Color(0xFF666666),
-                                                        fontSize: 16.0,
+                                                        fontSize: 15.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -3254,7 +3299,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 16.0,
+                                            fontSize: 15.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3469,7 +3514,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 16.0,
+                                            fontSize: 15.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3579,7 +3624,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                       .fontStyle,
                                             ),
                                             color: Color(0xFF666666),
-                                            fontSize: 16.0,
+                                            fontSize: 15.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -3631,7 +3676,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           .fontStyle,
                                                 ),
                                                 color: Color(0xFF666666),
-                                                fontSize: 16.0,
+                                                fontSize: 15.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 fontStyle:
@@ -3665,7 +3710,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                         .fontStyle,
                                               ),
                                               color: Color(0xFF666666),
-                                              fontSize: 16.0,
+                                              fontSize: 15.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
                                               fontStyle:
@@ -3718,7 +3763,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 16.0,
+                                                          fontSize: 15.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -3787,7 +3832,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                           ),
                                                           color:
                                                               Color(0xFF666666),
-                                                          fontSize: 16.0,
+                                                          fontSize: 15.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,

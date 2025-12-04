@@ -196,6 +196,63 @@ class AdminStudentSubmitModel
 
   StudentSubmitViewType? viewType = StudentSubmitViewType.overview;
 
+  /// ============================================================
+  /// NEW STATE VARIABLES FOR ADMIN STUDENT SUBMIT FEATURES
+  /// ============================================================
+
+  /// Cached list of ALL students (loaded once on page init)
+  List<StudentMyprofileRow> _allStudentsCache = [];
+  bool _isStudentsCacheLoaded = false;
+
+  /// List of students filtered by selected grade (computed from cache)
+  List<StudentMyprofileRow> filteredStudents = [];
+  void addToFilteredStudents(StudentMyprofileRow item) => filteredStudents.add(item);
+  void removeFromFilteredStudents(StudentMyprofileRow item) =>
+      filteredStudents.remove(item);
+  void removeAtIndexFromFilteredStudents(int index) =>
+      filteredStudents.removeAt(index);
+  void clearFilteredStudents() => filteredStudents.clear();
+
+  /// Currently selected student information
+  String? selectedStudentName;
+  int? selectedStudentId;
+  int? selectedStudentGrade;
+
+  /// List of subjects/courses for the selected student
+  List<CourseStudentRow> studentSubjects = [];
+  void addToStudentSubjects(CourseStudentRow item) => studentSubjects.add(item);
+  void removeFromStudentSubjects(CourseStudentRow item) =>
+      studentSubjects.remove(item);
+  void removeAtIndexFromStudentSubjects(int index) =>
+      studentSubjects.removeAt(index);
+  void clearStudentSubjects() => studentSubjects.clear();
+
+  /// Currently selected subject/course information
+  String? selectedSubjectName;
+  int? selectedClassId;
+  String? selectedCourseType; // 'design' or 'theory'
+
+  /// Overall submission progress for selected student (0.0 to 1.0)
+  double overallProgress = 0.0;
+
+  /// Assignment progress for selected subject (0.0 to 1.0)
+  double assignmentProgress = 0.0;
+
+  /// Weekly submission status for selected subject
+  /// Map: week number (1-15) -> boolean (submitted or not)
+  Map<int, bool> weeklySubmissionStatus = {};
+
+  /// Midterm submission status for selected subject
+  bool midtermSubmitted = false;
+
+  /// Final submission status for selected subject
+  bool finalSubmitted = false;
+
+  /// Loading states
+  bool isLoadingStudents = false;
+  bool isLoadingProgress = false;
+  bool isLoadingSubjects = false;
+
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in AdminStudentSubmit widget.
@@ -323,5 +380,355 @@ class AdminStudentSubmitModel
   }
 
   /// Action blocks.
-  Future filterStudentByGrade(BuildContext context) async {}
+
+  /// ============================================================
+  /// FEATURE 1: Filter students by selected grade
+  /// Uses local caching - DB query only on first call, then filters from cache
+  /// ============================================================
+  Future filterStudentByGrade(BuildContext context) async {
+    // selectedGrade is already in "1학년", "2학년" format - use directly for DB comparison
+    print('DEBUG: filterStudentByGrade called for grade: $selectedGrade, cacheLoaded: $_isStudentsCacheLoaded');
+
+    // If cache not loaded yet, load all students once
+    if (!_isStudentsCacheLoaded) {
+      isLoadingStudents = true;
+      try {
+        print('DEBUG: Loading ALL students into cache (one-time)');
+        _allStudentsCache = await StudentMyprofileTable().queryRows(
+          queryFn: (q) => q,
+        );
+        _isStudentsCacheLoaded = true;
+        print('DEBUG: Cached ${_allStudentsCache.length} total students');
+
+        // Debug: Print unique grade values to understand the data format
+        final uniqueGrades = _allStudentsCache.map((s) => s.grade).toSet().toList();
+        print('DEBUG: Unique grade values in DB: $uniqueGrades');
+      } catch (e) {
+        print('ERROR loading students cache: $e');
+        isLoadingStudents = false;
+        return;
+      }
+    }
+
+    // Filter from cache (instant, no network call)
+    // Compare directly with selectedGrade ("1학년", "2학년", etc.)
+    clearFilteredStudents();
+    filteredStudents = _allStudentsCache
+        .where((student) => student.grade == selectedGrade)
+        .toList();
+
+    print('DEBUG: Filtered to ${filteredStudents.length} students for grade $selectedGrade (from cache)');
+    isLoadingStudents = false;
+  }
+
+  /// ============================================================
+  /// FEATURE 2: Calculate overall submission progress for selected student
+  /// ============================================================
+  Future calculateOverallProgress(BuildContext context) async {
+    if (selectedStudentName == null) {
+      print('DEBUG: No student selected for overall progress');
+      return;
+    }
+
+    print('DEBUG: Calculating overall progress for: $selectedStudentName');
+    isLoadingProgress = true;
+
+    try {
+      // Get all courses for this student in current year/semester
+      final studentCourses = await CourseStudentTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('student_name', selectedStudentName)
+            .eqOrNull('year', years)
+            .eqOrNull('semester', semester),
+      );
+
+      print('DEBUG: Student has ${studentCourses.length} courses');
+
+      int totalExpected = 0;
+      int totalSubmitted = 0;
+
+      // For each course, calculate submissions
+      for (var course in studentCourses) {
+        if (course.classid == null) continue;
+
+        // Determine if design course by checking if course name contains "건축설계"
+        bool isDesignCourse = course.courseName?.contains('건축설계') ?? false;
+
+        // Design courses: 15 weeks + midterm + final = 17 items
+        // Theory courses: midterm + final = 2 items
+        if (isDesignCourse) {
+          totalExpected += 17; // 15 weeks + 2 milestones
+
+          // Count weekly submissions
+          final weeklySubmissions = await SubjectportpolioTable().queryRows(
+            queryFn: (q) => q
+                .eqOrNull('class', course.classid)
+                .eqOrNull('student_name', selectedStudentName),
+          );
+          totalSubmitted += weeklySubmissions.length;
+          print('DEBUG: Course ${course.courseName} - Weekly: ${weeklySubmissions.length}/15');
+        } else {
+          totalExpected += 2; // Only midterm + final for theory
+        }
+
+        // Count midterm submission
+        final midtermSubmissions = await MidtermResultsTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('class', course.classid)
+              .eqOrNull('student_name', selectedStudentName),
+        );
+        if (midtermSubmissions.isNotEmpty) {
+          totalSubmitted += 1;
+          print('DEBUG: Course ${course.courseName} - Midterm: submitted');
+        }
+
+        // Count final submission
+        final finalSubmissions = await FinalResultsTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('class', course.classid)
+              .eqOrNull('student_name', selectedStudentName),
+        );
+        if (finalSubmissions.isNotEmpty) {
+          totalSubmitted += 1;
+          print('DEBUG: Course ${course.courseName} - Final: submitted');
+        }
+      }
+
+      // Calculate overall progress percentage
+      if (totalExpected > 0) {
+        overallProgress = totalSubmitted / totalExpected;
+      } else {
+        overallProgress = 0.0;
+      }
+
+      print('DEBUG: Overall progress: ${(overallProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
+
+    } catch (e) {
+      print('ERROR in calculateOverallProgress: $e');
+      overallProgress = 0.0;
+    } finally {
+      isLoadingProgress = false;
+    }
+  }
+
+  /// ============================================================
+  /// FEATURE 3: Load subjects for selected student
+  /// ============================================================
+  Future loadStudentSubjects(BuildContext context) async {
+    if (selectedStudentName == null) {
+      print('DEBUG: No student selected for loading subjects');
+      return;
+    }
+
+    print('DEBUG: Loading subjects for: $selectedStudentName');
+    isLoadingSubjects = true;
+    clearStudentSubjects();
+
+    try {
+      // Query all courses for this student in current year/semester
+      final subjects = await CourseStudentTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('student_name', selectedStudentName)
+            .eqOrNull('year', years)
+            .eqOrNull('semester', semester),
+      );
+
+      studentSubjects = subjects;
+      print('DEBUG: Loaded ${studentSubjects.length} subjects');
+
+      for (var subject in studentSubjects) {
+        print('DEBUG: Subject: ${subject.courseName} (${subject.courseType})');
+      }
+
+    } catch (e) {
+      print('ERROR in loadStudentSubjects: $e');
+    } finally {
+      isLoadingSubjects = false;
+    }
+  }
+
+  /// ============================================================
+  /// FEATURE 4: Calculate assignment progress for selected subject
+  /// ============================================================
+  Future calculateAssignmentProgress(BuildContext context) async {
+    if (selectedClassId == null || selectedStudentName == null) {
+      print('DEBUG: No subject/student selected for assignment progress');
+      return;
+    }
+
+    print('DEBUG: Calculating assignment progress for class: $selectedClassId, student: $selectedStudentName');
+    isLoadingProgress = true;
+
+    try {
+      // Determine if design course by checking if course name contains "건축설계"
+      bool isDesignCourse = selectedSubjectName?.contains('건축설계') ?? false;
+
+      int totalExpected = 0;
+      int totalSubmitted = 0;
+
+      if (isDesignCourse) {
+        // Design course: 15 weeks + midterm + final
+        totalExpected = 17;
+
+        // Count weekly submissions
+        final weeklySubmissions = await SubjectportpolioTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('class', selectedClassId)
+              .eqOrNull('student_name', selectedStudentName),
+        );
+        totalSubmitted += weeklySubmissions.length;
+        print('DEBUG: Weekly submissions: ${weeklySubmissions.length}');
+      } else {
+        // Theory course: only midterm + final
+        totalExpected = 2;
+      }
+
+      // Count midterm
+      final midtermSubmissions = await MidtermResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', selectedClassId)
+            .eqOrNull('student_name', selectedStudentName),
+      );
+      if (midtermSubmissions.isNotEmpty) {
+        totalSubmitted += 1;
+        print('DEBUG: Midterm: submitted');
+      }
+
+      // Count final
+      final finalSubmissions = await FinalResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', selectedClassId)
+            .eqOrNull('student_name', selectedStudentName),
+      );
+      if (finalSubmissions.isNotEmpty) {
+        totalSubmitted += 1;
+        print('DEBUG: Final: submitted');
+      }
+
+      // Calculate assignment progress
+      if (totalExpected > 0) {
+        assignmentProgress = totalSubmitted / totalExpected;
+      } else {
+        assignmentProgress = 0.0;
+      }
+
+      print('DEBUG: Assignment progress: ${(assignmentProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
+
+    } catch (e) {
+      print('ERROR in calculateAssignmentProgress: $e');
+      assignmentProgress = 0.0;
+    } finally {
+      isLoadingProgress = false;
+    }
+  }
+
+  /// ============================================================
+  /// FEATURE 5: Load weekly progress and milestone status for selected subject
+  /// ============================================================
+  Future loadWeeklyProgressStatus(BuildContext context) async {
+    if (selectedClassId == null || selectedStudentName == null) {
+      print('DEBUG: No subject/student selected for weekly progress');
+      return;
+    }
+
+    print('DEBUG: Loading weekly progress for class: $selectedClassId, student: $selectedStudentName');
+
+    try {
+      // Reset status
+      weeklySubmissionStatus.clear();
+      midtermSubmitted = false;
+      finalSubmitted = false;
+
+      // Initialize all weeks to false
+      for (int i = 1; i <= 15; i++) {
+        weeklySubmissionStatus[i] = false;
+      }
+
+      // Query weekly submissions
+      final weeklySubmissions = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', selectedClassId)
+            .eqOrNull('student_name', selectedStudentName),
+      );
+
+      print('DEBUG: Found ${weeklySubmissions.length} weekly submissions');
+
+      // Mark submitted weeks
+      for (var submission in weeklySubmissions) {
+        if (submission.week != null) {
+          // Parse week number (e.g., "1주차" -> 1)
+          String weekStr = submission.week!.replaceAll(RegExp(r'[^0-9]'), '');
+          if (weekStr.isNotEmpty) {
+            int weekNum = int.parse(weekStr);
+            if (weekNum >= 1 && weekNum <= 15) {
+              weeklySubmissionStatus[weekNum] = true;
+              print('DEBUG: Week $weekNum: submitted');
+            }
+          }
+        }
+      }
+
+      // Check midterm submission
+      final midtermSubmissions = await MidtermResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', selectedClassId)
+            .eqOrNull('student_name', selectedStudentName),
+      );
+      midtermSubmitted = midtermSubmissions.isNotEmpty;
+      print('DEBUG: Midterm submitted: $midtermSubmitted');
+
+      // Check final submission
+      final finalSubmissions = await FinalResultsTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('class', selectedClassId)
+            .eqOrNull('student_name', selectedStudentName),
+      );
+      finalSubmitted = finalSubmissions.isNotEmpty;
+      print('DEBUG: Final submitted: $finalSubmitted');
+
+    } catch (e) {
+      print('ERROR in loadWeeklyProgressStatus: $e');
+    }
+  }
+
+  /// ============================================================
+  /// Helper function: Select student
+  /// ============================================================
+  Future selectStudent(BuildContext context, String studentName, int studentId, int studentGrade) async {
+    print('DEBUG: Selecting student: $studentName (ID: $studentId, Grade: $studentGrade)');
+
+    selectedStudentName = studentName;
+    selectedStudentId = studentId;
+    selectedStudentGrade = studentGrade;
+
+    // Clear previous subject selection
+    selectedSubjectName = null;
+    selectedClassId = null;
+    selectedCourseType = null;
+    clearStudentSubjects();
+
+    // Load only subjects for fast response
+    // Overall progress calculation removed for performance
+    await loadStudentSubjects(context);
+  }
+
+  /// ============================================================
+  /// Helper function: Select subject
+  /// ============================================================
+  Future selectSubject(BuildContext context, String subjectName, int classId, String courseType) async {
+    print('DEBUG: Selecting subject: $subjectName (Class ID: $classId, Type: $courseType)');
+
+    selectedSubjectName = subjectName;
+    selectedClassId = classId;
+    selectedCourseType = courseType;
+
+    // Determine if design course by checking if course name contains "건축설계"
+    isDesign = subjectName.contains('건축설계');
+
+    // Load data for selected subject
+    await Future.wait([
+      calculateAssignmentProgress(context),
+      loadWeeklyProgressStatus(context),
+    ]);
+  }
 }
