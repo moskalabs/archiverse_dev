@@ -59,6 +59,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
       // Load students for the default selected grade on page load (fast query)
       await _model.filterStudentByGrade(context);
       safeSetState(() {});
+
+      // Calculate grade-level overall submission rate
+      await _model.calculateGradeOverallProgress(context);
+      safeSetState(() {});
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));

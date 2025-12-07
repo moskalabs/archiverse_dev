@@ -398,24 +398,24 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future filterStudentByGrade(BuildContext context) async {
     // selectedGrade is already in "1학년", "2학년" format - use directly for DB comparison
-    print('DEBUG: filterStudentByGrade called for grade: $selectedGrade, cacheLoaded: $_isStudentsCacheLoaded');
+    // print('DEBUG: filterStudentByGrade called for grade: $selectedGrade, cacheLoaded: $_isStudentsCacheLoaded');
 
     // If cache not loaded yet, load all students once
     if (!_isStudentsCacheLoaded) {
       isLoadingStudents = true;
       try {
-        print('DEBUG: Loading ALL students into cache (one-time)');
+        // print('DEBUG: Loading ALL students into cache (one-time)');
         _allStudentsCache = await StudentMyprofileTable().queryRows(
           queryFn: (q) => q,
         );
         _isStudentsCacheLoaded = true;
-        print('DEBUG: Cached ${_allStudentsCache.length} total students');
+        // print('DEBUG: Cached ${_allStudentsCache.length} total students');
 
         // Debug: Print unique grade values to understand the data format
         final uniqueGrades = _allStudentsCache.map((s) => s.grade).toSet().toList();
-        print('DEBUG: Unique grade values in DB: $uniqueGrades');
+        // print('DEBUG: Unique grade values in DB: $uniqueGrades');
       } catch (e) {
-        print('ERROR loading students cache: $e');
+        // print('ERROR loading students cache: $e');
         isLoadingStudents = false;
         return;
       }
@@ -428,7 +428,7 @@ class AdminStudentSubmitModel
         .where((student) => student.grade == selectedGrade)
         .toList();
 
-    print('DEBUG: Filtered to ${filteredStudents.length} students for grade $selectedGrade (from cache)');
+    // print('DEBUG: Filtered to ${filteredStudents.length} students for grade $selectedGrade (from cache)');
     isLoadingStudents = false;
   }
 
@@ -437,11 +437,11 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future calculateOverallProgress(BuildContext context) async {
     if (selectedStudentName == null) {
-      print('DEBUG: No student selected for overall progress');
+      // print('DEBUG: No student selected for overall progress');
       return;
     }
 
-    print('DEBUG: Calculating overall progress for: $selectedStudentName');
+    // print('DEBUG: Calculating overall progress for: $selectedStudentName');
     isLoadingProgress = true;
 
     try {
@@ -453,7 +453,7 @@ class AdminStudentSubmitModel
             .eqOrNull('semester', semester),
       );
 
-      print('DEBUG: Student has ${studentCourses.length} courses');
+      // print('DEBUG: Student has ${studentCourses.length} courses');
 
       int totalExpected = 0;
       int totalSubmitted = 0;
@@ -477,7 +477,7 @@ class AdminStudentSubmitModel
                 .eqOrNull('student_name', selectedStudentName),
           );
           totalSubmitted += weeklySubmissions.length;
-          print('DEBUG: Course ${course.courseName} - Weekly: ${weeklySubmissions.length}/15');
+          // print('DEBUG: Course ${course.courseName} - Weekly: ${weeklySubmissions.length}/15');
         } else {
           totalExpected += 2; // Only midterm + final for theory
         }
@@ -490,7 +490,7 @@ class AdminStudentSubmitModel
         );
         if (midtermSubmissions.isNotEmpty) {
           totalSubmitted += 1;
-          print('DEBUG: Course ${course.courseName} - Midterm: submitted');
+          // print('DEBUG: Course ${course.courseName} - Midterm: submitted');
         }
 
         // Count final submission
@@ -501,7 +501,7 @@ class AdminStudentSubmitModel
         );
         if (finalSubmissions.isNotEmpty) {
           totalSubmitted += 1;
-          print('DEBUG: Course ${course.courseName} - Final: submitted');
+          // print('DEBUG: Course ${course.courseName} - Final: submitted');
         }
       }
 
@@ -512,10 +512,10 @@ class AdminStudentSubmitModel
         overallProgress = 0.0;
       }
 
-      print('DEBUG: Overall progress: ${(overallProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
+      // print('DEBUG: Overall progress: ${(overallProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
 
     } catch (e) {
-      print('ERROR in calculateOverallProgress: $e');
+      // print('ERROR in calculateOverallProgress: $e');
       overallProgress = 0.0;
     } finally {
       isLoadingProgress = false;
@@ -527,11 +527,11 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future loadStudentSubjects(BuildContext context) async {
     if (selectedStudentName == null) {
-      print('DEBUG: No student selected for loading subjects');
+      // print('DEBUG: No student selected for loading subjects');
       return;
     }
 
-    print('DEBUG: Loading subjects for: $selectedStudentName');
+    // print('DEBUG: Loading subjects for: $selectedStudentName');
     isLoadingSubjects = true;
     clearStudentSubjects();
 
@@ -545,14 +545,14 @@ class AdminStudentSubmitModel
       );
 
       studentSubjects = subjects;
-      print('DEBUG: Loaded ${studentSubjects.length} subjects');
+      // print('DEBUG: Loaded ${studentSubjects.length} subjects');
 
       for (var subject in studentSubjects) {
-        print('DEBUG: Subject: ${subject.courseName} (${subject.courseType})');
+        // print('DEBUG: Subject: ${subject.courseName} (${subject.courseType})');
       }
 
     } catch (e) {
-      print('ERROR in loadStudentSubjects: $e');
+      // print('ERROR in loadStudentSubjects: $e');
     } finally {
       isLoadingSubjects = false;
     }
@@ -563,11 +563,11 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future calculateAssignmentProgress(BuildContext context) async {
     if (selectedClassId == null || selectedStudentName == null) {
-      print('DEBUG: No subject/student selected for assignment progress');
+      // print('DEBUG: No subject/student selected for assignment progress');
       return;
     }
 
-    print('DEBUG: Calculating assignment progress for class: $selectedClassId, student: $selectedStudentName');
+    // print('DEBUG: Calculating assignment progress for class: $selectedClassId, student: $selectedStudentName');
     isLoadingProgress = true;
 
     try {
@@ -588,7 +588,7 @@ class AdminStudentSubmitModel
               .eqOrNull('student_name', selectedStudentName),
         );
         totalSubmitted += weeklySubmissions.length;
-        print('DEBUG: Weekly submissions: ${weeklySubmissions.length}');
+        // print('DEBUG: Weekly submissions: ${weeklySubmissions.length}');
       } else {
         // Theory course: only midterm + final
         totalExpected = 2;
@@ -602,7 +602,7 @@ class AdminStudentSubmitModel
       );
       if (midtermSubmissions.isNotEmpty) {
         totalSubmitted += 1;
-        print('DEBUG: Midterm: submitted');
+        // print('DEBUG: Midterm: submitted');
       }
 
       // Count final
@@ -613,7 +613,7 @@ class AdminStudentSubmitModel
       );
       if (finalSubmissions.isNotEmpty) {
         totalSubmitted += 1;
-        print('DEBUG: Final: submitted');
+        // print('DEBUG: Final: submitted');
       }
 
       // Calculate assignment progress
@@ -623,10 +623,10 @@ class AdminStudentSubmitModel
         assignmentProgress = 0.0;
       }
 
-      print('DEBUG: Assignment progress: ${(assignmentProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
+      // print('DEBUG: Assignment progress: ${(assignmentProgress * 100).toStringAsFixed(1)}% ($totalSubmitted/$totalExpected)');
 
     } catch (e) {
-      print('ERROR in calculateAssignmentProgress: $e');
+      // print('ERROR in calculateAssignmentProgress: $e');
       assignmentProgress = 0.0;
     } finally {
       isLoadingProgress = false;
@@ -638,11 +638,11 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future loadWeeklyProgressStatus(BuildContext context) async {
     if (selectedClassId == null || selectedStudentName == null) {
-      print('DEBUG: No subject/student selected for weekly progress');
+      // print('DEBUG: No subject/student selected for weekly progress');
       return;
     }
 
-    print('DEBUG: Loading weekly progress for class: $selectedClassId, student: $selectedStudentName');
+    // print('DEBUG: Loading weekly progress for class: $selectedClassId, student: $selectedStudentName');
 
     try {
       // Reset status
@@ -662,7 +662,7 @@ class AdminStudentSubmitModel
             .eqOrNull('student_name', selectedStudentName),
       );
 
-      print('DEBUG: Found ${weeklySubmissions.length} weekly submissions');
+      // print('DEBUG: Found ${weeklySubmissions.length} weekly submissions');
 
       // Mark submitted weeks
       for (var submission in weeklySubmissions) {
@@ -673,7 +673,7 @@ class AdminStudentSubmitModel
             int weekNum = int.parse(weekStr);
             if (weekNum >= 1 && weekNum <= 15) {
               weeklySubmissionStatus[weekNum] = true;
-              print('DEBUG: Week $weekNum: submitted');
+              // print('DEBUG: Week $weekNum: submitted');
             }
           }
         }
@@ -686,7 +686,7 @@ class AdminStudentSubmitModel
             .eqOrNull('student_name', selectedStudentName),
       );
       midtermSubmitted = midtermSubmissions.isNotEmpty;
-      print('DEBUG: Midterm submitted: $midtermSubmitted');
+      // print('DEBUG: Midterm submitted: $midtermSubmitted');
 
       // Check final submission
       final finalSubmissions = await FinalResultsTable().queryRows(
@@ -695,10 +695,10 @@ class AdminStudentSubmitModel
             .eqOrNull('student_name', selectedStudentName),
       );
       finalSubmitted = finalSubmissions.isNotEmpty;
-      print('DEBUG: Final submitted: $finalSubmitted');
+      // print('DEBUG: Final submitted: $finalSubmitted');
 
     } catch (e) {
-      print('ERROR in loadWeeklyProgressStatus: $e');
+      // print('ERROR in loadWeeklyProgressStatus: $e');
     }
   }
 
@@ -706,7 +706,7 @@ class AdminStudentSubmitModel
   /// Helper function: Select student
   /// ============================================================
   Future selectStudent(BuildContext context, String studentName, int studentId, int studentGrade) async {
-    print('DEBUG: Selecting student: $studentName (ID: $studentId, Grade: $studentGrade)');
+    // print('DEBUG: Selecting student: $studentName (ID: $studentId, Grade: $studentGrade)');
 
     selectedStudentName = studentName;
     selectedStudentId = studentId;
@@ -727,7 +727,7 @@ class AdminStudentSubmitModel
   /// Helper function: Select subject
   /// ============================================================
   Future selectSubject(BuildContext context, String subjectName, int classId, String courseType) async {
-    print('DEBUG: Selecting subject: $subjectName (Class ID: $classId, Type: $courseType)');
+    // print('DEBUG: Selecting subject: $subjectName (Class ID: $classId, Type: $courseType)');
 
     selectedSubjectName = subjectName;
     selectedClassId = classId;
@@ -746,11 +746,12 @@ class AdminStudentSubmitModel
   /// ============================================================
   /// FEATURE 6: Calculate grade-level overall submission rate (학년별 전체 과제 제출률)
   /// This calculates the submission rate for ALL students in the selected grade
+  /// OPTIMIZED: Batch queries instead of per-student queries
   /// ============================================================
   Future calculateGradeOverallProgress(BuildContext context) async {
     // Capture the grade at the start of the calculation to detect if it changes
     final requestedGrade = selectedGrade;
-    print('DEBUG: Calculating grade-level progress for: $requestedGrade');
+    // print('DEBUG: Calculating grade-level progress for: $requestedGrade');
     isLoadingGradeProgress = true;
 
     try {
@@ -759,7 +760,7 @@ class AdminStudentSubmitModel
       int? gradeNum = int.tryParse(gradeNumStr);
 
       if (gradeNum == null) {
-        print('ERROR: Could not parse grade number from: $requestedGrade');
+        // print('ERROR: Could not parse grade number from: $requestedGrade');
         return;
       }
 
@@ -771,12 +772,12 @@ class AdminStudentSubmitModel
       // Get all students in this grade from cache
       final studentsInGrade = filteredStudents;
       localTotalStudents = studentsInGrade.length;
-      print('DEBUG: Found $localTotalStudents students in $requestedGrade');
+      // print('DEBUG: Found $localTotalStudents students in $requestedGrade');
 
       if (localTotalStudents == 0) {
         // Check if grade changed before updating state
         if (selectedGrade != requestedGrade) {
-          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+          // print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
           return;
         }
         gradeTotalStudents = 0;
@@ -787,27 +788,62 @@ class AdminStudentSubmitModel
         return;
       }
 
-      // For each student, calculate their submission progress
-      for (var student in studentsInGrade) {
-        // Check if grade changed mid-calculation
-        if (selectedGrade != requestedGrade) {
-          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
-          return;
-        }
+      // OPTIMIZATION: Get all student names in one list
+      final studentNames = studentsInGrade.map((s) => s.name).where((name) => name != null).toSet().toList();
 
-        // Get all courses for this student in current year/semester
-        final studentCourses = await CourseStudentTable().queryRows(
-          queryFn: (q) => q
-              .eqOrNull('student_name', student.name)
-              .eqOrNull('year', years)
-              .eqOrNull('semester', semester),
-        );
+      // OPTIMIZATION: Get all courses for all students in this grade in ONE query
+      final allCourses = await CourseStudentTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('year', years)
+            .eqOrNull('semester', semester),
+      );
 
-        // Check again after await
-        if (selectedGrade != requestedGrade) {
-          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
-          return;
-        }
+      // Check if grade changed
+      if (selectedGrade != requestedGrade) {
+        // print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+        return;
+      }
+
+      // Filter courses for students in this grade
+      final gradeCourses = allCourses.where((course) =>
+        studentNames.contains(course.studentName)
+      ).toList();
+
+      // Get all class IDs
+      final classIds = gradeCourses.map((c) => c.classid).where((id) => id != null).toSet().toList();
+
+      if (classIds.isEmpty) {
+        if (selectedGrade != requestedGrade) return;
+        gradeTotalStudents = localTotalStudents;
+        gradeTotalSubmitted = 0;
+        gradeTotalExpected = 0;
+        gradeOverallProgress = 0.0;
+        isLoadingGradeProgress = false;
+        return;
+      }
+
+      // OPTIMIZATION: Fetch ALL submissions for these classes in batch
+      final allWeeklySubmissions = await SubjectportpolioTable().queryRows(
+        queryFn: (q) => q.inFilter('class', classIds),
+      );
+
+      final allMidtermSubmissions = await MidtermResultsTable().queryRows(
+        queryFn: (q) => q.inFilter('class', classIds),
+      );
+
+      final allFinalSubmissions = await FinalResultsTable().queryRows(
+        queryFn: (q) => q.inFilter('class', classIds),
+      );
+
+      // Check if grade changed
+      if (selectedGrade != requestedGrade) {
+        // print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+        return;
+      }
+
+      // Calculate for each student
+      for (var studentName in studentNames) {
+        final studentCourses = gradeCourses.where((c) => c.studentName == studentName).toList();
 
         for (var course in studentCourses) {
           if (course.classid == null) continue;
@@ -819,56 +855,29 @@ class AdminStudentSubmitModel
             // Design course: 15 weeks + midterm + final = 17 items
             localTotalExpected += 17;
 
-            // Count weekly submissions
-            final weeklySubmissions = await SubjectportpolioTable().queryRows(
-              queryFn: (q) => q
-                  .eqOrNull('class', course.classid)
-                  .eqOrNull('student_name', student.name),
-            );
-
-            // Check after await
-            if (selectedGrade != requestedGrade) {
-              print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
-              return;
-            }
-
-            localTotalSubmitted += weeklySubmissions.length;
+            // Count weekly submissions for this student in this class
+            final weeklyCount = allWeeklySubmissions.where((s) =>
+              s.classField == course.classid && s.studentName == studentName
+            ).length;
+            localTotalSubmitted += weeklyCount;
           } else {
             // Theory course: midterm + final = 2 items
             localTotalExpected += 2;
           }
 
           // Count midterm submission
-          final midtermSubmissions = await MidtermResultsTable().queryRows(
-            queryFn: (q) => q
-                .eqOrNull('class', course.classid)
-                .eqOrNull('student_name', student.name),
+          final hasMidterm = allMidtermSubmissions.any((s) =>
+            s.classField == course.classid && s.studentName == studentName
           );
-
-          // Check after await
-          if (selectedGrade != requestedGrade) {
-            print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
-            return;
-          }
-
-          if (midtermSubmissions.isNotEmpty) {
+          if (hasMidterm) {
             localTotalSubmitted += 1;
           }
 
           // Count final submission
-          final finalSubmissions = await FinalResultsTable().queryRows(
-            queryFn: (q) => q
-                .eqOrNull('class', course.classid)
-                .eqOrNull('student_name', student.name),
+          final hasFinal = allFinalSubmissions.any((s) =>
+            s.classField == course.classid && s.studentName == studentName
           );
-
-          // Check after await
-          if (selectedGrade != requestedGrade) {
-            print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
-            return;
-          }
-
-          if (finalSubmissions.isNotEmpty) {
+          if (hasFinal) {
             localTotalSubmitted += 1;
           }
         }
@@ -876,7 +885,7 @@ class AdminStudentSubmitModel
 
       // Final check before updating state variables
       if (selectedGrade != requestedGrade) {
-        print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+        // print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
         return;
       }
 
@@ -892,10 +901,10 @@ class AdminStudentSubmitModel
         gradeOverallProgress = 0.0;
       }
 
-      print('DEBUG: Grade $requestedGrade progress: ${(gradeOverallProgress * 100).toStringAsFixed(1)}% ($gradeTotalSubmitted/$gradeTotalExpected)');
+      // print('DEBUG: Grade $requestedGrade progress: ${(gradeOverallProgress * 100).toStringAsFixed(1)}% ($gradeTotalSubmitted/$gradeTotalExpected)');
 
     } catch (e) {
-      print('ERROR in calculateGradeOverallProgress: $e');
+      // print('ERROR in calculateGradeOverallProgress: $e');
       // Only reset if this is still the active grade
       if (selectedGrade == requestedGrade) {
         gradeOverallProgress = 0.0;
@@ -914,11 +923,11 @@ class AdminStudentSubmitModel
   /// ============================================================
   Future loadStudentWeeklyChartData(BuildContext context) async {
     if (selectedStudentName == null) {
-      print('DEBUG: No student selected for chart data');
+      // print('DEBUG: No student selected for chart data');
       return;
     }
 
-    print('DEBUG: Loading weekly chart data for: $selectedStudentName');
+    // print('DEBUG: Loading weekly chart data for: $selectedStudentName');
 
     try {
       // Reset chart data (17 slots: weeks 1-15 + midterm + final)
@@ -983,11 +992,11 @@ class AdminStudentSubmitModel
 
       // Count total submitted
       int totalSubmitted = weeklyChartData.where((v) => v == 1).length;
-      print('DEBUG: Chart data loaded - $totalSubmitted/17 items submitted');
-      print('DEBUG: Chart data: $weeklyChartData');
+      // print('DEBUG: Chart data loaded - $totalSubmitted/17 items submitted');
+      // print('DEBUG: Chart data: $weeklyChartData');
 
     } catch (e) {
-      print('ERROR in loadStudentWeeklyChartData: $e');
+      // print('ERROR in loadStudentWeeklyChartData: $e');
       weeklyChartData = List.filled(17, 0);
     }
   }
@@ -996,7 +1005,7 @@ class AdminStudentSubmitModel
   /// Enhanced: Select student with full data loading
   /// ============================================================
   Future selectStudentWithFullData(BuildContext context, String studentName, int studentId, int studentGrade) async {
-    print('DEBUG: Selecting student with full data: $studentName');
+    // print('DEBUG: Selecting student with full data: $studentName');
 
     selectedStudentName = studentName;
     selectedStudentId = studentId;

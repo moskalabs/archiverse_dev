@@ -2810,38 +2810,59 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                               .fontStyle,
                                                                         ),
                                                                   ),
-                                                                  Stack(
-                                                                    children: [
-                                                                      Container(
-                                                                        width: double
-                                                                            .infinity,
-                                                                        height:
-                                                                            120.0,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              Color(0xFFEEF1F6),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(5.0),
-                                                                        ),
+                                                                  FutureBuilder<List<SubjectportpolioRow>>(
+                                                                    key: ValueKey('critic_chart_${_model.selectedClassDetailID}'),
+                                                                    future: SubjectportpolioTable().queryRows(
+                                                                      queryFn: (q) => q.eqOrNull(
+                                                                        'class',
+                                                                        _model.selectedClassDetailID,
                                                                       ),
-                                                                      Container(
-                                                                        width: double
-                                                                            .infinity,
-                                                                        height:
-                                                                            120.0,
-                                                                        child: custom_widgets
-                                                                            .ChartWidget(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          height:
-                                                                              120.0,
-                                                                          chartData: List.generate(
-                                                                              random_data.randomInteger(15, 15),
-                                                                              (index) => random_data.randomInteger(1, 5)),
-                                                                        ),
-                                                                      ),
-                                                                    ],
+                                                                    ),
+                                                                    builder: (context, snapshot) {
+                                                                      // Calculate per-week critic progress
+                                                                      List<int> weeklyChartData = List.filled(15, 0);
+
+                                                                      if (snapshot.hasData) {
+                                                                        final portfolios = snapshot.data!;
+
+                                                                        // Calculate critic completion for each week
+                                                                        for (int week = 1; week <= 15; week++) {
+                                                                          final weekStr = '${week}주차';
+
+                                                                          // Get portfolios for this week with critic completed
+                                                                          final weekCriticCompleted = portfolios
+                                                                              .where((row) =>
+                                                                                  row.week == weekStr &&
+                                                                                  row.criticHtml != null &&
+                                                                                  row.criticHtml!.isNotEmpty)
+                                                                              .length;
+
+                                                                          weeklyChartData[week - 1] = weekCriticCompleted;
+                                                                        }
+                                                                      }
+
+                                                                      return Stack(
+                                                                        children: [
+                                                                          Container(
+                                                                            width: double.infinity,
+                                                                            height: 120.0,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Color(0xFFEEF1F6),
+                                                                              borderRadius: BorderRadius.circular(5.0),
+                                                                            ),
+                                                                          ),
+                                                                          Container(
+                                                                            width: double.infinity,
+                                                                            height: 120.0,
+                                                                            child: custom_widgets.ChartWidget(
+                                                                              width: double.infinity,
+                                                                              height: 120.0,
+                                                                              chartData: weeklyChartData,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
                                                                   ),
                                                                 ],
                                                               ),

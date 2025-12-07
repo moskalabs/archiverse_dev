@@ -35,6 +35,14 @@ class _ChartWidgetState extends State<ChartWidget> {
   // 사용할 데이터 가져오기
   List<int> get _chartData => widget.chartData ?? _defaultData;
 
+  // 데이터의 최대값 계산 (Y축 스케일링용)
+  double get _maxYValue {
+    if (_chartData.isEmpty) return 10;
+    final maxValue = _chartData.reduce((a, b) => a > b ? a : b);
+    // 최대값에 여유를 두기 위해 20% 추가하고, 최소 10으로 설정
+    return (maxValue * 1.2).clamp(10, double.infinity);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,7 +54,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         child: BarChart(
           BarChartData(
             alignment: BarChartAlignment.center,
-            maxY: 100, // 최대값 100% (15주 = 100%)
+            maxY: _maxYValue, // 데이터에 맞게 동적으로 최대값 설정
             minY: 0,
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
