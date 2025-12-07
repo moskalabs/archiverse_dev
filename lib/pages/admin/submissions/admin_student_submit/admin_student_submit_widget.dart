@@ -964,6 +964,11 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     await _model
                                                                         .filterStudentByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
+                                                                    // Calculate grade-level progress
+                                                                    await _model.calculateGradeOverallProgress(context);
+                                                                    safeSetState(() {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1058,6 +1063,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     await _model
                                                                         .filterStudentByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
+                                                                    await _model.calculateGradeOverallProgress(context);
+                                                                    safeSetState(() {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1152,6 +1161,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     await _model
                                                                         .filterStudentByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
+                                                                    await _model.calculateGradeOverallProgress(context);
+                                                                    safeSetState(() {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1246,6 +1259,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     await _model
                                                                         .filterStudentByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
+                                                                    await _model.calculateGradeOverallProgress(context);
+                                                                    safeSetState(() {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1340,6 +1357,10 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     await _model
                                                                         .filterStudentByGrade(
                                                                             context);
+                                                                    safeSetState(
+                                                                        () {});
+                                                                    await _model.calculateGradeOverallProgress(context);
+                                                                    safeSetState(() {});
                                                                   },
                                                                   child: Text(
                                                                     FFLocalizations.of(
@@ -1475,6 +1496,8 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                               child:
                                                   ProgressContainerStudentSubmitWidget(
                                                 title: '학년 전체 과제 제출률',
+                                                percentageNumerator: _model.gradeTotalSubmitted.toDouble(),
+                                                percentageDenominator: _model.gradeTotalExpected.toDouble(),
                                               ),
                                             ),
                                           ),
@@ -1629,11 +1652,11 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                 final isSelected = _model.selectedStudentId == student.id;
                                                                 return InkWell(
                                                                   onTap: () async {
-                                                                    await _model.selectStudent(
+                                                                    await _model.selectStudentWithFullData(
                                                                       context,
                                                                       student.name ?? '',
                                                                       student.id,
-                                                                      int.tryParse(student.grade ?? '1') ?? 1,
+                                                                      int.tryParse(student.grade?.replaceAll(RegExp(r'[^0-9]'), '') ?? '1') ?? 1,
                                                                     );
                                                                     safeSetState(() {});
                                                                   },
@@ -1830,6 +1853,8 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                         ProgressContainerStudentSubmitWidget(
                                                                       title:
                                                                           '전체 과제 제출진행률',
+                                                                      percentageNumerator: (_model.overallProgress * 17).roundToDouble(),
+                                                                      percentageDenominator: 17.0,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -2038,28 +2063,101 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          ListView(
-                                                                            padding:
-                                                                                EdgeInsets.zero,
-                                                                            shrinkWrap:
-                                                                                true,
-                                                                            scrollDirection:
-                                                                                Axis.vertical,
-                                                                            children:
-                                                                                [
-                                                                              wrapWithModel(
-                                                                                model: _model.dashboardClassContainerMModel1,
-                                                                                updateCallback: () => safeSetState(() {}),
-                                                                                child: DashboardClassContainerMWidget(
-                                                                                  courseName: '과목명',
-                                                                                  isDesign: false,
-                                                                                  professor: '교수명',
-                                                                                  classID: random_data.randomInteger(0, 10),
-                                                                                  getDetailClassID: (displayClassDetailID) async {},
+                                                                          // Dynamic student subjects list
+                                                                          if (_model.studentSubjects.isEmpty)
+                                                                            Container(
+                                                                              padding: EdgeInsets.all(16.0),
+                                                                              child: Text(
+                                                                                _model.selectedStudentName != null
+                                                                                    ? '등록된 과목이 없습니다'
+                                                                                    : '학생을 선택하세요',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  font: GoogleFonts.openSans(
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                  ),
+                                                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                  letterSpacing: 0.0,
                                                                                 ),
                                                                               ),
-                                                                            ].divide(SizedBox(height: 10.0)),
-                                                                          ),
+                                                                            )
+                                                                          else
+                                                                            ListView.separated(
+                                                                              padding: EdgeInsets.zero,
+                                                                              shrinkWrap: true,
+                                                                              physics: NeverScrollableScrollPhysics(),
+                                                                              scrollDirection: Axis.vertical,
+                                                                              itemCount: _model.studentSubjects
+                                                                                  .where((s) => _model.isDesign
+                                                                                      ? (s.courseName?.contains('건축설계') ?? false)
+                                                                                      : !(s.courseName?.contains('건축설계') ?? false))
+                                                                                  .length,
+                                                                              separatorBuilder: (_, __) => SizedBox(height: 10.0),
+                                                                              itemBuilder: (context, index) {
+                                                                                final filteredSubjects = _model.studentSubjects
+                                                                                    .where((s) => _model.isDesign
+                                                                                        ? (s.courseName?.contains('건축설계') ?? false)
+                                                                                        : !(s.courseName?.contains('건축설계') ?? false))
+                                                                                    .toList();
+                                                                                final subject = filteredSubjects[index];
+                                                                                return InkWell(
+                                                                                  onTap: () async {
+                                                                                    await _model.selectSubject(
+                                                                                      context,
+                                                                                      subject.courseName ?? '',
+                                                                                      subject.classid ?? 0,
+                                                                                      subject.courseType ?? '',
+                                                                                    );
+                                                                                    safeSetState(() {});
+                                                                                  },
+                                                                                  child: Container(
+                                                                                    width: double.infinity,
+                                                                                    padding: EdgeInsets.all(12.0),
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: _model.selectedClassId == subject.classid
+                                                                                          ? Color(0xFF284E75).withOpacity(0.1)
+                                                                                          : FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                      borderRadius: BorderRadius.circular(8.0),
+                                                                                      border: Border.all(
+                                                                                        color: _model.selectedClassId == subject.classid
+                                                                                            ? Color(0xFF284E75)
+                                                                                            : FlutterFlowTheme.of(context).alternate,
+                                                                                        width: 1.0,
+                                                                                      ),
+                                                                                    ),
+                                                                                    child: Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          subject.courseName ?? '과목명 없음',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                            font: GoogleFonts.openSans(
+                                                                                              fontWeight: FontWeight.w600,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                            ),
+                                                                                            color: Color(0xFF284E75),
+                                                                                            fontSize: 14.0,
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                        ),
+                                                                                        SizedBox(height: 4.0),
+                                                                                        Text(
+                                                                                          '${subject.professorName ?? '교수명 없음'} | ${subject.sectionType ?? ''}분반',
+                                                                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                            font: GoogleFonts.openSans(
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodySmall.fontStyle,
+                                                                                            ),
+                                                                                            color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            ),
                                                                         ].divide(SizedBox(height: 10.0)),
                                                                       ),
                                                                     ),
@@ -2092,7 +2190,9 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                 model: _model.progressContainerStudentSubmitModel3,
                                                                                 updateCallback: () => safeSetState(() {}),
                                                                                 child: ProgressContainerStudentSubmitWidget(
-                                                                                  title: '과제 제출 진행률',
+                                                                                  title: _model.selectedSubjectName ?? '과제 제출 진행률',
+                                                                                  percentageNumerator: (_model.assignmentProgress * (_model.isDesign ? 17.0 : 2.0)).roundToDouble(),
+                                                                                  percentageDenominator: _model.isDesign ? 17.0 : 2.0,
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2115,7 +2215,9 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                             wrapWithModel(
                                                                               model: _model.checkSubmittedModel,
                                                                               updateCallback: () => safeSetState(() {}),
-                                                                              child: CheckSubmittedWidget(),
+                                                                              child: CheckSubmittedWidget(
+                                                                                weeklyStatus: _model.weeklySubmissionStatus,
+                                                                              ),
                                                                             ),
                                                                             Text(
                                                                               FFLocalizations.of(context).getText(
@@ -2173,11 +2275,28 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                         width: double.infinity,
                                                                                         height: 40.0,
                                                                                         decoration: BoxDecoration(
-                                                                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                          color: _model.midtermSubmitted
+                                                                                              ? Color(0xFF284E75).withOpacity(0.1)
+                                                                                              : FlutterFlowTheme.of(context).secondaryBackground,
                                                                                           border: Border.all(
                                                                                             color: Color(0xFFE3E3E3),
                                                                                             width: 1.0,
                                                                                           ),
+                                                                                        ),
+                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                        child: Text(
+                                                                                          _model.midtermSubmitted ? 'O' : '-',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                font: GoogleFonts.notoSansKr(
+                                                                                                  fontWeight: FontWeight.w600,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                ),
+                                                                                                color: _model.midtermSubmitted ? Color(0xFF284E75) : Color(0xFF666666),
+                                                                                                fontSize: 15.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.w600,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                              ),
                                                                                         ),
                                                                                       ),
                                                                                     ].divide(SizedBox(height: 5.0)),
@@ -2220,11 +2339,28 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                         width: double.infinity,
                                                                                         height: 40.0,
                                                                                         decoration: BoxDecoration(
-                                                                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                          color: _model.finalSubmitted
+                                                                                              ? Color(0xFF284E75).withOpacity(0.1)
+                                                                                              : FlutterFlowTheme.of(context).secondaryBackground,
                                                                                           border: Border.all(
                                                                                             color: Color(0xFFE3E3E3),
                                                                                             width: 1.0,
                                                                                           ),
+                                                                                        ),
+                                                                                        alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                        child: Text(
+                                                                                          _model.finalSubmitted ? 'O' : '-',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                font: GoogleFonts.notoSansKr(
+                                                                                                  fontWeight: FontWeight.w600,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                                ),
+                                                                                                color: _model.finalSubmitted ? Color(0xFF284E75) : Color(0xFF666666),
+                                                                                                fontSize: 15.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.w600,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                              ),
                                                                                         ),
                                                                                       ),
                                                                                     ].divide(SizedBox(height: 5.0)),
@@ -2827,6 +2963,9 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   await _model
                                                       .filterStudentByGrade(
                                                           context);
+                                                  safeSetState(() {});
+                                                  await _model.calculateGradeOverallProgress(context);
+                                                  safeSetState(() {});
                                                 },
                                                 child: Text(
                                                   FFLocalizations.of(context)
@@ -2901,6 +3040,9 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   await _model
                                                       .filterStudentByGrade(
                                                           context);
+                                                  safeSetState(() {});
+                                                  await _model.calculateGradeOverallProgress(context);
+                                                  safeSetState(() {});
                                                 },
                                                 child: Text(
                                                   FFLocalizations.of(context)
@@ -2975,6 +3117,11 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   await _model
                                                       .filterStudentByGrade(
                                                           context);
+                                                  safeSetState(() {});
+                                                  await _model
+                                                      .calculateGradeOverallProgress(
+                                                          context);
+                                                  safeSetState(() {});
                                                 },
                                                 child: Text(
                                                   FFLocalizations.of(context)
@@ -3049,6 +3196,11 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   await _model
                                                       .filterStudentByGrade(
                                                           context);
+                                                  safeSetState(() {});
+                                                  await _model
+                                                      .calculateGradeOverallProgress(
+                                                          context);
+                                                  safeSetState(() {});
                                                 },
                                                 child: Text(
                                                   FFLocalizations.of(context)
@@ -3123,6 +3275,11 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   await _model
                                                       .filterStudentByGrade(
                                                           context);
+                                                  safeSetState(() {});
+                                                  await _model
+                                                      .calculateGradeOverallProgress(
+                                                          context);
+                                                  safeSetState(() {});
                                                 },
                                                 child: Text(
                                                   FFLocalizations.of(context)

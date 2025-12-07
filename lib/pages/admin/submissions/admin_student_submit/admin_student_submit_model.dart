@@ -252,6 +252,17 @@ class AdminStudentSubmitModel
   bool isLoadingStudents = false;
   bool isLoadingProgress = false;
   bool isLoadingSubjects = false;
+  bool isLoadingGradeProgress = false;
+
+  /// Grade-level overall submission rate (학년별 전체 과제 제출률)
+  double gradeOverallProgress = 0.0;
+  int gradeTotalStudents = 0;
+  int gradeTotalSubmitted = 0;
+  int gradeTotalExpected = 0;
+
+  /// Chart data for weekly submissions (1-15주차 + 중간 + 기말)
+  /// Index 0-14: weeks 1-15, Index 15: midterm, Index 16: final
+  List<int> weeklyChartData = List.filled(17, 0);
 
   ///  State fields for stateful widgets in this page.
 
@@ -729,6 +740,279 @@ class AdminStudentSubmitModel
     await Future.wait([
       calculateAssignmentProgress(context),
       loadWeeklyProgressStatus(context),
+    ]);
+  }
+
+  /// ============================================================
+  /// FEATURE 6: Calculate grade-level overall submission rate (학년별 전체 과제 제출률)
+  /// This calculates the submission rate for ALL students in the selected grade
+  /// ============================================================
+  Future calculateGradeOverallProgress(BuildContext context) async {
+    // Capture the grade at the start of the calculation to detect if it changes
+    final requestedGrade = selectedGrade;
+    print('DEBUG: Calculating grade-level progress for: $requestedGrade');
+    isLoadingGradeProgress = true;
+
+    try {
+      // Get grade number (e.g., "1학년" -> 1)
+      String gradeNumStr = requestedGrade.replaceAll(RegExp(r'[^0-9]'), '');
+      int? gradeNum = int.tryParse(gradeNumStr);
+
+      if (gradeNum == null) {
+        print('ERROR: Could not parse grade number from: $requestedGrade');
+        return;
+      }
+
+      // Use LOCAL counters to avoid race condition with concurrent calculations
+      int localTotalStudents = 0;
+      int localTotalSubmitted = 0;
+      int localTotalExpected = 0;
+
+      // Get all students in this grade from cache
+      final studentsInGrade = filteredStudents;
+      localTotalStudents = studentsInGrade.length;
+      print('DEBUG: Found $localTotalStudents students in $requestedGrade');
+
+      if (localTotalStudents == 0) {
+        // Check if grade changed before updating state
+        if (selectedGrade != requestedGrade) {
+          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+          return;
+        }
+        gradeTotalStudents = 0;
+        gradeTotalSubmitted = 0;
+        gradeTotalExpected = 0;
+        gradeOverallProgress = 0.0;
+        isLoadingGradeProgress = false;
+        return;
+      }
+
+      // For each student, calculate their submission progress
+      for (var student in studentsInGrade) {
+        // Check if grade changed mid-calculation
+        if (selectedGrade != requestedGrade) {
+          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+          return;
+        }
+
+        // Get all courses for this student in current year/semester
+        final studentCourses = await CourseStudentTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('student_name', student.name)
+              .eqOrNull('year', years)
+              .eqOrNull('semester', semester),
+        );
+
+        // Check again after await
+        if (selectedGrade != requestedGrade) {
+          print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+          return;
+        }
+
+        for (var course in studentCourses) {
+          if (course.classid == null) continue;
+
+          // Determine if design course
+          bool isDesignCourse = course.courseName?.contains('건축설계') ?? false;
+
+          if (isDesignCourse) {
+            // Design course: 15 weeks + midterm + final = 17 items
+            localTotalExpected += 17;
+
+            // Count weekly submissions
+            final weeklySubmissions = await SubjectportpolioTable().queryRows(
+              queryFn: (q) => q
+                  .eqOrNull('class', course.classid)
+                  .eqOrNull('student_name', student.name),
+            );
+
+            // Check after await
+            if (selectedGrade != requestedGrade) {
+              print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+              return;
+            }
+
+            localTotalSubmitted += weeklySubmissions.length;
+          } else {
+            // Theory course: midterm + final = 2 items
+            localTotalExpected += 2;
+          }
+
+          // Count midterm submission
+          final midtermSubmissions = await MidtermResultsTable().queryRows(
+            queryFn: (q) => q
+                .eqOrNull('class', course.classid)
+                .eqOrNull('student_name', student.name),
+          );
+
+          // Check after await
+          if (selectedGrade != requestedGrade) {
+            print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+            return;
+          }
+
+          if (midtermSubmissions.isNotEmpty) {
+            localTotalSubmitted += 1;
+          }
+
+          // Count final submission
+          final finalSubmissions = await FinalResultsTable().queryRows(
+            queryFn: (q) => q
+                .eqOrNull('class', course.classid)
+                .eqOrNull('student_name', student.name),
+          );
+
+          // Check after await
+          if (selectedGrade != requestedGrade) {
+            print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+            return;
+          }
+
+          if (finalSubmissions.isNotEmpty) {
+            localTotalSubmitted += 1;
+          }
+        }
+      }
+
+      // Final check before updating state variables
+      if (selectedGrade != requestedGrade) {
+        print('DEBUG: Grade changed during calculation, abandoning results for $requestedGrade');
+        return;
+      }
+
+      // Now safely update state variables with local results
+      gradeTotalStudents = localTotalStudents;
+      gradeTotalSubmitted = localTotalSubmitted;
+      gradeTotalExpected = localTotalExpected;
+
+      // Calculate overall grade progress
+      if (gradeTotalExpected > 0) {
+        gradeOverallProgress = gradeTotalSubmitted / gradeTotalExpected;
+      } else {
+        gradeOverallProgress = 0.0;
+      }
+
+      print('DEBUG: Grade $requestedGrade progress: ${(gradeOverallProgress * 100).toStringAsFixed(1)}% ($gradeTotalSubmitted/$gradeTotalExpected)');
+
+    } catch (e) {
+      print('ERROR in calculateGradeOverallProgress: $e');
+      // Only reset if this is still the active grade
+      if (selectedGrade == requestedGrade) {
+        gradeOverallProgress = 0.0;
+      }
+    } finally {
+      // Only update loading state if this is still the active grade
+      if (selectedGrade == requestedGrade) {
+        isLoadingGradeProgress = false;
+      }
+    }
+  }
+
+  /// ============================================================
+  /// FEATURE 7: Load student's weekly chart data (1-15주차 + 중간 + 기말)
+  /// Returns chart data for the selected student's submissions
+  /// ============================================================
+  Future loadStudentWeeklyChartData(BuildContext context) async {
+    if (selectedStudentName == null) {
+      print('DEBUG: No student selected for chart data');
+      return;
+    }
+
+    print('DEBUG: Loading weekly chart data for: $selectedStudentName');
+
+    try {
+      // Reset chart data (17 slots: weeks 1-15 + midterm + final)
+      weeklyChartData = List.filled(17, 0);
+
+      // Get all courses for this student
+      final studentCourses = await CourseStudentTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull('student_name', selectedStudentName)
+            .eqOrNull('year', years)
+            .eqOrNull('semester', semester),
+      );
+
+      for (var course in studentCourses) {
+        if (course.classid == null) continue;
+
+        // Only count design courses for weekly submissions
+        bool isDesignCourse = course.courseName?.contains('건축설계') ?? false;
+
+        if (isDesignCourse) {
+          // Get weekly submissions
+          final weeklySubmissions = await SubjectportpolioTable().queryRows(
+            queryFn: (q) => q
+                .eqOrNull('class', course.classid)
+                .eqOrNull('student_name', selectedStudentName),
+          );
+
+          // Mark submitted weeks
+          for (var submission in weeklySubmissions) {
+            if (submission.week != null) {
+              String weekStr = submission.week!.replaceAll(RegExp(r'[^0-9]'), '');
+              if (weekStr.isNotEmpty) {
+                int weekNum = int.tryParse(weekStr) ?? 0;
+                if (weekNum >= 1 && weekNum <= 15) {
+                  weeklyChartData[weekNum - 1] = 1; // Mark as submitted
+                }
+              }
+            }
+          }
+        }
+
+        // Check midterm submission
+        final midtermSubmissions = await MidtermResultsTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('class', course.classid)
+              .eqOrNull('student_name', selectedStudentName),
+        );
+        if (midtermSubmissions.isNotEmpty) {
+          weeklyChartData[15] = 1; // Index 15 = midterm
+        }
+
+        // Check final submission
+        final finalSubmissions = await FinalResultsTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('class', course.classid)
+              .eqOrNull('student_name', selectedStudentName),
+        );
+        if (finalSubmissions.isNotEmpty) {
+          weeklyChartData[16] = 1; // Index 16 = final
+        }
+      }
+
+      // Count total submitted
+      int totalSubmitted = weeklyChartData.where((v) => v == 1).length;
+      print('DEBUG: Chart data loaded - $totalSubmitted/17 items submitted');
+      print('DEBUG: Chart data: $weeklyChartData');
+
+    } catch (e) {
+      print('ERROR in loadStudentWeeklyChartData: $e');
+      weeklyChartData = List.filled(17, 0);
+    }
+  }
+
+  /// ============================================================
+  /// Enhanced: Select student with full data loading
+  /// ============================================================
+  Future selectStudentWithFullData(BuildContext context, String studentName, int studentId, int studentGrade) async {
+    print('DEBUG: Selecting student with full data: $studentName');
+
+    selectedStudentName = studentName;
+    selectedStudentId = studentId;
+    selectedStudentGrade = studentGrade;
+
+    // Clear previous selections
+    selectedSubjectName = null;
+    selectedClassId = null;
+    selectedCourseType = null;
+    clearStudentSubjects();
+
+    // Load all data in parallel
+    await Future.wait([
+      loadStudentSubjects(context),
+      calculateOverallProgress(context),
+      loadStudentWeeklyChartData(context),
     ]);
   }
 }

@@ -212,8 +212,6 @@ class _MyAppState extends State<MyApp> {
         final screenWidth = MediaQuery.sizeOf(context).width;
         final screenHeight = MediaQuery.sizeOf(context).height;
 
-        print('🚀 MAIN: ${screenWidth}px x ${screenHeight}px');
-
         // 모바일
         if (!kIsWeb || (screenWidth <= 768 && screenHeight <= 768)) {
           return child;
@@ -223,11 +221,8 @@ class _MyAppState extends State<MyApp> {
         final needsHScroll = screenWidth < 1400;
         final needsVScroll = screenHeight < 800;
         
-        print('🚀 스크롤: 가로=$needsHScroll, 세로=$needsVScroll');
-        
         // 가로 + 세로 둘 다 스크롤
         if (needsHScroll && needsVScroll) {
-          print('🚀 보라: 가로+세로 1400x800 고정');
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SingleChildScrollView(
@@ -246,14 +241,12 @@ class _MyAppState extends State<MyApp> {
         
         // 가로 스크롤만
         if (needsHScroll) {
-          print('🚀 빨간: 가로 1400px 고정');
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
               width: 1400.0,
               child: Builder(
                 builder: (innerContext) {
-                  print('🚀 강력한 MediaQuery 오버라이드 적용');
                   return MediaQuery(
                     data: MediaQuery.of(context).copyWith(
                       size: Size(1500.0, 1000.0),
@@ -272,7 +265,6 @@ class _MyAppState extends State<MyApp> {
         
         // 세로 스크롤만
         if (needsVScroll) {
-          print('🚀 초록: 세로 800px 고정');
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: SizedBox(

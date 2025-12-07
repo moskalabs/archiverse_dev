@@ -372,26 +372,7 @@ const kBreakpointMedium = 1400.0;
 const kBreakpointLarge = 1400.0;
 const kMinHeightDesktop = 800.0;
 bool isMobileWidth(BuildContext context) {
-  final width = MediaQuery.sizeOf(context).width;
-  final height = MediaQuery.sizeOf(context).height;
-  
-  // 테스트용: 모바일 조건 비활성화
-  print('isMobileWidth: 🚀 모바일 비활성화 - 무조건 FALSE (가로:${width}px)');
-  return false; // 테스트용: 무조건 비모바일
-  
-  /*
-  // 강제로 데스크톱 모드: 가로 769px 이상이면 무조건 비모바일
-  if (kIsWeb && width > 768) {
-    print('isMobileWidth: 강제 비모바일 (가로:${width}px > 768px)');
-    return false;
-  }
-  
-  // 진짜 모바일: 가로 AND 세로 둘 다 768px 이하
-  final isMobile = !kIsWeb || (width <= 768 && height <= 768);
-  print('isMobileWidth: 모바일 체크 - 가로:${width}px, 세로:${height}px, isMobile:$isMobile');
-  
-  return isMobile;
-  */
+  return false; // 무조건 비모바일 (데스크톱 모드)
 }
 // 전역 브레이크포인트 설정
 const kCustomBreakpointTablet = 1400.0;

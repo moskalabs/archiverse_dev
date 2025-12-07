@@ -13,9 +13,11 @@ class CheckSubmittedMobileWidget extends StatefulWidget {
   const CheckSubmittedMobileWidget({
     super.key,
     this.portfolioSubmitted,
+    this.weeklySubmissionStatus,
   });
 
   final SubjectportpolioRow? portfolioSubmitted;
+  final Map<int, bool>? weeklySubmissionStatus;
 
   @override
   State<CheckSubmittedMobileWidget> createState() =>
@@ -104,9 +106,7 @@ class _CheckSubmittedMobileWidgetState
                     child: Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        FFLocalizations.of(context).getText(
-                          '2c7t8nnt' /* - */,
-                        ),
+                        widget.weeklySubmissionStatus?[1] == true ? '제출' : '-',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.notoSansKr(
                                 fontWeight: FontWeight.w500,
@@ -177,9 +177,7 @@ class _CheckSubmittedMobileWidgetState
                     child: Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        FFLocalizations.of(context).getText(
-                          'b77eu4un' /* - */,
-                        ),
+                        widget.weeklySubmissionStatus?[2] == true ? '제출' : '-',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.notoSansKr(
                                 fontWeight: FontWeight.w500,
@@ -250,9 +248,7 @@ class _CheckSubmittedMobileWidgetState
                     child: Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        FFLocalizations.of(context).getText(
-                          'svvsq09w' /* - */,
-                        ),
+                        widget.weeklySubmissionStatus?[3] == true ? '제출' : '-',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.notoSansKr(
                                 fontWeight: FontWeight.w500,
@@ -323,9 +319,7 @@ class _CheckSubmittedMobileWidgetState
                     child: Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        FFLocalizations.of(context).getText(
-                          'nro7rso1' /* - */,
-                        ),
+                        widget.weeklySubmissionStatus?[4] == true ? '제출' : '-',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.notoSansKr(
                                 fontWeight: FontWeight.w500,
@@ -401,9 +395,7 @@ class _CheckSubmittedMobileWidgetState
                     child: Align(
                       alignment: AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        FFLocalizations.of(context).getText(
-                          '2gte3cxo' /* - */,
-                        ),
+                        widget.weeklySubmissionStatus?[5] == true ? '제출' : '-',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.notoSansKr(
                                 fontWeight: FontWeight.w500,
@@ -471,6 +463,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[6] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -521,6 +534,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[7] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -569,6 +603,27 @@ class _CheckSubmittedMobileWidgetState
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                       border: Border.all(
                         color: Color(0xFFE3E3E3),
+                      ),
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[8] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
                       ),
                     ),
                   ),
@@ -626,6 +681,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[9] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -674,6 +750,27 @@ class _CheckSubmittedMobileWidgetState
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                       border: Border.all(
                         color: Color(0xFFE3E3E3),
+                      ),
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[10] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
                       ),
                     ),
                   ),
@@ -726,6 +823,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[11] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -774,6 +892,27 @@ class _CheckSubmittedMobileWidgetState
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                       border: Border.all(
                         color: Color(0xFFE3E3E3),
+                      ),
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[12] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
                       ),
                     ),
                   ),
@@ -831,6 +970,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[13] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -881,6 +1041,27 @@ class _CheckSubmittedMobileWidgetState
                         color: Color(0xFFE3E3E3),
                       ),
                     ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[14] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -929,6 +1110,27 @@ class _CheckSubmittedMobileWidgetState
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                       border: Border.all(
                         color: Color(0xFFE3E3E3),
+                      ),
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional(0.0, 0.0),
+                      child: Text(
+                        widget.weeklySubmissionStatus?[15] == true ? '제출' : '-',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.notoSansKr(
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: Color(0xFF666666),
+                              fontSize: 16.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
                       ),
                     ),
                   ),

@@ -131,7 +131,9 @@ class _ProgressContainerStudentSubmitWidgetState
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 3.0, 5.0, 0.0),
                         child: LinearPercentIndicator(
-                          percent: 0.2,
+                          percent: (widget.percentageDenominator > 0)
+                              ? (widget.percentageNumerator / widget.percentageDenominator).clamp(0.0, 1.0)
+                              : 0.0,
                           lineHeight: 20.0,
                           animation: true,
                           animateFromLastPercent: true,
@@ -153,9 +155,7 @@ class _ProgressContainerStudentSubmitWidgetState
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              FFLocalizations.of(context).getText(
-                                'yv9gddw4' /* 0% */,
-                              ),
+                              '${widget.percentageNumerator.toInt()}/${widget.percentageDenominator.toInt()}',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -179,9 +179,7 @@ class _ProgressContainerStudentSubmitWidgetState
                               child: Align(
                                 alignment: AlignmentDirectional(1.0, 0.0),
                                 child: Text(
-                                  FFLocalizations.of(context).getText(
-                                    '12nfbrz4' /* 100% */,
-                                  ),
+                                  '${((widget.percentageDenominator > 0) ? (widget.percentageNumerator / widget.percentageDenominator * 100) : 0).toStringAsFixed(1)}%',
                                   textAlign: TextAlign.center,
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
