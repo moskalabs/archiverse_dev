@@ -18,11 +18,13 @@ class ChartWidget extends StatefulWidget {
     this.width,
     this.height,
     this.chartData, // 차트 데이터를 위한 매개변수 추가
+    this.maxValue, // 학생 수 기반 최대값 (옵션)
   });
 
   final double? width;
   final double? height;
   final List<int>? chartData; // 차트 데이터 매개변수를 int 타입으로 변경
+  final int? maxValue; // 학생 수 기반 Y축 최대값
 
   @override
   State<ChartWidget> createState() => _ChartWidgetState();
@@ -37,6 +39,11 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   // 데이터의 최대값 계산 (Y축 스케일링용)
   double get _maxYValue {
+    // maxValue가 지정되면 그 값을 사용 (학생 수 기준)
+    if (widget.maxValue != null && widget.maxValue! > 0) {
+      return widget.maxValue!.toDouble();
+    }
+    // 그렇지 않으면 데이터 기반으로 계산
     if (_chartData.isEmpty) return 10;
     final maxValue = _chartData.reduce((a, b) => a > b ? a : b);
     // 최대값에 여유를 두기 위해 20% 추가하고, 최소 10으로 설정
@@ -49,29 +56,28 @@ class _ChartWidgetState extends State<ChartWidget> {
       width: widget.width,
       height: widget.height,
       child: Padding(
-        padding: const EdgeInsets.all(
-            0.0), // Removed padding to maximize chart space
+        padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
         child: BarChart(
           BarChartData(
-            alignment: BarChartAlignment.center,
-            maxY: _maxYValue, // 데이터에 맞게 동적으로 최대값 설정
+            alignment: BarChartAlignment.spaceEvenly,
+            maxY: _maxYValue,
             minY: 0,
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
                 getTooltipItem: (group, groupIndex, rod, rodIndex) {
                   return BarTooltipItem(
-                    '${rod.toY.toInt()}',
+                    '${group.x + 1}주차: ${rod.toY.toInt()}명',
                     TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   );
                 },
               ),
             ),
             barGroups: List.generate(
-              15, // 15주
+              15,
               (index) => BarChartGroupData(
                 x: index,
                 barRods: [
@@ -79,20 +85,17 @@ class _ChartWidgetState extends State<ChartWidget> {
                     toY: index < _chartData.length
                         ? _chartData[index].toDouble()
                         : 0,
-                    color: const Color(0xFF284E75), // 색상을 #284E75로 변경
+                    color: const Color(0xFF284E75),
                     width: 16,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(3),
                   )
                 ],
               ),
             ),
             titlesData: FlTitlesData(
-              // 모든 축 레이블 완전히 제거
-              show: false, // This disables all titles
+              show: true,
               leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false,
-                ),
+                sideTitles: SideTitles(showTitles: false),
               ),
               rightTitles: AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
@@ -101,29 +104,31 @@ class _ChartWidgetState extends State<ChartWidget> {
                 sideTitles: SideTitles(showTitles: false),
               ),
               bottomTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 20,
+                  getTitlesWidget: (value, meta) {
+                    int weekNum = value.toInt() + 1;
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        '$weekNum',
+                        style: TextStyle(
+                          color: Color(0xFF666666),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             gridData: FlGridData(
-              show: true,
-              drawVerticalLine: true,
-              drawHorizontalLine: true,
-              horizontalInterval: 20, // 20% 간격으로 그리드 표시
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: Colors.grey.withOpacity(0.2),
-                  strokeWidth: 1,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: Colors.grey.withOpacity(0.2),
-                  strokeWidth: 1,
-                );
-              },
+              show: false,
             ),
             borderData: FlBorderData(
-              show: false, // 테두리 제거
+              show: false,
             ),
           ),
         ),

@@ -2810,20 +2810,31 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                               .fontStyle,
                                                                         ),
                                                                   ),
-                                                                  FutureBuilder<List<SubjectportpolioRow>>(
+                                                                  FutureBuilder<List<dynamic>>(
                                                                     key: ValueKey('critic_chart_${_model.selectedClassDetailID}'),
-                                                                    future: SubjectportpolioTable().queryRows(
-                                                                      queryFn: (q) => q.eqOrNull(
-                                                                        'class',
-                                                                        _model.selectedClassDetailID,
+                                                                    future: Future.wait([
+                                                                      SubjectportpolioTable().queryRows(
+                                                                        queryFn: (q) => q.eqOrNull(
+                                                                          'class',
+                                                                          _model.selectedClassDetailID,
+                                                                        ),
                                                                       ),
-                                                                    ),
+                                                                      CourseStudentTable().queryRows(
+                                                                        queryFn: (q) => q.eqOrNull(
+                                                                          'classid',
+                                                                          _model.selectedClassDetailID,
+                                                                        ),
+                                                                      ),
+                                                                    ]),
                                                                     builder: (context, snapshot) {
                                                                       // Calculate per-week critic progress
                                                                       List<int> weeklyChartData = List.filled(15, 0);
+                                                                      int totalStudents = 0;
 
                                                                       if (snapshot.hasData) {
-                                                                        final portfolios = snapshot.data!;
+                                                                        final portfolios = snapshot.data![0] as List<SubjectportpolioRow>;
+                                                                        final students = snapshot.data![1] as List<CourseStudentRow>;
+                                                                        totalStudents = students.length;
 
                                                                         // Calculate critic completion for each week
                                                                         for (int week = 1; week <= 15; week++) {
@@ -2845,7 +2856,7 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                         children: [
                                                                           Container(
                                                                             width: double.infinity,
-                                                                            height: 120.0,
+                                                                            height: 145.0,
                                                                             decoration: BoxDecoration(
                                                                               color: Color(0xFFEEF1F6),
                                                                               borderRadius: BorderRadius.circular(5.0),
@@ -2853,11 +2864,12 @@ class _AdminDashWidgetState extends State<AdminDashWidget> {
                                                                           ),
                                                                           Container(
                                                                             width: double.infinity,
-                                                                            height: 120.0,
+                                                                            height: 145.0,
                                                                             child: custom_widgets.ChartWidget(
                                                                               width: double.infinity,
-                                                                              height: 120.0,
+                                                                              height: 145.0,
                                                                               chartData: weeklyChartData,
+                                                                              maxValue: totalStudents > 0 ? totalStudents : null,
                                                                             ),
                                                                           ),
                                                                         ],
