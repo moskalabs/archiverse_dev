@@ -963,6 +963,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                       () async {
                                                                     _model.selectedGrade =
                                                                         '1학년';
+                                                                    _model.clearStudentSelection();
                                                                     safeSetState(
                                                                         () {});
                                                                     await _model
@@ -1062,6 +1063,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                       () async {
                                                                     _model.selectedGrade =
                                                                         '2학년';
+                                                                    _model.clearStudentSelection();
                                                                     safeSetState(
                                                                         () {});
                                                                     await _model
@@ -1160,6 +1162,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                       () async {
                                                                     _model.selectedGrade =
                                                                         '3학년';
+                                                                    _model.clearStudentSelection();
                                                                     safeSetState(
                                                                         () {});
                                                                     await _model
@@ -1258,6 +1261,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                       () async {
                                                                     _model.selectedGrade =
                                                                         '4학년';
+                                                                    _model.clearStudentSelection();
                                                                     safeSetState(
                                                                         () {});
                                                                     await _model
@@ -1356,6 +1360,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                       () async {
                                                                     _model.selectedGrade =
                                                                         '5학년';
+                                                                    _model.clearStudentSelection();
                                                                     safeSetState(
                                                                         () {});
                                                                     await _model
@@ -1675,31 +1680,15 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     ),
                                                                     child: Padding(
                                                                       padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 0.0),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                        children: [
-                                                                          Text(
-                                                                            student.name ?? '이름없음',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                              font: GoogleFonts.inter(
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
-                                                                              color: isSelected ? Colors.white : Color(0xFF666666),
-                                                                              fontSize: 20.0,
-                                                                            ),
+                                                                      child: Text(
+                                                                        student.name ?? '이름없음',
+                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                          font: GoogleFonts.inter(
+                                                                            fontWeight: FontWeight.normal,
                                                                           ),
-                                                                          Text(
-                                                                            student.id.toString(),
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                              font: GoogleFonts.inter(
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
-                                                                              color: isSelected ? Colors.white : Color(0xFF666666),
-                                                                              fontSize: 20.0,
-                                                                            ),
-                                                                          ),
-                                                                        ],
+                                                                          color: isSelected ? Colors.white : Color(0xFF666666),
+                                                                          fontSize: 20.0,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -1825,7 +1814,43 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                   ),
                                                   Expanded(
                                                     flex: 7,
-                                                    child: Column(
+                                                    child: _model.selectedStudentName == null
+                                                        ? Center(
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.person_search,
+                                                                  size: 64,
+                                                                  color: Color(0xFFCCCCCC),
+                                                                ),
+                                                                SizedBox(height: 16),
+                                                                Text(
+                                                                  '학생을 선택해주세요',
+                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                    font: GoogleFonts.notoSansKr(
+                                                                      fontWeight: FontWeight.w500,
+                                                                    ),
+                                                                    color: Color(0xFF999999),
+                                                                    fontSize: 18.0,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(height: 8),
+                                                                Text(
+                                                                  '좌측 학생 명단에서 학생을 선택하면\n과제 제출 현황을 확인할 수 있습니다.',
+                                                                  textAlign: TextAlign.center,
+                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                    font: GoogleFonts.notoSansKr(
+                                                                      fontWeight: FontWeight.w400,
+                                                                    ),
+                                                                    color: Color(0xFFAAAAAA),
+                                                                    fontSize: 14.0,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
                                                       mainAxisAlignment:
@@ -1857,8 +1882,8 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                         ProgressContainerStudentSubmitWidget(
                                                                       title:
                                                                           '전체 과제 제출진행률',
-                                                                      percentageNumerator: (_model.overallProgress * 17).roundToDouble(),
-                                                                      percentageDenominator: 17.0,
+                                                                      percentageNumerator: _model.studentTotalSubmitted.toDouble(),
+                                                                      percentageDenominator: _model.studentTotalExpected > 0 ? _model.studentTotalExpected.toDouble() : 1.0,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -2146,7 +2171,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                                         ),
                                                                                         SizedBox(height: 4.0),
                                                                                         Text(
-                                                                                          '${subject.professorName ?? '교수명 없음'} | ${subject.sectionType ?? ''}분반',
+                                                                                          '${subject.professorName ?? '교수명 없음'} | ${subject.sectionType ?? '분반 없음'}',
                                                                                           style: FlutterFlowTheme.of(context).bodySmall.override(
                                                                                             font: GoogleFonts.openSans(
                                                                                               fontWeight: FontWeight.w400,
@@ -2178,8 +2203,22 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                     ),
                                                                     Expanded(
                                                                       flex: 2,
-                                                                      child:
-                                                                          SingleChildScrollView(
+                                                                      child: _model.selectedClassId == null
+                                                                          ? Center(
+                                                                              child: Text(
+                                                                                '과목을 선택해주세요',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                      font: GoogleFonts.notoSansKr(
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                                                      ),
+                                                                                      color: Color(0xFF999999),
+                                                                                      fontSize: 14.0,
+                                                                                      letterSpacing: 0.0,
+                                                                                    ),
+                                                                              ),
+                                                                            )
+                                                                          : SingleChildScrollView(
                                                                         child:
                                                                             Column(
                                                                           mainAxisSize:
@@ -2455,9 +2494,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                FFLocalizations.of(context).getText(
-                                                                              'umizf6bc' /* 4 */,
-                                                                            ),
+                                                                                '${_model.studentSubjects.length}',
                                                                             style:
                                                                                 TextStyle(),
                                                                           ),
@@ -2963,6 +3000,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   _model.selectedGrade = '1학년';
+                                                  _model.clearStudentSelection();
                                                   safeSetState(() {});
                                                   await _model
                                                       .filterStudentByGrade(
@@ -3040,6 +3078,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   _model.selectedGrade = '2학년';
+                                                  _model.clearStudentSelection();
                                                   safeSetState(() {});
                                                   await _model
                                                       .filterStudentByGrade(
@@ -3117,6 +3156,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   _model.selectedGrade = '3학년';
+                                                  _model.clearStudentSelection();
                                                   safeSetState(() {});
                                                   await _model
                                                       .filterStudentByGrade(
@@ -3196,6 +3236,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   _model.selectedGrade = '4학년';
+                                                  _model.clearStudentSelection();
                                                   safeSetState(() {});
                                                   await _model
                                                       .filterStudentByGrade(
@@ -3275,6 +3316,7 @@ class _AdminStudentSubmitWidgetState extends State<AdminStudentSubmitWidget> {
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   _model.selectedGrade = '5학년';
+                                                  _model.clearStudentSelection();
                                                   safeSetState(() {});
                                                   await _model
                                                       .filterStudentByGrade(

@@ -235,6 +235,10 @@ class AdminStudentSubmitModel
   /// Overall submission progress for selected student (0.0 to 1.0)
   double overallProgress = 0.0;
 
+  /// Total expected and submitted for selected student
+  int studentTotalExpected = 0;
+  int studentTotalSubmitted = 0;
+
   /// Assignment progress for selected subject (0.0 to 1.0)
   double assignmentProgress = 0.0;
 
@@ -434,6 +438,7 @@ class AdminStudentSubmitModel
 
   /// ============================================================
   /// FEATURE 2: Calculate overall submission progress for selected student
+  /// Filters by student's section from student_myprofile table
   /// ============================================================
   Future calculateOverallProgress(BuildContext context) async {
     if (selectedStudentName == null) {
@@ -445,13 +450,46 @@ class AdminStudentSubmitModel
     isLoadingProgress = true;
 
     try {
-      // Get all courses for this student in current year/semester
-      final studentCourses = await CourseStudentTable().queryRows(
+      // Step 1: Get student's section from student_myprofile
+      String? studentSection;
+
+      // Try to get from cache first
+      final cachedStudent = _allStudentsCache.firstWhere(
+        (s) => s.name == selectedStudentName,
+        orElse: () => StudentMyprofileRow({}),
+      );
+
+      if (cachedStudent.data.isNotEmpty && cachedStudent.section != null) {
+        studentSection = cachedStudent.section;
+      } else {
+        // Query from DB if not in cache
+        final studentProfiles = await StudentMyprofileTable().queryRows(
+          queryFn: (q) => q.eqOrNull('name', selectedStudentName),
+        );
+        if (studentProfiles.isNotEmpty) {
+          studentSection = studentProfiles.first.section;
+        }
+      }
+
+      // Step 2: Get all courses for this student in current year/semester
+      final allCourses = await CourseStudentTable().queryRows(
         queryFn: (q) => q
             .eqOrNull('student_name', selectedStudentName)
             .eqOrNull('year', years)
             .eqOrNull('semester', semester),
       );
+
+      // Step 3: Filter by student's section
+      List<CourseStudentRow> studentCourses;
+      if (studentSection != null && studentSection.isNotEmpty) {
+        String sectionNum = studentSection.replaceAll(RegExp(r'[^0-9]'), '');
+        studentCourses = allCourses.where((c) {
+          String? courseSectionNum = c.sectionType?.replaceAll(RegExp(r'[^0-9]'), '');
+          return courseSectionNum == sectionNum;
+        }).toList();
+      } else {
+        studentCourses = allCourses;
+      }
 
       // print('DEBUG: Student has ${studentCourses.length} courses');
 
@@ -505,6 +543,10 @@ class AdminStudentSubmitModel
         }
       }
 
+      // Store the actual values
+      studentTotalExpected = totalExpected;
+      studentTotalSubmitted = totalSubmitted;
+
       // Calculate overall progress percentage
       if (totalExpected > 0) {
         overallProgress = totalSubmitted / totalExpected;
@@ -517,6 +559,8 @@ class AdminStudentSubmitModel
     } catch (e) {
       // print('ERROR in calculateOverallProgress: $e');
       overallProgress = 0.0;
+      studentTotalExpected = 0;
+      studentTotalSubmitted = 0;
     } finally {
       isLoadingProgress = false;
     }
@@ -524,35 +568,82 @@ class AdminStudentSubmitModel
 
   /// ============================================================
   /// FEATURE 3: Load subjects for selected student
+  /// Filters by student's section from student_myprofile table
   /// ============================================================
   Future loadStudentSubjects(BuildContext context) async {
     if (selectedStudentName == null) {
-      // print('DEBUG: No student selected for loading subjects');
+      print('DEBUG: No student selected for loading subjects');
       return;
     }
 
-    // print('DEBUG: Loading subjects for: $selectedStudentName');
+    print('DEBUG: Loading subjects for: $selectedStudentName, year: $years, semester: $semester');
     isLoadingSubjects = true;
     clearStudentSubjects();
 
     try {
-      // Query all courses for this student in current year/semester
-      final subjects = await CourseStudentTable().queryRows(
+      // Step 1: Get student's section from student_myprofile
+      String? studentSection;
+
+      // Try to get from cache first (filteredStudents already loaded)
+      final cachedStudent = _allStudentsCache.firstWhere(
+        (s) => s.name == selectedStudentName,
+        orElse: () => StudentMyprofileRow({}),
+      );
+
+      if (cachedStudent.data.isNotEmpty && cachedStudent.section != null) {
+        studentSection = cachedStudent.section;
+        print('DEBUG: Found student section from cache: $studentSection');
+      } else {
+        // Query from DB if not in cache
+        final studentProfiles = await StudentMyprofileTable().queryRows(
+          queryFn: (q) => q.eqOrNull('name', selectedStudentName),
+        );
+
+        if (studentProfiles.isNotEmpty) {
+          studentSection = studentProfiles.first.section;
+          print('DEBUG: Found student section from DB: $studentSection');
+        }
+      }
+
+      print('DEBUG: Student $selectedStudentName section: $studentSection');
+
+      // Step 2: Query all courses for this student in current year/semester
+      final allSubjects = await CourseStudentTable().queryRows(
         queryFn: (q) => q
             .eqOrNull('student_name', selectedStudentName)
             .eqOrNull('year', years)
             .eqOrNull('semester', semester),
       );
 
-      studentSubjects = subjects;
-      // print('DEBUG: Loaded ${studentSubjects.length} subjects');
+      print('DEBUG: Found ${allSubjects.length} total subjects before filtering');
+      for (var s in allSubjects) {
+        print('DEBUG: course_student sectionType raw value: "${s.sectionType}"');
+      }
+
+      // Step 3: Filter by student's section if available
+      if (studentSection != null && studentSection.isNotEmpty) {
+        // Extract section number from studentSection (e.g., "1분반" -> "1")
+        String sectionNum = studentSection.replaceAll(RegExp(r'[^0-9]'), '');
+
+        studentSubjects = allSubjects.where((subject) {
+          // Support both formats: "1" or "1분반"
+          String? subjectSectionNum = subject.sectionType?.replaceAll(RegExp(r'[^0-9]'), '');
+          return subjectSectionNum == sectionNum;
+        }).toList();
+
+        print('DEBUG: Filtered to ${studentSubjects.length} subjects matching section $sectionNum');
+      } else {
+        // If no section info, show all (fallback)
+        studentSubjects = allSubjects;
+        print('DEBUG: No section info, showing all ${studentSubjects.length} subjects');
+      }
 
       for (var subject in studentSubjects) {
-        // print('DEBUG: Subject: ${subject.courseName} (${subject.courseType})');
+        print('DEBUG: Subject: ${subject.courseName} | ${subject.professorName} | ${subject.sectionType} (classid: ${subject.classid})');
       }
 
     } catch (e) {
-      // print('ERROR in loadStudentSubjects: $e');
+      print('ERROR in loadStudentSubjects: $e');
     } finally {
       isLoadingSubjects = false;
     }
@@ -920,6 +1011,7 @@ class AdminStudentSubmitModel
   /// ============================================================
   /// FEATURE 7: Load student's weekly chart data (1-15주차 + 중간 + 기말)
   /// Returns chart data for the selected student's submissions
+  /// Filters by student's section from student_myprofile table
   /// ============================================================
   Future loadStudentWeeklyChartData(BuildContext context) async {
     if (selectedStudentName == null) {
@@ -933,13 +1025,44 @@ class AdminStudentSubmitModel
       // Reset chart data (17 slots: weeks 1-15 + midterm + final)
       weeklyChartData = List.filled(17, 0);
 
-      // Get all courses for this student
-      final studentCourses = await CourseStudentTable().queryRows(
+      // Step 1: Get student's section from student_myprofile
+      String? studentSection;
+
+      final cachedStudent = _allStudentsCache.firstWhere(
+        (s) => s.name == selectedStudentName,
+        orElse: () => StudentMyprofileRow({}),
+      );
+
+      if (cachedStudent.data.isNotEmpty && cachedStudent.section != null) {
+        studentSection = cachedStudent.section;
+      } else {
+        final studentProfiles = await StudentMyprofileTable().queryRows(
+          queryFn: (q) => q.eqOrNull('name', selectedStudentName),
+        );
+        if (studentProfiles.isNotEmpty) {
+          studentSection = studentProfiles.first.section;
+        }
+      }
+
+      // Step 2: Get all courses for this student
+      final allCourses = await CourseStudentTable().queryRows(
         queryFn: (q) => q
             .eqOrNull('student_name', selectedStudentName)
             .eqOrNull('year', years)
             .eqOrNull('semester', semester),
       );
+
+      // Step 3: Filter by student's section
+      List<CourseStudentRow> studentCourses;
+      if (studentSection != null && studentSection.isNotEmpty) {
+        String sectionNum = studentSection.replaceAll(RegExp(r'[^0-9]'), '');
+        studentCourses = allCourses.where((c) {
+          String? courseSectionNum = c.sectionType?.replaceAll(RegExp(r'[^0-9]'), '');
+          return courseSectionNum == sectionNum;
+        }).toList();
+      } else {
+        studentCourses = allCourses;
+      }
 
       for (var course in studentCourses) {
         if (course.classid == null) continue;
@@ -999,6 +1122,28 @@ class AdminStudentSubmitModel
       // print('ERROR in loadStudentWeeklyChartData: $e');
       weeklyChartData = List.filled(17, 0);
     }
+  }
+
+  /// ============================================================
+  /// Helper function: Clear student selection (for grade tab change)
+  /// ============================================================
+  void clearStudentSelection() {
+    print('DEBUG: clearStudentSelection called');
+    selectedStudentName = null;
+    selectedStudentId = null;
+    selectedStudentGrade = null;
+    selectedSubjectName = null;
+    selectedClassId = null;
+    selectedCourseType = null;
+    clearStudentSubjects();
+    overallProgress = 0.0;
+    studentTotalExpected = 0;
+    studentTotalSubmitted = 0;
+    assignmentProgress = 0.0;
+    weeklySubmissionStatus.clear();
+    midtermSubmitted = false;
+    finalSubmitted = false;
+    print('DEBUG: clearStudentSelection completed - selectedStudentName is now: $selectedStudentName');
   }
 
   /// ============================================================

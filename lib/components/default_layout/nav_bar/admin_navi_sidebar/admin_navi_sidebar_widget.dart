@@ -543,29 +543,71 @@ class _AdminNaviSidebarWidgetState extends State<AdminNaviSidebarWidget> {
                                       ),
                                     ),
                                   ),
-                                  wrapWithModel(
-                                    model: _model.menuItemModel5,
-                                    updateCallback: () => safeSetState(() {}),
-                                    child: MenuItemWidget(
-                                      isActivePage: widget.activePageName ==
-                                          'Student_LectureMaterial',
-                                      text: '공지/알람 관리',
-                                      icon: Icon(
-                                        Icons.calendar_month,
-                                        color: valueOrDefault<Color>(
-                                          widget.activePageName ==
-                                                  'Student_LectureMaterial'
-                                              ? Color(0xFF284E75)
-                                              : FlutterFlowTheme.of(context)
-                                                  .primaryBackground,
-                                          FlutterFlowTheme.of(context)
-                                              .primaryBackground,
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (dialogContext) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              '알림',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF284E75),
+                                              ),
+                                            ),
+                                            content: Text(
+                                              '추후 개발 예정입니다.',
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(dialogContext).pop();
+                                                },
+                                                child: Text(
+                                                  '확인',
+                                                  style: TextStyle(
+                                                    color: Color(0xFF284E75),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: wrapWithModel(
+                                      model: _model.menuItemModel5,
+                                      updateCallback: () => safeSetState(() {}),
+                                      child: MenuItemWidget(
+                                        isActivePage: widget.activePageName ==
+                                            'AdminNotification',
+                                        text: '공지/알람 관리',
+                                        icon: Icon(
+                                          Icons.calendar_month,
+                                          color: valueOrDefault<Color>(
+                                            widget.activePageName ==
+                                                    'AdminNotification'
+                                                ? Color(0xFF284E75)
+                                                : FlutterFlowTheme.of(context)
+                                                    .primaryBackground,
+                                            FlutterFlowTheme.of(context)
+                                                .primaryBackground,
+                                          ),
+                                          size: 24.0,
                                         ),
-                                        size: 24.0,
+                                        hasNumberTag: false,
+                                        hasSubMenu: false,
+                                        subMenuExpanded: false,
                                       ),
-                                      hasNumberTag: false,
-                                      hasSubMenu: false,
-                                      subMenuExpanded: false,
                                     ),
                                   ),
                                   InkWell(
