@@ -18,12 +18,16 @@ Future<List<String>> getClassDocuments(
   String? professorName,
   String? section,
 }) async {
-  final List<String> urls = [];
+  final List<String> orderedUrls = [];
   final Set<String> seen = <String>{};
+  final List<String> indexPlanUrls = [];
+  final List<String> coursePlanUrls = [];
+  final List<String> remainingUrls = [];
+  String? coverUrl;
 
   if (classId <= 0) {
     print('[getClassDocuments] 잘못된 classId: $classId');
-    return urls;
+    return orderedUrls;
   }
 
   String? _clean(String? value) {
@@ -40,10 +44,49 @@ Future<List<String>> getClassDocuments(
   final normalizedProfessor = _clean(professorName);
   final normalizedSection = _clean(section);
 
-  void addUrl(String? value) {
+  bool _matchesSection(String? recordSection) {
+    final normalizedRecord = _clean(recordSection);
+    if (normalizedSection == null) {
+      return true;
+    }
+    if (normalizedRecord == null) {
+      return true;
+    }
+    return normalizedRecord == normalizedSection;
+  }
+
+  bool _matchesProfessor(String? recordProfessor) {
+    final normalizedRecord = _clean(recordProfessor);
+    if (normalizedProfessor == null) {
+      return true;
+    }
+    if (normalizedRecord == null) {
+      return true;
+    }
+    return normalizedRecord == normalizedProfessor;
+  }
+
+  bool _matchesGrade(int? recordGrade) {
+    if (grade == null || grade <= 0) {
+      return true;
+    }
+    if (recordGrade == null) {
+      return true;
+    }
+    return recordGrade == grade;
+  }
+
+  void _stageUrl(List<String> bucket, String? value) {
+    final trimmed = value?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      bucket.add(trimmed);
+    }
+  }
+
+  void _commitUrl(String? value) {
     final trimmed = value?.trim();
     if (trimmed != null && trimmed.isNotEmpty && seen.add(trimmed)) {
-      urls.add(trimmed);
+      orderedUrls.add(trimmed);
     }
   }
 
@@ -73,7 +116,7 @@ Future<List<String>> getClassDocuments(
       },
     );
     if (classData.isNotEmpty) {
-      addUrl(classData.first.url);
+      coverUrl = classData.first.url;
     }
   } catch (error) {
     print('[getClassDocuments] class 테이블 조회 오류: $error');
@@ -81,16 +124,16 @@ Future<List<String>> getClassDocuments(
 
   try {
     final coursePlans = await CourseplanTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedSection != null) {
-          query = query.eqOrNull('section', normalizedSection);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final plan in coursePlans) {
-      addUrl(plan.url);
+      if (!_matchesSection(plan.section)) {
+        continue;
+      }
+      final planTitle = _clean(plan.planTitle)?.toLowerCase() ?? '';
+      final targetBucket =
+          planTitle.contains('index') ? indexPlanUrls : coursePlanUrls;
+      _stageUrl(targetBucket, plan.url);
     }
   } catch (error) {
     print('[getClassDocuments] courseplan 테이블 조회 오류: $error');
@@ -101,7 +144,7 @@ Future<List<String>> getClassDocuments(
       queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final attendance in attendances) {
-      addUrl(attendance.url);
+      _stageUrl(remainingUrls, attendance.url);
     }
   } catch (error) {
     print('[getClassDocuments] attendance 테이블 조회 오류: $error');
@@ -112,7 +155,7 @@ Future<List<String>> getClassDocuments(
       queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final gradeSheet in gradeSheets) {
-      addUrl(gradeSheet.url);
+      _stageUrl(remainingUrls, gradeSheet.url);
     }
   } catch (error) {
     print('[getClassDocuments] gradesheet 테이블 조회 오류: $error');
@@ -120,16 +163,13 @@ Future<List<String>> getClassDocuments(
 
   try {
     final workEvaluations = await WorkevalformTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedSection != null) {
-          query = query.eqOrNull('section', normalizedSection);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final evalForm in workEvaluations) {
-      addUrl(evalForm.url);
+      if (!_matchesSection(evalForm.section)) {
+        continue;
+      }
+      _stageUrl(remainingUrls, evalForm.url);
     }
   } catch (error) {
     print('[getClassDocuments] workevalform 테이블 조회 오류: $error');
@@ -137,16 +177,13 @@ Future<List<String>> getClassDocuments(
 
   try {
     final lectureMaterials = await LecturematerialTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedSection != null) {
-          query = query.eqOrNull('section', normalizedSection);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final material in lectureMaterials) {
-      addUrl(material.url);
+      if (!_matchesSection(material.section)) {
+        continue;
+      }
+      _stageUrl(remainingUrls, material.url);
     }
   } catch (error) {
     print('[getClassDocuments] lecturematerial 테이블 조회 오류: $error');
@@ -154,22 +191,19 @@ Future<List<String>> getClassDocuments(
 
   try {
     final portfolioData = await SubjectportpolioTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedSection != null) {
-          query = query.eqOrNull('section', normalizedSection);
-        }
-        if (normalizedProfessor != null) {
-          query = query.eqOrNull('professor_name', normalizedProfessor);
-        }
-        if (grade != null && grade > 0) {
-          query = query.eqOrNull('grade', grade);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final portfolio in portfolioData) {
-      addUrl(portfolio.url);
+      if (!_matchesSection(portfolio.section)) {
+        continue;
+      }
+      if (!_matchesProfessor(portfolio.professorName)) {
+        continue;
+      }
+      if (!_matchesGrade(portfolio.grade)) {
+        continue;
+      }
+      _stageUrl(remainingUrls, portfolio.url);
     }
   } catch (error) {
     print('[getClassDocuments] subjectportpolio 테이블 조회 오류: $error');
@@ -177,19 +211,16 @@ Future<List<String>> getClassDocuments(
 
   try {
     final midtermResults = await MidtermResultsTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedProfessor != null) {
-          query = query.eqOrNull('professor_name', normalizedProfessor);
-        }
-        if (grade != null && grade > 0) {
-          query = query.eqOrNull('grade', grade);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final result in midtermResults) {
-      addUrl(result.url);
+      if (!_matchesProfessor(result.professorName)) {
+        continue;
+      }
+      if (!_matchesGrade(result.grade)) {
+        continue;
+      }
+      _stageUrl(remainingUrls, result.url);
     }
   } catch (error) {
     print('[getClassDocuments] midterm_results 테이블 조회 오류: $error');
@@ -197,23 +228,31 @@ Future<List<String>> getClassDocuments(
 
   try {
     final finalResults = await FinalResultsTable().queryRows(
-      queryFn: (q) {
-        var query = q.eq('class', classId);
-        if (normalizedProfessor != null) {
-          query = query.eqOrNull('professor_name', normalizedProfessor);
-        }
-        if (grade != null && grade > 0) {
-          query = query.eqOrNull('grade', grade);
-        }
-        return query.order('created_date');
-      },
+      queryFn: (q) => q.eq('class', classId).order('created_date'),
     );
     for (final result in finalResults) {
-      addUrl(result.url);
+      if (!_matchesProfessor(result.professorName)) {
+        continue;
+      }
+      if (!_matchesGrade(result.grade)) {
+        continue;
+      }
+      _stageUrl(remainingUrls, result.url);
     }
   } catch (error) {
     print('[getClassDocuments] final_results 테이블 조회 오류: $error');
   }
 
-  return urls;
+  _commitUrl(coverUrl);
+  for (final url in indexPlanUrls) {
+    _commitUrl(url);
+  }
+  for (final url in coursePlanUrls) {
+    _commitUrl(url);
+  }
+  for (final url in remainingUrls) {
+    _commitUrl(url);
+  }
+
+  return orderedUrls;
 }
